@@ -14,6 +14,11 @@
 
 use Drupal\Core\Runtime\DrupalRuntime;
 
+$webroot = getenv('DRUPAL_WEBROOT');
+if ($webroot !== FALSE && isset($_SERVER['SCRIPT_NAME']) && str_starts_with($_SERVER['SCRIPT_NAME'], $webroot)) {
+  $_SERVER['SCRIPT_NAME'] = substr($_SERVER['SCRIPT_NAME'], strlen($webroot));
+}
+
 // By default, the symfony/runtime component would load SymfonyRuntime as its
 // runtime. However, Drupal's Kernel has a lot of runtime components that it
 // expects to be prepared. Thus, we default Drupal applications to DrupalRuntime

@@ -60,3 +60,8 @@ Desktop.ini
 
 # Local development
 php.ini
+
+# Production/runtime files
+*.backup
+error_log
+**/error_log
