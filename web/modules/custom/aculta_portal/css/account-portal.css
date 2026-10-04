@@ -1,0 +1,195 @@
+.aculta-account {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+  color: #0c3c29;
+}
+
+.aculta-account__header {
+  padding: clamp(1.125rem, 2.5vw, 1.75rem);
+  background: #ffffff;
+  border-inline-start: 4px solid #689427;
+  border-radius: 0.25rem;
+}
+
+.aculta-account__header h1 {
+  margin: 0;
+  color: #0c3c29;
+  font: 700 clamp(1.75rem, 3vw, 2.375rem)/1.1 Oswald, sans-serif;
+}
+
+.aculta-account__header p {
+  margin: 0.35rem 0 0;
+  color: #0c3c29;
+  font: 400 1rem/1.5 Inter, sans-serif;
+}
+
+.aculta-account__layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 0.85fr) minmax(0, 3fr);
+  align-items: start;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.aculta-account__nav,
+.aculta-account__content {
+  min-width: 0;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  background: #ffffff;
+  border-radius: 0.25rem;
+}
+
+.aculta-account__nav {
+  position: sticky;
+  top: 1rem;
+  border-inline-start: 3px solid #689427;
+}
+
+.aculta-account__menu {
+  display: grid;
+  gap: 0.375rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.aculta-account__menu > li { min-width: 0; }
+
+.aculta-account__link {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  color: #0c3c29;
+  background: #ffffff;
+  border-inline-start: 4px solid transparent;
+  border-radius: 0.1875rem;
+  font: 600 1rem/1.3 Oswald, sans-serif;
+  text-decoration: none;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.aculta-account__link:is(:hover, :focus-visible) {
+  color: #0c3c29;
+  background: #f2ca36;
+  text-decoration: none;
+}
+
+.aculta-account__link:focus-visible {
+  outline: 3px solid #0c3c29;
+  outline-offset: 2px;
+}
+
+.aculta-account__link.is-active,
+.aculta-account__link[aria-current="page"] {
+  color: #ffffff;
+  background: #0c3c29;
+  border-inline-start-color: #f2ca36;
+}
+
+.aculta-account__link.is-active:is(:hover, :focus-visible),
+.aculta-account__link[aria-current="page"]:is(:hover, :focus-visible) {
+  color: #ffffff;
+  background: #0c3c29;
+}
+
+.aculta-account__logout {
+  margin-block-start: 0.75rem;
+  border-block-start: 1px solid #689427;
+  color: #d4452d;
+  font-size: 1.1667rem;
+}
+
+.aculta-account__logout:is(:hover, :focus-visible) {
+  color: #ffffff;
+  background: #d4452d;
+}
+
+.aculta-account__content {
+  min-height: 18rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-inline-start: 3px solid #689427;
+}
+
+.aculta-account__content > h2 {
+  margin: 0 0 1.25rem;
+  color: #0c3c29;
+  font: 700 clamp(1.5rem, 2.5vw, 1.875rem)/1.15 Oswald, sans-serif;
+}
+
+.aculta-account__content > h2:focus { outline: none; }
+.aculta-account__content > h2:focus-visible { outline: 3px solid #689427; outline-offset: 4px; }
+.aculta-account__body { color: #0c3c29; font: 400 1rem/1.6 Inter, sans-serif; }
+.aculta-account__body h3 { color: #0c3c29; font: 600 1.375rem/1.2 Oswald, sans-serif; }
+.aculta-account__body .form-item { margin-block-end: 1rem; }
+.aculta-account__body .form-control,
+.aculta-account__body .form-select { width: 100%; }
+
+.aculta-account__identity { display: flex; align-items: center; gap: 1rem; margin-block-end: 1.5rem; }
+.aculta-account__identity h3 { margin: 0 0 0.25rem; color: #0c3c29; font: 600 1.5rem/1.2 Oswald, sans-serif; }
+.aculta-account__identity p { margin: 0; overflow-wrap: anywhere; }
+.aculta-account__avatar { display: grid; width: 5rem; height: 5rem; flex: 0 0 5rem; place-items: center; border-radius: 50%; object-fit: cover; }
+.aculta-account__avatar--empty { color: #ffffff; background: #0c3c29; font: 600 1.75rem/1 Oswald, sans-serif; }
+.aculta-account-photo { position: relative; flex: 0 0 5rem; }
+.aculta-account-photo__trigger { position: relative; display: grid; width: 5rem; height: 5rem; padding: 0; place-items: center; overflow: hidden; color: #ffffff; background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+.aculta-account-photo__trigger:focus-visible { outline: 3px solid #f2ca36; outline-offset: 3px; }
+.aculta-account-photo__edit-icon { position: absolute; inset: auto 0 0 auto; display: grid; width: 2rem; height: 2rem; place-items: center; color: #ffffff; background: #0c3c29; border: 2px solid #ffffff; border-radius: 50%; opacity: 0; transform: translate(-0.1rem, -0.1rem); transition: opacity 150ms ease; }
+.aculta-account-photo__edit-icon svg { width: 1rem; height: 1rem; }
+.aculta-account-photo__trigger:is(:hover, :focus-visible) .aculta-account-photo__edit-icon { opacity: 1; }
+.aculta-account-photo__dialog { position: static; width: min(34rem, 100%); max-width: 100%; max-height: none; padding: 0; margin: 1rem 0 0; overflow: visible; color: #0c3c29; background: transparent; border: 0; }
+.aculta-account-photo__dialog::backdrop { background: rgb(12 60 41 / 58%); }
+.aculta-account-photo.is-enhanced .aculta-account-photo__dialog[open] { position: fixed; inset: 0; width: min(34rem, calc(100vw - 2rem)); max-width: none; max-height: min(46rem, calc(100dvh - 2rem)); padding: 0; margin: auto; overflow: auto; background: #ffffff; border: 1px solid #689427; border-radius: 0.5rem; box-shadow: 0 1rem 3rem rgb(12 60 41 / 24%); }
+.aculta-account-photo__panel { position: relative; padding: clamp(1.25rem, 4vw, 2rem); }
+.aculta-account-photo__panel h2 { max-width: calc(100% - 3rem); margin: 0 0 0.5rem; color: #0c3c29; font: 600 1.5rem/1.2 Oswald, sans-serif; }
+.aculta-account-photo__panel h2:focus { outline: none; }
+.aculta-account-photo__panel h2:focus-visible { outline: 3px solid #689427; outline-offset: 4px; }
+.aculta-account-photo__panel > p { margin-block-end: 1rem; }
+.aculta-account-photo__close { position: absolute; inset: 0.75rem 0.75rem auto auto; display: grid; width: 2.75rem; height: 2.75rem; place-items: center; color: #0c3c29; background: #fbf4e8; border: 1px solid #0c3c29; border-radius: 50%; font: 400 1.75rem/1 Inter, sans-serif; cursor: pointer; }
+.aculta-account-photo__close:focus-visible { outline: 3px solid #689427; outline-offset: 2px; }
+.aculta-account__body .user-picture { max-width: 24rem; }
+.aculta-account__body .user-picture .image-widget { max-width: 100%; }
+
+.aculta-account-data__nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-block-end: 1rem; margin-block: 1rem; border-block-end: 1px solid #689427; }
+.aculta-account-data__link { display: inline-flex; min-height: 2.75rem; align-items: center; padding: 0.625rem 0.875rem; color: #0c3c29; background: #ffffff; border: 1px solid #0c3c29; border-radius: 0.1875rem; font: 600 0.9375rem/1.25 Oswald, sans-serif; text-decoration: none; transition: color 180ms ease, background-color 180ms ease; }
+.aculta-account-data__link:is(:hover, :focus-visible) { color: #0c3c29; background: #f2ca36; text-decoration: none; }
+.aculta-account-data__link:focus-visible { outline: 3px solid #0c3c29; outline-offset: 2px; }
+.aculta-account-data__link.is-active,
+.aculta-account-data__link[aria-current="page"] { color: #ffffff; background: #0c3c29; border-color: #0c3c29; }
+.aculta-account-data__link.is-active:is(:hover, :focus-visible),
+.aculta-account-data__link[aria-current="page"]:is(:hover, :focus-visible) { color: #ffffff; background: #0c3c29; }
+.aculta-account-data__content > h3 { margin-block: 0 1rem; }
+.aculta-account-data__content .form-actions { margin-block-start: 1.25rem; }
+.aculta-account-data__content [aria-busy="true"] { cursor: progress; }
+
+.aculta-account__loading {
+  width: fit-content;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  color: #0c3c29;
+  background: #f2ca36;
+  border-radius: 0.1875rem;
+  font: 600 0.875rem/1.4 Inter, sans-serif;
+}
+
+.aculta-account[aria-busy="true"] .aculta-account__content { cursor: progress; }
+.aculta-account__status { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@media (max-width: 767.98px) {
+  .aculta-account__layout { grid-template-columns: minmax(0, 1fr); }
+  .aculta-account__nav { position: static; }
+  .aculta-account__menu { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .aculta-account__logout { grid-column: 1 / -1; margin-block-start: 0.25rem; border-block-start: 1px solid #689427; }
+  .aculta-account__identity { align-items: flex-start; }
+  .aculta-account-photo__edit-icon { opacity: 1; }
+  .aculta-account-photo.is-enhanced .aculta-account-photo__dialog[open] { top: auto; bottom: 0; width: 100vw; max-width: none; max-height: min(90dvh, 46rem); margin: 0; border-radius: 1rem 1rem 0 0; }
+  .aculta-account-photo__panel { padding: 1.25rem 1rem calc(1rem + env(safe-area-inset-bottom)); }
+}
+
+@media (hover: none) {
+  .aculta-account-photo__edit-icon { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-account__link,
+  .aculta-account-data__link { transition: none; }
+  .aculta-account-photo__edit-icon { transition: none; }
+}

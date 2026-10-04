@@ -1,0 +1,87 @@
+aculta_portal.dashboard:
+  path: /conta-interna
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::dashboard'
+    _title: Minha conta
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.my_data:
+  path: /dados
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::myData'
+    _title: Meus dados
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.my_data_address:
+  path: /dados/endereco
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::address'
+    _title: Endereço
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.connections:
+  path: /conexoes
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::connections'
+    _title: Conexões
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.security:
+  path: /seguranca
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::security'
+    _title: Segurança da conta
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+
+aculta_portal.support_form:
+  path: /apoie
+  defaults:
+    _form: '\Drupal\aculta_portal\Support\Form\SupportForm'
+    _title: Apoie a Associação
+  requirements:
+    _access: 'TRUE'
+aculta_portal.support_settings:
+  path: /admin/config/aculta/apoio
+  defaults:
+    _form: '\Drupal\aculta_portal\Support\Form\SettingsForm'
+    _title: Formas de apoio
+  requirements:
+    _permission: administer aculta support settings
+aculta_portal.admin:
+  path: /admin/config/aculta/portal
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalRequirementsController::overview'
+    _title: ACULTA Portal
+  requirements:
+    _permission: administer site configuration
+aculta_portal.requirements:
+  path: /admin/config/aculta/portal/requisitos
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalRequirementsController::report'
+    _title: Requisitos do Portal ACULTA
+  requirements:
+    _permission: administer site configuration
+aculta_portal.support_my:
+  path: /apoio
+  defaults:
+    _controller: '\Drupal\aculta_portal\Support\Controller\SupportController::mySupport'
+    _title: Meu Apoio
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+
+
+
+

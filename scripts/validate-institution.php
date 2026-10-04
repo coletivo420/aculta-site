@@ -1,0 +1,96 @@
+<?php
+
+/** Read-only validation of the local institutional implementation. */
+use Symfony\Component\Yaml\Yaml;
+
+$root = dirname(__DIR__);
+$theme = $root . '/web/themes/custom/aculta';
+if (is_dir($root . '/config/sync')) {
+  $count = 0;
+  foreach (glob($root . '/config/sync/*.yml') as $path) {
+    Yaml::parseFile($path);
+    $count++;
+  }
+  echo 'Exported YAML files parsed: ' . $count . PHP_EOL;
+}
+$twig = \Drupal::service('twig');
+$twig->getLoader()->addLoader(new \Twig\Loader\FilesystemLoader($theme . '/templates'), TRUE);
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($theme)) as $file) {
+  if (!$file->isFile()) {
+    continue;
+  }
+  if (in_array($file->getExtension(), ['yml', 'yaml'], TRUE)) {
+    Yaml::parseFile($file->getPathname());
+    echo 'YAML OK: ' . $file->getFilename() . PHP_EOL;
+  }
+  if (str_ends_with($file->getFilename(), '.html.twig')) {
+    $source = new \Twig\Source(file_get_contents($file->getPathname()), $file->getFilename(), $file->getPathname());
+    $twig->compile($twig->parse($twig->tokenize($source)));
+    echo 'Twig OK: ' . $file->getFilename() . PHP_EOL;
+  }
+}
+$state = \Drupal::state()->get('aculta.institution_setup', []);
+if (empty($state['complete'])) {
+  throw new RuntimeException('Installation incomplete.');
+}
+foreach ($state['nodes'] as $key => $id) {
+  $node = \Drupal\node\Entity\Node::load($id);
+  if ($key === 'cnpj_document') {
+    if (!$node || $node->isPublished() || !$node->get('field_document')->isEmpty()) {
+      throw new RuntimeException('CNPJ PDF draft should remain private until the document is supplied.');
+    }
+    echo 'CNPJ document: unpublished draft, no invented download.' . PHP_EOL;
+    continue;
+  }
+  if (!$node || !$node->isPublished() || $node->get('body')->isEmpty()) {
+    throw new RuntimeException('Missing public content: ' . $key);
+  }
+  echo 'Content OK: ' . $key . ' / ' . $node->toUrl()->toString() . PHP_EOL;
+}
+foreach (\Drupal::menuTree()->load('main', new \Drupal\Core\Menu\MenuTreeParameters()) as $item) {
+  if (!$item->link->isEnabled()) {
+    continue;
+  }
+  echo 'Main menu: ' . $item->link->getPluginId() . ' / ' . $item->link->getTitle() . ' / ' . $item->link->getUrlObject()->toString() . PHP_EOL;
+}
+if (!empty($state['cms_enhancements'])) {
+  $webform = \Drupal\webform\Entity\Webform::load('aculta_contact');
+  if (!$webform || !$webform->isOpen() || count($webform->getElementsDecoded()) !== 5) {
+    throw new RuntimeException('Institutional Webform is not configured.');
+  }
+  if (!$webform->getSetting('form_disable_remote_addr')) {
+    throw new RuntimeException('IP collection is unexpectedly enabled.');
+  }
+  if ($webform->getHandlers('email')->count() !== 1) {
+    throw new RuntimeException('Expected one institutional email handler.');
+  }
+  foreach (['page', 'project', 'activity', 'article', 'document'] as $bundle) {
+    if (!\Drupal\pathauto\Entity\PathautoPattern::load('aculta_' . $bundle) || !\Drupal\field\Entity\FieldConfig::loadByName('node', $bundle, 'field_meta_tags')) {
+      throw new RuntimeException('Missing CMS pattern or SEO field: ' . $bundle);
+    }
+  }
+  $xml = \Drupal::service('simple_sitemap.generator')->getContent();
+  if (!$xml || !simplexml_load_string($xml)) {
+    throw new RuntimeException('Sitemap XML is not generated.');
+  }
+  echo 'Webform, metadata fields, Pathauto patterns and sitemap XML: OK.' . PHP_EOL;
+  $editor = \Drupal\editor\Entity\Editor::load('full_html');
+  $definitions = \Drupal::service('plugin.manager.ckeditor5.plugin')->getEnabledDefinitions($editor);
+  if (!isset($definitions['media_library_mediaLibrary'])) {
+    throw new RuntimeException('Media Library is not enabled in the content editor.');
+  }
+  echo 'CKEditor Media Library: OK.' . PHP_EOL;
+}
+foreach ($state['blocks'] as $key => $id) {
+  $block = \Drupal\block_content\Entity\BlockContent::load($id);
+  if (!$block || ($block->hasField('body') && $block->get('body')->isEmpty())) {
+    throw new RuntimeException('Missing block content: ' . $key);
+  }
+}
+foreach (['aculta_projects', 'aculta_news', 'aculta_activities', 'aculta_documents'] as $id) {
+  $view = \Drupal\views\Views::getView($id);
+  $view->setDisplay('block_1');
+  $view->execute();
+  echo 'View OK: ' . $id . ' / rows: ' . count($view->result) . PHP_EOL;
+}
+echo 'Institutional local checks passed.' . PHP_EOL;

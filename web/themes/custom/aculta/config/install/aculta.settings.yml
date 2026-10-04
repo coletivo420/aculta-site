@@ -1,0 +1,10 @@
+# Valores iniciais para o HTML herdado do tema-base. Não aplicados nesta etapa.
+b5_body_schema: 'none'
+b5_body_bg_schema: 'none'
+b5_theme_mode: 'light'
+b5_top_container: 'container'
+b5_top_container_config: ''
+b5_navbar_schema: 'dark'
+b5_navbar_bg_schema: 'none'
+b5_footer_schema: 'dark'
+b5_footer_bg_schema: 'none'

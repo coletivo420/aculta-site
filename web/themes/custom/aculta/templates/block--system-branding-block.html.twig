@@ -1,0 +1,14 @@
+{# Text branding remains usable until a valid logo is configured. #}
+{% extends "block.html.twig" %}
+{% block content %}
+  <div class="aculta-brand">
+    {% if site_logo %}
+      <a href="{{ path('<front>') }}" rel="home" class="site-logo">
+        <img src="{{ site_logo }}" alt="{{ site_name }}" width="900" height="300" fetchpriority="high" />
+      </a>
+    {% endif %}
+    {% if site_slogan %}
+      <p class="site-slogan">{{ site_slogan }}</p>
+    {% endif %}
+  </div>
+{% endblock %}

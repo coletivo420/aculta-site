@@ -65,3 +65,5 @@ php.ini
 *.backup
 error_log
 **/error_log
+__pycache__/
+*.py[cod]

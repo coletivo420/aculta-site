@@ -1,0 +1,48 @@
+uuid: b27d8a15-13ec-435b-bb3e-dd6c6abf0dea
+langcode: pt-br
+status: false
+dependencies:
+  module:
+    - commerce_mercado_pago
+id: mercado_pago
+label: 'Mercado Pago'
+weight: 0
+plugin: mercado_pago_checkout_pro
+configuration:
+  display_label: 'Mercado Pago'
+  mode: test
+  payment_method_types:
+    - mercado_pago_checkout_pro
+  collect_billing_information: false
+  public_key_test: ''
+  access_token_test: ''
+  public_key_stage: ''
+  access_token_stage: ''
+  public_key_prod: ''
+  access_token_prod: ''
+  client_id: ''
+  client_secret: ''
+  redirect_mode: redirect
+  country: BR
+  payment_types: {  }
+  payment_method: {  }
+  max_installments: 1
+  autofee: false
+  debug_logging: false
+conditions:
+  -
+    plugin: order_store
+    configuration:
+      stores:
+        - 32f75ad2-5d45-48bb-898e-d657d47d04f8
+  -
+    plugin: order_type
+    configuration:
+      bundles:
+        - default
+  -
+    plugin: order_currency
+    configuration:
+      currencies:
+        - BRL
+conditionOperator: AND

@@ -1,0 +1,51 @@
+services:
+  aculta_portal.domain_purpose:
+    class: Drupal\aculta_portal\Domain\DomainPurposeManager
+    arguments: ['@entity_type.manager', '@domain.negotiator', '@request_stack']
+  aculta_portal.breadcrumb_builder:
+    class: Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder
+    arguments: ['@aculta_portal.domain_purpose', '@request_stack']
+    tags:
+      - { name: breadcrumb_builder, priority: 100 }
+  aculta_portal.domain_route_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\DomainRouteSubscriber
+    arguments: ['@config.factory']
+    tags:
+      - { name: event_subscriber }
+  aculta_portal.domain_purpose_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
+    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks']
+    tags:
+      - { name: kernel.event_subscriber }
+  # CEP Autocomplete 1.0.0 references this Drupal logger channel but does
+  # not define it. Supply the standard Core logger channel without changing
+  # contributed code.
+  logger.channel.cep_autocomplete:
+    parent: logger.channel_base
+    arguments: ['cep_autocomplete']
+  aculta_portal.mercado_pago_environment_override:
+    class: Drupal\aculta_portal\Config\MercadoPagoEnvironmentOverride
+    tags:
+      - { name: config.factory.override, priority: 100 }
+  aculta_portal.mercado_pago_webhook_guard:
+    class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookGuard
+  aculta_portal.mercado_pago_webhook_subscriber:
+    class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookEventSubscriber
+    arguments: ['@entity_type.manager', '@key.repository', '@aculta_portal.mercado_pago_webhook_guard']
+    tags:
+      - { name: kernel.event_subscriber }
+  aculta_portal.account_route_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber
+    arguments: ['@current_user']
+    tags:
+      - { name: kernel.event_subscriber }
+  aculta_portal.cep_lookup_rate_limit_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\CepLookupRateLimitSubscriber
+    arguments: ['@flood']
+    tags:
+      - { name: kernel.event_subscriber }
+  aculta_portal.social_auth_user_created_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\SocialAuthUserCreatedSubscriber
+    arguments: ['@user.data']
+    tags:
+      - { name: kernel.event_subscriber }

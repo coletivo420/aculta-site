@@ -1,0 +1,31 @@
+name: Portal ACULTA
+type: module
+description: 'Integra a identidade do tema ACULTA aos módulos de conta e ao conteúdo institucional do Drupal.'
+package: Associação Cultural Antiproibicionista
+core_version_requirement: ^11
+dependencies:
+  - profile:profile
+  - domain:domain
+  - domain_alias:domain_alias
+  - domain_config:domain_config
+  - domain_source:domain_source
+  - address:address
+  - cep_autocomplete:cep_autocomplete
+  - drupal:user
+  - login_emailusername:login_emailusername
+  - change_mail_page:change_mail_page
+  - email_confirmer:email_confirmer
+  - email_confirmer:email_confirmer_user
+  - social_auth:social_auth
+  - commerce:commerce
+  - commerce:commerce_order
+  - commerce:commerce_payment
+  - commerce_mercado_pago:commerce_mercado_pago
+  - key:key
+  - drupal:node
+  - drupal:taxonomy
+  - drupal:datetime
+  - drupal:options
+  - drupal:media
+  - metatag:metatag
+  - schema_metatag:schema_metatag

@@ -1,0 +1,15 @@
+name: Associação Cultural Antiproibicionista
+type: theme
+description: 'Tema institucional da Associação Cultural Antiproibicionista.'
+package: Custom
+core_version_requirement: ^11
+base theme: bootstrap5
+libraries:
+  - aculta/global
+regions:
+  header: Cabeçalho
+  primary_menu: Menu principal
+  highlighted: Destaques
+  content: Conteúdo
+  sidebar: Barra lateral
+  footer: Rodapé

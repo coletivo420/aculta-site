@@ -1,0 +1,309 @@
+<?php
+
+namespace Drupal\aculta_portal\Controller;
+
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/** Private user account area. */
+final class PortalController extends ControllerBase {
+
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entities,
+    private readonly EntityFormBuilderInterface $forms,
+    private readonly FormBuilderInterface $accountFormBuilder,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static($container->get('entity_type.manager'), $container->get('entity.form_builder'), $container->get('form_builder'));
+  }
+
+  public function dashboard(): array {
+    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $profile = $this->loadParticipantProfile($account);
+    $nickname = $profile && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty() ? $profile->get('field_nickname')->value : '';
+    $first_name = $profile && !$profile->get('field_first_name')->isEmpty() ? $profile->get('field_first_name')->value : '';
+    $display_name = $nickname ?: ($first_name ?: $account->getDisplayName());
+    $file = $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty() ? $account->get('user_picture')->entity : NULL;
+    $photo = $file ? [
+      '#theme' => 'image_style',
+      '#style_name' => 'aculta_avatar',
+      '#uri' => $file->getFileUri(),
+      '#alt' => $this->t('Foto de perfil de @name', ['@name' => $display_name]),
+      '#attributes' => ['class' => ['aculta-account__avatar']],
+    ] : [
+      '#type' => 'html_tag',
+      '#tag' => 'span',
+      '#value' => mb_strtoupper(mb_substr($display_name, 0, 1)),
+      '#attributes' => ['class' => ['aculta-account__avatar', 'aculta-account__avatar--empty'], 'aria-hidden' => 'true'],
+    ];
+
+    return [
+      'identity' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-account__identity']],
+        'photo_editor' => [
+          '#theme' => 'aculta_portal_photo_editor',
+          '#photo' => $photo,
+          '#photo_form' => $this->buildPortalAccountForm($account),
+          '#display_name' => $display_name,
+        ],
+        'details' => [
+          '#type' => 'container',
+          'name' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $display_name],
+          'email' => ['#plain_text' => $account->getEmail()],
+        ],
+      ],
+      'intro' => [
+        '#plain_text' => $this->t('Use o menu para acompanhar seu apoio, atualizar seus dados e gerenciar sua conta.'),
+      ],
+      '#cache' => ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+    ];
+  }
+
+  public function myData(): array {
+    return $this->buildDataSection('basics');
+  }
+
+  public function address(): array {
+    return $this->buildDataSection('address');
+  }
+
+  public function connections(): array {
+    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $config = $this->config('social_auth_google.settings');
+    $google_ready = !empty($config->get('client_id')) && !empty($config->get('client_secret'));
+    $links = [];
+    if ($this->moduleHandler()->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
+      $links = $this->entities->getStorage('social_auth')->loadByProperties([
+        'user_id' => $account->id(),
+        'plugin_id' => 'google',
+      ]);
+    }
+
+    $items = [
+      'description' => ['#plain_text' => $this->t('Gerencie as contas externas conectadas à sua conta.')],
+      'google_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => 'Google'],
+    ];
+    if ($links) {
+      $items['google_status'] = ['#plain_text' => $this->t('Conta conectada.')];
+      if ($account->getPassword()) {
+        $social_auth = reset($links);
+        $items['disconnect'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Desconectar Google'),
+          '#url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()]),
+          '#attributes' => ['class' => ['button', 'button--secondary']],
+          '#access' => $social_auth->access('delete'),
+        ];
+      }
+      else {
+        $items['password_notice'] = ['#plain_text' => $this->t('Defina uma senha para sua conta antes de desconectar o Google.')];
+        $items['password_link'] = ['#type' => 'link', '#title' => $this->t('Gerenciar segurança da conta'), '#url' => Url::fromRoute('aculta_portal.security')];
+      }
+    }
+    elseif ($google_ready) {
+      $items['google_status'] = ['#plain_text' => $this->t('Nenhuma conta Google está conectada.')];
+      $items['google_login'] = \Drupal::service('plugin.manager.block')
+        ->createInstance('social_auth_login', [])
+        ->build();
+    }
+    else {
+      $items['google_status'] = ['#plain_text' => $this->t('A conexão com o Google estará disponível quando a configuração institucional estiver concluída.')];
+    }
+    $items['#cache'] = ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0];
+    return $items;
+  }
+
+  public function security(): array {
+    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $email_ready = $this->transactionalMailReady();
+    $content = [
+      'intro' => ['#plain_text' => $this->t('Gerencie como você acessa sua conta.')],
+      'email_section' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-security-card']],
+        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('E-mail de acesso')],
+        'current_label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
+        'current_email' => ['#plain_text' => $account->getEmail()],
+      ],
+      'password_section' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-security-card']],
+        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Senha')],
+        'description' => ['#plain_text' => $this->t('Mantenha uma senha segura para acessar sua conta.')],
+      ],
+      '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+    ];
+
+    if ($email_ready && $this->moduleHandler()->moduleExists('email_confirmer_user') && $this->moduleHandler()->moduleExists('change_mail_page')) {
+      $content['email_section']['change_form'] = $this->accountFormBuilder->getForm(\Drupal\change_mail_page\Form\ChangeMailForm::class, $account);
+      $pending_email = $this->pendingEmail($account->id());
+      if ($pending_email !== NULL) {
+        $content['email_section']['pending'] = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-security-pending'], 'aria-live' => 'polite'],
+          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
+          'email' => ['#plain_text' => $pending_email],
+          'message' => ['#plain_text' => $this->t('Aguardando confirmação no novo endereço.')],
+        ];
+      }
+    }
+    else {
+      $content['email_section']['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
+    }
+
+    $social_password_unset = (bool) \Drupal::service('user.data')->get('aculta_portal', $account->id(), 'social_auth_password_unset');
+    if ($account->getPassword() && !$social_password_unset) {
+      $content['password_section']['change_form'] = $this->buildPortalAccountForm($account);
+    }
+    else {
+      $content['password_section']['social_notice'] = ['#plain_text' => $this->t('Sua conta utiliza acesso externo. Quando o fluxo de definição de senha local estiver homologado, ele poderá ser oferecido aqui.')];
+    }
+
+    return [
+      'content' => $content,
+    ];
+  }
+
+  private function transactionalMailReady(): bool {
+    $smtp = $this->config('smtp.settings');
+    $mail_system = $this->config('system.mail')->get('interface.default');
+    $site_mail = trim((string) $this->config('system.site')->get('mail'));
+    return $this->moduleHandler()->moduleExists('smtp')
+      && $mail_system === 'SMTPMailSystem'
+      && (bool) $smtp->get('smtp_on')
+      && trim((string) $smtp->get('smtp_host')) !== ''
+      && trim((string) $smtp->get('smtp_username')) !== ''
+      && trim((string) $smtp->get('smtp_password')) !== ''
+      && $site_mail !== '';
+  }
+
+  private function pendingEmail(int|string $uid): ?string {
+    if (!$this->moduleHandler()->moduleExists('email_confirmer_user')) {
+      return NULL;
+    }
+    $pending = \Drupal::service('user.data')->get('email_confirmer_user', $uid, 'email_change_new_address');
+    if (!is_string($pending) || $pending === '') {
+      return NULL;
+    }
+    $confirmations = \Drupal::service('email_confirmer')->getConfirmations($pending, 'pending', 0, 'email_confirmer_user');
+    foreach ($confirmations as $confirmation) {
+      if ((int) $confirmation->get('uid')->target_id === (int) $uid) {
+        return $pending;
+      }
+    }
+    return NULL;
+  }
+
+  private function buildDataSection(string $section): array {
+    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $profile = $section === 'address'
+      ? $this->loadCommerceAddressProfile($account)
+      : $this->loadParticipantProfile($account);
+    $route = $section === 'address' ? 'aculta_portal.my_data_address' : 'aculta_portal.my_data';
+    $title = $section === 'address' ? $this->t('Endereço') : $this->t('Informações básicas');
+    $links = [];
+    foreach ([
+      'basics' => ['title' => $this->t('Informações básicas'), 'route' => 'aculta_portal.my_data'],
+      'address' => ['title' => $this->t('Endereço'), 'route' => 'aculta_portal.my_data_address'],
+    ] as $key => $tab) {
+      $link = [
+        '#type' => 'link',
+        '#title' => $tab['title'],
+        '#url' => Url::fromRoute($tab['route']),
+        '#attributes' => ['data-aculta-account-data-link' => 'true', 'class' => ['aculta-account-data__link']],
+      ];
+      if ($section === $key) {
+        $link['#attributes']['aria-current'] = 'page';
+        $link['#attributes']['class'][] = 'is-active';
+      }
+      $links[] = $link;
+    }
+    return [
+      'description' => ['#plain_text' => $this->t('Mantenha suas informações pessoais e de contato atualizadas.')],
+      'tabs' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-account-data__nav'], 'aria-label' => $this->t('Seções de meus dados'), 'data-aculta-account-data-nav' => 'true'],
+        'links' => $links,
+      ],
+      'content' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-account-data__content'], 'data-aculta-account-data-content' => 'true', 'aria-busy' => 'false'],
+        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $title, '#attributes' => ['tabindex' => '-1']],
+        'account_email' => $section === 'basics' ? [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-account-data__email']],
+          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail')],
+          'value' => ['#plain_text' => $account->getEmail()],
+        ] : [],
+        'form' => $this->forms->getForm($profile, 'edit'),
+      ],
+      '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+    ];
+  }
+
+  private function loadParticipantProfile($account) {
+    $profiles = $this->entities->getStorage('profile')->loadByUser($account, 'participante');
+    return $profiles ?: $this->entities->getStorage('profile')->create([
+      'type' => 'participante',
+      'uid' => $account->id(),
+      'status' => TRUE,
+      'is_default' => TRUE,
+    ]);
+  }
+
+  /**
+   * Loads or prepares the account's canonical Commerce customer address.
+   *
+   * An unsaved Profile entity lets the standard Commerce Address field form
+   * create the customer profile through normal Form API submission.
+   */
+  private function loadCommerceAddressProfile($account) {
+    $storage = $this->entities->getStorage('profile');
+    $existing = $storage->loadByUser($account, 'customer');
+    if (!$existing) {
+      $profiles = $storage->loadByProperties(['uid' => $account->id(), 'type' => 'customer']);
+      $existing = $profiles ? reset($profiles) : NULL;
+    }
+    return $existing ?: $storage->create([
+      'type' => 'customer',
+      'uid' => $account->id(),
+      'status' => TRUE,
+      'is_default' => TRUE,
+    ]);
+  }
+
+  /**
+   * Builds Core's user form safely inside the Portal route.
+   *
+   * Social Auth's generic user-form alter expects a `user` route parameter,
+   * which account pages do not have. Temporarily supply the current account
+   * during form construction, then remove Social Auth's separate account
+   * management section because the Portal has a dedicated Connections page.
+   */
+  private function buildPortalAccountForm($account): array {
+    $parameters = \Drupal::routeMatch()->getParameters();
+    $had_user_parameter = $parameters->has('user');
+    $previous_user_parameter = $parameters->get('user');
+    $parameters->set('user', $account);
+    try {
+      $form = $this->forms->getForm($account, 'default');
+      unset($form['social_auth']);
+      return $form;
+    }
+    finally {
+      if ($had_user_parameter) {
+        $parameters->set('user', $previous_user_parameter);
+      }
+      else {
+        $parameters->remove('user');
+      }
+    }
+  }
+
+}

@@ -1,0 +1,18 @@
+metatag.metatag_tag.schema_organization_legal_name:
+  type: text
+  label: Nome empresarial
+metatag.metatag_tag.schema_organization_alternate_name:
+  type: text
+  label: Nome fantasia registrado
+metatag.metatag_tag.schema_organization_tax_id:
+  type: text
+  label: CNPJ
+metatag.metatag_tag.schema_organization_email:
+  type: text
+  label: E-mail institucional
+metatag.metatag_tag.schema_web_page_name:
+  type: text
+  label: Nome da página estruturada
+metatag.metatag_tag.schema_web_page_url:
+  type: text
+  label: URL canônica da página estruturada
