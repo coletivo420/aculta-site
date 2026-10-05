@@ -19,6 +19,7 @@ O objetivo inicial é construir um site institucional profissional, acessível, 
 - Drupal 11
 - PHP 8.5
 - MariaDB
+- SQLite for development Runtime and versioned States (first Estado Integral)
 - Composer
 - Drush
 - Git
@@ -268,6 +269,16 @@ Nunca colocar credenciais no repositório.
 Não alterar configurações de segurança sem explicar a mudança.
 
 O ambiente local pode utilizar configurações de desenvolvimento diferentes das configurações de produção.
+
+## Bancos e Sistema de Estados
+
+- Desenvolvimento usa `var/database/aculta-runtime.sqlite`, uma cópia mutável restaurada de `estados/`.
+- `estados/*.sqlite` são snapshots imutáveis; o primeiro é integral e pode conter dados pessoais, sessões, logs e credenciais que já estavam no banco fonte.
+- O repositório que contém Estados integrais precisa estar confirmado como **privado** antes de qualquer commit/push do arquivo. Se a visibilidade for pública ou desconhecida, não publicar o Estado.
+- Produção continua usando MariaDB. Nunca implantar `estados/*.sqlite` nem apontar produção para o Runtime.
+- Não sanitizar ou editar o primeiro Estado integral. Mudanças operacionais depois do restore pertencem somente ao Runtime.
+- Código custom deve usar APIs Drupal e permanecer compatível com SQLite e MariaDB. SQL específico exige justificativa.
+- `web/sites/default/settings.local.php` e configurações locais permanecem fora do Git. Credenciais MariaDB de produção nunca entram em settings versionados.
 
 ## Forma de trabalho esperada do Codex
 

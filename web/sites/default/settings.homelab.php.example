@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * Homelab development database example.
+ * Copy this to an ignored local settings file and set ACULTA_ENV=homelab.
+ * Production remains MariaDB and must use its own external settings/credentials.
+ */
+$aculta_environment = getenv('ACULTA_ENV') ?: 'homelab';
+if ($aculta_environment !== 'homelab') {
+  return;
+}
+
+$databases['default']['default'] = [
+  'driver' => 'sqlite',
+  'database' => dirname(DRUPAL_ROOT) . '/var/database/aculta-runtime.sqlite',
+  'prefix' => '',
+];
+
+// The seven homelab hostnames are handled by the project's normal local
+// settings and Domain aliases. No production hostname is redirected here.
