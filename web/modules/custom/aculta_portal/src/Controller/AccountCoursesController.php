@@ -58,8 +58,8 @@ final class AccountCoursesController extends ControllerBase {
         '#cache' => ['tags' => $course['cache_tags']],
         'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $course['label']],
       ];
-      if ($course['description'] !== '') {
-        $card['description'] = ['#plain_text' => $course['description']];
+      if ($course['description'] !== []) {
+        $card['description'] = $course['description'];
       }
       $card['meta'] = [
         '#type' => 'container',
