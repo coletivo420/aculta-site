@@ -143,6 +143,19 @@ function aculta_portal_metatags_alter(array &$tags, array $context): void {
       if (str_contains((string) ($tags[$id] ?? ''), '[node:image]')) { unset($tags[$id]); }
     }
   }
+  $group = $context['entity'] ?? NULL;
+  if ($group instanceof \Drupal\group\Entity\GroupInterface && $group->bundle() === 'lms_course') {
+    $canonical = \Drupal::service('aculta_portal.domain_purpose')->canonicalRouteUrl(
+      'courses',
+      'entity.group.canonical',
+      ['group' => $group->id()],
+    );
+    if ($canonical) {
+      $canonical_url = $canonical->toString();
+      $tags['canonical_url'] = $canonical_url;
+      $tags['og_url'] = $canonical_url;
+    }
+  }
   if ($node instanceof NodeInterface && $node->bundle() === 'wiki_entry') {
     $canonical = \Drupal::service('aculta_portal.domain_purpose')->canonicalRouteUrl(
       'wiki',

@@ -145,6 +145,20 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
    * to Wiki420 even though Core marks some of them as administrative routes.
    */
   private function getRequiredPurpose(Route $route, string $routeName, Request $request, array $matched = []): ?string {
+    // Public LMS course routes follow the COURSES Domain. Routes marked as
+    // administrative by the central route subscriber remain on MAIN.
+    $groupParameter = $matched['group'] ?? $request->attributes->get('group');
+    $group = is_object($groupParameter) ? $groupParameter : NULL;
+    if (!$group && is_numeric($groupParameter)) {
+      $group = \Drupal::entityTypeManager()->getStorage('group')->load((int) $groupParameter);
+    }
+    if ($group && method_exists($group, 'bundle') && $group->bundle() === 'lms_course') {
+      if ($route->getOption('_admin_route') || $route->getOption('_aculta_domain_purpose') === 'main') {
+        return 'main';
+      }
+      return 'courses';
+    }
+
     $nodeRoutes = [
       'entity.node.edit_form',
       'entity.node.version_history',

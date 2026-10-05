@@ -1,0 +1,21 @@
+uuid: 74d2f2d6-7b75-4bbc-826e-c8259971f28b
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - group
+    - lms
+    - system
+id: lms_teacher
+label: Educador
+weight: 7
+is_admin: false
+permissions:
+  - 'access administration pages'
+  - 'access group overview'
+  - 'create lms_activity entities'
+  - 'create lms_course group'
+  - 'create lms_lesson entities'
+  - 'edit lms_activity entities'
+  - 'edit lms_lesson entities'
+  - 'view the administration theme'

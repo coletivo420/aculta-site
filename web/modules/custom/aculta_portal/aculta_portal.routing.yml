@@ -102,3 +102,14 @@ aculta_portal.wiki_search:
     _title: Buscar na Wiki420
   requirements:
     _permission: access content
+
+
+aculta_portal.courses_home:
+  path: /cursos
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\CoursesController::home'
+    _title: Cursos
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: courses

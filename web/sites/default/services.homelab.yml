@@ -14,4 +14,5 @@ parameters:
     cookie_domain: '.aculta.toca.net.br'
     cookie_samesite: Lax
     cookie_httponly: true
+    cookie_secure: true
     name_suffix: ''
