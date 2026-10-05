@@ -3,6 +3,7 @@ _core:
 environments:
   - default
   - local
+  - homelab
   - development
   - staging
   - testing
