@@ -142,6 +142,7 @@ final class PortalHooks {
       'aculta_portal.connections',
       'aculta_portal.security',
       'aculta_portal.support_my',
+      'aculta_portal.account_courses',
     ], TRUE)) {
       $attachments['#attached']['library'][] = 'aculta_portal/account-navigation';
     }

@@ -27,6 +27,7 @@ final class AccountShellBuilder {
     $sections = [
       'aculta_portal.dashboard' => ['title' => $this->translation->translate('Visão geral'), 'route' => 'aculta_portal.dashboard'],
       'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my'],
+      'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses'],
       'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data'],
       'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections'],
       'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security'],

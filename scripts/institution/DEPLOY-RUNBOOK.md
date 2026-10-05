@@ -36,7 +36,7 @@ equivalent root supported by the final hosting layout):
 | Observatório da Maconha Coletivo 420 (Purpose: magazine) | `coletivo420.aculta.org` | Editorial publications, articles, reports, interviews and opinion |
 | WIKI420 | `wiki420.aculta.org` | Wiki420 collaborative knowledge |
 | SHOP | `loja.aculta.org` | Future shop experience using the shared Commerce installation |
-| COURSES | `cursos.aculta.org` | Future learning experience |
+| COURSES | `cursos.aculta.org` | Drupal LMS learning experience |
 
 MAIN is an institutional site, not an aggregator application. It may show
 short teasers and links to other purposes; account forms, editorial archives,
@@ -54,6 +54,24 @@ external identity or payment services. Local development uses exact
 the shared `.aculta.org` session cookie. All subdomains receiving that cookie
 must remain under ACULTA's trusted control and the same Drupal application.
 Do not share it with an independent or SaaS-hosted subdomain.
+
+## Web server: Homelab versus production
+
+The Homelab uses Nginx. Hostinger production uses Apache.
+
+Do not copy Nginx directives such as `server_name`, `location`, `try_files`
+or `add_header` into production. Preserve Drupal's Apache `.htaccess` and
+validate the production equivalents using `mod_rewrite`, `mod_headers` or
+VirtualHost configuration where Hostinger permits it.
+
+A Homelab header such as `add_header ... always` requires an Apache-specific
+review; the semantic equivalent is generally based on `Header always set ...`,
+but it must only be added after inspecting the real production context.
+Production must not inherit the Homelab noindex policy.
+
+The Courses subsystem is already implemented in code with Drupal LMS and Group.
+A future deploy installs the locked dependencies and imports full configuration
+before any approved content provisioning or migration.
 
 ## Deployment sequence
 

@@ -1,0 +1,96 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_portal;
+
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\group\Entity\GroupMembership;
+use Drupal\lms\Entity\Bundle\Course;
+use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\lms\TrainingManager;
+
+/**
+ * Read-only integration between the account experience and Drupal LMS/Group.
+ *
+ * Group owns enrolment and Drupal LMS owns progress. This service does not
+ * persist parallel course, membership or progress data.
+ */
+final class AccountCoursesManager {
+
+  public function __construct(
+    private readonly TrainingManager $trainingManager,
+    private readonly DomainPurposeManager $domainPurposeManager,
+  ) {}
+
+  /**
+   * Returns presentation data for the account's LMS course memberships.
+   *
+   * @return array<int, array<string, mixed>>
+   *   Course cards keyed sequentially for rendering.
+   */
+  public function getCourses(AccountInterface $account): array {
+    $items = [];
+
+    foreach (GroupMembership::loadByUser($account) as $membership) {
+      $group = $membership->getGroup();
+      if (!$group instanceof Course || $group->bundle() !== 'lms_course') {
+        continue;
+      }
+
+      $status = $this->trainingManager->loadCourseStatus($group, $account, ['current' => TRUE]);
+      $description = '';
+      if ($group->hasField('field_description') && !$group->get('field_description')->isEmpty()) {
+        $description = trim((string) $group->get('field_description')->value);
+      }
+
+      $items[] = [
+        'id' => (string) $group->id(),
+        'label' => (string) $group->label(),
+        'description' => $description,
+        'status' => $status?->getStatus() ?? '',
+        'status_label' => $this->statusLabel($status),
+        'score' => $status?->getScore(),
+        'finished' => $status?->isFinished() ?? FALSE,
+        'url' => $this->courseUrl($group, $status),
+        'cache_tags' => array_values(array_unique(array_merge(
+          $group->getCacheTags(),
+          $status?->getCacheTags() ?? [],
+        ))),
+      ];
+    }
+
+    usort($items, static fn(array $a, array $b): int => strnatcasecmp($a['label'], $b['label']));
+    return $items;
+  }
+
+  public function countCourses(AccountInterface $account): int {
+    return count($this->getCourses($account));
+  }
+
+  public function catalogUrl(): ?Url {
+    return $this->domainPurposeManager->routeUrl('courses', 'aculta_portal.courses_home');
+  }
+
+  private function courseUrl(Course $course, ?CourseStatusInterface $status): ?Url {
+    $route = $status?->isFinished() ? 'lms.group.self_results' : 'lms.course.start';
+    return $this->domainPurposeManager->routeUrl('courses', $route, ['group' => $course->id()]);
+  }
+
+  private function statusLabel(?CourseStatusInterface $status): string {
+    if ($status === NULL) {
+      return 'Não iniciado';
+    }
+
+    return match ($status->getStatus()) {
+      CourseStatusInterface::STATUS_PROGRESS => 'Em andamento',
+      CourseStatusInterface::STATUS_PASSED => 'Concluído',
+      CourseStatusInterface::STATUS_FAILED => 'Não aprovado',
+      CourseStatusInterface::STATUS_NEEDS_EVALUATION => 'Aguardando avaliação',
+      default => 'Não iniciado',
+    };
+  }
+
+}
