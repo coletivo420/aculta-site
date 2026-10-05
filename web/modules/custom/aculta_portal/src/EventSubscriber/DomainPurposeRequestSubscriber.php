@@ -125,8 +125,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $term = is_numeric($termParameter)
         ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load((int) $termParameter)
         : (is_object($termParameter) ? $termParameter : NULL);
-      if ($term && in_array($term->bundle(), ['editorial_author', 'editorial_category'], TRUE)
-        && $this->domainPurposeManager->getCurrentPurpose() !== 'magazine') {
+      $termPurpose = $term && $term->bundle() === 'wiki_category' ? 'wiki' : 'magazine';
+      if ($term && (in_array($term->bundle(), ['editorial_author', 'editorial_category', 'wiki_category'], TRUE))
+        && $this->domainPurposeManager->getCurrentPurpose() !== $termPurpose) {
         $this->notFound($event);
       }
     }

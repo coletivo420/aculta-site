@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Domain;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\domain\DomainInterface;
@@ -28,6 +29,7 @@ final class DomainPurposeManager {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainNegotiatorInterface $domainNegotiator,
+    private readonly ConfigFactoryInterface $configFactory,
     private readonly ?RequestStack $requestStack = NULL,
   ) {}
 
@@ -75,6 +77,31 @@ final class DomainPurposeManager {
         $domain->set('scheme', $request->getScheme());
       }
     }
+    return Url::fromRoute($routeName, $parameters, [
+      'absolute' => TRUE,
+      'domain' => $domain,
+      'https' => $domain->isHttps(),
+    ]);
+  }
+
+  /** Generates an absolute URL on the configured canonical domain. */
+  public function canonicalRouteUrl(string $purpose, string $routeName, array $parameters = []): ?Url {
+    $domainId = self::DOMAIN_IDS[$purpose] ?? NULL;
+    $domain = $this->getDomain($purpose);
+    if ($domainId === NULL || !$domain) {
+      return NULL;
+    }
+    $config = $this->configFactory->get('domain.record.' . $domainId);
+    $hostname = $config->get('hostname');
+    if (!is_string($hostname) || $hostname === '') {
+      return NULL;
+    }
+    // Domain Alias rewrites loaded Domain entities for the current environment.
+    // Restore the canonical hostname from config before creating production URLs.
+    $domain = clone $domain;
+    $domain->setHostname($hostname);
+    $domain->set('scheme', $config->get('scheme') ?: 'https');
+    $domain->setPath();
     return Url::fromRoute($routeName, $parameters, [
       'absolute' => TRUE,
       'domain' => $domain,

@@ -143,6 +143,16 @@ function aculta_portal_metatags_alter(array &$tags, array $context): void {
       if (str_contains((string) ($tags[$id] ?? ''), '[node:image]')) { unset($tags[$id]); }
     }
   }
+  if ($node instanceof NodeInterface && $node->bundle() === 'wiki_entry') {
+    $canonical = \Drupal::service('aculta_portal.domain_purpose')->canonicalRouteUrl(
+      'wiki',
+      'entity.node.canonical',
+      ['node' => $node->id()],
+    );
+    if ($canonical) {
+      $tags['canonical_url'] = $canonical->toString();
+    }
+  }
   if (!$node instanceof NodeInterface || $node->bundle() !== 'activity') { return; }
   $locations = [];
   $mode = $node->get('field_modality')->value;
@@ -207,6 +217,16 @@ function aculta_portal_validate_activity(array &$form, FormStateInterface $state
  * never through the contrib form that persists its credential fields.
  */
 function aculta_portal_entity_access(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
+  $purpose = \Drupal::service('aculta_portal.domain_purpose')->getCurrentPurpose();
+  $wikiEntity = ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'wiki_entry')
+    || ($entity->getEntityTypeId() === 'taxonomy_term' && $entity->bundle() === 'wiki_category');
+  if ($wikiEntity && $purpose !== 'wiki') {
+    return AccessResult::forbidden()
+      ->cachePerPermissions()
+      ->addCacheContexts(['domain'])
+      ->addCacheableDependency($entity);
+  }
+
   if ($entity->getEntityTypeId() === 'user'
     && $operation === 'update'
     && \Drupal::routeMatch()->getRouteName() === 'entity.user.edit_form'
