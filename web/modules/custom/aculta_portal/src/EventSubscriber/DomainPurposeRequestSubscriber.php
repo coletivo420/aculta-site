@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -23,6 +23,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly RequestMatcherInterface $accessFreeMatcher,
+    private readonly AccountProxyInterface $currentUser,
   ) {}
 
   public static function getSubscribedEvents(): array {
@@ -37,13 +38,15 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   public function onResponse(ResponseEvent $event): void {
     if (!$event->isMainRequest()
       || $event->getRequest()->attributes->get('_route') !== 'user.logout'
-      || !$event->getResponse()->isRedirection()) {
+      || !$event->getResponse()->isRedirection()
+      || $this->currentUser->isAuthenticated()) {
       return;
     }
 
     $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
     if ($login) {
-      $event->setResponse(new RedirectResponse($login->toString()));
+      // Keep Core's status, cookies, and headers after a successful logout.
+      $event->getResponse()->headers->set('Location', $login->toString());
     }
   }
 

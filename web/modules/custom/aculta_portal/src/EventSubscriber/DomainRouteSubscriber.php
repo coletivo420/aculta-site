@@ -32,6 +32,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'user.reset.form' => '/recuperar-acesso/{uid}',
       'user.reset.login' => '/recuperar-acesso/{uid}/{timestamp}/{hash}/entrar',
       'user.logout' => '/sair',
+      'user.logout.confirm' => '/sair/confirmar',
       'user.logout.http' => '/sair',
       'user.page' => '/identidade',
       'user.edit' => '/identidade/editar',

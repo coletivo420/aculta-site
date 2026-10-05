@@ -18,3 +18,11 @@ $databases['default']['default'] = [
 
 // The seven homelab hostnames are handled by the project's normal local
 // settings and Domain aliases. No production hostname is redirected here.
+// These are Cloudflare's official public test keys. They always pass and are
+// only for Homelab/development. Production must provide a real
+// TURNSTILE_KEYS_JSON externally. Never replace an environment value already
+// supplied by the environment.
+$turnstile_keys = getenv('TURNSTILE_KEYS_JSON');
+if ($turnstile_keys === false || trim($turnstile_keys) === '') {
+  putenv('TURNSTILE_KEYS_JSON={"site_key":"1x00000000000000000000AA","secret_key":"1x0000000000000000000000000000000AA"}');
+}

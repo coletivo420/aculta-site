@@ -14,7 +14,7 @@ services:
       - { name: event_subscriber }
   aculta_portal.domain_purpose_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
-    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks']
+    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user']
     tags:
       - { name: kernel.event_subscriber }
   # CEP Autocomplete 1.0.0 references this Drupal logger channel but does
