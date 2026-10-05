@@ -26,7 +26,10 @@ final class AccountCoursesManager {
   ) {}
 
   /**
-   * Returns presentation data for the account's LMS course memberships.
+   * Returns presentation data for the account's visible LMS memberships.
+   *
+   * Membership alone never grants visibility. Group access remains authoritative
+   * and is checked before course metadata or LMS progress is loaded.
    *
    * @return array<int, array<string, mixed>>
    *   Course cards keyed sequentially for rendering.
@@ -40,10 +43,21 @@ final class AccountCoursesManager {
         continue;
       }
 
+      // A stale membership must not disclose unpublished or otherwise
+      // restricted course metadata through ACCOUNT.
+      if (!$group->access('view', $account)) {
+        continue;
+      }
+
       $status = $this->trainingManager->loadCourseStatus($group, $account, ['current' => TRUE]);
-      $description = '';
+      $description = [];
       if ($group->hasField('field_description') && !$group->get('field_description')->isEmpty()) {
-        $description = trim((string) $group->get('field_description')->value);
+        // Preserve the stored text format and its cacheability metadata. Do not
+        // flatten formatted text into a raw string or bypass Drupal's filters.
+        $description = $group->get('field_description')->view([
+          'label' => 'hidden',
+          'type' => 'text_default',
+        ]);
       }
 
       $items[] = [
@@ -75,6 +89,12 @@ final class AccountCoursesManager {
   }
 
   private function courseUrl(Course $course, ?CourseStatusInterface $status): ?Url {
+    // Drupal LMS blocks course navigation while manually graded work is
+    // awaiting evaluation. Do not generate a misleading start/continue CTA.
+    if ($status?->getStatus() === CourseStatusInterface::STATUS_NEEDS_EVALUATION) {
+      return NULL;
+    }
+
     $route = $status?->isFinished() ? 'lms.group.self_results' : 'lms.course.start';
     return $this->domainPurposeManager->routeUrl('courses', $route, ['group' => $course->id()]);
   }
