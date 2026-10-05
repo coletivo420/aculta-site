@@ -55,4 +55,4 @@ Nodes, Taxonomy e Views mantêm conteúdo. Domain/Domain Source controlam contex
 
 Antes de implementar: identificar fonte de verdade, purpose, API oficial, cache metadata, privacidade, canonical e comportamento em host incorreto. Atualizar esta documentação quando a arquitetura mudar.
 
-Veja também [a documentação geral](../../../docs/README.md).
+Veja também [a documentação geral](../../../../docs/README.md).

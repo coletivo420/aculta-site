@@ -59,4 +59,4 @@ Twig recebe dados preparados. Não consulta banco, não processa pagamento, não
 
 Quando necessário, dividir gradualmente `style.css` via Drupal Libraries em tokens/base/layout/components/utilities. Não introduzir Sass, Webpack ou Node sem necessidade concreta.
 
-Veja também [a arquitetura geral](../../../docs/README.md).
+Veja também [a arquitetura geral](../../../../docs/README.md).
