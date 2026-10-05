@@ -44,6 +44,17 @@ aculta_portal.security:
   options:
     no_cache: true
 
+aculta_portal.account_courses:
+  path: /meus-cursos
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\AccountCoursesController::page'
+    _title: Cursos
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+    _aculta_domain_purpose: account
+
 aculta_portal.support_form:
   path: /apoie
   defaults:

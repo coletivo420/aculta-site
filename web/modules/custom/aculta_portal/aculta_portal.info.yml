@@ -17,6 +17,8 @@ dependencies:
   - email_confirmer:email_confirmer
   - email_confirmer:email_confirmer_user
   - social_auth:social_auth
+  - group:group
+  - lms:lms
   - commerce:commerce
   - commerce:commerce_order
   - commerce:commerce_payment

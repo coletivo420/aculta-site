@@ -193,3 +193,32 @@
   .aculta-account-data__link { transition: none; }
   .aculta-account-photo__edit-icon { transition: none; }
 }
+
+
+/* Account learning summary and course list. LMS/Group own the data. */
+.aculta-account-courses-summary {
+  margin-block-start: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #689427;
+  border-inline-start: 3px solid #f2ca36;
+  border-radius: 0.25rem;
+}
+.aculta-account-courses-summary h3 { margin-top: 0; }
+.aculta-account-courses {
+  display: grid;
+  gap: 1rem;
+}
+.aculta-account-course {
+  padding: 1rem;
+  border: 1px solid #689427;
+  border-inline-start: 3px solid #f2ca36;
+  border-radius: 0.25rem;
+  background: #ffffff;
+}
+.aculta-account-course h3 { margin-top: 0; }
+.aculta-account-course__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-block: 0.75rem;
+}

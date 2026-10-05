@@ -26,3 +26,15 @@ $turnstile_keys = getenv('TURNSTILE_KEYS_JSON');
 if ($turnstile_keys === false || trim($turnstile_keys) === '') {
   putenv('TURNSTILE_KEYS_JSON={"site_key":"1x00000000000000000000AA","secret_key":"1x0000000000000000000000000000000AA"}');
 }
+
+
+/**
+ * Keep Drupal-generated runtime files private to the application users.
+ *
+ * The setgid bit preserves the shared group on new directories. Default ACLs
+ * on the Homelab runtime paths still grant the CLI user the access it needs.
+ * These values prevent cache rebuilds from recreating writable directories as
+ * 0777. Production permissions must be reviewed for the Apache account there.
+ */
+$settings['file_chmod_directory'] = 02770;
+$settings['file_chmod_file'] = 0660;

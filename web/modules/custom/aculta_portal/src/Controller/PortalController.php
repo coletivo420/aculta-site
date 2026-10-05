@@ -16,10 +16,16 @@ final class PortalController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
     private readonly FormBuilderInterface $accountFormBuilder,
+    private readonly \Drupal\aculta_portal\AccountCoursesManager $accountCourses,
   ) {}
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('entity_type.manager'), $container->get('entity.form_builder'), $container->get('form_builder'));
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('entity.form_builder'),
+      $container->get('form_builder'),
+      $container->get('aculta_portal.account_courses'),
+    );
   }
 
   public function dashboard(): array {
@@ -59,10 +65,44 @@ final class PortalController extends ControllerBase {
         ],
       ],
       'intro' => [
-        '#plain_text' => $this->t('Use o menu para acompanhar seu apoio, atualizar seus dados e gerenciar sua conta.'),
+        '#plain_text' => $this->t('Use o menu para acompanhar seu apoio, seus cursos, atualizar seus dados e gerenciar sua conta.'),
       ],
+      'courses_summary' => $this->buildCoursesSummary($account),
       '#cache' => ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
     ];
+  }
+
+  /** Builds a compact learning summary for the account overview. */
+  private function buildCoursesSummary(\Drupal\Core\Session\AccountInterface $account): array {
+    $count = $this->accountCourses->countCourses($account);
+    $build = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['aculta-account-courses-summary']],
+      'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Cursos')],
+      'summary' => [
+        '#plain_text' => $count === 1
+          ? $this->t('Você participa de 1 curso.')
+          : $this->t('Você participa de @count cursos.', ['@count' => $count]),
+      ],
+    ];
+    if ($count > 0) {
+      $build['link'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Ver meus cursos'),
+        '#url' => Url::fromRoute('aculta_portal.account_courses'),
+      ];
+    }
+    else {
+      $catalog = $this->accountCourses->catalogUrl();
+      if ($catalog) {
+        $build['link'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Ver cursos disponíveis'),
+          '#url' => $catalog,
+        ];
+      }
+    }
+    return $build;
   }
 
   public function myData(): array {
