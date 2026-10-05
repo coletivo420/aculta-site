@@ -33,20 +33,20 @@ equivalent root supported by the final hosting layout):
 | MAIN | `aculta.org` | Institutional site, central administration, shared technical integrations |
 | ACCOUNT | `conta.aculta.org` | Login, recovery, confirmation, account data and private account area |
 | SUPPORT | `apoio.aculta.org` | Public support portal and supportable projects |
-| MAGAZINE | `revista.aculta.org` | News, articles, reports, interviews, opinion and editorial publications |
-| WIKI | `wiki.aculta.org` | Future structured collaborative knowledge |
+| Observatório da Maconha Coletivo 420 (Purpose: magazine) | `coletivo420.aculta.org` | Editorial publications, articles, reports, interviews and opinion |
+| WIKI420 | `wiki420.aculta.org` | Wiki420 collaborative knowledge |
 | SHOP | `loja.aculta.org` | Future shop experience using the shared Commerce installation |
 | COURSES | `cursos.aculta.org` | Future learning experience |
 
 MAIN is an institutional site, not an aggregator application. It may show
 short teasers and links to other purposes; account forms, editorial archives,
-support checkout, shop, wiki, and course tools belong to their own hosts.
+support checkout, shop, Wiki420, and course tools belong to their own hosts.
 Projects remain institutional content on MAIN; their financial support belongs
-to SUPPORT and related reporting belongs to MAGAZINE. ACCOUNT `/apoio` is the
+to SUPPORT and related reporting belongs to COLETIVO420. ACCOUNT `/apoio` is the
 private order history for the current user. Commerce remains the financial
 source of truth; no parallel contribution ledger is used.
 
-Create DNS for `@`, `conta`, `apoio`, `revista`, `wiki`, `loja`, and `cursos`
+Create DNS for `@`, `conta`, `apoio`, `coletivo420`, `wiki420`, `loja`, and `cursos`
 only after inspecting the actual hosting origin; this runbook does not assume
 A versus CNAME records. Obtain valid HTTPS for all seven names before enabling
 external identity or payment services. Local development uses exact

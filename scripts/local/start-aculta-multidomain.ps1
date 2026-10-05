@@ -19,8 +19,8 @@ if (-not (Test-Path -LiteralPath $router -PathType Leaf)) {
   'http://aculta.test:8080'
   'http://conta.aculta.test:8080'
   'http://apoio.aculta.test:8080'
-  'http://revista.aculta.test:8080'
-  'http://wiki.aculta.test:8080'
+  'http://coletivo420.aculta.test:8080'
+  'http://wiki420.aculta.test:8080'
   'http://loja.aculta.test:8080'
   'http://cursos.aculta.test:8080'
 ) | Write-Output

@@ -9,9 +9,9 @@ dependencies:
     - node
     - user
 id: wiki_entries
-label: 'Verbetes da Wiki'
+label: 'Verbetes da Wiki420'
 module: views
-description: 'Verbetes publicados da Wiki, em ordem de publicação ou alteração.'
+description: 'Verbetes publicados da Wiki420, em ordem de publicação ou alteração.'
 tag: ''
 base_table: node_field_data
 base_field: nid

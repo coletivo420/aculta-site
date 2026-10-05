@@ -24,7 +24,7 @@ final class WikiController extends ControllerBase {
       'intro' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-wiki-intro']],
-        'title' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $this->t('Wiki')],
+        'title' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $this->t('Wiki420')],
         'text' => ['#plain_text' => $this->t('Uma enciclopédia colaborativa em construção. Consulte os verbetes publicados ou pesquise por um tema.')],
       ],
       'search' => [
@@ -64,7 +64,7 @@ final class WikiController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-wiki-search-results']],
       '#cache' => ['contexts' => ['url.query_args:q', 'domain', 'user.permissions'], 'tags' => ['node_list:wiki_entry']],
-      'title' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $this->t('Buscar na Wiki')],
+      'title' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $this->t('Buscar na Wiki420')],
       'form' => [
         '#type' => 'form',
         '#method' => 'get',

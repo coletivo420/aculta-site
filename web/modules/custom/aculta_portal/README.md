@@ -18,8 +18,8 @@ does not render or enable public account creation. The former
 `/minha-conta` paths are not the account interface.
 
 MAIN (`aculta.org`) is institutional. Identity belongs to ACCOUNT, public
-support to SUPPORT, editorial content to MAGAZINE (`revista.aculta.org`), and
-future knowledge, commerce, and courses to WIKI, SHOP, and COURSES. These are
+support to SUPPORT, editorial content to the Observatório da Maconha Coletivo 420 (`coletivo420.aculta.org`, purpose `magazine`), and
+future knowledge, commerce, and courses to WIKI420, SHOP, and COURSES. These are
 contexts of the same Drupal installation, database, and user store.
 
 ## Profile
@@ -246,7 +246,7 @@ need a separate verification before production.
 
 The installed Domain 3.0.1 API generates IDs from hostnames, so the actual IDs
 are `aculta_org`, `conta_aculta_org`, `apoio_aculta_org`,
-`revista_aculta_org`, `wiki_aculta_org`, `loja_aculta_org`, and
+`coletivo420_aculta_org`, `wiki420_aculta_org`, `loja_aculta_org`, and
 `cursos_aculta_org`. Domain Alias maps each local `.test:8080` hostname to its
 production entity in environment `local`. Production requires all seven hosts
 to point to the same Drupal document root over HTTPS. The shared

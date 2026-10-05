@@ -152,7 +152,7 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return match ($purpose) {
       'account' => (string) $this->t('Minha conta'),
       'support' => (string) $this->t('Apoio'),
-      'magazine' => (string) $this->t('Revista'),
+      'magazine' => (string) $this->t('Observatório da Maconha Coletivo 420'),
       default => (string) $this->t('Início'),
     };
   }

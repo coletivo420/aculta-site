@@ -152,7 +152,7 @@ function aculta_preprocess_breadcrumb(array &$variables): void {
     'main' => (string) t('Início'),
     'account' => (string) t('Minha conta'),
     'support' => (string) t('Apoio'),
-    'magazine' => (string) t('Revista'),
+    'magazine' => (string) t('Observatório da Maconha Coletivo 420'),
   ];
   $root_url = $purpose_manager->pathUrl($purpose, '/');
   if ($root_url && !empty($variables['links'][0])) {

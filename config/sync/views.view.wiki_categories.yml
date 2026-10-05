@@ -8,9 +8,9 @@ dependencies:
     - taxonomy
     - user
 id: wiki_categories
-label: 'Categorias da Wiki'
+label: 'Categorias da Wiki420'
 module: views
-description: 'Categorias editoriais da Wiki.'
+description: 'Categorias editoriais da Wiki420.'
 tag: ''
 base_table: taxonomy_term_field_data
 base_field: tid
@@ -78,7 +78,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      block_description: 'Categorias da Wiki'
+      block_description: 'Categorias da Wiki420'
     cache_metadata:
       max-age: -1
       contexts:

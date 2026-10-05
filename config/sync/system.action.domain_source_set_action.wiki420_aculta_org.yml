@@ -3,12 +3,12 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - domain.record.wiki_aculta_org
+    - domain.record.wiki420_aculta_org
   module:
     - domain_source
-id: domain_source_set_action.wiki_aculta_org
-label: 'Set content domain source value to the ACULTA - Wiki domain'
+id: domain_source_set_action.wiki420_aculta_org
+label: 'Set content domain source value to the Wiki420 domain'
 type: node
 plugin: domain_source_set_action
 configuration:
-  domain_id: wiki_aculta_org
+  domain_id: wiki420_aculta_org
