@@ -12,7 +12,7 @@ dependencies:
     - node
     - system
 id: wiki_contributor
-label: 'Colaborador da Wiki'
+label: 'Colaborador da Wiki420'
 weight: 4
 is_admin: false
 permissions:

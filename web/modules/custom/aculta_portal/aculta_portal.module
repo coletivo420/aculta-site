@@ -150,7 +150,9 @@ function aculta_portal_metatags_alter(array &$tags, array $context): void {
       ['node' => $node->id()],
     );
     if ($canonical) {
-      $tags['canonical_url'] = $canonical->toString();
+      $canonical_url = $canonical->toString();
+      $tags['canonical_url'] = $canonical_url;
+      $tags['og_url'] = $canonical_url;
     }
   }
   if (!$node instanceof NodeInterface || $node->bundle() !== 'activity') { return; }

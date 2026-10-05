@@ -7,7 +7,7 @@ dependencies:
   module:
     - content_moderation
 id: wiki_editorial
-label: 'Wiki editorial'
+label: 'Wiki420 editorial'
 type: content_moderation
 type_settings:
   states:

@@ -16,6 +16,7 @@
     ],
     "require": {
         "composer/installers": "^2.3",
+        "cweagans/composer-patches": "^2.0",
         "drupal/agreement": "^3.0",
         "drupal/bootstrap5": "4.0.8",
         "drupal/captcha": "^2.0",
@@ -71,7 +72,8 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "php-http/discovery": true,
             "php-tuf/composer-integration": true,
-            "symfony/runtime": true
+            "symfony/runtime": true,
+            "cweagans/composer-patches": true
         },
         "sort-packages": true
     },
@@ -132,6 +134,15 @@
                 "      https://www.drupal.org/getting-involved",
                 "  * Remove the plugin that prints this message:",
                 "      composer remove drupal/core-project-message"
+            ]
+        },
+        "patches": {
+            "drupal/address": [
+                {
+                    "description": "Address 2.0.4 compatibility with Diff 2.x (Drupal.org issue 3589015)",
+                    "url": "patches/address-diff-2-compatibility.patch",
+                    "sha256": "c26a87113f636f28c9331a5d11e1d2b2928e5f39c68c76a9ef55e980659d9d8a"
+                }
             ]
         }
     }

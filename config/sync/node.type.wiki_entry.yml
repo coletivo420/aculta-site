@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 name: Verbete
 type: wiki_entry
-description: 'Verbete editorial da Wiki da ACULTA.'
+description: 'Verbete editorial da Wiki420 da ACULTA.'
 help: null
 new_revision: true
 preview_mode: 1

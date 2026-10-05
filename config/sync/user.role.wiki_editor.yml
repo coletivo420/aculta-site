@@ -13,7 +13,7 @@ dependencies:
     - node
     - system
 id: wiki_editor
-label: 'Editor da Wiki'
+label: 'Editor da Wiki420'
 weight: 5
 is_admin: false
 permissions:

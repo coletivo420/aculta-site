@@ -7,6 +7,7 @@ namespace Drupal\aculta_portal\EventSubscriber;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -14,6 +15,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\Route;
 
 /** Enforces route purpose after Drupal has resolved the active Domain alias. */
 final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
@@ -57,7 +59,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
     $route = \Drupal::service('router.route_provider')->getRouteByName($matched['_route']);
-    $requiredPurpose = $route->getOption('_aculta_domain_purpose');
+    $requiredPurpose = $this->getRequiredPurpose($route, $matched['_route'], $event->getRequest(), $matched);
     if (is_string($requiredPurpose) && $this->domainPurposeManager->getCurrentPurpose() !== $requiredPurpose) {
       $event->setResponse($this->notFoundResponse());
     }
@@ -72,7 +74,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (!$route || !method_exists($route, 'getOption')) {
       return;
     }
-    $requiredPurpose = $route->getOption('_aculta_domain_purpose');
+    $requiredPurpose = $this->getRequiredPurpose($route, (string) $request->attributes->get('_route'), $request);
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
 
     $resetEditException = FALSE;
@@ -135,6 +137,45 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
   private function notFound(RequestEvent $event): void {
     $event->setResponse($this->notFoundResponse());
+  }
+
+  /**
+   * Resolves editorial routes by bundle while keeping generic node routes on
+   * their normal host. Wiki entry creation, editing, history and Diff belong
+   * to Wiki420 even though Core marks some of them as administrative routes.
+   */
+  private function getRequiredPurpose(Route $route, string $routeName, Request $request, array $matched = []): ?string {
+    $nodeRoutes = [
+      'entity.node.edit_form',
+      'entity.node.version_history',
+      'entity.node.revision',
+      'node.revision_revert_confirm',
+      'node.revision_revert_translation_confirm',
+      'node.revision_delete_confirm',
+      'diff.revisions_diff',
+    ];
+    if ($routeName === 'node.add') {
+      $nodeType = $matched['node_type'] ?? $request->attributes->get('node_type');
+      if (is_object($nodeType) && method_exists($nodeType, 'id')) {
+        $nodeType = $nodeType->id();
+      }
+      if (is_string($nodeType) && $nodeType === 'wiki_entry') {
+        return 'wiki';
+      }
+    }
+    if (in_array($routeName, $nodeRoutes, TRUE)) {
+      $node = $request->attributes->get('node') ?? ($matched['node'] ?? NULL);
+      if (is_object($node) && method_exists($node, 'bundle')) {
+        return $node->bundle() === 'wiki_entry' ? 'wiki' : $route->getOption('_aculta_domain_purpose');
+      }
+      if (is_numeric($node)) {
+        $node = \Drupal::entityTypeManager()->getStorage('node')->load((int) $node);
+        if ($node) {
+          return $node->bundle() === 'wiki_entry' ? 'wiki' : $route->getOption('_aculta_domain_purpose');
+        }
+      }
+    }
+    return $route->getOption('_aculta_domain_purpose');
   }
 
   private function notFoundResponse(): Response {

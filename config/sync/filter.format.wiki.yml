@@ -4,7 +4,7 @@ status: true
 dependencies:
   module:
     - freelinking
-name: Wiki
+name: Wiki420
 format: wiki
 weight: 5
 filters:

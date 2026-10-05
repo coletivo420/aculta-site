@@ -1,0 +1,17 @@
+{
+    "_hash": "ac3927f30a686f2f8dfd85553d50c89f11eefaf417010cc9d325f8db621c9ca6",
+    "patches": {
+        "drupal/address": [
+            {
+                "package": "drupal/address",
+                "description": "Address 2.0.4 compatibility with Diff 2.x (Drupal.org issue 3589015)",
+                "url": "patches/address-diff-2-compatibility.patch",
+                "sha256": "c26a87113f636f28c9331a5d11e1d2b2928e5f39c68c76a9ef55e980659d9d8a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ]
+    }
+}

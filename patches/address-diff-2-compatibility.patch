@@ -1,0 +1,7 @@
+diff --git a/src/Plugin/diff/Field/AddressFieldBuilder.php b/src/Plugin/diff/Field/AddressFieldBuilder.php
+index eb70567..411247d 100644
+--- a/src/Plugin/diff/Field/AddressFieldBuilder.php
++++ b/src/Plugin/diff/Field/AddressFieldBuilder.php
+@@ -24 +24 @@
+-  public function build(FieldItemListInterface $field_items) {
++  public function build(FieldItemListInterface $field_items): array {
