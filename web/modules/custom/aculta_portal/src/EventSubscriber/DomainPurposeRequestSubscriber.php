@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +26,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly RequestMatcherInterface $accessFreeMatcher,
     private readonly AccountProxyInterface $currentUser,
+    private readonly RouteProviderInterface $routeProvider,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   public static function getSubscribedEvents(): array {
@@ -61,7 +65,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     catch (ResourceNotFoundException | MethodNotAllowedException) {
       return;
     }
-    $route = \Drupal::service('router.route_provider')->getRouteByName($matched['_route']);
+    $route = $this->routeProvider->getRouteByName($matched['_route']);
     $requiredPurpose = $this->getRequiredPurpose($route, $matched['_route'], $event->getRequest(), $matched);
     if (is_string($requiredPurpose) && $this->domainPurposeManager->getCurrentPurpose() !== $requiredPurpose) {
       $event->setResponse($this->notFoundResponse());
@@ -89,7 +93,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         && \Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest(
           $request,
           (int) $uid,
-          (int) \Drupal::currentUser()->id(),
+          (int) $this->currentUser->id(),
         );
     }
     if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose && !$resetEditException) {
@@ -107,7 +111,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         $nodeParameter = $raw->get('node');
       }
       $node = is_numeric($nodeParameter)
-        ? \Drupal::entityTypeManager()->getStorage('node')->load((int) $nodeParameter)
+        ? $this->entityTypeManager->getStorage('node')->load((int) $nodeParameter)
         : (is_object($nodeParameter) ? $nodeParameter : NULL);
       if ($node && $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
         $sourceDomainId = (string) $node->get('field_domain_source')->target_id;
@@ -128,7 +132,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         $termParameter = $raw->get('taxonomy_term');
       }
       $term = is_numeric($termParameter)
-        ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load((int) $termParameter)
+        ? $this->entityTypeManager->getStorage('taxonomy_term')->load((int) $termParameter)
         : (is_object($termParameter) ? $termParameter : NULL);
       $termPurpose = $term && $term->bundle() === 'wiki_category' ? 'wiki' : 'magazine';
       if ($term && (in_array($term->bundle(), ['editorial_author', 'editorial_category', 'wiki_category'], TRUE))
@@ -153,7 +157,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $groupParameter = $matched['group'] ?? $request->attributes->get('group');
     $group = is_object($groupParameter) ? $groupParameter : NULL;
     if (!$group && is_numeric($groupParameter)) {
-      $group = \Drupal::entityTypeManager()->getStorage('group')->load((int) $groupParameter);
+      $group = $this->entityTypeManager->getStorage('group')->load((int) $groupParameter);
     }
     if ($group && method_exists($group, 'bundle') && $group->bundle() === 'lms_course') {
       if ($route->getOption('_admin_route') || $route->getOption('_aculta_domain_purpose') === 'main') {
@@ -186,7 +190,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         return $node->bundle() === 'wiki_entry' ? 'wiki' : $route->getOption('_aculta_domain_purpose');
       }
       if (is_numeric($node)) {
-        $node = \Drupal::entityTypeManager()->getStorage('node')->load((int) $node);
+        $node = $this->entityTypeManager->getStorage('node')->load((int) $node);
         if ($node) {
           return $node->bundle() === 'wiki_entry' ? 'wiki' : $route->getOption('_aculta_domain_purpose');
         }
