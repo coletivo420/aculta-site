@@ -228,9 +228,17 @@ Sempre:
 - validar desktop/mobile/teclado/reduced motion quando houver mudança visual;
 - registrar por que um componente existe e quem é dono de seus dados.
 
+## Referências upstream
+
+- Drupal SDC — criação e convenção de assets: https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/creating-a-single-directory-component
+- Drupal SDC — visão geral e library automática: https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/about-single-directory-components
+- Bootstrap5 base theme: https://www.drupal.org/project/bootstrap5
+
+Essas referências explicam mecanismo upstream; os contratos ACULTA deste documento continuam sendo a regra do projeto.
+
 ## Roadmap da Fase H
 
-| Fase | Objetivo | Estado inicial |
+| Fase | Objetivo | Estado |
 | --- | --- | --- |
 | H1 | formalizar o Component Design System | concluído |
 | H2 | tornar `editorial-card` o primeiro SDC completo | concluído |
