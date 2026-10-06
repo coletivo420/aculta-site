@@ -1,51 +1,62 @@
-# ADR-006: Apache como baseline de servidor web
+# ADR-006: Apache como baseline definitivo
 
 Status: Accepted
 
-Data da decisão atual: 2026-10-06
+Data da revisão: 2026-10-06
 
 ## Contexto
 
-O Homelab originalmente usava Nginx enquanto a produção Hostinger usava
-Apache. Essa diferença exigia traduzir regras de rewrite, headers e proteção de
-arquivos entre duas famílias de servidor web e aumentava o risco de divergência
-entre desenvolvimento e produção.
-
-O servidor de desenvolvimento foi migrado para Apache com PHP-FPM.
+A decisão original registrava Nginx no Homelab e Apache na produção Hostinger.
+O servidor de desenvolvimento foi posteriormente migrado para Apache para
+reduzir diferenças operacionais relevantes entre desenvolvimento e produção.
 
 ## Decisão
 
-Apache é o baseline definitivo de servidor web do ACULTA no Homelab e em
-produção.
+Apache é o baseline definitivo de servidor web do ACULTA.
 
-O Homelab usa Debian + Apache + PHP-FPM + SQLite. Produção usa Hostinger +
-Apache + PHP + MariaDB.
+Desenvolvimento/Homelab usa Debian + Apache + PHP-FPM + SQLite.
+
+Produção Hostinger usa Apache + PHP + MariaDB, com configuração própria de
+hospedagem.
 
 O projeto não mantém compatibilidade operacional com Nginx. Novos recursos,
-testes, exemplos e documentação normativa devem partir de Apache. Configuração
-Nginx remanescente pode ser preservada apenas como evidência histórica de
-migração até sua limpeza segura.
+testes, exemplos e documentação normativa devem partir de Apache.
+Configuração Nginx remanescente pode ser preservada apenas como evidência
+histórica de migração até sua limpeza segura.
 
-O `.htaccess` do Drupal faz parte do caminho operacional nos ambientes Apache
-e deve permanecer preservado. Rewrites, headers, proteção de arquivos privados,
-AllowOverride e integração PHP-FPM devem ser validados em Apache.
+Usar o mesmo servidor web não torna as configurações intercambiáveis.
+VirtualHosts, aliases, módulos, permissões, integração PHP, certificados,
+redirects, headers e proteção de arquivos continuam específicos de cada
+ambiente.
+
+O Drupal deve manter seu `.htaccess` e o deploy deve validar pelo menos
+`mod_rewrite`, `mod_headers`, `AllowOverride`, integração PHP-FPM e proteção
+de arquivos no ambiente alvo.
+
+O tema `aculta` e os módulos custom não devem depender de comportamento
+exclusivo de uma configuração Apache local.
 
 ## Consequências
 
 - o Homelab pode validar comportamento Apache antes do deploy;
 - não é mais necessário traduzir `location`, `try_files` ou `add_header`
   de Nginx para Apache;
-- VirtualHosts, caminhos, usuários, certificados e módulos continuam
-  específicos de cada ambiente;
 - configurações do Virtualmin e da Hostinger não devem ser copiadas
   literalmente entre si;
-- relatórios históricos que mencionam Nginx continuam válidos como registro da
-  época, mas não definem a arquitetura atual;
 - testes de segurança que antes aceitavam uma exceção porque Nginx ignorava
-  `.htaccess` precisam ser reavaliados sob Apache.
+  `.htaccess` precisam ser reavaliados sob Apache;
+- um processo Nginx ativo no Homelab deve ser tratado como regressão do
+  baseline atual.
+
+## Consequência histórica
+
+Registros de testes executados antes da migração podem mencionar Nginx
+corretamente como estado daquele momento. Esta ADR substitui a decisão
+arquitetural anterior para o estado atual; não é necessário reescrever
+evidência histórica apenas para trocar o nome do servidor.
 
 ## Não objetivos
 
 Esta decisão não altera o banco de desenvolvimento, o Sistema de Estados
-SQLite, a arquitetura Domain, a produção MariaDB ou o roadmap futuro de
-migração do Runtime do Homelab para MariaDB.
+SQLite, a arquitetura Domain, a produção MariaDB, a refatoração do tema ou o
+roadmap futuro de migração do Runtime do Homelab para MariaDB.
