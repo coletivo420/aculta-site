@@ -262,6 +262,15 @@ O arquivo customizado continha apenas o markup básico do Core e, por existir no
 
 Os demais overrides foram mantidos porque possuem responsabilidade própria do projeto: shell público, branding, instituição, cards editoriais/projetos, breadcrumb, integração VVJB e feed textual.
 
+## Auditoria pós-G4
+
+A revisão consolidada A–G4 corrigiu dois contratos antigos que não tinham sido introduzidos pela refatoração:
+
+- `--bs-link-color-rgb` foi alinhado ao verde escuro real de `--bs-link-color` (`12, 60, 41`), evitando divergência em utilitários Bootstrap baseados em RGB;
+- `node--editorial-highlight.html.twig` voltou a renderizar `title_prefix` e `title_suffix`, preservando saída adicional de módulos/contextual links como esperado em templates de node.
+
+A varredura de custom properties após G4 permanece sem usos `--aculta-*` indefinidos.
+
 ## Configuração do tema
 
 `config/install/aculta.settings.yml` contém defaults herdados do Bootstrap5.

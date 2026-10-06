@@ -1,5 +1,7 @@
 {# Drupal presenter: preserve node attributes here and delegate only inner visual markup to SDC. #}
 <article{{ attributes.addClass('aculta-editorial-card') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
   {{ include('aculta:editorial-card', {
     category: content.field_category,
     title: label,

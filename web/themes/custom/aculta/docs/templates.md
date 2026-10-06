@@ -38,9 +38,9 @@ Regra após G4: herdar templates do Bootstrap5/Core/contrib por padrão e criar 
 
 **Dados:** category, summary, complement, link e label do node.
 
-**Implementação:** preserva o wrapper `<article>` e os attributes do node e delega o markup interno ao SDC `aculta:editorial-card` via `include(..., with_context = false)`.
+**Implementação:** preserva o wrapper `<article>`, os attributes do node e `title_prefix`/`title_suffix`, e delega o markup interno ao SDC `aculta:editorial-card` via `include(..., with_context = false)`.
 
-**Preservar:** attributes/contextual do node, conteúdo editorial editável e o contrato de slots do SDC.
+**Preservar:** attributes/contextual do node, `title_prefix`/`title_suffix`, conteúdo editorial editável e o contrato de slots do SDC.
 
 ## `node--project--teaser.html.twig`
 
