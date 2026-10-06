@@ -33,7 +33,7 @@ Esta divisão é física, não uma alteração de contrato visual. A ordem de ca
 | --- | --- | --- |
 | Header | `page.html.twig`, CSS | regions/blocks Drupal |
 | Branding | branding block Twig + preprocess | System Branding + assets do tema |
-| Navegação desktop/mobile | `page.html.twig`, `aculta.js`, CSS | Menu Drupal + Bootstrap Collapse |
+| Navegação desktop/mobile | `page.html.twig`, `js/navigation.js`, CSS | Menu Drupal + Bootstrap Collapse |
 | Menu utilitário/Conta | page preprocess + region render arrays | blocks/menu Drupal |
 | Breadcrumb | Portal builder + Twig/preprocess atual | routing, Domain purpose, entities |
 | Hero | CSS/Twig de conteúdo existente | conteúdo Drupal |
