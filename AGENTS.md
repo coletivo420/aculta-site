@@ -328,6 +328,21 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
 - Consultar `docs/portal/COMPONENT-DESIGN-SYSTEM.md` e
   `web/themes/custom/aculta/docs/component-design-system.md`.
 
+## Regra de encerramento de fase
+
+Toda fase ou subfase concluída deve terminar em **PR próprio**.
+
+O PR deve:
+
+- representar uma unidade lógica clara;
+- listar entregas e limites;
+- registrar `RUNTIME STATUS: DEFERRED` quando houver código não testado no Homelab;
+- não misturar trabalho de outra fase;
+- apontar a próxima fase;
+- permanecer rastreável mesmo quando for integrado imediatamente.
+
+Não considerar uma fase encerrada apenas porque existe commit local/branch.
+
 ## Coordenação Portal, tema e documentação
 
 A evolução do Portal e a refatoração do tema são linhas separadas.

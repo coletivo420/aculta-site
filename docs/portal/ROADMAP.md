@@ -70,6 +70,26 @@ Saída:
 
 inventário + plano de refatoração por arquivo.
 
+## S2.1 — Account SDC/AJAX contract
+
+**Estado: concluída documentalmente.**
+
+Resultado: [ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
+
+Objetivo:
+
+mapear cada elemento da Minha Conta entre fonte de verdade, integração Portal,
+SDC e comportamento AJAX.
+
+Decisões:
+
+- SDC é apresentação; não substitui AJAX/Form API;
+- navegação da Conta permanece progressivamente assíncrona;
+- CEP permanece AJAX;
+- OAuth, checkout e confirmações externas não viram fetch genérico;
+- listagens de participação preferem Views AJAX;
+- componentes simples/reutilizáveis entram antes de shell/forms complexos.
+
 ## S3 — Behavior-preserving preparation
 
 **Estado: próxima.**
@@ -84,13 +104,52 @@ Exemplos:
 - reduzir markup de controller;
 - normalizar estruturas de dados;
 - preparar interfaces/adapters;
-- organizar services.
+- organizar services;
+- preparar Minha Conta para SDC sem mover regra de negócio ao tema;
+- manter AJAX somente onde definido na matriz da Conta.
 
 Sem Runtime:
 
 - manter PR como draft se houver mudança executável;
 - declarar `RUNTIME STATUS: DEFERRED`;
 - não taggear release.
+
+## S3.2 — Minha Conta -> SDC
+
+Executar em pequenos drafts, preferencialmente nesta ordem:
+
+1. status badge;
+2. empty state;
+3. summary card;
+4. action list;
+5. course card;
+6. account shell;
+7. identity;
+8. data section;
+9. security/integration cards;
+10. support cards;
+11. participation cards;
+12. photo editor.
+
+Cada conversão deve remover CSS/markup antigo somente depois de paridade.
+
+A matriz normativa está em
+[ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
+
+## S3.3 — Minha Conta AJAX boundary
+
+Preservar como requisito:
+
+- navegação parcial entre seções;
+- Básicos/Endereço;
+- CEP;
+- Views AJAX de participação;
+- behaviors contrib como Flag.
+
+Migrar gradualmente `account-navigation.js` para APIs Core.
+
+Não transformar OAuth, Commerce checkout, confirmação de e-mail ou navegação de
+curso em AJAX custom.
 
 ## S4 — Feature specifications and draft branches
 
