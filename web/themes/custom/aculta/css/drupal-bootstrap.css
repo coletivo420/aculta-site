@@ -1,0 +1,205 @@
+/* 12. Drupal and Bootstrap components: preserve behavior and remove default colors. */
+.card, .modal-content, .offcanvas, .dropdown-menu {
+  --bs-card-bg: var(--aculta-white);
+  --bs-card-cap-bg: var(--aculta-white);
+  --bs-card-color: var(--aculta-green-dark);
+  --bs-modal-bg: var(--aculta-white);
+  --bs-modal-color: var(--aculta-green-dark);
+  --bs-offcanvas-bg: var(--aculta-white);
+  --bs-offcanvas-color: var(--aculta-green-dark);
+  --bs-dropdown-bg: var(--aculta-white);
+  --bs-dropdown-color: var(--aculta-green-dark);
+  --bs-dropdown-link-color: var(--aculta-green-dark);
+  --bs-dropdown-link-hover-color: var(--aculta-green-dark);
+  --bs-dropdown-link-hover-bg: var(--bs-primary-bg-subtle);
+  --bs-dropdown-link-active-color: var(--aculta-green-dark);
+  --bs-dropdown-link-active-bg: var(--bs-primary-bg-subtle);
+  --bs-dropdown-link-disabled-color: var(--aculta-green-dark);
+  --bs-dropdown-header-color: var(--aculta-green-dark);
+}
+.aculta-navbar .dropdown-menu { --bs-dropdown-font-size: 1.25rem; }
+
+.form-control, .form-select, .form-check-input, .input-group-text {
+  color: var(--aculta-green-dark);
+  background-color: var(--aculta-white);
+  border-color: var(--aculta-control-border);
+}
+.form-label { font-weight: 600; margin-bottom: 0.5rem; }
+.form-control, .form-select { min-height: 2.75rem; }
+.form-control[type="color"] { min-height: 0; }
+.form-control::placeholder { color: var(--aculta-green-dark); opacity: 0.75; }
+.form-control:disabled, .form-select:disabled, .input-group-text { background-color: var(--aculta-cream); }
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+  color: var(--aculta-green-dark);
+  background-color: var(--aculta-white);
+  border-color: var(--aculta-green);
+  box-shadow: 0 0 0 0.25rem var(--aculta-focus);
+}
+.form-check-input:checked, .form-check-input[type="checkbox"]:indeterminate {
+  background-color: var(--aculta-green);
+  border-color: var(--aculta-green);
+}
+/* Substituir cores fixas dos ícones de formulário herdados pelo tema. */
+.form-select {
+  --bs-form-select-bg-img: linear-gradient(45deg, transparent 50%, var(--aculta-green-dark) 50%),
+    linear-gradient(135deg, var(--aculta-green-dark) 50%, transparent 50%);
+  background-position: right 1rem center, right 0.6875rem center;
+  background-size: 0.3125rem 0.3125rem;
+}
+.form-switch .form-check-input,
+.form-switch .form-check-input:focus,
+.form-switch .form-check-input:checked {
+  --bs-form-switch-bg: radial-gradient(circle, var(--aculta-white) 60%, transparent 65%);
+  background-color: var(--aculta-green-dark);
+  background-size: 1rem 100%;
+}
+.form-switch .form-check-input:checked { background-color: var(--aculta-green); }
+.form-range::-webkit-slider-thumb { background-color: var(--aculta-green); }
+.form-range::-moz-range-thumb { background-color: var(--aculta-green); }
+.form-range::-webkit-slider-thumb:active { background-color: var(--aculta-green-dark); }
+.form-range::-moz-range-thumb:active { background-color: var(--aculta-green-dark); }
+.form-range:focus::-webkit-slider-thumb { box-shadow: 0 0 0 0.25rem var(--aculta-focus); }
+.form-range:focus::-moz-range-thumb { box-shadow: 0 0 0 0.25rem var(--aculta-focus); }
+.form-range::-webkit-slider-runnable-track { background-color: var(--aculta-border); }
+.form-range::-moz-range-track { background-color: var(--aculta-border); }
+.form-range:disabled::-webkit-slider-thumb { background-color: var(--aculta-border); }
+.form-range:disabled::-moz-range-thumb { background-color: var(--aculta-border); }
+.form-range:disabled { opacity: 0.6; }
+.form-control.is-valid, .form-control.is-invalid,
+.was-validated .form-control:valid, .was-validated .form-control:invalid { background-image: none; }
+:is(.form-select.is-valid, .form-select.is-invalid, .was-validated .form-select:valid, .was-validated .form-select:invalid):not([multiple]):is(:not([size]), [size="1"]) {
+  --bs-form-select-bg-icon: none;
+}
+:is(.form-control, .form-select):is(.is-valid, .is-invalid):focus,
+.was-validated :is(.form-control, .form-select):is(:valid, :invalid):focus {
+  box-shadow: 0 0 0 0.25rem var(--aculta-focus);
+}
+.valid-tooltip, .invalid-tooltip { color: var(--aculta-green-dark); background-color: var(--aculta-cream); }
+.valid-tooltip { border: 1px solid var(--aculta-green); }
+.invalid-tooltip { border: 1px solid var(--aculta-red); }
+
+.nav { --bs-nav-link-color: var(--aculta-link); --bs-nav-link-hover-color: var(--aculta-green-dark); --bs-nav-link-disabled-color: var(--aculta-green-dark); }
+.nav-pills { --bs-nav-pills-link-active-bg: var(--aculta-green-dark); --bs-nav-pills-link-active-color: var(--aculta-white); }
+.nav-tabs { --bs-nav-tabs-link-active-color: var(--aculta-green-dark); --bs-nav-tabs-link-active-bg: var(--aculta-white); }
+.pagination {
+  --bs-pagination-color: var(--aculta-link);
+  --bs-pagination-bg: var(--aculta-white);
+  --bs-pagination-hover-color: var(--aculta-green-dark);
+  --bs-pagination-hover-bg: var(--aculta-cream);
+  --bs-pagination-focus-color: var(--aculta-green-dark);
+  --bs-pagination-focus-bg: var(--aculta-cream);
+  --bs-pagination-focus-box-shadow: 0 0 0 0.25rem var(--aculta-focus);
+  --bs-pagination-active-color: var(--aculta-white);
+  --bs-pagination-active-bg: var(--aculta-green-dark);
+  --bs-pagination-active-border-color: var(--aculta-green);
+  --bs-pagination-disabled-color: var(--aculta-green-dark);
+  --bs-pagination-disabled-bg: var(--aculta-cream);
+}
+.list-group {
+  --bs-list-group-bg: var(--aculta-white);
+  --bs-list-group-color: var(--aculta-green-dark);
+  --bs-list-group-action-color: var(--aculta-link);
+  --bs-list-group-action-hover-color: var(--aculta-green-dark);
+  --bs-list-group-action-hover-bg: var(--aculta-cream);
+  --bs-list-group-action-active-color: var(--aculta-green-dark);
+  --bs-list-group-action-active-bg: var(--aculta-cream);
+  --bs-list-group-active-color: var(--aculta-white);
+  --bs-list-group-active-bg: var(--aculta-green-dark);
+  --bs-list-group-active-border-color: var(--aculta-green);
+  --bs-list-group-disabled-color: var(--aculta-green-dark);
+  --bs-list-group-disabled-bg: var(--aculta-cream);
+}
+.accordion {
+  --bs-accordion-bg: var(--aculta-white);
+  --bs-accordion-color: var(--aculta-green-dark);
+  --bs-accordion-btn-color: var(--aculta-green-dark);
+  --bs-accordion-active-color: var(--aculta-green-dark);
+  --bs-accordion-active-bg: var(--bs-primary-bg-subtle);
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem var(--aculta-focus);
+}
+.accordion-button::after {
+  background-image: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-right: 2px solid var(--aculta-green);
+  border-bottom: 2px solid var(--aculta-green);
+  transform: rotate(45deg);
+}
+.accordion-button:not(.collapsed)::after { background-image: none; transform: rotate(225deg); }
+.progress { --bs-progress-bg: var(--aculta-cream); --bs-progress-bar-bg: var(--aculta-green-dark); --bs-progress-bar-color: var(--aculta-white); }
+.progress-bar { font-family: var(--aculta-font-body); font-size: 0.75rem; font-weight: 600; }
+
+.alert {
+  --bs-alert-color: var(--aculta-green-dark);
+  --bs-alert-bg: var(--aculta-white);
+  --bs-alert-border-color: var(--aculta-border);
+  --bs-alert-link-color: var(--aculta-green-dark);
+}
+.alert-primary, .alert-success, .alert-info { --bs-alert-bg: var(--aculta-white); --bs-alert-border-color: var(--aculta-border); }
+.alert-secondary, .alert-light, .alert-dark { --bs-alert-bg: var(--aculta-cream); --bs-alert-border-color: var(--aculta-border); }
+.alert-warning { --bs-alert-bg: var(--bs-warning-bg-subtle); --bs-alert-border-color: var(--aculta-border); border-inline-start: 3px solid var(--aculta-yellow); }
+.alert-danger { --bs-alert-bg: var(--bs-danger-bg-subtle); --bs-alert-border-color: var(--aculta-border); border-inline-start: 3px solid var(--aculta-red); }
+
+.table {
+  --bs-table-color: var(--aculta-green-dark);
+  --bs-table-bg: var(--aculta-white);
+  --bs-table-border-color: var(--aculta-border);
+  --bs-table-striped-color: var(--aculta-green-dark);
+  --bs-table-striped-bg: var(--aculta-cream);
+  --bs-table-active-color: var(--aculta-green-dark);
+  --bs-table-active-bg: var(--bs-primary-bg-subtle);
+  --bs-table-hover-color: var(--aculta-green-dark);
+  --bs-table-hover-bg: var(--aculta-cream);
+}
+.table-primary, .table-success, .table-info { --bs-table-bg: var(--bs-primary-bg-subtle); }
+.table-warning { --bs-table-bg: var(--bs-warning-bg-subtle); }
+.table-danger { --bs-table-bg: var(--bs-danger-bg-subtle); }
+.table-dark, .table-secondary, .table-light { --bs-table-bg: var(--aculta-cream); }
+
+/* Helpers com valores compilados que não seguem apenas --bs-primary. */
+.text-primary, .text-success, .text-info,
+.link-primary, .link-success, .link-info { color: var(--aculta-link) !important; }
+.link-primary:hover, .link-primary:focus,
+.link-success:hover, .link-success:focus,
+.link-info:hover, .link-info:focus { color: var(--aculta-green-dark) !important; }
+.text-danger, .text-warning, .link-danger, .link-warning { color: var(--aculta-green-dark) !important; }
+.link-danger:hover, .link-danger:focus,
+.link-warning:hover, .link-warning:focus,
+.link-secondary:hover, .link-secondary:focus,
+.link-dark:hover, .link-dark:focus { color: var(--aculta-green-dark) !important; }
+.link-light:hover, .link-light:focus { color: var(--aculta-white) !important; }
+.text-bg-primary, .text-bg-success, .text-bg-info { color: var(--aculta-green-dark) !important; background-color: var(--bs-primary-bg-subtle) !important; }
+.text-bg-warning { color: var(--aculta-green-dark) !important; background-color: var(--aculta-cream) !important; }
+.text-bg-danger { color: var(--aculta-green-dark) !important; background-color: var(--bs-danger-bg-subtle) !important; }
+.text-bg-light { color: var(--aculta-green-dark) !important; }
+.modal-backdrop, .offcanvas-backdrop { background-color: var(--aculta-green-dark); }
+.tooltip { --bs-tooltip-bg: var(--aculta-green-dark); --bs-tooltip-color: var(--aculta-white); }
+.popover { --bs-popover-bg: var(--aculta-white); --bs-popover-header-bg: var(--aculta-cream); --bs-popover-header-color: var(--aculta-green-dark); --bs-popover-body-color: var(--aculta-green-dark); }
+.toast { --bs-toast-bg: var(--aculta-white); --bs-toast-color: var(--aculta-green-dark); --bs-toast-header-bg: var(--aculta-cream); --bs-toast-header-color: var(--aculta-green-dark); }
+.btn-close { filter: none; opacity: 1; background: none; color: var(--aculta-green-dark); min-width: 1.5rem; min-height: 1.5rem; }
+.btn-close::before { content: "\00d7"; display: block; font-size: 1.5rem; line-height: 1; }
+.btn-close:focus { box-shadow: 0 0 0 0.25rem var(--aculta-focus); }
+
+:is(a, button, input, select, textarea, .btn, .button):focus-visible {
+  outline: 3px solid var(--aculta-green-dark);
+  outline-offset: 3px;
+}
+.aculta-header :focus-visible { outline-color: var(--aculta-white); }
+.aculta-footer :focus-visible { outline-color: var(--aculta-white); }
+::selection { color: var(--aculta-green-dark); background-color: var(--aculta-yellow); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .button, .nav-link, .form-control, .form-select, .form-check-input,
+  .accordion-button, .accordion-button::after, .collapsing {
+    transition: none;
+  }
+  .aculta-navbar .nav-link,
+  .card,
+  .aculta-project,
+  .aculta-editorial-list .views-row,
+  .webform-submission-form .form-submit { transition: none; }
+  .card:is(:hover, :focus-within),
+  .aculta-project:is(:hover, :focus-within),
+  .aculta-editorial-list .views-row:is(:hover, :focus-within) { transform: none; }
+}
+

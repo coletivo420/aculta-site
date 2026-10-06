@@ -64,7 +64,12 @@ Detalhes: [docs/design-system.md](docs/design-system.md).
 - `css/components/content.css` - espaçamento principal, títulos de seção, superfícies e cards.
 - `css/components/buttons.css` - botões/CTAs públicos e estados.
 - `css/components/auth.css` - apresentação das rotas Drupal de login/registro/recuperação.
-- `css/style.css` - footer, integrações Bootstrap/Drupal, institucional, editorial/VVJB e responsividade ainda não extraídos.
+- `css/components/footer.css` - base visual do footer.
+- `css/drupal-bootstrap.css` - integração visual com componentes Drupal/Bootstrap.
+- `css/components/institutional.css` - composição institucional, projetos e conteúdo editorial relacionado.
+- `css/components/editorial-carousel.css` - apresentação do destaque editorial/VVJB.
+- `css/responsive.css` - ajustes responsivos globais remanescentes.
+- `css/style.css` - trecho residual ainda misto de footer-layout, formulários, Conta/segurança e participação.
 - `components/editorial-card` - piloto SDC do card de destaque editorial; o presenter Drupal preserva o wrapper/attributes do node.
 - `js/navigation.js` - progressive enhancement da navegação e integração com Bootstrap Collapse.
 - `js/editorial-carousel.js` - integração de foco com o carousel editorial VVJB.

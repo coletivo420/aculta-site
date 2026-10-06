@@ -61,24 +61,29 @@ Não misturar, no mesmo passo, reorganização de arquivos com otimização agre
 
 ## CSS
 
-Estrutura CSS atual após o Commit C:
+Estrutura CSS atual após o G2:
 
 ```text
 css/
 ├── tokens.css
 ├── base.css
 ├── layout.css
+├── drupal-bootstrap.css
+├── responsive.css
 ├── components/
 │   ├── header.css
 │   ├── navigation.css
 │   ├── breadcrumb.css
 │   ├── content.css
 │   ├── buttons.css
+│   ├── footer.css
+│   ├── institutional.css
+│   ├── editorial-carousel.css
 │   └── auth.css
 └── style.css
 ```
 
-A library global deve preservar a ordem documentada em `aculta.libraries.yml`. `style.css` ainda concentra footer, formulários genéricos, integrações Bootstrap/Drupal, institucional, VVJB e parte da responsividade; ele será reduzido gradualmente, sem reordenar a cascade incidentalmente.
+A library global deve preservar a ordem documentada em `aculta.libraries.yml`. Após o G2, `style.css` contém somente o trecho ainda misto de footer-layout, formulários, Conta/segurança e participação; ele só deve ser reduzido novamente quando houver fronteiras contíguas que não reordenem a cascade.
 
 Antes de remover ou mover regra:
 
