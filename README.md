@@ -25,10 +25,14 @@ User cuida de autenticação; Profile/Address de dados pessoais; Social Auth de 
 
 ## Ambientes
 
-- Homelab: Debian + Nginx + PHP-FPM + SQLite.
+- Homelab: Debian + Apache + PHP-FPM + SQLite.
 - Produção: Hostinger + Apache + PHP + MariaDB.
 
-Configuração de Nginx não é copiada literalmente para Apache.
+Apache é o baseline definitivo de servidor web do projeto. Homelab e produção
+usam a mesma família de servidor, mas VirtualHosts, módulos disponíveis,
+permissões, certificados e integrações continuam específicos de cada ambiente.
+Nginx não é alvo de compatibilidade; referências remanescentes servem apenas
+como histórico de migração.
 
 ## Documentação
 

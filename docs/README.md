@@ -14,7 +14,7 @@
 - [ADR-003 - Sessão compartilhada](decisions/ADR-003-shared-session.md)
 - [ADR-004 - SQLite no desenvolvimento](decisions/ADR-004-sqlite-development.md)
 - [ADR-005 - Drupal LMS como fonte de verdade](decisions/ADR-005-lms-integration.md)
-- [ADR-006 - Nginx no Homelab e Apache em produção](decisions/ADR-006-web-servers.md)
+- [ADR-006 - Apache como baseline de servidor web](decisions/ADR-006-web-servers.md)
 
 ## Referências estudadas
 

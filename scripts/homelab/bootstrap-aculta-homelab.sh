@@ -20,7 +20,5 @@ EXPECTED_DB="$(realpath var/database/aculta-runtime.sqlite)"
   echo "Refusing bootstrap: Drupal is not connected to var/database/aculta-runtime.sqlite." >&2
   exit 1
 }
-php vendor/drush/drush/drush.php status
-php vendor/drush/drush/drush.php config:status
-php vendor/drush/drush/drush.php updatedb:status
-echo "Bootstrap checks complete. Review config/update status before any mutation."
+./scripts/homelab/verify-aculta-homelab.sh
+echo "Bootstrap checks complete. Apache is the canonical Homelab baseline; review config/update status before any mutation."

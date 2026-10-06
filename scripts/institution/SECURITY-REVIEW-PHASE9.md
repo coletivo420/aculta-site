@@ -5,6 +5,13 @@ Date: 2026-10-05
 This document records the Homelab review without storing credentials or
 personal data. Security Review was run without autofix.
 
+> Post-migration note (2026-10-06): this review was performed while the Homelab
+> still used Nginx. ADR-006 now defines Apache + PHP-FPM as the definitive
+> Homelab baseline. The historical `ACCEPTED_HOMELAB_NGINX` disposition below
+> must not be reused as a current exception: Apache consumes `.htaccess`, so
+> private-file protection and the related warning require Apache-specific
+> validation.
+
 ## Current disposition
 
 | Finding | Disposition |

@@ -18,17 +18,23 @@ O objetivo inicial é construir um site institucional profissional, acessível, 
 
 - Drupal 11
 - PHP 8.5
-- MariaDB
-- SQLite for development Runtime and versioned States (first Estado Integral)
+- Apache como baseline definitivo de servidor web
+- PHP-FPM no Homelab
+- SQLite para o Runtime de desenvolvimento e Estados versionados
+- MariaDB em produção
 - Composer
 - Drush
 - Git
 - GitHub
 - Codex CLI
 
-Ambiente local principal:
+Ambiente de desenvolvimento principal:
 
-Windows + PowerShell
+Debian Homelab + Apache + PHP-FPM + SQLite
+
+Produção:
+
+Hostinger + Apache + PHP + MariaDB
 
 Document root do Drupal:
 
@@ -47,6 +53,17 @@ web/modules/custom/
 Configuração exportável do Drupal:
 
 config/sync/
+
+## Servidor web
+
+Apache é o baseline definitivo do ACULTA no Homelab e em produção.
+
+- Não introduzir novos exemplos, regras ou dependências específicas de Nginx.
+- Não manter compatibilidade com Nginx como requisito do projeto.
+- Preservar o `web/.htaccess` do Drupal e validar rewrites/headers/proteção de arquivos em Apache.
+- No Homelab, validar `mod_rewrite`, `mod_headers` e a integração PHP-FPM por `proxy_fcgi`.
+- VirtualHosts, caminhos, usuários, certificados e configuração Virtualmin/Hostinger continuam específicos de cada ambiente.
+- Referências a Nginx em relatórios antigos são históricas e não definem a arquitetura atual.
 
 ## Regras fundamentais
 
@@ -126,19 +143,21 @@ Não reescrever o histórico da branch main.
 
 Não fazer commit de credenciais.
 
-## Drush no Windows
+## Drush
 
-Neste ambiente, executar Drush através de:
+No Homelab Debian, usar o Drush instalado pelo Composer:
 
-php .\vendor\drush\drush\drush.php
+```sh
+php vendor/drush/drush/drush.php status
+php vendor/drush/drush/drush.php cr
+```
 
-Exemplo:
+Em uma workstation Windows opcional, o equivalente é:
 
+```powershell
 php .\vendor\drush\drush\drush.php status
-
-Para limpar cache:
-
 php .\vendor\drush\drush\drush.php cr
+```
 
 ## Identidade institucional
 
@@ -273,12 +292,13 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
 ## Bancos e Sistema de Estados
 
 - Desenvolvimento usa `var/database/aculta-runtime.sqlite`, uma cópia mutável restaurada de `estados/`.
-- `estados/*.sqlite` são snapshots imutáveis; o primeiro é integral e pode conter dados pessoais, sessões, logs e credenciais que já estavam no banco fonte.
-- O repositório que contém Estados integrais precisa estar confirmado como **privado** antes de qualquer commit/push do arquivo. Se a visibilidade for pública ou desconhecida, não publicar o Estado.
+- `estados/*.sqlite` são snapshots imutáveis e integrais; não são sanitizados.
+- Por decisão explícita do projeto, Estados integrais podem ser versionados neste repositório público. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
 - Produção continua usando MariaDB. Nunca implantar `estados/*.sqlite` nem apontar produção para o Runtime.
-- Não sanitizar ou editar o primeiro Estado integral. Mudanças operacionais depois do restore pertencem somente ao Runtime.
+- Não editar um Estado imutável. Mudanças operacionais depois do restore pertencem somente ao Runtime.
 - Código custom deve usar APIs Drupal e permanecer compatível com SQLite e MariaDB. SQL específico exige justificativa.
 - `web/sites/default/settings.local.php` e configurações locais permanecem fora do Git. Credenciais MariaDB de produção nunca entram em settings versionados.
+- Existe intenção futura de migrar o Runtime do Homelab para MariaDB quando o BDTGN estiver maduro para a integração. Até essa decisão ser executada, SQLite continua sendo a fonte operacional do Homelab e os Estados continuam snapshots SQLite.
 
 ## Forma de trabalho esperada do Codex
 

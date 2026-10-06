@@ -19,7 +19,7 @@ deployment, credential setup, or payment was performed in the local phase.
 - The immutable SQLite snapshots in `estados/` are integral development States, not production backups or deployment artifacts. Never upload, restore, or point production at one.
 - Production remains MariaDB. Production credentials and MariaDB settings come only from private environment configuration on the production host.
 - A deployment transfers code, locked Composer dependencies, and full `config/sync`; it does not transfer the Runtime, an Estado, SQL dumps, or uploaded/private files.
-- The first Estado contains the source database's complete records and may include personal data and values already persisted in the source database. Keep the repository private before publishing it.
+- Integral Estados preserve the development Runtime without sanitization. By explicit project decision they may be versioned in this public repository; never deliberately add external service secrets or production credentials to the Runtime/Estado.
 
 ## Multidomain architecture
 
@@ -49,25 +49,32 @@ source of truth; no parallel contribution ledger is used.
 Create DNS for `@`, `conta`, `apoio`, `coletivo420`, `wiki420`, `loja`, and `cursos`
 only after inspecting the actual hosting origin; this runbook does not assume
 A versus CNAME records. Obtain valid HTTPS for all seven names before enabling
-external identity or payment services. Local development uses exact
-`.test:8080` aliases; production uses canonical `.org` Domain entities and
-the shared `.aculta.org` session cookie. All subdomains receiving that cookie
-must remain under ACULTA's trusted control and the same Drupal application.
+external identity or payment services. Homelab development uses the `*.aculta.toca.net.br` aliases; production uses
+canonical `.org` Domain entities. Each environment uses its own shared cookie
+domain (`.aculta.toca.net.br` in Homelab and `.aculta.org` in production).
+All subdomains receiving a shared cookie must remain under ACULTA's trusted
+control and the same Drupal application.
 Do not share it with an independent or SaaS-hosted subdomain.
 
-## Web server: Homelab versus production
+## Web server: Apache baseline
 
-The Homelab uses Nginx. Hostinger production uses Apache.
+Apache is the definitive web-server baseline in both Homelab and production.
+The Homelab runs Debian + Apache + PHP-FPM; Hostinger production also uses
+Apache, with hosting-specific configuration.
 
-Do not copy Nginx directives such as `server_name`, `location`, `try_files`
-or `add_header` into production. Preserve Drupal's Apache `.htaccess` and
-validate the production equivalents using `mod_rewrite`, `mod_headers` or
-VirtualHost configuration where Hostinger permits it.
+Preserve Drupal's `web/.htaccess` and validate `mod_rewrite`,
+`mod_headers`, the PHP-FPM handler, private/public file protection and the
+effective VirtualHost before deployment. The Homelab verifier treats an active
+Nginx process as a regression.
 
-A Homelab header such as `add_header ... always` requires an Apache-specific
-review; the semantic equivalent is generally based on `Header always set ...`,
-but it must only be added after inspecting the real production context.
-Production must not inherit the Homelab noindex policy.
+Sharing the Apache family does not make the environments identical. Do not
+copy Homelab VirtualHosts, filesystem paths, service users, certificates or
+Virtualmin configuration literally into Hostinger. Production must not inherit
+the Homelab noindex policy.
+
+Nginx is not a supported target for new ACULTA configuration. Historical Nginx
+material may remain in migration reports as evidence, but it must not be used
+as the normative deployment source.
 
 The Courses subsystem is already implemented in code with Drupal LMS and Group.
 A future deploy installs the locked dependencies and imports full configuration
