@@ -33,13 +33,13 @@ Esta divisão é física, não uma alteração de contrato visual. A ordem de ca
 | --- | --- | --- |
 | Header | `page.html.twig`, CSS | regions/blocks Drupal |
 | Branding | branding block Twig + preprocess | System Branding + assets do tema |
-| Navegação desktop/mobile | `page.html.twig`, `aculta.js`, CSS | Menu Drupal + Bootstrap Collapse |
+| Navegação desktop/mobile | `page.html.twig`, `js/navigation.js`, CSS | Menu Drupal + Bootstrap Collapse |
 | Menu utilitário/Conta | page preprocess + region render arrays | blocks/menu Drupal |
 | Breadcrumb | Portal builder + Twig/preprocess atual | routing, Domain purpose, entities |
 | Hero | CSS/Twig de conteúdo existente | conteúdo Drupal |
 | CTA pair | classes visuais existentes | links/conteúdo renderizado |
 | Project card | `node--project--teaser.html.twig` | fields do node |
-| Editorial highlight | `node--editorial-highlight.html.twig` | fields do node + VVJB |
+| Editorial highlight | presenter `node--editorial-highlight.html.twig` + SDC `aculta:editorial-card` | fields do node + VVJB |
 | Editorial list/prose | field preprocess + CSS | fields/Views Drupal |
 | Institution block | block Twig + preprocess | custom block fields |
 | Forms | Bootstrap/Core markup + CSS + input override | Form API |
@@ -62,13 +62,32 @@ Exemplos:
 
 ## Single Directory Components
 
-Drupal 11 permite SDC, mas a adoção deve ser seletiva.
+Drupal 11 possui SDC no Core. A adoção continua seletiva.
 
-Um candidato a SDC deve:
+### Piloto: `aculta:editorial-card`
 
-- ter reutilização real;
-- possuir contrato claro de props/slots;
-- reduzir duplicação;
+O Commit F cria `components/editorial-card` como primeiro SDC porque o destaque editorial já possui markup visual autocontido e entradas renderáveis claras.
+
+Contrato:
+
+- slots: `category`, `title`, `summary`, `complement`, `cta`;
+- sem props funcionais;
+- sem estado;
+- sem consulta de dados;
+- sem CSS/JS próprios neste piloto.
+
+O presenter `node--editorial-highlight.html.twig` mantém o `<article>` e os attributes Drupal, e chama o componente com `include('aculta:editorial-card', ..., with_context = false)`.
+
+O CSS permanece na cascade atual para que o piloto teste SDC sem combinar componentização Twig com mudança de carregamento de assets.
+
+### Critério para próximos SDCs
+
+Um novo candidato deve:
+
+- ter reutilização real ou fronteira visual clara;
+- possuir contrato simples de props/slots;
+- reduzir duplicação ou acoplamento;
+- preservar attributes/cache/access no presenter quando aplicável;
 - melhorar legibilidade/testabilidade.
 
-Não migrar todo Twig apenas para usar uma API moderna. Um piloto só deve ser criado em commit próprio após a modularização básica e validação dos contratos reais.
+Não migrar todo Twig apenas para uniformizar tecnologia.

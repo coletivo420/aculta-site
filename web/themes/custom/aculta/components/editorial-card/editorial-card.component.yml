@@ -1,0 +1,18 @@
+name: Editorial card
+status: experimental
+group: Editorial
+description: 'Reusable inner presentation for editorial highlight cards. Drupal-specific node attributes remain in the presenter template.'
+props:
+  type: object
+  properties: {}
+slots:
+  category:
+    title: Category
+  title:
+    title: Title
+  summary:
+    title: Summary
+  complement:
+    title: Complement
+  cta:
+    title: Call to action

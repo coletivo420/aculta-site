@@ -19,6 +19,11 @@ web/themes/custom/aculta/
 ├── config/
 │   ├── install/aculta.settings.yml
 │   └── schema/aculta.schema.yml
+├── components/
+│   └── editorial-card/
+│       ├── editorial-card.component.yml
+│       ├── editorial-card.twig
+│       └── README.md
 ├── css/
 │   ├── tokens.css
 │   ├── base.css
@@ -202,6 +207,16 @@ A auditoria identificou chamadas estáticas a serviços Drupal. Não serão remo
 O Commit E remove do tema a duplicação de purpose, rotas ocultas, raiz e resolução de título. `AcultaBreadcrumbBuilder` continua responsável por links, hierarquia, cache metadata e `currentTitle()`. O preprocess do tema apenas publica esse título para o Twig como `aculta_current_breadcrumb`.
 
 O template permanece responsável por `nav`, lista ordenada e `aria-current="page"`; nenhuma regra de Domain ou rota foi movida para Twig.
+
+## F — piloto Single Directory Component
+
+O Commit F introduz o primeiro SDC do tema: `aculta:editorial-card`.
+
+O template `node--editorial-highlight.html.twig` permanece como presenter Drupal e preserva o `<article>` e os attributes do node. O componente recebe como slots os renderables de categoria, título, resumo, complemento e CTA.
+
+O piloto não move CSS nem JavaScript. Isso mantém a cascade e o attachment atuais enquanto valida descoberta, contrato e renderização SDC no Drupal 11.
+
+A adoção posterior permanece opt-in e depende de benefício concreto; não existe meta de converter todos os templates.
 
 ## Configuração do tema
 

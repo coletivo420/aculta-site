@@ -128,6 +128,28 @@ Após o Commit E:
 
 Não voltar a duplicar arrays de purpose/rotas ou resolução de título em `aculta.theme`.
 
+## Single Directory Components
+
+O projeto usa SDC apenas quando houver benefício concreto. Drupal 11 já fornece SDC no Core; não adicionar módulo contrib para essa capacidade.
+
+Piloto atual:
+
+```text
+components/
+└── editorial-card/
+    ├── editorial-card.component.yml
+    ├── editorial-card.twig
+    └── README.md
+```
+
+Regras:
+
+- manter integração Drupal específica no presenter quando isso preserva attributes/contexto;
+- usar slots para renderables/markup e props apenas para dados estruturados;
+- preferir `include(..., with_context = false)` para evitar dependência implícita de contexto;
+- não mover CSS/JS para o diretório do SDC no mesmo commit que cria o contrato, salvo quando a mudança de attachment for objetivo explícito e testado;
+- não converter templates em massa.
+
 ## Testes mínimos por etapa
 
 Quando houver mudança funcional/visual, validar:

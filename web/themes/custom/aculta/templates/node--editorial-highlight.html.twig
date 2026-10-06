@@ -1,8 +1,10 @@
-{# Field values and links remain editable content, not template copy. #}
+{# Drupal presenter: preserve node attributes here and delegate only inner visual markup to SDC. #}
 <article{{ attributes.addClass('aculta-editorial-card') }}>
-  <div class="aculta-category">{{ content.field_category }}</div>
-  <h3>{{ label }}</h3>
-  <div class="aculta-editorial-summary">{{ content.field_summary }}</div>
-  {% if content.field_complement %}<div class="aculta-editorial-complement">{{ content.field_complement }}</div>{% endif %}
-  <div class="aculta-editorial-cta">{{ content.field_link }}</div>
+  {{ include('aculta:editorial-card', {
+    category: content.field_category,
+    title: label,
+    summary: content.field_summary,
+    complement: content.field_complement,
+    cta: content.field_link
+  }, with_context = false) }}
 </article>
