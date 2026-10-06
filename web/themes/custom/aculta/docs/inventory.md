@@ -193,15 +193,15 @@ Otimização por rota, página ou attachment condicional fica fora deste commit.
 - page/header block routing;
 - block institucional/branding;
 - HTML/head title fallback;
-- breadcrumb.
+- breadcrumb, agora como adaptador fino de apresentação.
 
 A auditoria identificou chamadas estáticas a serviços Drupal. Não serão removidas cosmeticamente: cada mudança deve melhorar uma fronteira real.
 
-### Fronteira breadcrumb
+### E — fronteira breadcrumb Portal/tema
 
-O Portal já registra `AcultaBreadcrumbBuilder` e possui regras de purpose, cache contexts e hierarquia. O preprocess de breadcrumb do tema ainda conhece `aculta_portal.domain_purpose` e repete parte dessa decisão.
+O Commit E remove do tema a duplicação de purpose, rotas ocultas, raiz e resolução de título. `AcultaBreadcrumbBuilder` continua responsável por links, hierarquia, cache metadata e `currentTitle()`. O preprocess do tema apenas publica esse título para o Twig como `aculta_current_breadcrumb`.
 
-Essa duplicação é candidata a um commit posterior de cleanup tema/Portal. O Commit A apenas a documenta.
+O template permanece responsável por `nav`, lista ordenada e `aria-current="page"`; nenhuma regra de Domain ou rota foi movida para Twig.
 
 ## Configuração do tema
 

@@ -46,11 +46,11 @@ Overrides só devem existir quando alteram apresentação necessária. Remoção
 
 **Motivo:** markup público do breadcrumb e página atual.
 
-**Dados:** breadcrumb construído pelo Drupal/Portal e `aculta_current_breadcrumb` no estado atual.
+**Dados:** links e política de visibilidade/hierarquia vêm de `AcultaBreadcrumbBuilder`; o preprocess do tema apenas expõe `currentTitle()` como `aculta_current_breadcrumb` para apresentação.
 
 **Preservar:** `nav`, label acessível, lista ordenada e `aria-current="page"`.
 
-**Nota arquitetural:** a linha de base ainda duplica parte da decisão de breadcrumb entre Portal e tema. Cleanup posterior deve concentrar decisão no Portal e deixar apresentação no tema.
+**Fronteira arquitetural:** purpose, rotas ocultas, raiz, hierarquia, dependências de cache e resolução segura do título pertencem ao Portal. O tema mantém somente markup e semântica visual/acessível.
 
 ## `form/input.html.twig`
 
