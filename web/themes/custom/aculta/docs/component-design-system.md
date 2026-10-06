@@ -191,6 +191,21 @@ Um SDC pode passar a `stable` quando:
 - não depende de contexto Twig implícito;
 - possui referência documental suficiente para humanos e agentes de IA.
 
+## Primeiro componente-modelo
+
+`aculta:editorial-card` é o primeiro SDC `stable` do sistema.
+
+Ele estabelece o padrão:
+
+- presenter Drupal preserva Theme API e adiciona o wrapper de integração;
+- SDC recebe somente slots renderáveis;
+- CSS exclusivo vive em `components/editorial-card/editorial-card.css`;
+- Drupal anexa o CSS automaticamente quando o componente é usado;
+- regras do VVJB permanecem fora do card;
+- nenhum JavaScript é necessário para o card.
+
+Futuros cards devem copiar o contrato arquitetural, não necessariamente o mesmo markup.
+
 ## Anti-regressão para agentes e humanos
 
 Não:
@@ -217,8 +232,8 @@ Sempre:
 
 | Fase | Objetivo | Estado inicial |
 | --- | --- | --- |
-| H1 | formalizar o Component Design System | em execução |
-| H2 | tornar `editorial-card` o primeiro SDC completo | em execução |
+| H1 | formalizar o Component Design System | concluído |
+| H2 | tornar `editorial-card` o primeiro SDC completo | concluído |
 | H3 | primitives reutilizáveis | planejado |
 | H4 | família de cards | planejado |
 | H5 | patterns compostos, incluindo carousel/rail | planejado |

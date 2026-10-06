@@ -1,8 +1,8 @@
 # Editorial card SDC
 
-Piloto de Single Directory Component do tema `aculta`.
+Primeiro componente `stable` do ACULTA Bootstrap Component Design System.
 
-O componente contém somente o markup interno reutilizável do destaque editorial. O template Drupal `node--editorial-highlight.html.twig` continua responsável pelo elemento `<article>`, pelos attributes do node, por `title_prefix`/`title_suffix` e pela integração com o sistema de temas.
+O SDC contém o markup interno reutilizável e seu CSS exclusivo. O presenter Drupal `node--editorial-highlight.html.twig` continua responsável pelo elemento `<article>`, pela classe de integração `.aculta-editorial-card`, pelos attributes do node, por `title_prefix`/`title_suffix` e pela integração com o Theme API.
 
 ## Contrato
 
@@ -14,8 +14,23 @@ Entradas são slots renderáveis:
 - `complement`;
 - `cta`.
 
-Não há props funcionais, estado, consulta de dados, CSS ou JavaScript próprios neste piloto.
+Não há props funcionais, estado, consulta de serviços, storage, Node, Commerce ou LMS.
 
-## Decisão do piloto
+## Assets
 
-O CSS permanece na cascade existente para que o Commit F valide descoberta/uso do SDC sem misturar mudança de attachment de assets. Se o padrão provar valor, a eventual co-localização de CSS deve ser feita em commit separado e testável.
+`editorial-card.css` pertence ao SDC e é carregado automaticamente pelo Drupal quando `aculta:editorial-card` é renderizado.
+
+O componente não possui JavaScript.
+
+Continuam globais apenas contratos compartilhados, como tokens e a base `.aculta-category`. Regras de layout/controles do VVJB permanecem em `css/components/editorial-carousel.css`, pois pertencem ao pattern/engine de carousel e não ao card.
+
+## Presenter
+
+O presenter deve:
+
+- preservar `attributes`, `title_prefix` e `title_suffix`;
+- adicionar `.aculta-editorial-card` ao wrapper;
+- encaminhar renderables sem consultar storage paralelo;
+- incluir o SDC com `with_context = false`.
+
+Esse contrato é o modelo para futuros `project-card`, `course-card` e `product-card`.

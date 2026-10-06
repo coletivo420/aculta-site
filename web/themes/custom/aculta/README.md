@@ -69,10 +69,10 @@ Detalhes: [docs/design-system.md](docs/design-system.md) e [docs/component-desig
 - `css/components/footer.css` - base visual do footer.
 - `css/drupal-bootstrap.css` - integração visual com componentes Drupal/Bootstrap.
 - `css/components/institutional.css` - composição institucional, projetos e conteúdo editorial relacionado.
-- `css/components/editorial-carousel.css` - apresentação do destaque editorial/VVJB.
+- `css/components/editorial-carousel.css` - apresentação do pattern/engine VVJB; não contém mais CSS exclusivo do card editorial.
 - `css/responsive.css` - ajustes responsivos globais remanescentes.
 - `css/style.css` - trecho residual ainda misto de footer-layout, formulários, Conta/segurança e participação.
-- `components/editorial-card` - piloto SDC do card de destaque editorial; o presenter Drupal preserva o wrapper/attributes do node.
+- `components/editorial-card` - primeiro SDC `stable`; Twig, metadata e CSS exclusivo carregado automaticamente pelo Drupal.
 - `js/navigation.js` - progressive enhancement da navegação e integração com Bootstrap Collapse.
 - `js/editorial-carousel.js` - integração de foco com o carousel editorial VVJB; carregado pela library contextual `aculta/editorial-carousel` apenas na View da Home.
 - `templates` - overrides Twig.

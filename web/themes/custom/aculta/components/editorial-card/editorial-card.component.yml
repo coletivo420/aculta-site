@@ -1,7 +1,8 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: Editorial card
-status: experimental
-group: Editorial
-description: 'Reusable inner presentation for editorial highlight cards. Drupal-specific node attributes remain in the presenter template.'
+status: stable
+group: Cards
+description: 'Reusable editorial card presentation with renderable slots and component-scoped CSS.'
 props:
   type: object
   properties: {}

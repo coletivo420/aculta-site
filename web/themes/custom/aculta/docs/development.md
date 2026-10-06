@@ -144,13 +144,14 @@ Não voltar a duplicar arrays de purpose/rotas ou resolução de título em `acu
 
 O projeto usa SDC apenas quando houver fronteira visual e benefício concreto. Drupal 11 já fornece SDC estável no Core; não adicionar módulo contrib para essa capacidade.
 
-Componente-modelo em promoção H2:
+Componente-modelo estável após H2:
 
 ```text
 components/
 └── editorial-card/
     ├── editorial-card.component.yml
     ├── editorial-card.twig
+    ├── editorial-card.css
     └── README.md
 ```
 
@@ -163,6 +164,12 @@ Regras:
 - não converter templates em massa;
 - SDC não consulta serviços, storage, banco, Node/Commerce/LMS diretamente;
 - CSS/JS exclusivo pode ser co-localizado como `<component>.css`/`<component>.js` para carregamento automático do SDC.
+
+### Ownership de CSS no H2
+
+O H2 move somente regras exclusivas de `aculta:editorial-card` para o SDC. Seletores compartilhados continuam globais; regras de VVJB permanecem no CSS do pattern de carousel.
+
+Não duplicar de volta regras do card em `content.css`, `breadcrumb.css` ou `editorial-carousel.css`.
 
 ## Testes mínimos por etapa
 
