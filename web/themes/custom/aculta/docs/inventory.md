@@ -107,7 +107,7 @@ Observações auditadas para commits posteriores:
 
 - o arquivo concentra responsabilidades demais;
 - há usos de `!important`, principalmente em utilities Bootstrap;
-- o bloco recente de autenticação repete cores literais já existentes como tokens;
+- o bloco de autenticação foi normalizado no G1 para reutilizar os tokens oficiais, sem alterar valores visuais;
 - há breakpoints equivalentes escritos com valores diferentes;
 
 ## Correções após o inventário inicial
@@ -217,6 +217,12 @@ O template `node--editorial-highlight.html.twig` permanece como presenter Drupal
 O piloto não move CSS nem JavaScript. Isso mantém a cascade e o attachment atuais enquanto valida descoberta, contrato e renderização SDC no Drupal 11.
 
 A adoção posterior permanece opt-in e depende de benefício concreto; não existe meta de converter todos os templates.
+
+## G1 — autenticação normalizada para tokens
+
+O CSS de login/registro/recuperação deixou de repetir literais da paleta e famílias tipográficas. `auth.css` agora referencia `--aculta-cream`, `--aculta-white`, `--aculta-green`, `--aculta-green-dark`, `--aculta-yellow`, `--aculta-font-body` e `--aculta-font-display`.
+
+Nenhum seletor, spacing, radius, breakpoint ou valor visual foi alterado; é uma normalização de fonte de verdade do design system.
 
 ## Configuração do tema
 
