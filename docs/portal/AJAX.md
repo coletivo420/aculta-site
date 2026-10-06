@@ -62,6 +62,20 @@ Core, preservando:
 - behaviors;
 - fallback full-page.
 
+## Minha Conta
+
+A fronteira detalhada entre SDC e AJAX está em
+[ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
+
+Decisão:
+
+- converter markup repetido para SDC **sem remover a experiência assíncrona**;
+- manter navegação parcial entre seções;
+- manter Básicos/Endereço com atualização parcial;
+- substituir gradualmente o transporte custom por APIs Core;
+- manter formulários essenciais como Form API com fallback normal;
+- não interceptar OAuth/checkout/confirmations com fetch próprio.
+
 ## CEP
 
 `cep-address.js` tem regra diferente de `account-navigation.js`.

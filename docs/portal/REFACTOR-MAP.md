@@ -53,6 +53,9 @@ Não migrar todos os hooks num único PR.
 
 ## S3.2 — Account presentation boundary
 
+Contrato normativo:
+[ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
+
 ### Objetivo
 
 Separar dados/estado da apresentação.
@@ -69,12 +72,19 @@ Separar dados/estado da apresentação.
 
 Primeiros contratos a definir/usar:
 
-- `account-shell`;
-- `summary-card`;
-- `course-card`;
 - `status-badge`;
 - `empty-state`;
-- `action-list`.
+- `summary-card`;
+- `action-list`;
+- `course-card`;
+- `account-shell`;
+- `account-identity`;
+- `data-section`;
+- `security-card`;
+- `integration-card`.
+
+AJAX é uma dimensão separada do componente: a navegação parcial da Conta
+permanece enquanto o transporte é migrado gradualmente para APIs Core.
 
 Usar render element SDC quando apropriado:
 

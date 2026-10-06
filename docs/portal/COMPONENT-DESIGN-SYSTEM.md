@@ -112,13 +112,27 @@ Não criar SDC apenas para embrulhar uma `<div>` usada uma vez.
 
 ### Conta
 
-Candidatos:
+A matriz detalhada está em
+[ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
 
-- account summary card;
+Candidatos atuais:
+
+- account shell;
+- account identity;
+- summary card;
+- course card;
 - action list;
 - status badge;
 - empty state;
-- data section.
+- data section;
+- security card;
+- integration card;
+- support/order summary;
+- participation card;
+- photo editor.
+
+A migração é incremental. Um SDC pode conter slots com Form API ou conteúdo
+atualizado por AJAX; ele não substitui essas APIs.
 
 ### Cursos
 
