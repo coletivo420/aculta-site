@@ -28,7 +28,7 @@ O tema não é fonte de verdade de autenticação, pagamentos, Commerce, cursos,
 - Base theme: `bootstrap5`.
 - Bootstrap pertence exclusivamente ao base theme; não embarcar uma segunda cópia.
 - A library global atual é `aculta/global`.
-- CSS atual: `css/tokens.css`, `css/base.css`, `css/layout.css` e `css/style.css`, nessa ordem.
+- CSS atual: fundações em `tokens.css`/`base.css`/`layout.css`, componentes em `css/components/` e integrações ainda residuais em `css/style.css`.
 - JavaScript atual: `js/aculta.js`.
 - Fontes web: Inter e Oswald via Google Fonts.
 
@@ -58,7 +58,13 @@ Detalhes: [docs/design-system.md](docs/design-system.md).
 - `css/tokens.css` - paleta, tokens do tema e integração de custom properties Bootstrap.
 - `css/base.css` - base tipográfica e regras globais de elementos.
 - `css/layout.css` - container e geometria estrutural geral.
-- `css/style.css` - componentes e regras especializadas ainda não extraídas.
+- `css/components/header.css` - header e branding textual.
+- `css/components/navigation.css` - navegação principal e progressive enhancement visual.
+- `css/components/breadcrumb.css` - breadcrumb e links editoriais associados.
+- `css/components/content.css` - espaçamento principal, títulos de seção, superfícies e cards.
+- `css/components/buttons.css` - botões/CTAs públicos e estados.
+- `css/components/auth.css` - apresentação das rotas Drupal de login/registro/recuperação.
+- `css/style.css` - footer, integrações Bootstrap/Drupal, institucional, editorial/VVJB e responsividade ainda não extraídos.
 - `js/aculta.js` - progressive enhancement da navegação e do carousel editorial.
 - `templates` - overrides Twig.
 - `docs` - contratos e inventário técnico do tema.

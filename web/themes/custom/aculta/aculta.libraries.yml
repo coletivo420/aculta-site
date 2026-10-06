@@ -5,7 +5,13 @@ global:
       css/tokens.css: {}
       css/base.css: {}
       css/layout.css: {}
+      css/components/header.css: {}
+      css/components/navigation.css: {}
+      css/components/breadcrumb.css: {}
+      css/components/content.css: {}
+      css/components/buttons.css: {}
       css/style.css: {}
+      css/components/auth.css: {}
   js:
     js/aculta.js: {}
   dependencies:

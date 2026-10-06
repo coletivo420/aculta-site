@@ -68,10 +68,17 @@ css/
 ├── tokens.css
 ├── base.css
 ├── layout.css
+├── components/
+│   ├── header.css
+│   ├── navigation.css
+│   ├── breadcrumb.css
+│   ├── content.css
+│   ├── buttons.css
+│   └── auth.css
 └── style.css
 ```
 
-A library global deve preservar esta ordem. `style.css` ainda concentra componentes e regras especializadas e será reduzido gradualmente, sem reordenar a cascade incidentalmente.
+A library global deve preservar a ordem documentada em `aculta.libraries.yml`. `style.css` ainda concentra footer, formulários genéricos, integrações Bootstrap/Drupal, institucional, VVJB e parte da responsividade; ele será reduzido gradualmente, sem reordenar a cascade incidentalmente.
 
 Antes de remover ou mover regra:
 

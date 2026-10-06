@@ -23,6 +23,13 @@ web/themes/custom/aculta/
 │   ├── tokens.css
 │   ├── base.css
 │   ├── layout.css
+│   ├── components/
+│   │   ├── header.css
+│   │   ├── navigation.css
+│   │   ├── breadcrumb.css
+│   │   ├── content.css
+│   │   ├── buttons.css
+│   │   └── auth.css
 │   └── style.css
 ├── js/
 │   └── aculta.js
@@ -54,7 +61,13 @@ web/themes/custom/aculta/
 - `css/tokens.css`;
 - `css/base.css`;
 - `css/layout.css`;
+- `css/components/header.css`;
+- `css/components/navigation.css`;
+- `css/components/breadcrumb.css`;
+- `css/components/content.css`;
+- `css/components/buttons.css`;
 - `css/style.css`;
+- `css/components/auth.css`;
 - `js/aculta.js`;
 - `bootstrap5/global-styling`;
 - `bootstrap5/bootstrap5-js-latest`;
@@ -67,7 +80,7 @@ A redução de assets globais é objetivo posterior. O Commit A não altera carr
 
 Na linha de base auditada, todo o CSS estava concentrado em `css/style.css`, com aproximadamente 1.029 linhas.
 
-Após o Commit B, a ordem global é `tokens.css` → `base.css` → `layout.css` → `style.css`. Os três primeiros arquivos foram extraídos sem alterar declarações nem ordem de cascade; `style.css` permanece com componentes e regras especializadas ainda não extraídas.
+Após o Commit B, as fundações foram separadas em `tokens.css`, `base.css` e `layout.css`. O Commit C inicia a componentização sem reordenar a cascade: `header.css` → `navigation.css` → `breadcrumb.css` → `content.css` → `buttons.css` → `style.css` → `auth.css`, sempre depois das três fundações. `style.css` permanece com os blocos ainda intercalados que exigem uma segunda onda de extração.
 
 O conjunto CSS contém:
 
@@ -112,6 +125,19 @@ O Commit B separa, sem reescrever regras:
 A validação estática do commit reconstrói byte a byte o `style.css` anterior pela concatenação `tokens.css + base.css + layout.css + style.css`. A única mudança adicional de runtime é `aculta.libraries.yml` carregar os quatro arquivos nessa mesma ordem.
 
 Este passo não componentiza header, navegação, formulários, Conta ou editorial; isso fica para o Commit C.
+
+## C — primeira onda de componentes CSS
+
+O Commit C extrai blocos semanticamente contínuos do CSS residual sem reescrever seletores ou declarações:
+
+- `components/header.css`;
+- `components/navigation.css`;
+- `components/breadcrumb.css`;
+- `components/content.css`;
+- `components/buttons.css`;
+- `components/auth.css`.
+
+A concatenação `header + navigation + breadcrumb + content + buttons + style + auth` reconstrói byte a byte o `style.css` anterior ao Commit C. Footer, formulários genéricos, integrações Bootstrap/Drupal, composição institucional e VVJB continuam no `style.css` porque ainda aparecem intercalados; serão movidos apenas quando a separação puder preservar a ordem sem fragmentação artificial.
 
 ## JavaScript
 

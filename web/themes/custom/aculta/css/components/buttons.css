@@ -1,0 +1,83 @@
+/* 10. Public interface buttons use the institutional yellow/red palette. */
+.btn, .button, button.link {
+  --bs-btn-font-family: var(--aculta-font-display);
+  --bs-btn-font-size: 1rem;
+  --bs-btn-font-weight: 600;
+  --bs-btn-focus-shadow-rgb: 104, 148, 39;
+  --aculta-button-bg: var(--aculta-button-primary-bg);
+  --aculta-button-color: var(--aculta-button-primary-text);
+  --bs-btn-padding-x: 1.25rem;
+  --bs-btn-padding-y: 0.625rem;
+  --bs-btn-line-height: 1.4;
+  text-decoration: none;
+}
+.btn-secondary, .btn-dark,
+.btn-warning, .btn-danger, .btn-light { --aculta-button-bg: var(--aculta-yellow); --aculta-button-color: var(--aculta-red); }
+
+.btn-primary, .btn-secondary, .btn-success, .btn-info,
+.btn-warning, .btn-danger, .btn-light, .btn-dark, .button {
+  --bs-btn-color: var(--aculta-button-color);
+  --bs-btn-bg: var(--aculta-button-bg);
+  --bs-btn-border-color: var(--aculta-button-bg);
+  --bs-btn-hover-color: var(--aculta-white);
+  --bs-btn-hover-bg: var(--aculta-green-dark);
+  --bs-btn-hover-border-color: var(--aculta-green-dark);
+  --bs-btn-active-color: var(--aculta-white);
+  --bs-btn-active-bg: var(--aculta-green-dark);
+  --bs-btn-active-border-color: var(--aculta-green-dark);
+  --bs-btn-disabled-color: var(--aculta-button-color);
+  --bs-btn-disabled-bg: var(--aculta-button-bg);
+  --bs-btn-disabled-border-color: var(--aculta-button-bg);
+}
+.btn-warning { --bs-btn-border-color: var(--aculta-control-border); border-inline-start: 3px solid var(--aculta-yellow); }
+.btn-danger { --bs-btn-border-color: var(--aculta-control-border); border-inline-start: 3px solid var(--aculta-red); }
+.btn-light { --bs-btn-border-color: var(--aculta-control-border); }
+
+.btn-outline-primary, .btn-outline-success, .btn-outline-info,
+.btn-outline-secondary, .btn-outline-dark, .btn-outline-light,
+.btn-outline-warning, .btn-outline-danger {
+  --bs-btn-color: var(--aculta-red);
+  --bs-btn-bg: var(--aculta-yellow);
+  --bs-btn-border-color: var(--aculta-yellow);
+  --bs-btn-hover-color: var(--aculta-white);
+  --bs-btn-hover-bg: var(--aculta-green-dark);
+  --bs-btn-hover-border-color: var(--aculta-green-dark);
+  --bs-btn-active-color: var(--aculta-white);
+  --bs-btn-active-bg: var(--aculta-green-dark);
+  --bs-btn-active-border-color: var(--aculta-green-dark);
+  --bs-btn-disabled-color: var(--aculta-red);
+  --bs-btn-disabled-bg: var(--aculta-yellow);
+  --bs-btn-disabled-border-color: var(--aculta-yellow);
+}
+.btn-outline-warning, .btn-outline-danger { --bs-btn-border-color: var(--aculta-yellow); }
+.btn-outline-primary, .btn-outline-success, .btn-outline-info,
+.btn-outline-secondary, .btn-outline-dark, .btn-outline-light,
+.btn-outline-warning, .btn-outline-danger {
+  color: var(--aculta-button-primary-text);
+  background-color: var(--aculta-button-primary-bg);
+  border-color: var(--aculta-button-primary-bg);
+}
+.btn-link, button.link {
+  --bs-btn-color: var(--aculta-link);
+  --bs-btn-hover-color: var(--aculta-green-dark);
+  --bs-btn-active-color: var(--aculta-green-dark);
+  --bs-btn-disabled-color: var(--aculta-green-dark);
+}
+button.link { color: var(--aculta-link); }
+button.link:hover, button.link:focus { color: var(--aculta-green-dark); }
+
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggler, .btn-close, .accordion-button, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .social-auth, .auth-link, [class*="google"])) {
+  color: var(--aculta-red);
+  background-color: var(--aculta-yellow);
+  border-color: var(--aculta-yellow);
+}
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggler, .btn-close, .accordion-button, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .social-auth, .auth-link, [class*="google"])):is(:hover, :active) {
+  color: var(--aculta-white);
+  background-color: var(--aculta-green-dark);
+  border-color: var(--aculta-green-dark);
+}
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggler, .btn-close, .accordion-button, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .social-auth, .auth-link, [class*="google"])):focus-visible {
+  outline: 3px solid var(--aculta-green-dark);
+  outline-offset: 3px;
+}
+
