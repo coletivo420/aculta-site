@@ -66,11 +66,11 @@ Overrides só devem existir quando alteram apresentação necessária. Remoção
 
 ## `views-view-vvjb.html.twig`
 
-**Motivo:** fornece o label referenciado pelo `aria-labelledby` do VVJB 2.0 na View de destaques da home e inclui o template original do módulo.
+**Motivo:** fornece o label referenciado pelo `aria-labelledby` do VVJB 2.0 na View de destaques da home, anexa a library contextual `aculta/editorial-carousel` e inclui o template original do módulo.
 
 **Dados:** View e options do VVJB.
 
-**Preservar:** IDs compatíveis, label visualmente oculto e delegação dos controles ao VVJB.
+**Preservar:** IDs compatíveis, label visualmente oculto, attachment da library apenas para `home_editorial_highlights` e delegação dos controles ao VVJB.
 
 ## `feed-icon.html.twig`
 

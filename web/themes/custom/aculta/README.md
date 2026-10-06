@@ -29,7 +29,7 @@ O tema não é fonte de verdade de autenticação, pagamentos, Commerce, cursos,
 - Bootstrap pertence exclusivamente ao base theme; não embarcar uma segunda cópia.
 - A library global atual é `aculta/global`.
 - CSS atual: fundações em `tokens.css`/`base.css`/`layout.css`, componentes em `css/components/` e integrações ainda residuais em `css/style.css`.
-- JavaScript atual: `js/navigation.js` e `js/editorial-carousel.js`.
+- JavaScript atual: `js/navigation.js` global e `js/editorial-carousel.js` contextual no carrossel editorial da Home.
 - Fontes web: Inter e Oswald via Google Fonts.
 
 ## Design system
@@ -72,7 +72,7 @@ Detalhes: [docs/design-system.md](docs/design-system.md).
 - `css/style.css` - trecho residual ainda misto de footer-layout, formulários, Conta/segurança e participação.
 - `components/editorial-card` - piloto SDC do card de destaque editorial; o presenter Drupal preserva o wrapper/attributes do node.
 - `js/navigation.js` - progressive enhancement da navegação e integração com Bootstrap Collapse.
-- `js/editorial-carousel.js` - integração de foco com o carousel editorial VVJB.
+- `js/editorial-carousel.js` - integração de foco com o carousel editorial VVJB; carregado pela library contextual `aculta/editorial-carousel` apenas na View da Home.
 - `templates` - overrides Twig.
 - `docs` - contratos e inventário técnico do tema.
 
