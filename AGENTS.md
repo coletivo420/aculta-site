@@ -313,6 +313,21 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
 - Não solicitar scopes OAuth que não correspondam a uma feature ativa e aprovada.
 - Produtos Google for Nonprofits pós-aprovação não devem ser tratados como disponíveis antes da ativação real.
 
+## Bootstrap Component Design System
+
+- O tema `aculta` já implementa o **ACULTA Bootstrap Component Design System**.
+- Bootstrap 5 é a infraestrutura estrutural/comportamental; SDC do Drupal Core é
+  o mecanismo preferencial para componentes reutilizáveis.
+- O `aculta_portal` prepara dados, access, cache, URLs e presenters; não move
+  regra de negócio para SDC/Twig.
+- Antes de criar markup/CSS custom do Portal, verificar Bootstrap + SDC já
+  existentes.
+- Não adotar `drupal/bootstrap_components`, UI Suite Bootstrap ou outra suíte
+  concorrente sem nova decisão arquitetural.
+- Não reiniciar a refatoração avançada do tema para adequá-la ao Portal.
+- Consultar `docs/portal/COMPONENT-DESIGN-SYSTEM.md` e
+  `web/themes/custom/aculta/docs/component-design-system.md`.
+
 ## Coordenação Portal, tema e documentação
 
 A evolução do Portal e a refatoração do tema são linhas separadas.

@@ -12,6 +12,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Fontes de verdade](SOURCE-OF-TRUTH.md)
 - [Módulos upstream](UPSTREAM-MODULES.md)
 - [Política AJAX](AJAX.md)
+- [Integração com o Bootstrap Component Design System](COMPONENT-DESIGN-SYSTEM.md)
 - [Fórum](FORUM.md)
 - [Wiki420](WIKI.md)
 - [Revista / Observatório Coletivo 420](MAGAZINE.md)
