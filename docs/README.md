@@ -22,6 +22,10 @@ A documentação normativa da camada de integração fica em
 [`docs/portal`](portal/README.md): arquitetura, fontes de verdade, módulos
 upstream, AJAX, fórum, testes, versionamento e roadmap.
 
+## Integrações externas
+
+- [Google](integrations/GOOGLE.md)
+
 ## Tema aculta
 
 A documentação detalhada da camada de apresentação fica em [`web/themes/custom/aculta/docs`](../web/themes/custom/aculta/docs/), incluindo inventário, design system, componentes, templates, acessibilidade, JavaScript, branding e desenvolvimento.

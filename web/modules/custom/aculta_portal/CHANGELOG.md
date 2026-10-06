@@ -25,4 +25,5 @@ O Portal usa tags `portal-vX.Y.Z`.
 Em preparação.
 
 Objetivo: organizar responsabilidades, fontes de verdade, módulos upstream,
-AJAX, fórum, testes, versionamento e roadmap antes de novas features.
+AJAX, Fórum, Wiki, Revista, Loja, integrações Google, testes, versionamento e
+roadmap antes de novas features.

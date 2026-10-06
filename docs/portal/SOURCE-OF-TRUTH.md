@@ -26,8 +26,11 @@ dos módulos que integra.
 | Busca | índice Search API | Search API + Views | composição/domain | WIKI/FORUM | Não |
 | Favoritos/seguir | Flag entities | Flag | controles/resumos | ACCOUNT/FORUM | Não |
 | Notificação de comentários | Comment Notify | Comment Notify | preferências/links | ACCOUNT/FORUM | Não |
-| Editorial | Nodes/Taxonomy | Core + Views | integração de links | MAGAZINE | Não |
-| Loja | Commerce | Commerce | integração/domain | SHOP | Não |
+| Revista/editorial | Nodes/Taxonomy/Media | Core + Views | integração de links/SEO | MAGAZINE | Não |
+| Loja | Commerce Product/Order/Payment | Commerce | integração/domain/conta | SHOP/ACCOUNT | Não |
+| Analytics | Google Analytics | Google Tag/GA4 | eventos aprovados, sem PII | públicos | Não |
+| Search ownership | Search Console | Google Search Console | sitemap/verificação | públicos | Não |
+| Classroom externo | Google Classroom | Classroom API | adapter futuro; LMS segue canônico | COURSES/ACCOUNT | Não |
 | Host/contexto | Domain entities | Domain suite | purpose/URLs/isolation | todos | Não |
 
 ## Regra de gravação

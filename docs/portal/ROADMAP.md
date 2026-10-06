@@ -15,6 +15,8 @@ Entregas:
 - política upstream;
 - política AJAX;
 - especificação Fórum;
+- contratos Wiki, Revista e Loja;
+- arquitetura de integrações Google;
 - testes;
 - versionamento;
 - roadmap;
@@ -162,6 +164,41 @@ Foco:
 - logs;
 - cron;
 - SQLite/MariaDB portability.
+
+## Trilha paralela — Integrações Google
+
+Esta trilha é de plataforma e não deve ser forçada dentro do SemVer do Portal.
+
+### G0 — Prepared
+
+- OAuth Google por Key/env;
+- documentação;
+- sitemap/canonical;
+- nenhuma credencial versionada.
+
+### G1 — Production Minimum
+
+- Search Console;
+- sitemap;
+- Google Tag/GA4 quando aprovado internamente;
+- consentimento;
+- validação sem PII.
+
+### G2 — Google for Nonprofits
+
+- Workspace;
+- Ad Grants;
+- YouTube;
+- Maps quando houver caso real.
+
+### G3 — Learning Integration
+
+- Google Classroom;
+- scopes mínimos;
+- adapter;
+- Drupal LMS segue fonte de verdade.
+
+Ver [Integrações Google](../integrations/GOOGLE.md).
 
 ## 1.0.0 — Portal Stable
 

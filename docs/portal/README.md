@@ -13,9 +13,13 @@ fontes de verdade funcionais dessas ferramentas.
 - [Módulos upstream](UPSTREAM-MODULES.md)
 - [Política AJAX](AJAX.md)
 - [Fórum](FORUM.md)
+- [Wiki420](WIKI.md)
+- [Revista / Observatório Coletivo 420](MAGAZINE.md)
+- [Loja](SHOP.md)
 - [Testes](TESTING.md)
 - [Versionamento](VERSIONING.md)
 - [Roadmap](ROADMAP.md)
+- [Integrações Google](../integrations/GOOGLE.md)
 
 ## Estado atual
 
