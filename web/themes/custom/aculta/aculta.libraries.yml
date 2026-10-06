@@ -13,7 +13,8 @@ global:
       css/style.css: {}
       css/components/auth.css: {}
   js:
-    js/aculta.js: {}
+    js/navigation.js: {}
+    js/editorial-carousel.js: {}
   dependencies:
     - bootstrap5/global-styling
     - bootstrap5/bootstrap5-js-latest
