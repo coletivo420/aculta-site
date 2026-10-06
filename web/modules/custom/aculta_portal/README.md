@@ -40,13 +40,20 @@ módulos funcionais -> aculta_portal -> tema aculta
 ## Subsistemas
 
 ### Conta
-User, Profile, Address e Social Auth continuam fontes de verdade. O Portal fornece a experiência integrada.
+User, Profile, Address e Social Auth continuam fontes de verdade. O Portal fornece a experiência integrada. O dashboard mostra um resumo dos cursos do usuário e aponta para `/meus-cursos`.
 
 ### Apoio
 Commerce é fonte financeira. Donation Flow fornece o fluxo. O Portal não mantém ledger paralelo.
 
 ### Cursos
 Drupal LMS e Group são fontes de verdade de cursos, matrícula e progresso. O Portal apenas integra e apresenta.
+
+A página privada ACCOUNT `/meus-cursos` lista somente as matrículas Group do
+usuário atual e consulta seu status no Drupal LMS. O acesso de visualização do
+curso é validado antes de carregar metadados; descrições passam pela Field API
+e pelo formato de texto configurado. Cursos aguardando avaliação não exibem CTA
+para iniciar ou continuar. A Conta não mantém dados paralelos de matrícula ou
+progresso.
 
 ### Wiki/editorial
 Nodes, Taxonomy e Views mantêm conteúdo. Domain/Domain Source controlam contexto.

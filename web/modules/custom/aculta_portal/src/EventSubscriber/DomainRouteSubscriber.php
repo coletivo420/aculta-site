@@ -84,7 +84,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
 
-    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.support_my'] as $name) {
+    foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.support_my', 'aculta_portal.account_courses'] as $name) {
       if ($route = $collection->get($name)) {
         $route->setOption('_aculta_domain_purpose', 'account');
       }

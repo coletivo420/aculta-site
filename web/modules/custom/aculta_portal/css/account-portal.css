@@ -160,6 +160,26 @@
 .aculta-account-data__content .form-actions { margin-block-start: 1.25rem; }
 .aculta-account-data__content [aria-busy="true"] { cursor: progress; }
 
+.aculta-account__courses-summary,
+.aculta-account-course,
+.aculta-account-courses__empty {
+  padding: 1rem;
+  margin-block: 1rem;
+  background: #fbf4e8;
+  border-inline-start: 3px solid #689427;
+  border-radius: 0.1875rem;
+}
+
+.aculta-account__courses-summary h3,
+.aculta-account-course h2 {
+  margin-block: 0 0.5rem;
+  color: #0c3c29;
+  font: 600 1.375rem/1.2 Oswald, sans-serif;
+}
+
+.aculta-account-course__status { font-weight: 700; }
+.aculta-account-course .button { margin-block-start: 0.5rem; }
+
 .aculta-account__loading {
   width: fit-content;
   padding: 0.5rem 0.75rem;

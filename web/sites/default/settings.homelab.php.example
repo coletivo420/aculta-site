@@ -38,3 +38,8 @@ if ($turnstile_keys === false || trim($turnstile_keys) === '') {
  */
 $settings['file_chmod_directory'] = 02770;
 $settings['file_chmod_file'] = 0660;
+
+// Core's default PHP storage explicitly chmods compiled Twig directories to
+// 0777, ignoring these file-system settings. Override only the Twig bin in
+// Homelab so cache creation and cleanup keep directories at 02770.
+$settings['php_storage']['twig']['class'] = \Drupal\aculta_portal\PhpStorage\RestrictedTwigStorage::class;

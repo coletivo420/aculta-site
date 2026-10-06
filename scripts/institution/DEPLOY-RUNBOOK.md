@@ -79,19 +79,23 @@ before any approved content provisioning or migration.
 2. Install locked dependencies with Composer; do not run a global update.
 3. Run database updates and import all configuration from the repository
    `config/sync` directory using the regular full import.
-4. Provision/migrate the reviewed institutional block content. The Store
+4. Only after dependencies and configuration are in place, run the reviewed,
+   idempotent LMS pilot provisioner or an explicitly approved content migration.
+   Course, lesson, activity, enrollment, and progress data are content, not
+   configuration.
+5. Provision/migrate the reviewed institutional block content. The Store
    script depends on the canonical institution block with UUID
    `80f3fc02-39b5-4386-8a32-78301b635007`.
-5. Run the idempotent Store provisioner:
+6. Run the idempotent Store provisioner:
 
    ```powershell
    php .\vendor\drush\drush\drush.php php:script scripts/institution/provision-commerce-store.php
    ```
 
-6. Confirm there is exactly one active default Store in BRL, one disabled
+7. Confirm there is exactly one active default Store in BRL, one disabled
    Mercado Pago gateway, no access token in active/exported config, zero
    payments, and no unintended orders.
-7. Confirm `drush config:status` reports no differences. Do not enable the
+8. Confirm `drush config:status` reports no differences. Do not enable the
    gateway or open financial support during this deployment.
 
 The Store provisioner validates the current public legal name, CNPJ, public
