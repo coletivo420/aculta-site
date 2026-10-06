@@ -144,3 +144,7 @@ A evolução de `style.css` deve centralizar conceitos realmente reutilizados, c
 - estados de botão.
 
 Não criar centenas de variáveis apenas para aumentar abstração. Um token deve representar um conceito estável e reutilizado.
+## Autenticação
+
+As rotas Drupal de login, registro e recuperação reutilizam exclusivamente os tokens oficiais de cor e tipografia do tema. Não introduzir literais duplicados em `css/components/auth.css`; mudanças visuais devem ocorrer nos tokens ou em regras semânticas explicitamente justificadas.
+
