@@ -2,39 +2,77 @@
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\aculta_portal\AccountShellBuilder;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Path\CurrentPathStack;
+use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Drupal hooks for the ACULTA account portal.
  */
 final class PortalHooks {
 
+  public function __construct(
+    #[Autowire(service: 'current_route_match')]
+    private readonly CurrentRouteMatch $routeMatch,
+    #[Autowire(service: 'current_user')]
+    private readonly AccountProxyInterface $currentUser,
+    #[Autowire(service: 'path.current')]
+    private readonly CurrentPathStack $currentPath,
+    #[Autowire(service: 'request_stack')]
+    private readonly RequestStack $requestStack,
+    #[Autowire(service: 'string_translation')]
+    private readonly TranslationInterface $translation,
+    #[Autowire(service: 'module_handler')]
+    private readonly ModuleHandlerInterface $moduleHandler,
+    #[Autowire(service: 'plugin.manager.block')]
+    private readonly BlockManagerInterface $blockManager,
+    #[Autowire(service: 'entity_type.manager')]
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'config.factory')]
+    private readonly ConfigFactoryInterface $configFactory,
+    #[Autowire(service: 'extension.list.module')]
+    private readonly ModuleExtensionList $moduleList,
+    #[Autowire(service: 'aculta_portal.domain_purpose')]
+    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.account_shell_builder')]
+    private readonly AccountShellBuilder $accountShellBuilder,
+  ) {}
+
+
   /**
    * Implements hook_preprocess_page().
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
-    $route_match = \Drupal::routeMatch();
-    $account = \Drupal::currentUser();
-    $path = \Drupal::service('path.current')->getPath();
-    if ($account->isAuthenticated() && !$account->hasPermission('administer users')
+    $account = $this->currentUser;
+    $path = $this->currentPath->getPath();
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request !== NULL
+      && $account->isAuthenticated()
+      && !$account->hasPermission('administer users')
       && preg_match('#^/user/([1-9][0-9]*)/edit$#D', $path, $matches)) {
       $target_uid = (int) $matches[1];
       if ($target_uid === (int) $account->id()
-        && !\Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest(\Drupal::request(), $target_uid, (int) $account->id())) {
+        && !\Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest($request, $target_uid, (int) $account->id())) {
         $variables['aculta_account_edit_blocked'] = TRUE;
         $variables['aculta_account_security_url'] = Url::fromRoute('aculta_portal.security')->toString();
       }
     }
 
-    $builder = new \Drupal\aculta_portal\AccountShellBuilder(
-      $route_match,
-      \Drupal::service('plugin.manager.menu.link'),
-      \Drupal::translation(),
-    );
-    $builder->build($variables);
+    $this->accountShellBuilder->build($variables);
   }
 
   /**
@@ -54,7 +92,7 @@ final class PortalHooks {
     if (empty($variables['items']) || !is_array($variables['items'])) {
       return;
     }
-    $resolver = \Drupal::service('aculta_portal.domain_purpose');
+    $resolver = $this->domainPurposeManager;
     $this->rewriteDomainMenuItems($variables['items'], $resolver);
     if (isset($variables['#cache']) && is_array($variables['#cache'])) {
       $variables['#cache']['contexts'] = array_values(array_unique(array_merge(
@@ -70,14 +108,14 @@ final class PortalHooks {
     if (!isset($variables['links']) || !is_array($variables['links'])) {
       return;
     }
-    $resolver = \Drupal::service('aculta_portal.domain_purpose');
+    $resolver = $this->domainPurposeManager;
     foreach ($variables['links'] as &$link) {
       $url = $link['url'] ?? NULL;
       if (!$url instanceof Url || !$url->isRouted() || $url->getRouteName() !== 'entity.taxonomy_term.canonical') {
         continue;
       }
       $term_id = $url->getRouteParameters()['taxonomy_term'] ?? NULL;
-      $term = is_numeric($term_id) ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load((int) $term_id) : NULL;
+      $term = is_numeric($term_id) ? $this->entityTypeManager->getStorage('taxonomy_term')->load((int) $term_id) : NULL;
       if ($term && in_array($term->bundle(), ['editorial_author', 'editorial_category'], TRUE)) {
         $link['url'] = $resolver->routeUrl('magazine', 'entity.taxonomy_term.canonical', ['taxonomy_term' => $term->id()]) ?? $url;
       }
@@ -104,7 +142,7 @@ final class PortalHooks {
           $node_parameter = $parameters['node'] ?? NULL;
           $node = $node_parameter instanceof \Drupal\node\NodeInterface
             ? $node_parameter
-            : (is_numeric($node_parameter) ? \Drupal::entityTypeManager()->getStorage('node')->load((int) $node_parameter) : NULL);
+            : (is_numeric($node_parameter) ? $this->entityTypeManager->getStorage('node')->load((int) $node_parameter) : NULL);
           if ($node && $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
             $purpose = $resolver->getPurposeForDomainId((string) $node->get('field_domain_source')->target_id);
             if ($purpose !== NULL) {
@@ -134,7 +172,7 @@ final class PortalHooks {
    */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
-    $route = \Drupal::routeMatch()->getRouteName();
+    $route = $this->routeMatch->getRouteName();
     if (in_array($route, [
       'aculta_portal.dashboard',
       'aculta_portal.my_data',
@@ -154,11 +192,11 @@ final class PortalHooks {
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
     if ($form_id === 'user_login_form') {
-      $form['name']['#title'] = \Drupal::translation()->translate('Nome de usuário ou e-mail');
-      $form['name']['#description'] = \Drupal::translation()->translate('Informe seu e-mail ou nome de usuário.');
+      $form['name']['#title'] = $this->translation->translate('Nome de usuário ou e-mail');
+      $form['name']['#description'] = $this->translation->translate('Informe seu e-mail ou nome de usuário.');
       $form['password_reset_link'] = [
         '#type' => 'link',
-        '#title' => \Drupal::translation()->translate('Esqueci minha senha'),
+        '#title' => $this->translation->translate('Esqueci minha senha'),
         '#url' => Url::fromRoute('user.pass'),
         '#attributes' => ['class' => ['aculta-login__reset-link']],
         '#weight' => 10,
@@ -166,10 +204,10 @@ final class PortalHooks {
       $form['registration_notice'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-login__registration']],
-        'text' => ['#plain_text' => \Drupal::translation()->translate('Ainda não tem uma conta?')],
+        'text' => ['#plain_text' => $this->translation->translate('Ainda não tem uma conta?')],
         'link' => [
           '#type' => 'link',
-          '#title' => \Drupal::translation()->translate('Ver informações sobre o cadastro'),
+          '#title' => $this->translation->translate('Ver informações sobre o cadastro'),
           '#url' => Url::fromRoute('user.register'),
           '#attributes' => ['class' => ['aculta-button', 'aculta-button--secondary']],
         ],
@@ -177,19 +215,19 @@ final class PortalHooks {
       ];
     }
     if ($form_id === 'user_login_form'
-      && \Drupal::routeMatch()->getRouteName() === 'user.login'
-      && \Drupal::service('path.current')->getPath() === '/entrar'
-      && \Drupal::moduleHandler()->moduleExists('social_auth')
+      && $this->routeMatch->getRouteName() === 'user.login'
+      && $this->currentPath->getPath() === '/entrar'
+      && $this->moduleHandler->moduleExists('social_auth')
       && $this->googleLoginConfigured()) {
       $form['social_auth_divider'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-login__divider']],
         'line_before' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['aria-hidden' => 'true']],
-        'label' => ['#plain_text' => \Drupal::translation()->translate('ou')],
+        'label' => ['#plain_text' => $this->translation->translate('ou')],
         'line_after' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['aria-hidden' => 'true']],
         '#weight' => 20,
       ];
-      $form['social_auth'] = \Drupal::service('plugin.manager.block')
+      $form['social_auth'] = $this->blockManager
         ->createInstance('social_auth_login', [])
         ->build();
       $form['social_auth']['#weight'] = 21;
@@ -204,7 +242,7 @@ final class PortalHooks {
       return;
     }
 
-    $path = \Drupal::service('path.current')->getPath();
+    $path = $this->currentPath->getPath();
     if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'participante') {
       if ($path === '/dados') {
         // Keep this tab limited to personal basics, even if older active
@@ -238,7 +276,7 @@ final class PortalHooks {
 
     if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'customer'
       && $path === '/dados/endereco'
-      && (int) $entity->getOwnerId() === (int) \Drupal::currentUser()->id()) {
+      && (int) $entity->getOwnerId() === (int) $this->currentUser->id()) {
       // The Portal and Commerce edit the same customer Profile Address.
       $allowed = ['address', 'actions', 'form_build_id', 'form_token', 'form_id'];
       foreach (array_keys($form) as $key) {
@@ -249,7 +287,7 @@ final class PortalHooks {
       if (isset($form['address']['widget'][0]['address'])) {
         $address_element = &$form['address']['widget'][0]['address'];
         $address_element['#default_value']['country_code'] ??= 'BR';
-        $participant = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser(\Drupal::currentUser(), 'participante');
+        $participant = $this->entityTypeManager->getStorage('profile')->loadByUser($this->currentUser, 'participante');
         if ($participant) {
           $address_element['#default_value']['given_name'] ??= $participant->get('field_first_name')->value ?? '';
           $address_element['#default_value']['family_name'] ??= $participant->get('field_last_name')->value ?? '';
@@ -265,7 +303,7 @@ final class PortalHooks {
           'sorting_code' => 'Código postal',
         ] as $key => $label) {
           if (isset($address_element[$key])) {
-            $address_element[$key]['#title'] = \Drupal::translation()->translate($label);
+            $address_element[$key]['#title'] = $this->translation->translate($label);
           }
         }
         foreach (['organization', 'given_name', 'additional_name', 'family_name'] as $private_or_duplicate) {
@@ -276,7 +314,7 @@ final class PortalHooks {
         unset($address_element);
       }
       if (isset($form['actions']['submit'])) {
-        $form['actions']['submit']['#value'] = \Drupal::translation()->translate('Salvar endereço');
+        $form['actions']['submit']['#value'] = $this->translation->translate('Salvar endereço');
         $form['actions']['submit']['#submit'][] = 'aculta_portal_address_redirect';
       }
       return;
@@ -291,7 +329,7 @@ final class PortalHooks {
         }
       }
       if (isset($form['actions']['submit'])) {
-        $form['actions']['submit']['#value'] = \Drupal::translation()->translate('Salvar foto do perfil');
+        $form['actions']['submit']['#value'] = $this->translation->translate('Salvar foto do perfil');
         $form['actions']['submit']['#submit'][] = 'aculta_portal_account_photo_redirect';
       }
     }
@@ -302,8 +340,8 @@ final class PortalHooks {
    */
   #[Hook('form_user_login_form_alter')]
   public function userLoginFormAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
-    $form['name']['#title'] = \Drupal::translation()->translate('Nome de usuário ou e-mail');
-    $form['name']['#description'] = \Drupal::translation()->translate('Informe seu e-mail ou nome de usuário.');
+    $form['name']['#title'] = $this->translation->translate('Nome de usuário ou e-mail');
+    $form['name']['#description'] = $this->translation->translate('Informe seu e-mail ou nome de usuário.');
   }
 
   /**
@@ -332,7 +370,7 @@ final class PortalHooks {
           'content' => NULL,
         ],
         'template' => 'aculta-portal-shell',
-        'path' => \Drupal::service('extension.list.module')->getPath('aculta_portal') . '/templates',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
       'aculta_portal_photo_editor' => [
         'variables' => [
@@ -341,13 +379,13 @@ final class PortalHooks {
           'display_name' => NULL,
         ],
         'template' => 'aculta-portal-photo-editor',
-        'path' => \Drupal::service('extension.list.module')->getPath('aculta_portal') . '/templates',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
     ];
   }
 
   private function googleLoginConfigured(): bool {
-    $config = \Drupal::config('social_auth_google.settings');
+    $config = $this->configFactory->get('social_auth_google.settings');
     return !empty($config->get('client_id')) && !empty($config->get('client_secret'));
   }
 
@@ -358,10 +396,10 @@ final class PortalHooks {
    */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array $context): void {
-    $route = \Drupal::routeMatch()->getRouteName();
+    $route = $this->routeMatch->getRouteName();
     if ($route === 'aculta_portal.support_form') {
       $description = 'Apoie os projetos culturais, ações de formação, comunicação, cuidado e participação social da Associação Cultural Antiproibicionista.';
-      $supportUrl = \Drupal::service('aculta_portal.domain_purpose')->routeUrl('support', '<front>');
+      $supportUrl = $this->domainPurposeManager->routeUrl('support', '<front>');
       $supportUrl = $supportUrl ? $supportUrl->toString() : '';
       $tags = array_replace($tags, [
         'title' => 'Apoie a Associação | Associação Cultural Antiproibicionista',
