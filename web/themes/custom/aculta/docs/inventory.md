@@ -23,6 +23,7 @@ web/themes/custom/aculta/
 │   └── editorial-card/
 │       ├── editorial-card.component.yml
 │       ├── editorial-card.twig
+│       ├── editorial-card.css
 │       └── README.md
 ├── css/
 │   ├── tokens.css
@@ -270,6 +271,21 @@ A revisão consolidada A–G4 corrigiu dois contratos antigos que não tinham si
 - `node--editorial-highlight.html.twig` voltou a renderizar `title_prefix` e `title_suffix`, preservando saída adicional de módulos/contextual links como esperado em templates de node.
 
 A varredura de custom properties após G4 permanece sem usos `--aculta-*` indefinidos.
+
+## H1–H2 — ACULTA Bootstrap Component Design System
+
+H1 formaliza o tema como Component Design System em camadas: Foundations, Primitives, Components, Patterns e Shell, mantendo Bootstrap5 como infraestrutura.
+
+H2 promove `aculta:editorial-card` a primeiro SDC `stable`:
+
+- adiciona `editorial-card.css`, auto-carregado pelo SDC;
+- remove do CSS global apenas seletores exclusivos do card;
+- mantém `.aculta-category` compartilhado globalmente;
+- mantém layout/controles/reduced-motion do VVJB em `css/components/editorial-carousel.css`;
+- não adiciona JavaScript ao card;
+- não altera o contrato de slots do componente.
+
+O arquivo `aculta.libraries.yml` não precisa registrar `editorial-card.css`; o Core gera a library do SDC automaticamente.
 
 ## Configuração do tema
 

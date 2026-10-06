@@ -56,14 +56,12 @@
 .card .card-text:last-child { margin-bottom: 0; }
 .card,
 .aculta-project,
-.aculta-editorial-card,
 .aculta-areas > section,
 .aculta-editorial-list .views-row {
   background-color: var(--aculta-white);
 }
 .card,
 .aculta-project,
-.aculta-editorial-card,
 .aculta-editorial-list .views-row {
   border: 1px solid var(--aculta-border);
   border-top: 3px solid var(--aculta-yellow);

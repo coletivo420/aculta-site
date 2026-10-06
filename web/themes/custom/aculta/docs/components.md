@@ -1,6 +1,20 @@
 # Componentes visuais
 
-Este catálogo descreve componentes existentes ou reconhecidos no tema. Não é autorização para criar storage, regras de negócio ou novos subsistemas no tema.
+Este catálogo pertence ao **ACULTA Bootstrap Component Design System**. A arquitetura canônica está em [component-design-system.md](component-design-system.md).
+
+Ele descreve componentes existentes ou reconhecidos no tema. Não é autorização para criar storage, regras de negócio ou novos subsistemas no tema.
+
+## Taxonomia
+
+| Camada | Exemplos/estado atual |
+| --- | --- |
+| Foundations | `tokens.css`, `base.css`, `layout.css`, integração Bootstrap |
+| Primitives | button/category/heading/media como candidatos seletivos |
+| Components | `aculta:editorial-card`, project card, breadcrumb; course/product cards planejados |
+| Patterns | hero atual; carousel/rail, content-grid e content-section planejados |
+| Shell | header, navigation, utility/account, footer |
+
+A classificação é de responsabilidade, não obrigação de converter cada item em SDC.
 
 ## Contrato geral
 
@@ -25,7 +39,8 @@ Todo componente visual deve:
 | `components/footer.css` | base visual do footer |
 | `drupal-bootstrap.css` | integração visual com componentes Drupal/Bootstrap |
 | `components/institutional.css` | composição institucional, projetos e conteúdo relacionado |
-| `components/editorial-carousel.css` | destaque editorial e integração visual VVJB |
+| `components/editorial-carousel.css` | pattern/engine visual VVJB; sem styling exclusivo do card |
+| `components/editorial-card/editorial-card.css` | CSS exclusivo do SDC `aculta:editorial-card`, auto-carregado |
 | `responsive.css` | ajustes responsivos globais remanescentes |
 | `components/auth.css` | login, registro e recuperação de senha Drupal |
 | `style.css` | trecho residual ainda intercalado de footer-layout, formulários, Conta/segurança e participação |
@@ -67,11 +82,11 @@ Exemplos:
 
 ## Single Directory Components
 
-Drupal 11 possui SDC no Core. A adoção continua seletiva.
+Drupal 11 possui SDC estável no Core. A adoção continua seletiva e segue o contrato presenter -> SDC documentado em `component-design-system.md`.
 
-### Piloto: `aculta:editorial-card`
+### Componente-modelo: `aculta:editorial-card`
 
-O Commit F cria `components/editorial-card` como primeiro SDC porque o destaque editorial já possui markup visual autocontido e entradas renderáveis claras.
+O Commit F criou o piloto; o H2 o promove a primeiro SDC `stable` do design system, com markup, metadata e CSS exclusivo co-localizados.
 
 Contrato:
 
@@ -79,11 +94,12 @@ Contrato:
 - sem props funcionais;
 - sem estado;
 - sem consulta de dados;
-- sem CSS/JS próprios neste piloto.
+- CSS exclusivo em `components/editorial-card/editorial-card.css`;
+- sem JavaScript próprio.
 
 O presenter `node--editorial-highlight.html.twig` mantém o `<article>` e os attributes Drupal, e chama o componente com `include('aculta:editorial-card', ..., with_context = false)`.
 
-O CSS permanece na cascade atual para que o piloto teste SDC sem combinar componentização Twig com mudança de carregamento de assets.
+O Drupal carrega `editorial-card.css` automaticamente quando o SDC é renderizado. Tokens e `.aculta-category` permanecem compartilhados; VVJB continua dono do carousel.
 
 ### Critério para próximos SDCs
 

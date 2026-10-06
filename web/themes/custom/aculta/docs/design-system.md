@@ -1,6 +1,20 @@
 # Design system
 
-O design system do tema deve representar a identidade já aprovada. Refatoração não autoriza redesign.
+O tema `aculta` é o **ACULTA Bootstrap Component Design System**. Ele representa a identidade aprovada e compõe Bootstrap5, Drupal e contrib sem assumir suas regras de negócio.
+
+A arquitetura completa, camadas, contratos presenter/SDC e roadmap H estão em [component-design-system.md](component-design-system.md).
+
+Evolução do design system não autoriza redesign implícito.
+
+## Camadas do sistema
+
+- **Foundations:** tokens, tipografia, spacing, cor, motion e acessibilidade transversal.
+- **Primitives:** unidades visuais pequenas e reutilizáveis quando houver ganho concreto.
+- **Components:** unidades compostas como cards, breadcrumb e pagination.
+- **Patterns:** composições como hero, grid, section e carousel/rail.
+- **Shell:** header, navigation, account utility e footer.
+
+Bootstrap permanece infraestrutura. ACULTA define identidade e contratos visuais.
 
 ## Paleta oficial
 
