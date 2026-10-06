@@ -2,7 +2,7 @@
 
 Piloto de Single Directory Component do tema `aculta`.
 
-O componente contém somente o markup interno reutilizável do destaque editorial. O template Drupal `node--editorial-highlight.html.twig` continua responsável pelo elemento `<article>`, pelos attributes do node e pela integração com o sistema de temas.
+O componente contém somente o markup interno reutilizável do destaque editorial. O template Drupal `node--editorial-highlight.html.twig` continua responsável pelo elemento `<article>`, pelos attributes do node, por `title_prefix`/`title_suffix` e pela integração com o sistema de temas.
 
 ## Contrato
 
