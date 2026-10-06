@@ -1,0 +1,160 @@
+# Inventário técnico do tema aculta
+
+Este documento registra o estado encontrado no início da refatoração behavior-preserving. Ele descreve o código atual; itens de dívida técnica listados aqui não são alterações já realizadas.
+
+Linha de base auditada: `main` em `dbc114d91854f65f75b1b79af47c6ca48ab26426` (2026-10-06).
+
+## Mapa de arquivos
+
+```text
+web/themes/custom/aculta/
+├── aculta.info.yml
+├── aculta.libraries.yml
+├── aculta.theme
+├── README.md
+├── assets/
+│   └── branding/aculta/
+│       ├── source/
+│       └── web/
+├── config/
+│   ├── install/aculta.settings.yml
+│   └── schema/aculta.schema.yml
+├── css/
+│   └── style.css
+├── js/
+│   └── aculta.js
+└── templates/
+    ├── block--block-content--type--aculta-institution.html.twig
+    ├── block--system-branding-block.html.twig
+    ├── feed-icon.html.twig
+    ├── node--editorial-highlight.html.twig
+    ├── node--project--teaser.html.twig
+    ├── page.html.twig
+    ├── views-view-vvjb.html.twig
+    ├── form/input.html.twig
+    └── navigation/breadcrumb.html.twig
+```
+
+## Theme metadata e libraries
+
+`aculta.info.yml`:
+
+- exige Drupal `^11`;
+- usa `bootstrap5` como base theme;
+- anexa `aculta/global`;
+- declara header, primary_menu, highlighted, content, sidebar e footer.
+
+`aculta.libraries.yml` possui uma única library global com:
+
+- Inter 400/500/600/700;
+- Oswald 400/500/600/700;
+- `css/style.css`;
+- `js/aculta.js`;
+- `bootstrap5/global-styling`;
+- `bootstrap5/bootstrap5-js-latest`;
+- `core/drupal`;
+- `core/once`.
+
+A redução de assets globais é objetivo posterior. O Commit A não altera carregamento.
+
+## CSS
+
+`css/style.css` possui aproximadamente 1.029 linhas na linha de base auditada.
+
+O arquivo já contém:
+
+- paleta e custom properties `--aculta-*`;
+- integração com variáveis Bootstrap;
+- base e tipografia;
+- layout/container;
+- header e navegação;
+- botões e formulários;
+- componentes editoriais e institucionais;
+- footer;
+- Conta e telas Core de autenticação;
+- integração visual com VVJB;
+- media queries e `prefers-reduced-motion`.
+
+Observações auditadas para commits posteriores:
+
+- o arquivo concentra responsabilidades demais;
+- há usos de `!important`, principalmente em utilities Bootstrap;
+- o bloco recente de autenticação repete cores literais já existentes como tokens;
+- há breakpoints equivalentes escritos com valores diferentes;
+- `var(--aculta-dark-green)` é usado no footer, mas o token definido é `--aculta-green-dark`.
+
+O último item é um bug CSS real, porém não é corrigido neste commit documental.
+
+## JavaScript
+
+`js/aculta.js` possui cerca de 70 linhas e dois behaviors:
+
+1. `Drupal.behaviors.acultaNavigation`
+   - usa o Collapse do Bootstrap;
+   - habilita Escape no menu mobile;
+   - devolve foco ao toggle;
+   - marca a navegação como pronta apenas quando Bootstrap e elementos necessários existem.
+
+2. `Drupal.behaviors.acultaEditorialFocus`
+   - integra foco com a API pública do VVJB;
+   - pausa o carousel quando o foco entra;
+   - não cria timer próprio;
+   - trata `AbortError` de ViewTransition localmente.
+
+Estado auditado:
+
+- usa `once()`;
+- não introduz jQuery;
+- não usa `setTimeout` ou `setInterval`;
+- não reimplementa Bootstrap ou VVJB.
+
+A eventual separação em arquivos deve preservar esses contratos.
+
+## PHP do tema
+
+`aculta.theme` contém preprocess hooks de apresentação para:
+
+- VVJB;
+- fields editoriais;
+- label do login;
+- page/header block routing;
+- block institucional/branding;
+- HTML/head title fallback;
+- breadcrumb.
+
+A auditoria identificou chamadas estáticas a serviços Drupal. Não serão removidas cosmeticamente: cada mudança deve melhorar uma fronteira real.
+
+### Fronteira breadcrumb
+
+O Portal já registra `AcultaBreadcrumbBuilder` e possui regras de purpose, cache contexts e hierarquia. O preprocess de breadcrumb do tema ainda conhece `aculta_portal.domain_purpose` e repete parte dessa decisão.
+
+Essa duplicação é candidata a um commit posterior de cleanup tema/Portal. O Commit A apenas a documenta.
+
+## Configuração do tema
+
+`config/install/aculta.settings.yml` contém defaults herdados do Bootstrap5.
+
+`config/schema/aculta.schema.yml` declara, além dos settings Bootstrap, referências de apresentação para:
+
+- página de transparência;
+- página inicial institucional;
+- UUID do bloco institucional.
+
+Esses settings não transformam o tema em fonte de verdade dos dados referenciados.
+
+## Próximas fronteiras
+
+A refatoração deve preservar:
+
+- identidade visual;
+- URLs;
+- Domain purposes e canonical;
+- Commerce;
+- LMS/Group;
+- Wiki;
+- Conta/autenticação;
+- sessão/logout;
+- Turnstile;
+- schemas e dados.
+
+O objetivo é modularizar apresentação, não redesenhar aplicação.

@@ -14,7 +14,11 @@
 - [ADR-003 - Sessão compartilhada](decisions/ADR-003-shared-session.md)
 - [ADR-004 - SQLite no desenvolvimento](decisions/ADR-004-sqlite-development.md)
 - [ADR-005 - Drupal LMS como fonte de verdade](decisions/ADR-005-lms-integration.md)
-- [ADR-006 - Nginx no Homelab e Apache em produção](decisions/ADR-006-web-servers.md)
+- [ADR-006 - Apache nos ambientes web](decisions/ADR-006-web-servers.md)
+
+## Tema aculta
+
+A documentação detalhada da camada de apresentação fica em [`web/themes/custom/aculta/docs`](../web/themes/custom/aculta/docs/), incluindo inventário, design system, componentes, templates, acessibilidade, JavaScript, branding e desenvolvimento.
 
 ## Referências estudadas
 
