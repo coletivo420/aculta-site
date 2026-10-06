@@ -1,69 +1,61 @@
 # ACULTA Portal
 
-`aculta_portal` é a camada de integração da plataforma Drupal da Associação Cultural Antiproibicionista.
+`aculta_portal` é a camada de integração e customização da plataforma Drupal
+da Associação Cultural Antiproibicionista.
 
-> O Portal organiza, apresenta e conecta capacidades Drupal sem substituir suas fontes de dados e regras de negócio.
+> O Portal organiza, apresenta e conecta capacidades Drupal sem substituir suas
+> fontes de dados e regras de negócio.
 
-## Integra
+## Papel
 
-Domain, Drupal User, Profile/Address, Social Auth, Image/Crop, Commerce, Donation Flow, Mercado Pago via Commerce, Drupal LMS/Group, Wiki420, conteúdo editorial, canonical/metatag e shell da Conta.
+O Portal integra a experiência de:
 
-## Não é
+- Conta/User;
+- Profile/Address/CEP;
+- Social Auth;
+- apoio/Commerce;
+- cursos/LMS/Group;
+- Wiki420;
+- Fórum e comentários, quando a versão correspondente for implementada;
+- participação do usuário;
+- administração consolidada;
+- Domain purposes.
 
-Não é sistema próprio de autenticação, pagamento, LMS, matrícula, progresso, CMS ou tema visual.
+Não é sistema próprio de autenticação, endereço, pagamento, LMS, matrícula,
+progresso, Wiki, fórum ou comentários.
 
 ## Arquitetura
 
 ```text
-módulos funcionais -> aculta_portal -> tema aculta
+Core + módulos contrib -> aculta_portal -> tema aculta
 ```
 
-## Diretórios
-
-- `src/Controller` - controllers de integração.
-- `src/Domain` - purposes, URLs e contexto.
-- `src/EventSubscriber` - integração de request/rotas/eventos.
-- `src/Commerce` - glue de Commerce.
-- `src/Support` - apoio institucional.
-- `src/Plugin` - plugins/conditions/metatag.
-- `templates`, `css`, `js` - apresentação específica do Portal.
+O tema é apresentação. O Portal é integração. Os módulos funcionais continuam
+fontes de verdade.
 
 ## Contratos
 
-- trabalhar com Domain purpose, não hostname;
-- preferir DI, Entity API e serviços públicos dos módulos;
+- trabalhar com Domain purpose, não hostname hardcoded;
+- preferir DI, Entity API, Views e serviços públicos;
 - não consultar tabelas contrib diretamente quando houver API;
-- dados privados devem variar por usuário e não usar cache compartilhado;
+- não criar storage paralelo;
+- respeitar entity access antes de expor metadata;
+- dados privados variam por usuário e não usam cache compartilhado;
 - segredos ficam fora de Configuration Sync e Git;
-- toda nova feature documenta sua fonte de verdade.
+- AJAX usa preferencialmente APIs Drupal;
+- toda feature identifica fonte de verdade, access, cache, Domain e testes.
 
 ### Breadcrumb público
 
 `AcultaBreadcrumbBuilder` é a fonte de verdade para purpose público, rotas ocultas, raiz por domínio, hierarquia, cache metadata e resolução segura do título atual. O tema `aculta` não replica essa política: consome os links Drupal e `currentTitle()` apenas para renderização.
 
-## Subsistemas
+## Documentação normativa
 
-### Conta
-User, Profile, Address e Social Auth continuam fontes de verdade. O Portal fornece a experiência integrada. O dashboard mostra um resumo dos cursos do usuário e aponta para `/meus-cursos`.
+Consultar [docs/portal](../../../../docs/portal/README.md).
 
-### Apoio
-Commerce é fonte financeira. Donation Flow fornece o fluxo. O Portal não mantém ledger paralelo.
+O roadmap e decisões de arquitetura vivem lá. Este README serve como entrada
+rápida para quem está no diretório do módulo.
 
-### Cursos
-Drupal LMS e Group são fontes de verdade de cursos, matrícula e progresso. O Portal apenas integra e apresenta.
+## Changelog
 
-A página privada ACCOUNT `/meus-cursos` lista somente as matrículas Group do
-usuário atual e consulta seu status no Drupal LMS. O acesso de visualização do
-curso é validado antes de carregar metadados; descrições passam pela Field API
-e pelo formato de texto configurado. Cursos aguardando avaliação não exibem CTA
-para iniciar ou continuar. A Conta não mantém dados paralelos de matrícula ou
-progresso.
-
-### Wiki/editorial
-Nodes, Taxonomy e Views mantêm conteúdo. Domain/Domain Source controlam contexto.
-
-## Desenvolvimento
-
-Antes de implementar: identificar fonte de verdade, purpose, API oficial, cache metadata, privacidade, canonical e comportamento em host incorreto. Atualizar esta documentação quando a arquitetura mudar.
-
-Veja também [a documentação geral](../../../../docs/README.md).
+Consultar [CHANGELOG.md](CHANGELOG.md).

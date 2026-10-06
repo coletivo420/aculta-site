@@ -300,6 +300,40 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
 - `web/sites/default/settings.local.php` e configurações locais permanecem fora do Git. Credenciais MariaDB de produção nunca entram em settings versionados.
 - Existe intenção futura de migrar o Runtime do Homelab para MariaDB quando o BDTGN estiver maduro para a integração. Até essa decisão ser executada, SQLite continua sendo a fonte operacional do Homelab e os Estados continuam snapshots SQLite.
 
+## Integrações Google e serviços externos
+
+- Consultar `docs/integrations/GOOGLE.md` antes de qualquer integração Google.
+- Não inserir Google Tag, Analytics, Search Console verification, OAuth ou Classroom diretamente em Twig/JS do tema.
+- Credenciais e secrets ficam em ambiente/Key; nunca no Git.
+- Integrações devem poder permanecer desabilitadas sem quebrar o Drupal.
+- Homelab não deve enviar telemetria real por padrão.
+- Google Analytics/Tag exige revisão de consentimento e não pode enviar PII.
+- Search Console deve preferir verificação de domínio/DNS quando possível.
+- Google Classroom é integração futura; Drupal LMS continua fonte de verdade de cursos, matrícula e progresso.
+- Não solicitar scopes OAuth que não correspondam a uma feature ativa e aprovada.
+- Produtos Google for Nonprofits pós-aprovação não devem ser tratados como disponíveis antes da ativação real.
+
+## Coordenação Portal, tema e documentação
+
+A evolução do Portal e a refatoração do tema são linhas separadas.
+
+Para tarefas do `aculta_portal`:
+
+- não modificar `web/themes/custom/aculta/**` sem autorização explícita;
+- consultar `docs/portal/` antes de implementar;
+- manter as fontes de verdade definidas em `SOURCE-OF-TRUTH.md`;
+- não instalar dependência planejada antes da versão correspondente;
+- não reescrever roadmap/arquitetura por iniciativa própria;
+- atualizar CHANGELOG e evidência de testes junto do código implementado;
+- uma alteração lógica validada deve virar um commit atômico;
+- cada commit funcional precisa dos testes adequados antes de ser considerado concluído.
+
+A documentação arquitetural e o roadmap são definidos fora da execução de
+código. O Codex deve principalmente implementar, testar e registrar o resultado
+da implementação.
+
+O Portal usa tags `portal-vX.Y.Z`. Ver `docs/portal/VERSIONING.md`.
+
 ## Forma de trabalho esperada do Codex
 
 Antes de uma alteração relevante:
