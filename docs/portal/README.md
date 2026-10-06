@@ -17,6 +17,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Wiki420](WIKI.md)
 - [Revista / Observatório Coletivo 420](MAGAZINE.md)
 - [Loja](SHOP.md)
+- [Modo de entrega GitHub-first / Runtime-last](DELIVERY-MODE.md)
 - [Testes](TESTING.md)
 - [Versionamento](VERSIONING.md)
 - [Roadmap](ROADMAP.md)
@@ -30,7 +31,9 @@ fontes de verdade funcionais dessas ferramentas.
 - sete purposes ativos: MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP e COURSES;
 - oitavo purpose planejado: FORUM;
 - `aculta_portal` continua sendo a camada de integração;
-- a refatoração do tema `aculta` ocorre em uma linha de trabalho separada.
+- o tema `aculta` já está em fase avançada do ACULTA Bootstrap Component Design System;
+- o Portal opera temporariamente em modo GitHub-first / Runtime-last;
+- trabalho local antigo não publicado não é baseline; `origin/main` é autoritativo.
 
 ## Regra principal
 

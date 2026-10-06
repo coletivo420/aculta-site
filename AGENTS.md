@@ -334,14 +334,18 @@ A evolução do Portal e a refatoração do tema são linhas separadas.
 
 Para tarefas do `aculta_portal`:
 
+- o modo atual é GitHub-first / Runtime-last; consultar `docs/portal/DELIVERY-MODE.md`;
+- `origin/main` é a base autoritativa; trabalho local antigo não publicado foi descartado;
+- mudanças executáveis sem Runtime ficam em draft com `RUNTIME STATUS: DEFERRED`;
 - não modificar `web/themes/custom/aculta/**` sem autorização explícita;
 - consultar `docs/portal/` antes de implementar;
 - manter as fontes de verdade definidas em `SOURCE-OF-TRUTH.md`;
 - não instalar dependência planejada antes da versão correspondente;
 - não reescrever roadmap/arquitetura por iniciativa própria;
 - atualizar CHANGELOG e evidência de testes junto do código implementado;
-- uma alteração lógica validada deve virar um commit atômico;
-- cada commit funcional precisa dos testes adequados antes de ser considerado concluído.
+- uma alteração lógica deve virar um commit atômico;
+- documentação/preparação pode ser commitada sem Runtime;
+- mudança funcional só é considerada concluída/mergeável/release após os testes adequados.
 
 A documentação arquitetural e o roadmap são definidos fora da execução de
 código. O Codex deve principalmente implementar, testar e registrar o resultado

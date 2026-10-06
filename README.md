@@ -37,37 +37,36 @@ como histórico de migração.
 
 ## Roadmap
 
-O desenvolvimento do Portal segue versões independentes da refatoração do tema.
-Cada versão funcional deve ser implementada em uma branch curta, testada no
-Homelab, documentada e integrada antes da próxima.
+O projeto opera temporariamente em modo **GitHub-first / Runtime-last** para
+economizar a janela do Codex/Homelab.
 
-| Etapa | Objetivo |
+A base autoritativa é `origin/main`; trabalho local antigo não publicado é
+descartado. Documentação, arquitetura, inventários e preparação avançam pelo
+GitHub. Código funcional que depende do Drupal pode ser preparado em draft, mas
+só é integrado/released depois da validação Runtime.
+
+| Macrofase | Objetivo |
 | --- | --- |
-| **Fechamento 9.3B** | consolidar o Estado Integral pós-Fase 9 e sincronizar o ambiente de desenvolvimento |
-| **Portal 0.10.0 — Foundation** | arquitetura, fontes de verdade, módulos upstream, AJAX, Wiki, Revista, Loja, Fórum, Google, testes e versionamento |
-| **Portal 0.11.0 — Forum Foundation** | ativar `forum.aculta.org` / `forum.aculta.toca.net.br` usando Drupal Forum + Node + Comment + Taxonomy |
-| **Portal 0.12.0 — Forum Participation** | integrar meus tópicos, minhas respostas e navegação do Fórum à Conta |
-| **Portal 0.13.0 — Participation Hub** | centralizar participação em Fórum, Wiki e cursos sem storage paralelo |
-| **Portal 0.14.0 — Admin Hub** | consolidar atalhos, status e administração dos subsistemas já existentes |
-| **Portal 0.15.0 — AJAX Consolidation** | migrar infraestrutura AJAX genérica própria para Views AJAX, Form API, Drupal Ajax e HTMX quando apropriado |
-| **Portal 0.16.0 — Search** | adotar Search API para Wiki e Fórum e retirar busca textual custom após teste de paridade |
-| **Portal 0.17.0 — Engagement** | avaliar/adotar Flag e Comment Notify para acompanhamento, favoritos e notificações |
-| **Portal 0.18.0 — Deduplication** | remover apenas código custom comprovadamente substituído por Core/contrib |
-| **Portal 0.19.0 — Hardening** | permissions, access, cache, CSRF, Domain isolation, desempenho, logs e portabilidade SQLite/MariaDB |
-| **Portal 1.0.0 — Stable** | baseline estável com Conta, CEP, apoio, cursos, Wiki, Fórum, participação, administração, busca e segurança integrados |
+| **S1 — Component contracts** | alinhar o Portal ao ACULTA Bootstrap Component Design System |
+| **S2 — Static Portal Audit** | mapear DI, access, cache, markup, queries, AJAX e duplicações |
+| **S3 — Behavior-preserving preparation** | preparar presenters/services/refactors em drafts pequenos |
+| **S4 — Feature preparation** | preparar Fórum, Participation Hub, Admin, AJAX, Search e Engagement |
+| **R0 — Clean baseline** | retornar ao Codex descartando o worktree antigo e sincronizando `origin/main` |
+| **R1 — Dependencies/config** | aplicar Composer, módulos e configuração um conjunto por vez |
+| **R2 — Functional validation** | Drush, Domain/HTTP, User A/B, AJAX, access/cache e regressão |
+| **R3 — Hardening** | segurança, performance, logs e portabilidade SQLite/MariaDB |
+| **R4 — Releases** | merge/tag somente do que passou no Runtime |
 
-A trilha de integrações Google evolui em paralelo ao SemVer do Portal:
+O roadmap detalhado está em
+[docs/portal/ROADMAP.md](docs/portal/ROADMAP.md), e o modo de entrega em
+[docs/portal/DELIVERY-MODE.md](docs/portal/DELIVERY-MODE.md).
 
+O Portal consome o
+[ACULTA Bootstrap Component Design System](docs/portal/COMPONENT-DESIGN-SYSTEM.md);
+o tema avançado é preservado, não reiniciado.
+
+A trilha Google continua paralela:
 `G0 Prepared → G1 Production Minimum → G2 Google for Nonprofits → G3 Learning Integration`.
-
-No lançamento mínimo, a arquitetura prevê Search Console, sitemap e
-Google Tag/GA4 somente com consentimento e sem PII. Google Classroom é uma
-integração futura e **não substitui Drupal LMS**, que continua sendo a fonte de
-verdade de cursos e progresso.
-
-O roadmap detalhado e normativo está em
-[docs/portal/ROADMAP.md](docs/portal/ROADMAP.md). A arquitetura Google está em
-[docs/integrations/GOOGLE.md](docs/integrations/GOOGLE.md).
 
 ## Documentação
 

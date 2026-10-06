@@ -1,231 +1,262 @@
 # Roadmap do ACULTA Portal
 
-Este roadmap organiza a evolução do `aculta_portal` em versões revisáveis.
+Este roadmap organiza a evolução do `aculta_portal` no modo atual
+**GitHub-first / Runtime-last**.
 
-O tema `aculta` possui linha de trabalho própria e não faz parte deste roadmap.
+O tema `aculta` possui linha própria e já está em fase avançada do
+**ACULTA Bootstrap Component Design System**. O Portal consome esse sistema; não
+reinicia a refatoração do tema.
 
-## 0.10.0 — Foundation
+## Estado de base
 
-Objetivo: organizar antes de ampliar.
+- Portal 0.10.0 Foundation documental: concluída;
+- arquitetura Wiki/Revista/Loja/Fórum/Google: documentada;
+- Bootstrap Component Design System: adotado por ADR-007;
+- trabalho local antigo não publicado/9.3B: descartado como base;
+- `origin/main`: única fonte autoritativa;
+- validação Runtime: concentrada para uma janela posterior.
+
+Ver [DELIVERY-MODE.md](DELIVERY-MODE.md).
+
+# Macrofase S — trabalho sem Homelab
+
+## S1 — Component contracts
+
+**Estado: ativa.**
+
+Objetivo:
+
+alinhar `aculta_portal` ao Component Design System.
 
 Entregas:
 
-- arquitetura;
-- fontes de verdade;
-- política upstream;
-- política AJAX;
-- especificação Fórum;
-- contratos Wiki, Revista e Loja;
-- arquitetura de integrações Google;
-- testes;
-- versionamento;
-- roadmap;
-- CHANGELOG.
+- contrato presenter/view-model -> SDC;
+- famílias comuns de card/status/empty-state/action-list;
+- mapeamento Bootstrap antes de markup custom;
+- inventário de telas Portal;
+- matriz de access/cache por componente;
+- documentação de props/slots;
+- definição de componentes candidatos para Conta, Cursos, Wiki, Fórum e Loja.
 
-Nenhuma feature pública nova é requisito desta versão.
+Documentação pode ser integrada ao main.
 
-## 0.11.0 — Forum Foundation
+Código executável fica draft se não houver Runtime.
 
-Objetivo: ativar o Fórum como oitavo purpose.
+## S2 — Static Portal Audit
 
-Entregas planejadas:
+Objetivo:
+
+auditar o código existente sem mudar comportamento em produção.
+
+Mapear:
+
+- controllers com markup/apresentação excessiva;
+- usos de `\Drupal::`;
+- DI;
+- render arrays;
+- cache metadata;
+- entity access;
+- URLs por Domain purpose;
+- queries custom;
+- AJAX próprio;
+- duplicações com Core/contrib;
+- pontos que devem consumir SDC.
+
+Saída:
+
+inventário + plano de refatoração por arquivo.
+
+## S3 — Behavior-preserving preparation
+
+Objetivo:
+
+preparar refactors pequenos e reversíveis.
+
+Exemplos:
+
+- extrair presenters/view-models;
+- reduzir markup de controller;
+- normalizar estruturas de dados;
+- preparar interfaces/adapters;
+- organizar services.
+
+Sem Runtime:
+
+- manter PR como draft se houver mudança executável;
+- declarar `RUNTIME STATUS: DEFERRED`;
+- não taggear release.
+
+## S4 — Feature specifications and draft branches
+
+Preparar especificações e, quando seguro, branches draft das capacidades
+futuras.
+
+### Portal 0.11 — Forum Foundation
 
 - `drupal/forum`;
-- Domain `forum.aculta.org`;
-- alias `forum.aculta.toca.net.br`;
-- purpose `forum`;
-- landing nativa;
-- tópicos/respostas;
-- isolamento;
-- sessão compartilhada;
-- config exportada;
-- testes.
+- Domain FORUM;
+- topic/reply;
+- isolation;
+- shared session;
+- Bootstrap/SDC presentation contracts.
 
-## 0.12.0 — Forum Participation
+Composer/config/runtime ficam pendentes da janela R.
 
-Objetivo: integrar a participação do Fórum na Conta.
+### Portal 0.12 — Forum Participation
 
-Entregas:
-
-- página/seção "Minha participação";
 - meus tópicos;
 - minhas respostas;
-- links FORUM;
-- Views filtradas pelo usuário;
-- AJAX via Views/Core;
-- cache/access.
+- Views;
+- participation presenters;
+- SDC contracts.
 
-Ainda sem storage Portal.
-
-## 0.13.0 — Participation Hub
-
-Objetivo: central única da participação do usuário.
-
-Integrar:
+### Portal 0.13 — Participation Hub
 
 - Fórum;
 - Wiki;
 - Cursos;
-- comentários relevantes aprovados.
+- activity aggregation sem storage paralelo.
 
-A Conta passa a apresentar atividade cruzada sem copiar dados.
+### Portal 0.14 — Admin Hub
 
-## 0.14.0 — Admin Hub
+- atalhos/status;
+- sem CRUD paralelo;
+- admin theme permanece Drupal-native.
 
-Objetivo: transformar `/admin/config/aculta/portal` em hub real.
+### Portal 0.15 — AJAX Consolidation
 
-Integrar status/links para:
-
-- usuários/perfis;
-- Domains;
-- Wiki;
-- Fórum/moderação;
-- cursos/Group/LMS;
-- Commerce/apoio/pagamentos;
-- Webforms;
-- requisitos;
-- segurança.
-
-Não recriar CRUDs.
-
-## 0.15.0 — AJAX Consolidation
-
-Objetivo: reduzir infraestrutura JavaScript própria.
-
-Alvo principal:
-
-`account-navigation.js`.
-
-Migrar progressivamente para:
-
+- plano de migração de `account-navigation.js`;
 - Views AJAX;
 - Form API AJAX;
-- Drupal Ajax API;
+- Drupal Ajax;
 - Core HTMX quando apropriado.
 
-Preservar UX, accessibility e progressive enhancement.
+### Portal 0.16 — Search
 
-A adaptação necessária do CEP não é removida automaticamente.
-
-## 0.16.0 — Search
-
-Objetivo: adotar Search API.
-
-Primeiros índices:
-
+- Search API;
 - Wiki;
-- Fórum.
+- Fórum;
+- substituição futura da busca LIKE.
 
-Substituir gradualmente a busca `LIKE` custom da Wiki.
-
-Backend inicial pode usar Database Search no Homelab, se compatível com o
-desenho aprovado na implementação.
-
-## 0.17.0 — Engagement
-
-Objetivo: acompanhamento e notificações.
-
-Candidatos:
+### Portal 0.17 — Engagement
 
 - Flag;
-- Comment Notify.
+- Comment Notify;
+- privacidade/SMTP/opt-in.
 
-Entregas dependem de revisão de SMTP, privacidade e UX.
+### Portal 0.18 — Deduplication
 
-## 0.18.0 — Deduplication
+- breadcrumb;
+- Schema Metatag;
+- menus;
+- busca antiga;
+- AJAX antigo;
+- Support tables;
+- CEP override excessivo.
 
-Objetivo: remover somente duplicações comprovadas.
+Não remover customização necessária do CEP sem paridade comprovada.
 
-Auditar:
+# Macrofase R — retorno ao Runtime/Codex
 
-- breadcrumb custom;
-- plugins Schema Metatag;
-- preprocess de menus;
-- busca Wiki antiga;
-- transport AJAX antigo;
-- Support table manual;
-- CEP override excessivo;
-- usos estáticos de `\Drupal::`.
+## R0 — Clean baseline
 
-Cada remoção precisa de substituto upstream + teste de paridade.
+Primeira ação no Homelab:
 
-## 0.19.0 — Hardening
+- descartar trabalho local antigo;
+- sincronizar exatamente com `origin/main`;
+- não recuperar a antiga 9.3B;
+- validar baseline Apache + SQLite.
 
-Foco:
+## R1 — Dependency and config integration
 
-- permissions;
+Aplicar um conjunto preparado por vez.
+
+Começar por Portal 0.11:
+
+- Composer;
+- Forum;
+- Domain;
+- config export/import;
+- cache;
+- bootstrap.
+
+Depois seguir versões na ordem do roadmap.
+
+## R2 — Functional validation
+
+Executar:
+
+- Drupal bootstrap;
+- config/updatedb;
+- Domain matrix;
+- HTTP;
+- shared session;
+- User A/User B;
 - access;
 - cache;
-- CSRF;
 - AJAX;
-- Domain isolation;
+- mobile/a11y onde aplicável;
+- regressão Wiki/Cursos/Commerce/Conta.
+
+## R3 — Hardening
+
+Equivale ao alvo Portal 0.19:
+
+- permissions;
+- CSRF;
 - Security Review;
 - performance;
-- logs;
 - cron;
-- SQLite/MariaDB portability.
+- logs;
+- SQLite/MariaDB portability;
+- falhas externas;
+- deploy/runbook.
 
-## Trilha paralela — Integrações Google
+## R4 — Releases
 
-Esta trilha é de plataforma e não deve ser forçada dentro do SemVer do Portal.
+Somente depois de PASS Runtime:
 
-### G0 — Prepared
+- merge dos PRs funcionais;
+- CHANGELOG;
+- tags `portal-vX.Y.Z`;
+- snapshots/Estados quando realmente necessários;
+- preparação de produção.
 
-- OAuth Google por Key/env;
-- documentação;
-- sitemap/canonical;
-- nenhuma credencial versionada.
+# Trilha paralela — Google
 
-### G1 — Production Minimum
+Mantida fora do SemVer Portal:
 
-- Search Console;
-- sitemap;
-- Google Tag/GA4 quando aprovado internamente;
-- consentimento;
-- validação sem PII.
-
-### G2 — Google for Nonprofits
-
-- Workspace;
-- Ad Grants;
-- YouTube;
-- Maps quando houver caso real.
-
-### G3 — Learning Integration
-
-- Google Classroom;
-- scopes mínimos;
-- adapter;
-- Drupal LMS segue fonte de verdade.
+`G0 Prepared -> G1 Production Minimum -> G2 Google for Nonprofits -> G3 Learning Integration`.
 
 Ver [Integrações Google](../integrations/GOOGLE.md).
 
-## 1.0.0 — Portal Stable
+# Portal 1.0.0 — Stable
 
-Gates:
+Gates finais:
 
-- Conta estável;
-- dados/CEP estáveis;
-- apoio integrado;
-- cursos integrados;
-- Wiki integrada;
-- Fórum integrado;
-- participação integrada;
-- admin hub;
+- Conta;
+- dados/CEP;
+- apoio;
+- cursos;
+- Wiki;
+- Fórum;
+- Participation Hub;
+- Admin Hub;
 - Search API;
 - AJAX consolidado;
+- Component Design System aplicado às experiências públicas;
 - Domain isolation;
 - Apache Homelab;
 - SQLite Runtime;
 - compatibilidade MariaDB;
 - security review;
-- runbook;
-- snapshot/restore;
+- runbook/deploy;
 - documentação completa.
 
 ## Disciplina
 
-Somente uma versão funcional deve estar em implementação principal por vez.
+No modo atual:
 
-Não antecipar dependências de versões futuras apenas porque aparecem neste
-roadmap.
+**GitHub prepara; Runtime comprova.**
+
+Nenhum draft Runtime-deferred conta como versão concluída.
