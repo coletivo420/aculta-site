@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\aculta_portal\AccountCoursesManager;
+use Drupal\aculta_portal\Presentation\AccountCoursePresenter;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -13,19 +13,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AccountCoursesController extends ControllerBase {
 
   public function __construct(
-    private readonly AccountCoursesManager $courses,
+    private readonly AccountCoursePresenter $presenter,
     private readonly AccountProxyInterface $currentAccount,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.account_courses'),
+      $container->get('aculta_portal.presentation.account_course'),
       $container->get('current_user'),
     );
   }
 
   public function page(): array {
-    $items = $this->courses->getCourses($this->currentAccount);
+    $view = $this->presenter->present($this->currentAccount);
+    $items = $view['items'];
     $build = [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-account-courses']],
@@ -38,13 +39,13 @@ final class AccountCoursesController extends ControllerBase {
     if ($items === []) {
       $build['empty'] = [
         '#type' => 'container',
-        'message' => ['#plain_text' => $this->t('Você ainda não está participando de nenhum curso.')],
+        'message' => ['#plain_text' => $view['empty']['message']],
       ];
-      if ($catalog = $this->courses->catalogUrl()) {
+      if ($view['empty']['cta'] !== NULL) {
         $build['empty']['link'] = [
           '#type' => 'link',
-          '#title' => $this->t('Ver cursos disponíveis'),
-          '#url' => $catalog,
+          '#title' => $view['empty']['cta']['label'],
+          '#url' => $view['empty']['cta']['url'],
           '#attributes' => ['class' => ['btn', 'btn-primary']],
         ];
       }
@@ -56,7 +57,7 @@ final class AccountCoursesController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-account-course']],
         '#cache' => ['tags' => $course['cache_tags']],
-        'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $course['label']],
+        'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $course['title']],
       ];
       if ($course['description'] !== []) {
         $card['description'] = $course['description'];
@@ -64,16 +65,16 @@ final class AccountCoursesController extends ControllerBase {
       $card['meta'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-account-course__meta']],
-        'status' => ['#plain_text' => $this->t('Status: @status', ['@status' => $course['status_label']])],
+        'status' => ['#plain_text' => $this->t('Status: @status', ['@status' => $course['status']['label']])],
       ];
-      if ($course['score'] !== NULL) {
-        $card['meta']['score'] = ['#plain_text' => $this->t('Resultado: @score%', ['@score' => $course['score']])];
+      if ($course['score_label'] !== NULL) {
+        $card['meta']['score'] = ['#plain_text' => $course['score_label']];
       }
-      if ($course['url']) {
+      if ($course['cta'] !== NULL) {
         $card['action'] = [
           '#type' => 'link',
-          '#title' => $course['finished'] ? $this->t('Ver resultado') : $this->t('Acessar curso'),
-          '#url' => $course['url'],
+          '#title' => $course['cta']['label'],
+          '#url' => $course['cta']['url'],
           '#attributes' => ['class' => ['btn', 'btn-primary']],
         ];
       }

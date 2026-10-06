@@ -26,7 +26,7 @@ final class AccountCoursesManager {
   ) {}
 
   /**
-   * Returns presentation data for the account's visible LMS memberships.
+   * Returns authorized LMS/Group data for the account's visible memberships.
    *
    * Membership alone never grants visibility. Group access remains authoritative
    * and is checked before course metadata or LMS progress is loaded.
@@ -65,7 +65,6 @@ final class AccountCoursesManager {
         'label' => (string) $group->label(),
         'description' => $description,
         'status' => $status?->getStatus() ?? '',
-        'status_label' => $this->statusLabel($status),
         'score' => $status?->getScore(),
         'finished' => $status?->isFinished() ?? FALSE,
         'url' => $this->courseUrl($group, $status),
@@ -97,20 +96,6 @@ final class AccountCoursesManager {
 
     $route = $status?->isFinished() ? 'lms.group.self_results' : 'lms.course.start';
     return $this->domainPurposeManager->routeUrl('courses', $route, ['group' => $course->id()]);
-  }
-
-  private function statusLabel(?CourseStatusInterface $status): string {
-    if ($status === NULL) {
-      return 'Não iniciado';
-    }
-
-    return match ($status->getStatus()) {
-      CourseStatusInterface::STATUS_PROGRESS => 'Em andamento',
-      CourseStatusInterface::STATUS_PASSED => 'Concluído',
-      CourseStatusInterface::STATUS_FAILED => 'Não aprovado',
-      CourseStatusInterface::STATUS_NEEDS_EVALUATION => 'Aguardando avaliação',
-      default => 'Não iniciado',
-    };
   }
 
 }
