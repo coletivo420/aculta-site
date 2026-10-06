@@ -102,6 +102,8 @@ Veja [docs/javascript.md](docs/javascript.md).
 
 Twig recebe dados preparados para apresentação. Não consulta banco, não processa pagamento, não decide matrícula, Domain access ou autorização e não persiste estado. Overrides devem preservar atributos e metadata de acesso/cache.
 
+O tema herda templates Bootstrap5/Core/contrib por padrão. Overrides existem apenas quando há delta visual/semântico ACULTA; o G4 removeu o override redundante de `input.html.twig` para restaurar a implementação do Bootstrap5 4.0.8.
+
 No breadcrumb público, `aculta_portal` é dono da política e hierarquia; o tema apenas adapta o título atual para o Twig e renderiza a semântica visual/acessível.
 
 Veja [docs/templates.md](docs/templates.md).

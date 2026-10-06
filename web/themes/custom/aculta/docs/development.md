@@ -123,6 +123,20 @@ Primeiro classificar a lógica:
 
 Twig não recebe regra de negócio.
 
+### Overrides Twig
+
+Herdar Bootstrap5/Core/contrib por padrão. Não copiar templates apenas para mantê-los idênticos ao upstream.
+
+Antes de adicionar ou manter override:
+
+- comparar com a versão efetivamente instalada do base theme/contrib;
+- documentar o delta ACULTA;
+- preservar attributes, cache/access e hooks esperados;
+- remover overrides que apenas mascaram upstream sem benefício.
+
+No G4, `form/input.html.twig` foi removido para voltar a herdar o template Bootstrap5 4.0.8.
+
+
 ### Breadcrumb
 
 Após o Commit E:

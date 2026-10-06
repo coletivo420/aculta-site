@@ -2,6 +2,12 @@
 
 Overrides só devem existir quando alteram apresentação necessária. Remoção exige comparação com Core/base theme/contrib e teste de regressão.
 
+## Auditoria G4 — Bootstrap5 4.0.8 / Drupal 11.4.8
+
+O override customizado `form/input.html.twig` foi removido. Ele reproduzia somente o markup básico do Core (`<input{{ attributes }} />{{ children }}`), mas o base theme Bootstrap5 mantém lógica própria nesse template para integração visual de inputs/botões. Mantê-lo no subtema mascarava o template do base theme sem adicionar um delta ACULTA.
+
+Regra após G4: herdar templates do Bootstrap5/Core/contrib por padrão e criar override somente quando houver diferença de apresentação específica do projeto.
+
 ## `page.html.twig`
 
 **Motivo:** define o shell semântico público: header, menu principal, utility/account, breadcrumb, highlighted/help, título, content/sidebar e footer.
@@ -53,16 +59,6 @@ Overrides só devem existir quando alteram apresentação necessária. Remoção
 **Preservar:** `nav`, label acessível, lista ordenada e `aria-current="page"`.
 
 **Fronteira arquitetural:** purpose, rotas ocultas, raiz, hierarquia, dependências de cache e resolução segura do título pertencem ao Portal. O tema mantém somente markup e semântica visual/acessível.
-
-## `form/input.html.twig`
-
-**Motivo atual:** mantém um override mínimo de input preservando attributes e children.
-
-**Dados:** Form API/preprocess herdado do Bootstrap5.
-
-**Preservar:** todos os attributes e children.
-
-**Revisão futura:** só remover se comparação com a versão efetivamente instalada do base theme/Core provar redundância.
 
 ## `views-view-vvjb.html.twig`
 

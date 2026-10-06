@@ -47,7 +47,7 @@ Esta divisão é física, não uma alteração de contrato visual. A ordem de ca
 | Editorial highlight | presenter `node--editorial-highlight.html.twig` + SDC `aculta:editorial-card` | fields do node + VVJB |
 | Editorial list/prose | field preprocess + CSS | fields/Views Drupal |
 | Institution block | block Twig + preprocess | custom block fields |
-| Forms | Bootstrap/Core markup + CSS + input override | Form API |
+| Forms | Bootstrap5/Core markup herdado + CSS do tema | Form API |
 | Alerts/tables | Bootstrap + CSS do tema | render arrays Drupal |
 | Footer | `page.html.twig`, bloco institucional, menus | regions/blocks Drupal |
 | Account shell | `page.html.twig` + apresentação Portal | User/Profile/Portal |
