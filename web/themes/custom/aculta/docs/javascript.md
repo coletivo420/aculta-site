@@ -4,9 +4,17 @@ O JavaScript do tema é progressive enhancement. Bootstrap e módulos contrib co
 
 ## Estado atual
 
-`js/aculta.js` contém dois Drupal behaviors.
+A library global carrega dois arquivos, um por responsabilidade:
 
-### `acultaNavigation`
+```text
+js/
+├── navigation.js
+└── editorial-carousel.js
+```
+
+Os selectors, IDs de `once()`, eventos e chamadas às APIs públicas permanecem os mesmos do arquivo monolítico anterior.
+
+### `navigation.js` — `acultaNavigation`
 
 Responsabilidade:
 
@@ -22,7 +30,7 @@ Não deve:
 - comparar URL para descobrir item atual;
 - depender de jQuery.
 
-### `acultaEditorialFocus`
+### `editorial-carousel.js` — `acultaEditorialFocus`
 
 Responsabilidade:
 
@@ -48,17 +56,15 @@ Não deve:
 
 Não introduzir jQuery novo.
 
-## Modularização futura
+## Carregamento
 
-A divisão natural, se mantiver responsabilidades atuais, é:
+Os dois arquivos permanecem em `aculta/global` e compartilham as dependências atuais:
 
-```text
-js/
-├── navigation.js
-└── editorial-carousel.js
-```
+- `bootstrap5/bootstrap5-js-latest`;
+- `core/drupal`;
+- `core/once`.
 
-Primeiro separar arquivos mantendo comportamento e carregamento equivalentes. Otimizar libraries/attachment somente em commit posterior e testável.
+O Commit D não introduz library separada por componente nem attachment condicional. Esse tipo de otimização deve ser avaliado em commit próprio para não misturar split estrutural com mudança de carregamento.
 
 ## Testes
 

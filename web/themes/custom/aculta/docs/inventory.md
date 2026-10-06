@@ -32,7 +32,8 @@ web/themes/custom/aculta/
 │   │   └── auth.css
 │   └── style.css
 ├── js/
-│   └── aculta.js
+│   ├── navigation.js
+│   └── editorial-carousel.js
 └── templates/
     ├── block--block-content--type--aculta-institution.html.twig
     ├── block--system-branding-block.html.twig
@@ -68,7 +69,8 @@ web/themes/custom/aculta/
 - `css/components/buttons.css`;
 - `css/style.css`;
 - `css/components/auth.css`;
-- `js/aculta.js`;
+- `js/navigation.js`;
+- `js/editorial-carousel.js`;
 - `bootstrap5/global-styling`;
 - `bootstrap5/bootstrap5-js-latest`;
 - `core/drupal`;
@@ -141,7 +143,13 @@ A concatenação `header + navigation + breadcrumb + content + buttons + style +
 
 ## JavaScript
 
-`js/aculta.js` possui cerca de 70 linhas e dois behaviors:
+Após o Commit D, os dois behaviors foram separados sem alterar seus blocos internos:
+
+- `js/navigation.js` contém `Drupal.behaviors.acultaNavigation`;
+- `js/editorial-carousel.js` contém `Drupal.behaviors.acultaEditorialFocus`.
+
+Os dois arquivos continuam na library global e preservam as mesmas dependências.
+
 
 1. `Drupal.behaviors.acultaNavigation`
    - usa o Collapse do Bootstrap;
@@ -162,7 +170,18 @@ Estado auditado:
 - não usa `setTimeout` ou `setInterval`;
 - não reimplementa Bootstrap ou VVJB.
 
-A eventual separação em arquivos deve preservar esses contratos.
+O Commit D preserva esses contratos e não otimiza attachment/carregamento condicional.
+
+## D — JavaScript por responsabilidade
+
+O Commit D substitui o arquivo monolítico `js/aculta.js` por:
+
+- `js/navigation.js`;
+- `js/editorial-carousel.js`.
+
+Os blocos dos dois Drupal behaviors foram preservados literalmente. A mudança estrutural duplica apenas o wrapper IIFE necessário para que cada arquivo seja executável de forma independente. A library `aculta/global` continua carregando ambos globalmente, com as mesmas dependências Bootstrap/Drupal/`once()`.
+
+Otimização por rota, página ou attachment condicional fica fora deste commit.
 
 ## PHP do tema
 

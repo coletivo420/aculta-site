@@ -1,31 +1,9 @@
 /**
  * @file
- * Progressive enhancement of the main navigation, including Drupal AJAX.
+ * Focus integration for the home editorial carousel, including Drupal AJAX.
  */
 (function (Drupal, once) {
   'use strict';
-
-  Drupal.behaviors.acultaNavigation = {
-    attach(context) {
-      if (typeof bootstrap === 'undefined') {
-        return;
-      }
-      once('aculta-navigation', '.aculta-navbar', context).forEach((navbar) => {
-        const toggle = navbar.querySelector('.aculta-menu-toggle');
-        const menu = navbar.querySelector('#aculta-primary-menu');
-        if (!toggle || !menu) {
-          return;
-        }
-        navbar.classList.add('aculta-navigation-ready');
-        menu.addEventListener('keydown', (event) => {
-          if (event.key === 'Escape' && !window.matchMedia('(min-width: 1100px)').matches) {
-            bootstrap.Collapse.getOrCreateInstance(menu, { toggle: false }).hide();
-            toggle.focus();
-          }
-        });
-      });
-    },
-  };
 
   // VVJB 2.0 has no focus pause. Use its public API; no custom slide timer.
   Drupal.behaviors.acultaEditorialFocus = {

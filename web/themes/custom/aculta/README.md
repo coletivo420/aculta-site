@@ -29,7 +29,7 @@ O tema não é fonte de verdade de autenticação, pagamentos, Commerce, cursos,
 - Bootstrap pertence exclusivamente ao base theme; não embarcar uma segunda cópia.
 - A library global atual é `aculta/global`.
 - CSS atual: fundações em `tokens.css`/`base.css`/`layout.css`, componentes em `css/components/` e integrações ainda residuais em `css/style.css`.
-- JavaScript atual: `js/aculta.js`.
+- JavaScript atual: `js/navigation.js` e `js/editorial-carousel.js`.
 - Fontes web: Inter e Oswald via Google Fonts.
 
 ## Design system
@@ -65,7 +65,8 @@ Detalhes: [docs/design-system.md](docs/design-system.md).
 - `css/components/buttons.css` - botões/CTAs públicos e estados.
 - `css/components/auth.css` - apresentação das rotas Drupal de login/registro/recuperação.
 - `css/style.css` - footer, integrações Bootstrap/Drupal, institucional, editorial/VVJB e responsividade ainda não extraídos.
-- `js/aculta.js` - progressive enhancement da navegação e do carousel editorial.
+- `js/navigation.js` - progressive enhancement da navegação e integração com Bootstrap Collapse.
+- `js/editorial-carousel.js` - integração de foco com o carousel editorial VVJB.
 - `templates` - overrides Twig.
 - `docs` - contratos e inventário técnico do tema.
 

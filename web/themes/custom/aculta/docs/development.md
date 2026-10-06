@@ -61,7 +61,7 @@ Não misturar, no mesmo passo, reorganização de arquivos com otimização agre
 
 ## CSS
 
-Estrutura atual após o Commit B:
+Estrutura CSS atual após o Commit C:
 
 ```text
 css/
@@ -91,6 +91,20 @@ Antes de remover ou mover regra:
 Classes podem existir apenas em configuração e não aparecer em PHP/Twig.
 
 Não minificar fontes no Git; agregação de produção pertence ao Drupal/infra.
+
+## JavaScript
+
+Estrutura atual após o Commit D:
+
+```text
+js/
+├── navigation.js
+└── editorial-carousel.js
+```
+
+Ambos permanecem em `aculta/global`. Separar responsabilidade não autoriza alterar selectors, IDs de `once()`, eventos ou APIs públicas de Bootstrap/VVJB no mesmo commit.
+
+O carregamento condicional por rota/componente deve ser tratado separadamente, com teste de AJAX/BigPipe e páginas representativas.
 
 ## PHP/Twig
 
