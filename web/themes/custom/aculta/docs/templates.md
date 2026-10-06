@@ -28,11 +28,13 @@ Overrides só devem existir quando alteram apresentação necessária. Remoção
 
 ## `node--editorial-highlight.html.twig`
 
-**Motivo:** card de destaque editorial usado na home/VVJB.
+**Motivo:** presenter Drupal do card de destaque editorial usado na home/VVJB.
 
 **Dados:** category, summary, complement, link e label do node.
 
-**Preservar:** attributes do node e conteúdo editorial editável.
+**Implementação:** preserva o wrapper `<article>` e os attributes do node e delega o markup interno ao SDC `aculta:editorial-card` via `include(..., with_context = false)`.
+
+**Preservar:** attributes/contextual do node, conteúdo editorial editável e o contrato de slots do SDC.
 
 ## `node--project--teaser.html.twig`
 

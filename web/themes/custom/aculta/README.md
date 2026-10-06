@@ -65,6 +65,7 @@ Detalhes: [docs/design-system.md](docs/design-system.md).
 - `css/components/buttons.css` - botões/CTAs públicos e estados.
 - `css/components/auth.css` - apresentação das rotas Drupal de login/registro/recuperação.
 - `css/style.css` - footer, integrações Bootstrap/Drupal, institucional, editorial/VVJB e responsividade ainda não extraídos.
+- `components/editorial-card` - piloto SDC do card de destaque editorial; o presenter Drupal preserva o wrapper/attributes do node.
 - `js/navigation.js` - progressive enhancement da navegação e integração com Bootstrap Collapse.
 - `js/editorial-carousel.js` - integração de foco com o carousel editorial VVJB.
 - `templates` - overrides Twig.
