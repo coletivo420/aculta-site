@@ -2,7 +2,7 @@
 
 ## Princípio
 
-Refatorar apresentação sem alterar comportamento da aplicação ou identidade visual.
+Evoluir o **ACULTA Bootstrap Component Design System** sem alterar regras de negócio, fontes de verdade Drupal/contrib/Portal ou identidade visual aprovada.
 
 ```text
 Drupal/contrib = funcionalidade
@@ -44,20 +44,13 @@ Produção Hostinger usa:
 
 Apache em ambos os ambientes não significa configuração idêntica. O tema não deve depender de detalhe exclusivo de VirtualHost, módulo ou configuração local.
 
-## Workflow de refatoração
+## Workflow
 
-Mudanças devem ser pequenas, testáveis e reversíveis.
+Mudanças devem ser pequenas, testáveis e reversíveis. A refatoração A–G4 está encerrada; a macrofase ativa é a **Fase H — ACULTA Bootstrap Component Design System**.
 
-Sequência planejada:
+A arquitetura, camadas, critérios de maturidade e roadmap H1–H10 estão em [component-design-system.md](component-design-system.md).
 
-1. documentação e inventário;
-2. tokens/base/layout;
-3. componentização CSS;
-4. separação JavaScript/libraries;
-5. cleanup Twig/preprocess e fronteiras Portal/tema;
-6. SDC piloto apenas se justificado.
-
-Não misturar, no mesmo passo, reorganização de arquivos com otimização agressiva de carregamento.
+Não misturar reorganização estrutural, redesign e otimização agressiva de carregamento no mesmo passo.
 
 ## CSS
 
@@ -149,9 +142,9 @@ Não voltar a duplicar arrays de purpose/rotas ou resolução de título em `acu
 
 ## Single Directory Components
 
-O projeto usa SDC apenas quando houver benefício concreto. Drupal 11 já fornece SDC no Core; não adicionar módulo contrib para essa capacidade.
+O projeto usa SDC apenas quando houver fronteira visual e benefício concreto. Drupal 11 já fornece SDC estável no Core; não adicionar módulo contrib para essa capacidade.
 
-Piloto atual:
+Componente-modelo em promoção H2:
 
 ```text
 components/
@@ -163,11 +156,13 @@ components/
 
 Regras:
 
-- manter integração Drupal específica no presenter quando isso preserva attributes/contexto;
+- manter integração Drupal específica no presenter e preservar `attributes`, `title_prefix`, `title_suffix`, access/cache metadata quando aplicável;
 - usar slots para renderables/markup e props apenas para dados estruturados;
 - preferir `include(..., with_context = false)` para evitar dependência implícita de contexto;
 - não mover CSS/JS para o diretório do SDC no mesmo commit que cria o contrato, salvo quando a mudança de attachment for objetivo explícito e testado;
-- não converter templates em massa.
+- não converter templates em massa;
+- SDC não consulta serviços, storage, banco, Node/Commerce/LMS diretamente;
+- CSS/JS exclusivo pode ser co-localizado como `<component>.css`/`<component>.js` para carregamento automático do SDC.
 
 ## Testes mínimos por etapa
 

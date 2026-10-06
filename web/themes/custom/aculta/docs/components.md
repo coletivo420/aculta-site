@@ -1,6 +1,20 @@
 # Componentes visuais
 
-Este catálogo descreve componentes existentes ou reconhecidos no tema. Não é autorização para criar storage, regras de negócio ou novos subsistemas no tema.
+Este catálogo pertence ao **ACULTA Bootstrap Component Design System**. A arquitetura canônica está em [component-design-system.md](component-design-system.md).
+
+Ele descreve componentes existentes ou reconhecidos no tema. Não é autorização para criar storage, regras de negócio ou novos subsistemas no tema.
+
+## Taxonomia
+
+| Camada | Exemplos/estado atual |
+| --- | --- |
+| Foundations | `tokens.css`, `base.css`, `layout.css`, integração Bootstrap |
+| Primitives | button/category/heading/media como candidatos seletivos |
+| Components | `aculta:editorial-card`, project card, breadcrumb; course/product cards planejados |
+| Patterns | hero atual; carousel/rail, content-grid e content-section planejados |
+| Shell | header, navigation, utility/account, footer |
+
+A classificação é de responsabilidade, não obrigação de converter cada item em SDC.
 
 ## Contrato geral
 
@@ -67,7 +81,7 @@ Exemplos:
 
 ## Single Directory Components
 
-Drupal 11 possui SDC no Core. A adoção continua seletiva.
+Drupal 11 possui SDC estável no Core. A adoção continua seletiva e segue o contrato presenter -> SDC documentado em `component-design-system.md`.
 
 ### Piloto: `aculta:editorial-card`
 

@@ -4,18 +4,20 @@ Tema público da plataforma Drupal da Associação Cultural Antiproibicionista. 
 
 ## Papel arquitetural
 
-`aculta` é a camada de apresentação:
+`aculta` é a camada de apresentação e, desde a Fase H, o **ACULTA Bootstrap Component Design System**:
 
 ```text
-Drupal Core + módulos especializados
-                |
-                v
-          aculta_portal
-     integração/orquestração
-                |
-                v
-             aculta
-          apresentação
+Drupal Core + contrib
+        |
+        v
+  aculta_portal
+        |
+        v
+ACULTA Component Design System
+ Foundations -> Primitives -> Components -> Patterns -> Shell
+        |
+        v
+    Bootstrap 5
 ```
 
 O tema possui identidade visual, tipografia, design tokens, layout, header/footer, navegação, Twig overrides, apresentação de formulários, foco, responsividade e componentes visuais.
@@ -49,7 +51,7 @@ Tipografia: Oswald para display/headings/nav/CTAs; Inter para corpo, formulário
 
 Semântica: verde = estrutura, verde escuro = contraste/interação, amarelo = ação, vermelho = ênfase editorial, creme/branco = superfície.
 
-Detalhes: [docs/design-system.md](docs/design-system.md).
+Detalhes: [docs/design-system.md](docs/design-system.md) e [docs/component-design-system.md](docs/component-design-system.md).
 
 ## Estrutura atual
 
@@ -110,7 +112,9 @@ Veja [docs/templates.md](docs/templates.md).
 
 ## Evolução
 
-A refatoração é incremental e behavior-preserving. A divisão de CSS/JS será feita sem introduzir Sass, Webpack, Vite, Node, PostCSS ou outra cadeia de build sem benefício técnico concreto e aprovado.
+A refatoração estrutural defensiva A–G4 está encerrada. A evolução corrente é a **Fase H — ACULTA Bootstrap Component Design System**, mantendo Bootstrap como infraestrutura e ACULTA como linguagem visual/componentizada.
+
+A divisão de CSS/JS continua sem introduzir Sass, Webpack, Vite, Node, PostCSS ou outra cadeia de build sem benefício técnico concreto e aprovado.
 
 Ambientes de desenvolvimento e produção usam Apache; a configuração continua específica por ambiente e o tema não pode depender de comportamento exclusivo do servidor web.
 
