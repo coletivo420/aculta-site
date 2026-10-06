@@ -107,9 +107,9 @@ js/
 └── editorial-carousel.js
 ```
 
-Ambos permanecem em `aculta/global`. Separar responsabilidade não autoriza alterar selectors, IDs de `once()`, eventos ou APIs públicas de Bootstrap/VVJB no mesmo commit.
+`navigation.js` permanece em `aculta/global`. Após o G3, `editorial-carousel.js` é carregado apenas pela library `aculta/editorial-carousel`, anexada no template VVJB da View `home_editorial_highlights`.
 
-O carregamento condicional por rota/componente deve ser tratado separadamente, com teste de AJAX/BigPipe e páginas representativas.
+Separar responsabilidade não autoriza alterar selectors, IDs de `once()`, eventos ou APIs públicas de Bootstrap/VVJB. Libraries contextuais devem ser anexadas pelo componente/theme hook real, não por comparação de URL em JavaScript.
 
 ## PHP/Twig
 

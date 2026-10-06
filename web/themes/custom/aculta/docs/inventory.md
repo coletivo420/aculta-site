@@ -65,7 +65,9 @@ web/themes/custom/aculta/
 - anexa `aculta/global`;
 - declara header, primary_menu, highlighted, content, sidebar e footer.
 
-`aculta.libraries.yml` possui uma única library global com:
+`aculta.libraries.yml` possui uma library global e uma library contextual.
+
+`aculta/global` carrega:
 
 - Inter 400/500/600/700;
 - Oswald 400/500/600/700;
@@ -85,13 +87,12 @@ web/themes/custom/aculta/
 - `css/responsive.css`;
 - `css/components/auth.css`;
 - `js/navigation.js`;
-- `js/editorial-carousel.js`;
 - `bootstrap5/global-styling`;
 - `bootstrap5/bootstrap5-js-latest`;
 - `core/drupal`;
 - `core/once`.
 
-A redução de assets globais é objetivo posterior. O Commit A não altera carregamento.
+`aculta/editorial-carousel` carrega apenas `js/editorial-carousel.js`, com dependências `core/drupal` e `core/once`, e é anexada no override VVJB somente para `home_editorial_highlights`.
 
 ## CSS
 
@@ -247,6 +248,14 @@ A segunda onda extrai do `style.css` somente blocos contíguos com responsabilid
 O `style.css` residual permanece entre `institutional.css` e `editorial-carousel.css` porque ainda mistura footer-layout, formulários, Conta/segurança e participação. Esse trecho não foi reordenado nem artificialmente fragmentado.
 
 A validação estática reconstrói byte a byte o `style.css` anterior pela concatenação `footer + drupal-bootstrap + institutional + style + editorial-carousel + responsive`.
+
+## G3 — carregamento contextual do JavaScript editorial
+
+O G3 remove `js/editorial-carousel.js` da library global. A nova library `aculta/editorial-carousel` é anexada em `views-view-vvjb.html.twig` apenas quando a View ativa é `home_editorial_highlights`.
+
+`navigation.js` continua global porque pertence ao shell público. O CSS de `components/editorial-carousel.css` continua global por enquanto: o arquivo ainda mistura regras do card editorial com regras exclusivas do VVJB, e removê-lo globalmente poderia alterar renderizações do node fora da Home.
+
+A mudança reduz JavaScript desnecessário em páginas sem carrossel sem alterar selectors, behaviors, `once()`, eventos ou APIs do VVJB.
 
 ## Configuração do tema
 

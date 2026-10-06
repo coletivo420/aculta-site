@@ -19,9 +19,15 @@ global:
       css/components/auth.css: {}
   js:
     js/navigation.js: {}
-    js/editorial-carousel.js: {}
   dependencies:
     - bootstrap5/global-styling
     - bootstrap5/bootstrap5-js-latest
+    - core/drupal
+    - core/once
+
+editorial-carousel:
+  js:
+    js/editorial-carousel.js: {}
+  dependencies:
     - core/drupal
     - core/once

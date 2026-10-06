@@ -4,12 +4,12 @@ O JavaScript do tema é progressive enhancement. Bootstrap e módulos contrib co
 
 ## Estado atual
 
-A library global carrega dois arquivos, um por responsabilidade:
+O JavaScript está separado por responsabilidade e por escopo de carregamento:
 
 ```text
 js/
-├── navigation.js
-└── editorial-carousel.js
+├── navigation.js          # global
+└── editorial-carousel.js  # contextual: View home_editorial_highlights
 ```
 
 Os selectors, IDs de `once()`, eventos e chamadas às APIs públicas permanecem os mesmos do arquivo monolítico anterior.
@@ -58,13 +58,11 @@ Não introduzir jQuery novo.
 
 ## Carregamento
 
-Os dois arquivos permanecem em `aculta/global` e compartilham as dependências atuais:
+`js/navigation.js` permanece em `aculta/global`, pois o shell público usa navegação em todas as páginas.
 
-- `bootstrap5/bootstrap5-js-latest`;
-- `core/drupal`;
-- `core/once`.
+`js/editorial-carousel.js` pertence à library `aculta/editorial-carousel` e é anexado por `templates/views-view-vvjb.html.twig` somente quando a View é `home_editorial_highlights`.
 
-O Commit D não introduz library separada por componente nem attachment condicional. Esse tipo de otimização deve ser avaliado em commit próprio para não misturar split estrutural com mudança de carregamento.
+A library contextual declara suas próprias dependências em `core/drupal` e `core/once`. O CSS do carrossel permanece global neste passo porque `css/components/editorial-carousel.css` ainda contém estilos do card editorial usados fora da engine VVJB; a separação visual card/engine deve ocorrer em mudança posterior e específica.
 
 ## Testes
 
