@@ -130,46 +130,7 @@ function aculta_preprocess_html(array &$variables): void {
  * Implements hook_preprocess_breadcrumb().
  */
 function aculta_preprocess_breadcrumb(array &$variables): void {
-  $route_match = \Drupal::routeMatch();
-  $route = $route_match->getRouteObject();
-  $purpose_manager = \Drupal::service('aculta_portal.domain_purpose');
-  $purpose = $purpose_manager->getCurrentPurpose();
-  $hidden_routes = [
-    'system.403', 'system.404', 'user.logout', 'user.logout.confirm',
-    'user.reset', 'user.reset.form', 'user.reset.login', 'entity.user.edit_form',
-    'commerce_payment.notify', 'social_auth_google.redirect_to_google',
-    'social_auth_google.callback', 'user.login_status.http',
-  ];
-  if (!$route || !$purpose || !in_array($purpose, ['main', 'account', 'support', 'magazine'], TRUE)
-    || $route->getOption('_admin_route') || in_array($route_match->getRouteName(), $hidden_routes, TRUE)
-    || \Drupal::service('path.matcher')->isFrontPage()) {
-    $variables['breadcrumb'] = [];
-    $variables['aculta_current_breadcrumb'] = NULL;
-    return;
-  }
-
-  $root_labels = [
-    'main' => (string) t('Início'),
-    'account' => (string) t('Minha conta'),
-    'support' => (string) t('Apoio'),
-    'magazine' => (string) t('Observatório da Maconha Coletivo 420'),
-  ];
-  $root_url = $purpose_manager->pathUrl($purpose, '/');
-  if ($root_url && !empty($variables['links'][0])) {
-    $variables['links'][0] = \Drupal\Core\Link::fromTextAndUrl($root_labels[$purpose], $root_url);
-    $variables['breadcrumb'][0] = [
-      'text' => $root_labels[$purpose],
-      'url' => $root_url->toString(),
-    ];
-  }
-
-  $entity = $route_match->getParameter('node') ?? $route_match->getParameter('taxonomy_term');
-  if ($entity instanceof \Drupal\Core\Entity\EntityInterface) {
-    $title = (string) $entity->label();
-  }
-  else {
-    $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route);
-    $title = is_scalar($title) || $title instanceof \Stringable ? (string) $title : '';
-  }
-  $variables['aculta_current_breadcrumb'] = trim(strip_tags($title)) ?: NULL;
+  /** @var \Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder $builder */
+  $builder = \Drupal::service('aculta_portal.breadcrumb_builder');
+  $variables['aculta_current_breadcrumb'] = $builder->currentTitle(\Drupal::routeMatch());
 }

@@ -96,6 +96,8 @@ Veja [docs/javascript.md](docs/javascript.md).
 
 Twig recebe dados preparados para apresentação. Não consulta banco, não processa pagamento, não decide matrícula, Domain access ou autorização e não persiste estado. Overrides devem preservar atributos e metadata de acesso/cache.
 
+No breadcrumb público, `aculta_portal` é dono da política e hierarquia; o tema apenas adapta o título atual para o Twig e renderiza a semântica visual/acessível.
+
 Veja [docs/templates.md](docs/templates.md).
 
 ## Evolução

@@ -118,6 +118,16 @@ Primeiro classificar a lógica:
 
 Twig não recebe regra de negócio.
 
+### Breadcrumb
+
+Após o Commit E:
+
+- `aculta_portal` decide purpose, visibilidade, raiz, hierarquia, cache metadata e título atual;
+- o preprocess do tema apenas adapta `currentTitle()` para a variável Twig;
+- o Twig renderiza somente markup e semântica acessível.
+
+Não voltar a duplicar arrays de purpose/rotas ou resolução de título em `aculta.theme`.
+
 ## Testes mínimos por etapa
 
 Quando houver mudança funcional/visual, validar:

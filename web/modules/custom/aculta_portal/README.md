@@ -45,6 +45,10 @@ fontes de verdade.
 - AJAX usa preferencialmente APIs Drupal;
 - toda feature identifica fonte de verdade, access, cache, Domain e testes.
 
+### Breadcrumb público
+
+`AcultaBreadcrumbBuilder` é a fonte de verdade para purpose público, rotas ocultas, raiz por domínio, hierarquia, cache metadata e resolução segura do título atual. O tema `aculta` não replica essa política: consome os links Drupal e `currentTitle()` apenas para renderização.
+
 ## Documentação normativa
 
 Consultar [docs/portal](../../../../docs/portal/README.md).
