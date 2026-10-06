@@ -300,6 +300,27 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
 - `web/sites/default/settings.local.php` e configurações locais permanecem fora do Git. Credenciais MariaDB de produção nunca entram em settings versionados.
 - Existe intenção futura de migrar o Runtime do Homelab para MariaDB quando o BDTGN estiver maduro para a integração. Até essa decisão ser executada, SQLite continua sendo a fonte operacional do Homelab e os Estados continuam snapshots SQLite.
 
+## Coordenação Portal, tema e documentação
+
+A evolução do Portal e a refatoração do tema são linhas separadas.
+
+Para tarefas do `aculta_portal`:
+
+- não modificar `web/themes/custom/aculta/**` sem autorização explícita;
+- consultar `docs/portal/` antes de implementar;
+- manter as fontes de verdade definidas em `SOURCE-OF-TRUTH.md`;
+- não instalar dependência planejada antes da versão correspondente;
+- não reescrever roadmap/arquitetura por iniciativa própria;
+- atualizar CHANGELOG e evidência de testes junto do código implementado;
+- uma alteração lógica validada deve virar um commit atômico;
+- cada commit funcional precisa dos testes adequados antes de ser considerado concluído.
+
+A documentação arquitetural e o roadmap são definidos fora da execução de
+código. O Codex deve principalmente implementar, testar e registrar o resultado
+da implementação.
+
+O Portal usa tags `portal-vX.Y.Z`. Ver `docs/portal/VERSIONING.md`.
+
 ## Forma de trabalho esperada do Codex
 
 Antes de uma alteração relevante:
