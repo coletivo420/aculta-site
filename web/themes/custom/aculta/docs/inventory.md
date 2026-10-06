@@ -52,7 +52,6 @@ web/themes/custom/aculta/
     ├── node--project--teaser.html.twig
     ├── page.html.twig
     ├── views-view-vvjb.html.twig
-    ├── form/input.html.twig
     └── navigation/breadcrumb.html.twig
 ```
 
@@ -164,7 +163,7 @@ Após o Commit D, os dois behaviors foram separados sem alterar seus blocos inte
 - `js/navigation.js` contém `Drupal.behaviors.acultaNavigation`;
 - `js/editorial-carousel.js` contém `Drupal.behaviors.acultaEditorialFocus`.
 
-Os dois arquivos continuam na library global e preservam as mesmas dependências.
+No estado do Commit D, os dois arquivos ainda eram globais. Após o G3, `navigation.js` permanece em `aculta/global` e `editorial-carousel.js` é carregado somente pela library contextual `aculta/editorial-carousel`.
 
 
 1. `Drupal.behaviors.acultaNavigation`
@@ -195,9 +194,7 @@ O Commit D substitui o arquivo monolítico `js/aculta.js` por:
 - `js/navigation.js`;
 - `js/editorial-carousel.js`.
 
-Os blocos dos dois Drupal behaviors foram preservados literalmente. A mudança estrutural duplica apenas o wrapper IIFE necessário para que cada arquivo seja executável de forma independente. A library `aculta/global` continua carregando ambos globalmente, com as mesmas dependências Bootstrap/Drupal/`once()`.
-
-Otimização por rota, página ou attachment condicional fica fora deste commit.
+Os blocos dos dois Drupal behaviors foram preservados literalmente. A mudança estrutural duplica apenas o wrapper IIFE necessário para que cada arquivo seja executável de forma independente. No estado do Commit D, a library `aculta/global` ainda carregava ambos. O G3 posteriormente moveu `editorial-carousel.js` para attachment contextual na View `home_editorial_highlights`.
 
 ## PHP do tema
 
@@ -256,6 +253,14 @@ O G3 remove `js/editorial-carousel.js` da library global. A nova library `aculta
 `navigation.js` continua global porque pertence ao shell público. O CSS de `components/editorial-carousel.css` continua global por enquanto: o arquivo ainda mistura regras do card editorial com regras exclusivas do VVJB, e removê-lo globalmente poderia alterar renderizações do node fora da Home.
 
 A mudança reduz JavaScript desnecessário em páginas sem carrossel sem alterar selectors, behaviors, `once()`, eventos ou APIs do VVJB.
+
+## G4 — cleanup de overrides Twig
+
+A auditoria contra Bootstrap5 4.0.8 / Drupal 11.4.8 removeu `templates/form/input.html.twig`.
+
+O arquivo customizado continha apenas o markup básico do Core e, por existir no subtema, mascarava o override específico de `input.html.twig` fornecido pelo Bootstrap5. Isso não era um delta visual ACULTA e poderia impedir classes/semântica de botão definidas pelo base theme.
+
+Os demais overrides foram mantidos porque possuem responsabilidade própria do projeto: shell público, branding, instituição, cards editoriais/projetos, breadcrumb, integração VVJB e feed textual.
 
 ## Configuração do tema
 
