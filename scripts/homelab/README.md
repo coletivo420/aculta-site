@@ -17,7 +17,7 @@ composer install
 cp web/sites/default/settings.homelab.php.example web/sites/default/settings.homelab.php
 export ACULTA_ENV=homelab
 ./scripts/estados/restaurar-estado.sh estados/2026-10-04_aculta_estado_fase8-integral-v1.sqlite
-./scripts/homelab/verify-aculta-homelab.sh
+bash scripts/homelab/verify-aculta-homelab.sh
 ```
 
 O `settings.php` local deve incluir `settings.homelab.php` depois da
