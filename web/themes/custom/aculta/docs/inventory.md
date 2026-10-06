@@ -28,12 +28,17 @@ web/themes/custom/aculta/
 │   ├── tokens.css
 │   ├── base.css
 │   ├── layout.css
+│   ├── drupal-bootstrap.css
+│   ├── responsive.css
 │   ├── components/
 │   │   ├── header.css
 │   │   ├── navigation.css
 │   │   ├── breadcrumb.css
 │   │   ├── content.css
 │   │   ├── buttons.css
+│   │   ├── footer.css
+│   │   ├── institutional.css
+│   │   ├── editorial-carousel.css
 │   │   └── auth.css
 │   └── style.css
 ├── js/
@@ -72,7 +77,12 @@ web/themes/custom/aculta/
 - `css/components/breadcrumb.css`;
 - `css/components/content.css`;
 - `css/components/buttons.css`;
+- `css/components/footer.css`;
+- `css/drupal-bootstrap.css`;
+- `css/components/institutional.css`;
 - `css/style.css`;
+- `css/components/editorial-carousel.css`;
+- `css/responsive.css`;
 - `css/components/auth.css`;
 - `js/navigation.js`;
 - `js/editorial-carousel.js`;
@@ -223,6 +233,20 @@ A adoção posterior permanece opt-in e depende de benefício concreto; não exi
 O CSS de login/registro/recuperação deixou de repetir literais da paleta e famílias tipográficas. `auth.css` agora referencia `--aculta-cream`, `--aculta-white`, `--aculta-green`, `--aculta-green-dark`, `--aculta-yellow`, `--aculta-font-body` e `--aculta-font-display`.
 
 Nenhum seletor, spacing, radius, breakpoint ou valor visual foi alterado; é uma normalização de fonte de verdade do design system.
+
+## G2 — segunda onda CSS
+
+A segunda onda extrai do `style.css` somente blocos contíguos com responsabilidade clara, preservando a ordem da cascade:
+
+- `components/footer.css`;
+- `drupal-bootstrap.css`;
+- `components/institutional.css`;
+- `components/editorial-carousel.css`;
+- `responsive.css`.
+
+O `style.css` residual permanece entre `institutional.css` e `editorial-carousel.css` porque ainda mistura footer-layout, formulários, Conta/segurança e participação. Esse trecho não foi reordenado nem artificialmente fragmentado.
+
+A validação estática reconstrói byte a byte o `style.css` anterior pela concatenação `footer + drupal-bootstrap + institutional + style + editorial-carousel + responsive`.
 
 ## Configuração do tema
 

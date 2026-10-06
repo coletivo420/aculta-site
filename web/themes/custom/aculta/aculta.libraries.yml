@@ -10,7 +10,12 @@ global:
       css/components/breadcrumb.css: {}
       css/components/content.css: {}
       css/components/buttons.css: {}
+      css/components/footer.css: {}
+      css/drupal-bootstrap.css: {}
+      css/components/institutional.css: {}
       css/style.css: {}
+      css/components/editorial-carousel.css: {}
+      css/responsive.css: {}
       css/components/auth.css: {}
   js:
     js/navigation.js: {}

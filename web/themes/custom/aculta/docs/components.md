@@ -22,8 +22,13 @@ Todo componente visual deve:
 | `components/breadcrumb.css` | breadcrumb e tratamento de links editoriais nesse contexto |
 | `components/content.css` | espaçamento principal, títulos de seção, superfícies e cards genéricos |
 | `components/buttons.css` | botões públicos e CTAs |
+| `components/footer.css` | base visual do footer |
+| `drupal-bootstrap.css` | integração visual com componentes Drupal/Bootstrap |
+| `components/institutional.css` | composição institucional, projetos e conteúdo relacionado |
+| `components/editorial-carousel.css` | destaque editorial e integração visual VVJB |
+| `responsive.css` | ajustes responsivos globais remanescentes |
 | `components/auth.css` | login, registro e recuperação de senha Drupal |
-| `style.css` | integrações e componentes ainda intercalados, a extrair em ondas posteriores |
+| `style.css` | trecho residual ainda intercalado de footer-layout, formulários, Conta/segurança e participação |
 
 Esta divisão é física, não uma alteração de contrato visual. A ordem de carregamento é parte do comportamento e deve ser preservada.
 
