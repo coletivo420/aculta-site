@@ -1,0 +1,61 @@
+/* 7. Breadcrumb */
+.aculta-breadcrumb { margin-block: 0.75rem 1rem; font: 400 0.875rem/1.6 var(--aculta-font-body); }
+.aculta-breadcrumb .breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+.aculta-breadcrumb .breadcrumb-item { color: var(--aculta-green-dark); overflow-wrap: anywhere; }
+.aculta-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  color: var(--aculta-green-dark);
+  content: "/";
+}
+.aculta-breadcrumb .breadcrumb-item.active { color: var(--aculta-green-dark); }
+.aculta-breadcrumb .breadcrumb-item a:focus-visible {
+  border-radius: 0.125rem;
+  outline: 3px solid var(--aculta-green);
+  outline-offset: 3px;
+}
+.aculta-prose :is(p, li, dd, blockquote) a:not(.btn):not(.button):not([role="button"]),
+.aculta-editorial-summary a:not(.btn):not(.button):not([role="button"]),
+.aculta-editorial-complement a:not(.btn):not(.button):not([role="button"]),
+.aculta-editorial-cta a:not(.btn):not(.button):not([role="button"]),
+.aculta-editorial-link,
+.aculta-editorial-list .views-more-link,
+.aculta-breadcrumb .breadcrumb-item a:not(.btn):not(.button):not([role="button"]) {
+  color: var(--aculta-link-editorial);
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.075em;
+}
+.aculta-prose :is(p, li, dd, blockquote) a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible),
+.aculta-editorial-summary a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible),
+.aculta-editorial-complement a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible),
+.aculta-editorial-cta a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible),
+.aculta-editorial-link:is(:hover, :focus-visible),
+.aculta-editorial-list .views-more-link:is(:hover, :focus-visible),
+.aculta-breadcrumb .breadcrumb-item a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible) {
+  color: var(--aculta-link-editorial-hover);
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 0.075em;
+}
+.aculta-prose :is(p, li, dd, blockquote) a:not(.btn):not(.button):not([role="button"]):visited,
+.aculta-editorial-summary a:not(.btn):not(.button):not([role="button"]):visited,
+.aculta-editorial-complement a:not(.btn):not(.button):not([role="button"]):visited,
+.aculta-editorial-cta a:not(.btn):not(.button):not([role="button"]):visited,
+.aculta-editorial-link:visited,
+.aculta-editorial-list .views-more-link:visited,
+.aculta-breadcrumb .breadcrumb-item a:not(.btn):not(.button):not([role="button"]):visited {
+  color: var(--aculta-link-editorial);
+}
+.aculta-city .aculta-prose :is(p, li, dd, blockquote) a:not(.btn):not(.button):not([role="button"]),
+.aculta-city .aculta-prose :is(p, li, dd, blockquote) a:not(.btn):not(.button):not([role="button"]):visited,
+.aculta-city .aculta-prose :is(p, li, dd, blockquote) a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible) {
+  color: var(--aculta-cream);
+}
+
