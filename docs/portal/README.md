@@ -18,6 +18,8 @@ fontes de verdade funcionais dessas ferramentas.
 - [Revista / Observatório Coletivo 420](MAGAZINE.md)
 - [Loja](SHOP.md)
 - [Modo de entrega GitHub-first / Runtime-last](DELIVERY-MODE.md)
+- [S2 — Static Portal Audit](STATIC-AUDIT.md)
+- [Mapa de refatoração](REFACTOR-MAP.md)
 - [Testes](TESTING.md)
 - [Versionamento](VERSIONING.md)
 - [Roadmap](ROADMAP.md)

@@ -22,7 +22,7 @@ Ver [DELIVERY-MODE.md](DELIVERY-MODE.md).
 
 ## S1 — Component contracts
 
-**Estado: ativa.**
+**Estado: concluída documentalmente.**
 
 Objetivo:
 
@@ -43,6 +43,10 @@ Documentação pode ser integrada ao main.
 Código executável fica draft se não houver Runtime.
 
 ## S2 — Static Portal Audit
+
+**Estado: concluída documentalmente.**
+
+Resultado: [STATIC-AUDIT.md](STATIC-AUDIT.md) e [REFACTOR-MAP.md](REFACTOR-MAP.md).
 
 Objetivo:
 
@@ -67,6 +71,8 @@ Saída:
 inventário + plano de refatoração por arquivo.
 
 ## S3 — Behavior-preserving preparation
+
+**Estado: próxima.**
 
 Objetivo:
 

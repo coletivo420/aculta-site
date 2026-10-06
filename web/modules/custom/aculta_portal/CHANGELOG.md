@@ -6,6 +6,12 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Documentação
+
+- S2 Static Portal Audit concluído sem alterar runtime.
+- Mapa de refatoração classifica KEEP, REFACTOR, UPSTREAM/CONFIG e RUNTIME-SENSITIVE.
+- Bootstrap Component Design System definido como destino da apresentação pública do Portal.
+
 ### Planejado
 
 - Portal 0.10.0: fundação documental e disciplina de desenvolvimento.
