@@ -126,8 +126,14 @@ componentes, Twig, CSS, responsividade e identidade.
 
 O `aculta_portal` fornece render arrays, dados, forms e integração.
 
-A refatoração do tema ocorre em uma linha separada. Mudanças Portal não devem
-reescrever o tema como efeito colateral.
+A apresentação pública segue o **ACULTA Bootstrap Component Design System** já
+estabelecido pelo tema. O Portal prepara dados/estados e presenters; SDCs do
+tema aplicam contratos visuais sobre Bootstrap. Ver
+[COMPONENT-DESIGN-SYSTEM.md](COMPONENT-DESIGN-SYSTEM.md) e ADR-007.
+
+A refatoração do tema está em fase avançada e é preservada como baseline.
+Mudanças Portal não devem reiniciar, reestruturar em massa ou reescrever o tema
+como efeito colateral.
 
 ## Bancos
 

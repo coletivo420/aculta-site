@@ -25,5 +25,8 @@ O Portal usa tags `portal-vX.Y.Z`.
 Em preparação.
 
 Objetivo: organizar responsabilidades, fontes de verdade, módulos upstream,
-AJAX, Fórum, Wiki, Revista, Loja, integrações Google, testes, versionamento e
-roadmap antes de novas features.
+AJAX, Fórum, Wiki, Revista, Loja, integrações Google, Bootstrap Component Design
+System, testes, versionamento e roadmap antes de novas features.
+
+O desenvolvimento opera temporariamente em modo GitHub-first / Runtime-last;
+features executáveis preparadas sem Homelab permanecem draft até validação.

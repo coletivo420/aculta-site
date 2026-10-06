@@ -15,6 +15,7 @@
 - [ADR-004 - SQLite no desenvolvimento](decisions/ADR-004-sqlite-development.md)
 - [ADR-005 - Drupal LMS como fonte de verdade](decisions/ADR-005-lms-integration.md)
 - [ADR-006 - Apache como baseline definitivo](decisions/ADR-006-web-servers.md)
+- [ADR-007 - ACULTA Bootstrap Component Design System](decisions/ADR-007-bootstrap-component-design-system.md)
 
 ## ACULTA Portal
 

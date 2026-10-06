@@ -1,31 +1,48 @@
 # Estratégia de testes do ACULTA Portal
 
-O Homelab é o ambiente de desenvolvimento executável. Mudanças funcionais
-devem ser testadas antes do commit.
+O projeto opera temporariamente em modo
+[GitHub-first / Runtime-last](DELIVERY-MODE.md).
 
-## Regra de commit
+Isso separa **revisão estática** de **validação Runtime**.
 
-```text
-código/config
-   ↓
-testes
-   ↓
-PASS
-   ↓
-documentação mínima
-   ↓
-commit
-```
+## Gate A — GitHub/static
 
-Teste inconclusivo não é PASS.
+Pode ser executado sem Homelab.
 
-## Testes mínimos para PHP/config
+Aplicável a:
 
-Executar conforme o escopo:
+- docs;
+- ADRs;
+- contratos;
+- inventários;
+- planos de teste;
+- análise de código;
+- preparação de draft PR.
+
+Verificar conforme aplicável:
+
+- diff;
+- conflitos;
+- referências internas;
+- consistência com source-of-truth;
+- APIs upstream documentadas;
+- ausência de segredos;
+- ausência de alteração acidental no tema;
+- separação Portal/tema;
+- contratos do Bootstrap Component Design System.
+
+Gate A nunca autoriza declarar comportamento funcional como PASS.
+
+## Gate B — Runtime
+
+Obrigatório antes de merge/release de mudança funcional.
+
+Executar conforme escopo:
 
 ```sh
 php -l caminho/alterado.php
 composer validate
+composer audit
 vendor/bin/drush status
 vendor/bin/drush cr
 vendor/bin/drush config:status
@@ -33,41 +50,34 @@ vendor/bin/drush updatedb:status
 git diff --check
 ```
 
-Se PHPCS/PHPStan estiverem configurados para o escopo, executar também.
+Adicionar PHPCS/PHPStan/testes automatizados quando estiverem configurados.
 
-`composer audit` deve ser executado quando a rede permitir. Se falhar somente
-por indisponibilidade externa, registrar a limitação e confirmar se
-`composer.json`/`composer.lock` mudaram.
+## Drafts sem Runtime
+
+Mudança executável preparada sem Homelab deve permanecer draft e declarar:
+
+```text
+RUNTIME STATUS: DEFERRED
+```
+
+O PR deve listar os gates faltantes.
+
+Não taggear release.
 
 ## Configuração Drupal
 
-Quando a feature muda configuração:
+Mudanças `config/sync` exigem Runtime antes do merge funcional:
 
-1. implementar/testar no Runtime;
-2. `drush cex -y`;
-3. revisar somente os arquivos esperados;
-4. importar em contexto limpo quando aplicável;
-5. deixar `config:status` CLEAN.
+1. aplicar no Runtime;
+2. validar;
+3. `drush cex -y`;
+4. revisar somente arquivos esperados;
+5. testar import quando aplicável;
+6. terminar com `config:status` CLEAN.
 
-Nunca aceitar um export massivo não relacionado.
+Não fabricar YAML de configuração e tratá-lo como validado apenas por revisão.
 
 ## Matriz de Domains
-
-Purposes atuais:
-
-- MAIN;
-- ACCOUNT;
-- SUPPORT;
-- MAGAZINE;
-- WIKI;
-- SHOP;
-- COURSES.
-
-Quando Forum for ativado:
-
-- FORUM.
-
-Matriz planejada de hosts:
 
 | Purpose | Homelab | Produção |
 | --- | --- | --- |
@@ -80,31 +90,24 @@ Matriz planejada de hosts:
 | COURSES | cursos.aculta.toca.net.br | cursos.aculta.org |
 | FORUM | forum.aculta.toca.net.br | forum.aculta.org |
 
+FORUM é planejado até a implementação Runtime.
+
 Produção não é modificada durante desenvolvimento.
 
 ## Isolamento
 
-Toda feature especializada deve provar:
+Toda feature especializada deve provar no Runtime:
 
 ```text
 host correto -> comportamento esperado
-host incorreto -> 404 ou política explicitamente documentada
+host incorreto -> 404 ou política documentada
 ```
 
-Não usar redirect silencioso como substituto de isolamento sem ADR.
+## User A / User B
 
-## Testes de usuário
+Aplicar a dados privados:
 
-Para dados privados:
-
-- User A vê somente seus dados;
-- User B vê somente seus dados;
-- anônimo não recebe dados privados;
-- cache não cruza usuários.
-
-Aplicar a:
-
-- dados pessoais;
+- perfil;
 - endereço;
 - apoio;
 - cursos;
@@ -112,94 +115,83 @@ Aplicar a:
 - flags;
 - notificações.
 
-Wiki/Fórum podem conter conteúdo público; nesse caso o teste verifica autoria e
-permissões, não isolamento artificial de conteúdo público.
+Wiki/Fórum públicos verificam autoria/access, não isolamento artificial.
+
+## Component Design System
+
+Para UI pública nova validar:
+
+- contrato presenter -> SDC;
+- componente Bootstrap usado corretamente;
+- keyboard;
+- focus-visible;
+- headings/landmarks;
+- loading/empty/error;
+- mobile;
+- reduced motion;
+- titles longos;
+- cache/access não vazando para a camada visual.
 
 ## AJAX
 
-Toda feature AJAX precisa provar:
+Validar:
 
-- fluxo com JS;
+- JS;
 - fallback sem JS quando essencial;
-- teclado;
 - focus;
 - aria-live/mensagens;
-- erro de servidor;
+- erro;
 - permissions;
-- behaviors após substituição parcial;
-- back/history quando aplicável.
+- behavior reattach;
+- history/back;
+- BigPipe/AJAX quando aplicável.
 
-## Cache
+## Subsistemas
 
-Revisar:
-
-- cache contexts;
-- cache tags;
-- max-age;
-- dependências de entidades;
-- `user` / `user.permissions` / `domain` quando necessário.
-
-Nenhuma tela privada pode depender apenas de cache compartilhado.
-
-## Fórum
-
-Na primeira versão:
+### Fórum
 
 - landing;
-- containers/fóruns;
 - tópico;
 - resposta;
 - canonical;
-- host incorreto;
-- login compartilhado;
-- permissões;
-- moderação básica;
+- isolation;
+- shared login;
+- permissions;
 - cache.
 
-## Wiki
-
-Continuar validando:
+### Wiki
 
 - published/unpublished;
 - revisions;
 - Diff;
 - Domain Source;
-- busca;
+- search;
 - canonical;
-- access antes de metadata.
+- metadata access.
 
-## Cursos
-
-Continuar validando:
+### Cursos
 
 - membership;
 - access;
 - progresso;
 - needs evaluation;
-- account summary;
-- course host;
-- logout compartilhado.
+- ACCOUNT;
+- COURSES;
+- shared logout.
 
-## CEP/endereço
+### CEP
 
-Validar:
-
-- Profile customer real;
-- CEP válido;
-- CEP inválido;
-- resposta atrasada/stale;
-- bairro;
-- estado/cidade/logradouro;
-- complemento manual;
-- submit;
-- reload;
+- Profile customer;
+- CEP válido/inválido;
+- stale response;
+- Address fields;
+- submit/reload;
 - AJAX reinjection;
 - User A/User B.
 
 ## Estados
 
-Mudança importante do Portal deve continuar compatível com o processo de
-snapshot/restore do Homelab.
+Criar novo Estado somente quando a janela Runtime demonstrar necessidade.
 
-Quando uma fase exigir novo Estado, usar os scripts oficiais; não copiar SQLite
-vivo manualmente.
+Não recuperar ou promover o trabalho local antigo descartado apenas para manter
+continuidade histórica.
