@@ -104,7 +104,7 @@ Purposes atuais:
 
 | Purpose | Produção | Homelab |
 | --- | --- | --- |
-| MAIN | aculta.org | aculta.aculta.toca.net.br |
+| MAIN | aculta.org | aculta.toca.net.br |
 | ACCOUNT | conta.aculta.org | conta.aculta.toca.net.br |
 | SUPPORT | apoio.aculta.org | apoio.aculta.toca.net.br |
 | MAGAZINE | coletivo420.aculta.org | coletivo420.aculta.toca.net.br |

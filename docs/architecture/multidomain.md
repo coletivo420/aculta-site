@@ -18,7 +18,7 @@ central bloqueia hosts incorretos.
 
 | Purpose | Produção | Homelab | Estado |
 | --- | --- | --- | --- |
-| main | aculta.org | aculta.aculta.toca.net.br | ativo |
+| main | aculta.org | aculta.toca.net.br | ativo |
 | account | conta.aculta.org | conta.aculta.toca.net.br | ativo |
 | support | apoio.aculta.org | apoio.aculta.toca.net.br | ativo |
 | magazine | coletivo420.aculta.org | coletivo420.aculta.toca.net.br | ativo |

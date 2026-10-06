@@ -71,7 +71,7 @@ Matriz planejada de hosts:
 
 | Purpose | Homelab | Produção |
 | --- | --- | --- |
-| MAIN | aculta.aculta.toca.net.br | aculta.org |
+| MAIN | aculta.toca.net.br | aculta.org |
 | ACCOUNT | conta.aculta.toca.net.br | conta.aculta.org |
 | SUPPORT | apoio.aculta.toca.net.br | apoio.aculta.org |
 | MAGAZINE | coletivo420.aculta.toca.net.br | coletivo420.aculta.org |
