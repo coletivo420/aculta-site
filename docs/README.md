@@ -16,6 +16,12 @@
 - [ADR-005 - Drupal LMS como fonte de verdade](decisions/ADR-005-lms-integration.md)
 - [ADR-006 - Apache como baseline definitivo](decisions/ADR-006-web-servers.md)
 
+## ACULTA Portal
+
+A documentação normativa da camada de integração fica em
+[`docs/portal`](portal/README.md): arquitetura, fontes de verdade, módulos
+upstream, AJAX, fórum, testes, versionamento e roadmap.
+
 ## Tema aculta
 
 A documentação detalhada da camada de apresentação fica em [`web/themes/custom/aculta/docs`](../web/themes/custom/aculta/docs/), incluindo inventário, design system, componentes, templates, acessibilidade, JavaScript, branding e desenvolvimento.
