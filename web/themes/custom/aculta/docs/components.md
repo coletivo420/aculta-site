@@ -9,12 +9,24 @@ Ele descreve componentes existentes ou reconhecidos no tema. Não é autorizaç�
 | Camada | Exemplos/estado atual |
 | --- | --- |
 | Foundations | `tokens.css`, `base.css`, `layout.css`, integração Bootstrap |
-| Primitives | button/category/heading/media como candidatos seletivos |
+| Primitives | button como contrato CSS/Bootstrap; `category-label` aprovado para H3; heading/media adiados |
 | Components | `aculta:editorial-card`, project card, breadcrumb; course/product cards planejados |
 | Patterns | hero atual; carousel/rail, content-grid e content-section planejados |
 | Shell | header, navigation, utility/account, footer |
 
 A classificação é de responsabilidade, não obrigação de converter cada item em SDC.
+
+## Auditoria de primitives
+
+Resultado H3:
+
+- `category-label`: candidato aprovado a SDC experimental;
+- button: primitive global via Bootstrap/Form API, sem SDC neste momento;
+- section-heading: adiado para o pattern `content-section` em H5;
+- media: adiado até a família de cards H4 fornecer requisitos comuns;
+- icon: sem caso de uso suficiente.
+
+Ver [h3-primitives-audit.md](h3-primitives-audit.md).
 
 ## Contrato geral
 

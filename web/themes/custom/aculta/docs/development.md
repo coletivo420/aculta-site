@@ -171,6 +171,14 @@ O H2 move somente regras exclusivas de `aculta:editorial-card` para o SDC. Selet
 
 Não duplicar de volta regras do card em `content.css`, `breadcrumb.css` ou `editorial-carousel.css`.
 
+### Regra H3 para primitives
+
+Primitive não implica SDC. Se o contrato precisa estilizar markup produzido por Core/Bootstrap/Form API, CSS global pode ser a implementação correta.
+
+O primeiro primitive SDC aprovado é `category-label`. Button permanece CSS/Bootstrap; section-heading e media aguardam H5/H4 respectivamente.
+
+Antes de adicionar novos SDCs, considerar ativar `enforce_prop_schemas: true` em commit próprio e validar todos os componentes existentes.
+
 ## Testes mínimos por etapa
 
 Quando houver mudança funcional/visual, validar:
