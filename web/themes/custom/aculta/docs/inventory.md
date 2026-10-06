@@ -20,6 +20,9 @@ web/themes/custom/aculta/
 │   ├── install/aculta.settings.yml
 │   └── schema/aculta.schema.yml
 ├── css/
+│   ├── tokens.css
+│   ├── base.css
+│   ├── layout.css
 │   └── style.css
 ├── js/
 │   └── aculta.js
@@ -48,6 +51,9 @@ web/themes/custom/aculta/
 
 - Inter 400/500/600/700;
 - Oswald 400/500/600/700;
+- `css/tokens.css`;
+- `css/base.css`;
+- `css/layout.css`;
 - `css/style.css`;
 - `js/aculta.js`;
 - `bootstrap5/global-styling`;
@@ -59,9 +65,11 @@ A redução de assets globais é objetivo posterior. O Commit A não altera carr
 
 ## CSS
 
-`css/style.css` possui aproximadamente 1.029 linhas na linha de base auditada.
+Na linha de base auditada, todo o CSS estava concentrado em `css/style.css`, com aproximadamente 1.029 linhas.
 
-O arquivo já contém:
+Após o Commit B, a ordem global é `tokens.css` → `base.css` → `layout.css` → `style.css`. Os três primeiros arquivos foram extraídos sem alterar declarações nem ordem de cascade; `style.css` permanece com componentes e regras especializadas ainda não extraídas.
+
+O conjunto CSS contém:
 
 - paleta e custom properties `--aculta-*`;
 - integração com variáveis Bootstrap;
@@ -91,6 +99,19 @@ O token inválido `--aculta-dark-green` identificado no inventário inicial foi 
 A varredura do `style.css` após a correção não encontrou outras custom properties `--aculta-*` usadas sem definição no próprio tema.
 
 Esta correção não altera a paleta nem introduz novo token; apenas restaura a aplicação do verde escuro oficial onde a declaração CSS antes ficava inválida.
+
+## B — fundações CSS
+
+O Commit B separa, sem reescrever regras:
+
+- `tokens.css`: comentário de identidade, paleta oficial, custom properties do tema e integração com tokens Bootstrap;
+- `base.css`: base, tipografia global e famílias aplicadas a elementos de UI;
+- `layout.css`: container e layout estrutural geral;
+- `style.css`: começa no antigo bloco de header e mantém todo o restante na ordem original.
+
+A validação estática do commit reconstrói byte a byte o `style.css` anterior pela concatenação `tokens.css + base.css + layout.css + style.css`. A única mudança adicional de runtime é `aculta.libraries.yml` carregar os quatro arquivos nessa mesma ordem.
+
+Este passo não componentiza header, navegação, formulários, Conta ou editorial; isso fica para o Commit C.
 
 ## JavaScript
 

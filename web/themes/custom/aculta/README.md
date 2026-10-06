@@ -28,7 +28,7 @@ O tema não é fonte de verdade de autenticação, pagamentos, Commerce, cursos,
 - Base theme: `bootstrap5`.
 - Bootstrap pertence exclusivamente ao base theme; não embarcar uma segunda cópia.
 - A library global atual é `aculta/global`.
-- CSS atual: `css/style.css`.
+- CSS atual: `css/tokens.css`, `css/base.css`, `css/layout.css` e `css/style.css`, nessa ordem.
 - JavaScript atual: `js/aculta.js`.
 - Fontes web: Inter e Oswald via Google Fonts.
 
@@ -55,7 +55,10 @@ Detalhes: [docs/design-system.md](docs/design-system.md).
 
 - `assets/branding` - originais e exports de marca.
 - `config/install` e `config/schema` - defaults e schema de theme settings.
-- `css/style.css` - sistema visual atual, ainda monolítico.
+- `css/tokens.css` - paleta, tokens do tema e integração de custom properties Bootstrap.
+- `css/base.css` - base tipográfica e regras globais de elementos.
+- `css/layout.css` - container e geometria estrutural geral.
+- `css/style.css` - componentes e regras especializadas ainda não extraídas.
 - `js/aculta.js` - progressive enhancement da navegação e do carousel editorial.
 - `templates` - overrides Twig.
 - `docs` - contratos e inventário técnico do tema.

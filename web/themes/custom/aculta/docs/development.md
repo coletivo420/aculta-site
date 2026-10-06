@@ -61,6 +61,18 @@ Não misturar, no mesmo passo, reorganização de arquivos com otimização agre
 
 ## CSS
 
+Estrutura atual após o Commit B:
+
+```text
+css/
+├── tokens.css
+├── base.css
+├── layout.css
+└── style.css
+```
+
+A library global deve preservar esta ordem. `style.css` ainda concentra componentes e regras especializadas e será reduzido gradualmente, sem reordenar a cascade incidentalmente.
+
 Antes de remover ou mover regra:
 
 - verificar Twig;

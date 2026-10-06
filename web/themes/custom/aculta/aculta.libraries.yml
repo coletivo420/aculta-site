@@ -2,6 +2,9 @@ global:
   css:
     theme:
       'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap': { type: external, minified: true }
+      css/tokens.css: {}
+      css/base.css: {}
+      css/layout.css: {}
       css/style.css: {}
   js:
     js/aculta.js: {}
