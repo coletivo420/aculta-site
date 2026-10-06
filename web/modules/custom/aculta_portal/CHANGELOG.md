@@ -1,0 +1,28 @@
+# Changelog — ACULTA Portal
+
+Todas as mudanças relevantes do `aculta_portal` devem ser registradas aqui.
+
+O Portal usa tags `portal-vX.Y.Z`.
+
+## [Unreleased]
+
+### Planejado
+
+- Portal 0.10.0: fundação documental e disciplina de desenvolvimento.
+- Portal 0.11.0: fundação do Fórum.
+- Portal 0.12.0: participação do Fórum na Conta.
+- Portal 0.13.0: hub integrado de participação.
+- Portal 0.14.0: hub administrativo.
+- Portal 0.15.0: consolidação AJAX.
+- Portal 0.16.0: Search API.
+- Portal 0.17.0: engagement.
+- Portal 0.18.0: deduplicação.
+- Portal 0.19.0: hardening.
+- Portal 1.0.0: baseline estável do Portal.
+
+## 0.10.0 — Foundation
+
+Em preparação.
+
+Objetivo: organizar responsabilidades, fontes de verdade, módulos upstream,
+AJAX, fórum, testes, versionamento e roadmap antes de novas features.
