@@ -58,6 +58,14 @@ quando houver comportamento assíncrono
 | Favoritos/seguir | Flag | adapter mínimo | `follow-action`, `status-badge` | usar comportamento AJAX do Flag quando adotado; não criar toggle próprio |
 | Notificações | Comment Notify | integração/preferences | `notification-preference` | usar forms/APIs do módulo; não criar transporte próprio |
 
+## Contratos
+
+Os contratos visuais propostos estão em
+[ACCOUNT-COMPONENT-CONTRACTS.md](ACCOUNT-COMPONENT-CONTRACTS.md).
+
+O primeiro piloto Portal é a fronteira de Cursos documentada em
+[S3-2-ACCOUNT-SDC.md](S3-2-ACCOUNT-SDC.md).
+
 ## O que vira SDC primeiro
 
 Ordem preferencial:

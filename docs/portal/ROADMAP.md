@@ -116,7 +116,17 @@ Sem Runtime:
 
 ## S3.2 — Minha Conta -> SDC
 
-Executar em pequenos drafts, preferencialmente nesta ordem:
+**Estado: S3.2A preparada em draft; Runtime deferred.**
+
+S3.2A cria a primeira fronteira presenter -> futuro SDC com Cursos, sem alterar
+o tema e mantendo o render atual como fallback.
+
+Documentos:
+
+- [S3-2-ACCOUNT-SDC.md](S3-2-ACCOUNT-SDC.md)
+- [ACCOUNT-COMPONENT-CONTRACTS.md](ACCOUNT-COMPONENT-CONTRACTS.md)
+
+Executar as próximas conversões em pequenos drafts, preferencialmente nesta ordem:
 
 1. status badge;
 2. empty state;

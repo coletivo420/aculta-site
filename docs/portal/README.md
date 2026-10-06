@@ -14,6 +14,8 @@ fontes de verdade funcionais dessas ferramentas.
 - [Política AJAX](AJAX.md)
 - [Integração com o Bootstrap Component Design System](COMPONENT-DESIGN-SYSTEM.md)
 - [Minha Conta — matriz SDC, integrações e AJAX](ACCOUNT-SDC-AJAX.md)
+- [Minha Conta — contratos de componentes](ACCOUNT-COMPONENT-CONTRACTS.md)
+- [S3.2 — Minha Conta -> SDC](S3-2-ACCOUNT-SDC.md)
 - [Fórum](FORUM.md)
 - [Wiki420](WIKI.md)
 - [Revista / Observatório Coletivo 420](MAGAZINE.md)
