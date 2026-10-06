@@ -81,9 +81,16 @@ Observações auditadas para commits posteriores:
 - há usos de `!important`, principalmente em utilities Bootstrap;
 - o bloco recente de autenticação repete cores literais já existentes como tokens;
 - há breakpoints equivalentes escritos com valores diferentes;
-- `var(--aculta-dark-green)` é usado no footer, mas o token definido é `--aculta-green-dark`.
 
-O último item é um bug CSS real, porém não é corrigido neste commit documental.
+## Correções após o inventário inicial
+
+### A0 — token do footer
+
+O token inválido `--aculta-dark-green` identificado no inventário inicial foi corrigido para o token oficial já existente `--aculta-green-dark` nas três declarações do footer.
+
+A varredura do `style.css` após a correção não encontrou outras custom properties `--aculta-*` usadas sem definição no próprio tema.
+
+Esta correção não altera a paleta nem introduz novo token; apenas restaura a aplicação do verde escuro oficial onde a declaração CSS antes ficava inválida.
 
 ## JavaScript
 
