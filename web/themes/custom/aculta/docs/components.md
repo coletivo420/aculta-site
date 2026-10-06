@@ -13,6 +13,20 @@ Todo componente visual deve:
 - não persistir estado funcional;
 - não consultar diretamente banco de dados.
 
+## Arquivos CSS atuais
+
+| Arquivo | Responsabilidade |
+| --- | --- |
+| `components/header.css` | header e branding textual |
+| `components/navigation.css` | navegação principal, estados active/hover/focus e progressive enhancement visual |
+| `components/breadcrumb.css` | breadcrumb e tratamento de links editoriais nesse contexto |
+| `components/content.css` | espaçamento principal, títulos de seção, superfícies e cards genéricos |
+| `components/buttons.css` | botões públicos e CTAs |
+| `components/auth.css` | login, registro e recuperação de senha Drupal |
+| `style.css` | integrações e componentes ainda intercalados, a extrair em ondas posteriores |
+
+Esta divisão é física, não uma alteração de contrato visual. A ordem de carregamento é parte do comportamento e deve ser preservada.
+
 ## Catálogo atual
 
 | Componente | Implementação principal | Fonte de dados/estado |
