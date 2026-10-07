@@ -2,7 +2,7 @@
 
 Data: 2026-10-07
 
-Status: **FAIL — blocker fora do escopo da S3.5**
+Status: **RESOLVIDO pela R1.2A; PR #30 ainda depende de reteste S3.5**
 
 ## Contexto
 
@@ -105,3 +105,58 @@ Depois do merge dessa correção:
 2. repetir Wiki add/edit;
 3. repetir gates S3.5 afetados;
 4. somente então decidir merge do #30.
+
+
+## R1.2A — resolução do finding
+
+**R1.2A ROOT CAUSE: CONFIRMED**
+**R1.2A FIX: `filter.format.full_html` salvo pela Config Entity API com IDs como chaves**
+**RUNTIME STATUS: PASS**
+
+Main usado como baseline: `b175955b8ed7d7cea8275f17e9d2b9e6bde830b2`.
+
+Antes da correção, os media types ativos eram `image`, `document` e
+`remote_video`. `full_html` usava CKEditor 5 com `drupalMedia`; seu filtro
+`media_embed` continha `allowed_media_types` como lista numérica (`0 => image`,
+`1 => document`, `2 => remote_video`). A interseção Core por chave resultou em
+array vazio. `basic_html` e o formato `wiki` não foram alterados.
+
+A stack trace HTTP confirmou o fluxo:
+`MediaLibraryState::validateRequiredParameters()` →
+`MediaLibraryState::create()` →
+`CKEditor5Plugin\MediaLibrary::getDynamicPluginConfig()` →
+`CKEditor5PluginManager::getCKEditor5PluginConfig()` →
+`CKEditor5::getJSSettings()` → renderização do formulário de edição Wiki.
+O formato envolvido foi `full_html`.
+
+A alteração foi aplicada com `FilterFormat` Config Entity API, seguida de
+cache rebuild e export. O array ativo/exportado agora é associativo:
+
+```yaml
+allowed_media_types:
+  image: image
+  document: document
+  remote_video: remote_video
+```
+
+A interseção Core após a mudança contém os três IDs: `image`, `document` e
+`remote_video`.
+
+Validação HTTP autenticada no Wiki host: `/node/add/wiki_entry` e `/node/43/edit`
+retornaram 200 antes e depois do config import; anônimo recebeu 403 em
+`/node/add/wiki_entry`. O formulário carregou CKEditor 5 e gerou a URL de
+Media Library com exatamente os três tipos. A URL foi requisitada e retornou
+200; a UI contém a ação de inserção. O grid administrativo de mídia no host
+MAIN também retornou 200. Nenhum upload, mídia ou conteúdo foi criado. Não foi
+executado clique de seleção/cancelamento em navegador automatizado; o ambiente
+não possui Selenium, Playwright ou geckodriver.
+
+`drush cex` alterou somente `config/sync/filter.format.full_html.yml`; o diff
+consiste exclusivamente na serialização associativa dos três IDs. `drush cim`
+reportou nenhuma alteração pendente; cache rebuild, config status e updatedb
+passaram. O verificador Homelab, Composer validate/audit/platform requirements
+e os smoke tests de host passaram. Não foram alterados Domain policy, código
+PHP, tema, dependências Composer, tipos de mídia, Runtime SQLite ou produção.
+
+O PR #30 não foi alterado nem retestado nesta unidade. Após o merge desta
+correção, R1.2B deve atualizar #30 contra o novo `main` e repetir os gates S3.5.
