@@ -101,6 +101,12 @@ ou ao módulo upstream, salvo necessidade específica de UX:
 Essas rotas não devem aparecer como navegação principal do usuário quando uma
 rota pública amigável existir.
 
+Exceção específica ACULTA: o callback OAuth do Social Auth é exposto em
+português como `/entrar/{provedor}/retorno`. Para o Google, o URI é
+`/entrar/google/retorno`. Ele continua sendo um endpoint técnico, não um link de
+navegação; a forma localizada atende ao URI que precisa ser cadastrado no
+cliente OAuth.
+
 ## ACCOUNT
 
 Inventário mínimo de URLs humanas a manter/padronizar:

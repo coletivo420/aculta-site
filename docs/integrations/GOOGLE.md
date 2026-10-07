@@ -27,6 +27,29 @@ O projeto já possui:
 - Config Override apontando Social Auth Google para essas keys;
 - configuração exportada sem client ID/secret reais.
 
+### Google Login — URIs do cliente Web
+
+O Social Auth Google usa um fluxo OAuth do lado do servidor. O callback
+configurado pelo Portal é `/entrar/{provedor}/retorno`; para o Google, cadastre
+os URIs de redirecionamento exatos abaixo no cliente OAuth Web:
+
+| Ambiente | URI de redirecionamento autorizado |
+| --- | --- |
+| Homelab | `https://conta.aculta.toca.net.br/entrar/google/retorno` |
+| Produção | `https://conta.aculta.org/entrar/google/retorno` |
+
+Se o cliente também usar APIs Google iniciadas diretamente por JavaScript,
+cadastre estas origens autorizadas (origem é somente esquema + host, sem
+caminho):
+
+- `https://conta.aculta.toca.net.br`
+- `https://conta.aculta.org`
+
+As origens JavaScript não substituem os URIs de callback. O ambiente de
+produção deve manter seu URI cadastrado antes de ativar o novo código; não
+inclua localhost ou hosts de desenvolvimento adicionais no cliente de
+produção sem necessidade.
+
 Esse padrão deve ser preservado.
 
 ## Princípio de credenciais

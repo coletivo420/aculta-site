@@ -44,7 +44,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'change_mail_page.change_mail' => '/seguranca/email',
       'change_mail_page.change_mail_form' => '/seguranca/email/{user}',
       'social_auth.network.redirect' => '/acesso/{network}',
-      'social_auth.network.callback' => '/acesso/{network}/retorno',
+      'social_auth.network.callback' => '/entrar/{network}/retorno',
       'commerce_payment.notify' => '/integracoes/pagamentos/{commerce_payment_gateway}/notificacao',
     ];
     $accountRoutes = array_fill_keys(array_keys($pathChanges), TRUE);
