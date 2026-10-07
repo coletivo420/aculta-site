@@ -85,9 +85,10 @@ específica; os pontos configurados também permanecem ativos. As chaves são
 mantidas na configuração de Key do runtime; seus valores não pertencem ao
 código nem à documentação. Após o
 responsável confirmar que o Turnstile estava funcionando, foi desativado o
-fallback de CAPTCHA solicitado. A aparência é `always`, para deixar o widget
-visível desde o carregamento; `interaction-only` o ocultava para a maioria das
-pessoas.
+fallback de CAPTCHA solicitado. A aparência é `interaction-only`: o Turnstile continua ativo para visitantes
+anônimos, mas fica visualmente oculto enquanto a Cloudflare não exigir
+interação. Usuários autenticados não recebem o desafio porque a role
+`authenticated` possui `skip CAPTCHA`.
 
 CAPTCHA é uma barreira para visitantes anônimos: formulários públicos em rotas
 não administrativas exigem Turnstile, salvo quando o fluxo não submete um
@@ -102,9 +103,10 @@ um bypass de CAPTCHA para formulários anônimos. Formulários continuam sujeito
 anônimo continua bloqueado quando não apresenta token Turnstile válido; não
 existe bypass por JavaScript.
 
-O smoke HTTP desta revisão confirmou que o formulário de login carrega o
-JavaScript e o markup do widget Turnstile, sem markup de CAPTCHA de imagem ou
-reCAPTCHA. A validação de token e o login por senha não foram repetidos com
+O smoke HTTP desta revisão confirmou que o formulário de login anônimo carrega
+o JavaScript e o markup do Turnstile, sem markup de CAPTCHA de imagem ou
+reCAPTCHA. Com `interaction-only`, o markup pode existir sem que o desafio fique
+visível quando nenhuma interação é exigida. A validação de token e o login por senha não foram repetidos com
 interação de navegador nesta alteração.
 
 ## Estado operacional desta revisão

@@ -102,7 +102,7 @@ Baseline combinado com a política de autenticação:
 
 - `enable_globally: 1` para páginas públicas;
 - rotas administrativas continuam fora da regra global;
-- usuários autenticados usam a permissão oficial `skip CAPTCHA`;
+- usuários autenticados usam a permissão oficial `skip CAPTCHA` e não recebem widget/desafio Turnstile;
 - título: `Verificação de segurança`;
 - descrição em português;
 - mensagem de erro em português;
@@ -115,8 +115,8 @@ protegido. A lógica do módulo CAPTCHA não é duplicada no Portal.
 ## Turnstile
 
 O widget usa explicitamente `widget.language: pt-br` e
-`widget.appearance: always`, preservando a decisão de tornar o desafio visível
-na página de login.
+`widget.appearance: interaction-only`: o desafio roda para visitantes anônimos,
+mas só se torna visível quando a Cloudflare exigir interação.
 
 Cloudflare Turnstile requer JavaScript para produzir o token de validação. O
 projeto **não** deve criar bypass automático ou selecionar um CAPTCHA mais fraco
@@ -133,7 +133,7 @@ A internacionalização não pode regredir as decisões de segurança já integr
 
 - CAPTCHA global para visitantes anônimos permanece ativo;
 - `authenticated` permanece com `skip CAPTCHA`;
-- Turnstile permanece com `appearance: always`;
+- Turnstile permanece com `appearance: interaction-only` para anônimos;
 - endpoints JSON de autenticação removidos pelo Portal não devem ser reativados
   como atalho sem Form API/Turnstile;
 - nenhum fallback sem JavaScript pode reduzir a proteção.
