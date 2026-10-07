@@ -426,6 +426,10 @@ Ver [Integrações Google](../integrations/GOOGLE.md).
 
 # Portal 1.0.0 — Stable
 
+**Gates especificados.**
+
+Documento: [PORTAL-1.0-RELEASE-GATES.md](PORTAL-1.0-RELEASE-GATES.md).
+
 Gates finais:
 
 - Conta;
