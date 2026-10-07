@@ -4,18 +4,44 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
-use Drupal\views\Views;
+use Drupal\views\ViewExecutableFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /** Public landing page and bounded title/summary/body search for the Wiki. */
 final class WikiController extends ControllerBase {
 
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entities,
+    private readonly DomainPurposeManager $domainPurpose,
+    private readonly Connection $database,
+    private readonly DateFormatterInterface $dateFormatter,
+    private readonly ViewExecutableFactory $viewExecutableFactory,
+    private readonly AccountProxyInterface $currentAccount,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('aculta_portal.domain_purpose'),
+      $container->get('database'),
+      $container->get('date.formatter'),
+      $container->get('views.executable'),
+      $container->get('current_user'),
+    );
+  }
+
   /** Builds the Wiki home from the editorial Views. */
   public function home(): array {
-    $build = [
+    return [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-wiki-home']],
       '#cache' => [
@@ -52,7 +78,7 @@ final class WikiController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Quer colaborar? Proponha um verbete.'),
         '#url' => Url::fromRoute('node.add', ['node_type' => 'wiki_entry']),
-        '#access' => $this->currentUser()->hasPermission('create wiki_entry content'),
+        '#access' => $this->currentAccount->hasPermission('create wiki_entry content'),
       ],
       'categories_title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Categorias da Wiki420')],
       'categories' => $this->viewBlock('wiki_categories', 'block_1'),
@@ -61,7 +87,6 @@ final class WikiController extends ControllerBase {
       'changes_title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Alterações recentes da Wiki420')],
       'changes' => $this->recentChanges(),
     ];
-    return $build;
   }
 
   /** Searches only published Wiki entries by title, summary, and body. */
@@ -70,28 +95,44 @@ final class WikiController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-wiki-search-results']],
-      '#cache' => ['contexts' => ['url.query_args:q', 'domain', 'user.permissions'], 'tags' => ['node_list:wiki_entry']],
+      '#cache' => [
+        'contexts' => ['url.query_args:q', 'domain', 'user.permissions'],
+        'tags' => ['node_list:wiki_entry'],
+      ],
       'title' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $this->t('Buscar na Wiki420')],
       'form' => [
         '#type' => 'form',
         '#method' => 'get',
         '#action' => Url::fromRoute('aculta_portal.wiki_search')->toString(),
         '#attributes' => ['role' => 'search'],
-        'q' => ['#type' => 'textfield', '#title' => $this->t('Termo de busca'), '#default_value' => $term, '#maxlength' => 100, '#required' => TRUE],
+        'q' => [
+          '#type' => 'textfield',
+          '#title' => $this->t('Termo de busca'),
+          '#default_value' => $term,
+          '#maxlength' => 100,
+          '#required' => TRUE,
+        ],
         'submit' => ['#type' => 'submit', '#value' => $this->t('Buscar')],
       ],
     ];
+
     if ($term === '') {
       return $build;
     }
+
     $term = mb_substr($term, 0, 100);
-    $wikiDomain = \Drupal::service('aculta_portal.domain_purpose')->getDomain('wiki');
+    $wikiDomain = $this->domainPurpose->getDomain('wiki');
     if (!$wikiDomain) {
-      $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.')];
+      $build['empty'] = [
+        '#type' => 'item',
+        '#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.'),
+      ];
       return $build;
     }
-    $pattern = '%' . \Drupal::database()->escapeLike($term) . '%';
-    $query = \Drupal::entityQuery('node')
+
+    $storage = $this->entities->getStorage('node');
+    $pattern = '%' . $this->database->escapeLike($term) . '%';
+    $query = $storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'wiki_entry')
       ->condition('field_domain_source.target_id', $wikiDomain->id())
@@ -103,16 +144,32 @@ final class WikiController extends ControllerBase {
       ->condition('field_wiki_summary.value', $pattern, 'LIKE')
       ->condition('body.value', $pattern, 'LIKE');
     $ids = $query->condition($matches)->execute();
-    $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple($ids);
-    $build['count'] = ['#type' => 'item', '#plain_text' => $this->formatPlural(count($nodes), '1 verbete encontrado.', '@count verbetes encontrados.')];
+    $nodes = $storage->loadMultiple($ids);
+
+    $build['count'] = [
+      '#type' => 'item',
+      '#plain_text' => $this->formatPlural(
+        count($nodes),
+        '1 verbete encontrado.',
+        '@count verbetes encontrados.',
+      ),
+    ];
+
     foreach ($nodes as $node) {
-      if ($node->access('view')) {
-        $build['results'][$node->id()] = $this->entityTypeManager()->getViewBuilder('node')->view($node, 'teaser');
+      if ($node->access('view', $this->currentAccount)) {
+        $build['results'][$node->id()] = $this->entities
+          ->getViewBuilder('node')
+          ->view($node, 'teaser');
       }
     }
+
     if (!$nodes) {
-      $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.')];
+      $build['empty'] = [
+        '#type' => 'item',
+        '#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.'),
+      ];
     }
+
     return $build;
   }
 
@@ -126,11 +183,13 @@ final class WikiController extends ControllerBase {
         'tags' => ['node_list:wiki_entry'],
       ],
     ];
-    $wikiDomain = \Drupal::service('aculta_portal.domain_purpose')->getDomain('wiki');
+    $wikiDomain = $this->domainPurpose->getDomain('wiki');
     if (!$wikiDomain) {
       return $build;
     }
-    $ids = \Drupal::entityQuery('node')
+
+    $storage = $this->entities->getStorage('node');
+    $ids = $storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'wiki_entry')
       ->condition('field_domain_source.target_id', $wikiDomain->id())
@@ -138,11 +197,11 @@ final class WikiController extends ControllerBase {
       ->sort('changed', 'DESC')
       ->range(0, 5)
       ->execute();
-    $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple($ids);
+    $nodes = $storage->loadMultiple($ids);
     $cacheability = CacheableMetadata::createFromRenderArray($build);
-    $dateFormatter = \Drupal::service('date.formatter');
+
     foreach ($nodes as $node) {
-      if (!$node->access('view')) {
+      if (!$node->access('view', $this->currentAccount)) {
         continue;
       }
       $changed = $node->getChangedTime();
@@ -157,26 +216,37 @@ final class WikiController extends ControllerBase {
         'updated' => [
           '#type' => 'html_tag',
           '#tag' => 'time',
-          '#value' => $dateFormatter->format($changed, 'medium'),
+          '#value' => $this->dateFormatter->format($changed, 'medium'),
           '#attributes' => ['datetime' => gmdate(DATE_ATOM, $changed)],
         ],
       ];
+
       $owner = $node->getOwner();
-      if ($owner && $owner->access('view')) {
-        $row['author'] = ['#plain_text' => $this->t('por @name', ['@name' => $owner->getDisplayName()])];
+      if ($owner && $owner->access('view', $this->currentAccount)) {
+        $row['author'] = [
+          '#plain_text' => $this->t('por @name', ['@name' => $owner->getDisplayName()]),
+        ];
         $cacheability->addCacheableDependency($owner);
       }
+
       $build['#items'][] = $row;
       $cacheability->addCacheableDependency($node);
     }
+
     $cacheability->applyTo($build);
     return $build;
   }
 
   /** Embeds one permission-checked Wiki View block. */
   private function viewBlock(string $viewId, string $displayId): array {
-    $view = Views::getView($viewId);
-    return $view ? $view->buildRenderable($displayId) : ['#markup' => ''];
+    $view = $this->entities->getStorage('view')->load($viewId);
+    if (!$view) {
+      return ['#markup' => ''];
+    }
+
+    return $this->viewExecutableFactory
+      ->get($view)
+      ->buildRenderable($displayId);
   }
 
 }
