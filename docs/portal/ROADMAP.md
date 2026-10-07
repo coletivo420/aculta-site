@@ -200,6 +200,27 @@ Objetivo:
 
 preparar migração por grupos para Hook classes OOP, sem conversão massiva.
 
+## S3.8 — Lifecycle/install
+
+**Estado: concluída documentalmente.**
+
+Documento:
+[S3-8-LIFECYCLE-INSTALL.md](S3-8-LIFECYCLE-INSTALL.md).
+
+Decisão: nenhum update hook histórico será reescrito sem fresh-install e
+upgrade-path tests.
+
+## S3.9 — Assets/avatar inventory
+
+**Estado: próxima.**
+
+Objetivo:
+
+- inventariar os assets de avatar;
+- localizar consumidores;
+- decidir ownership;
+- não remover arquivos sem evidência.
+
 ## S3.3A — Minha Conta AJAX boundary
 
 Preservar como requisito:
