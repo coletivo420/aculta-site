@@ -11,6 +11,11 @@ O Portal usa tags `portal-vX.Y.Z`.
 - S3.1 prepara Dependency Injection na camada de hooks, breadcrumb e policy de Domain.
 - Runtime status da S3.1 permanece DEFERRED; nenhum release é autorizado.
 
+### Refatoração preparada
+
+- S3.5 separa resolução de purpose do enforcement HTTP e evita mutação de Domain em URLs locais.
+- Runtime status da S3.5 permanece DEFERRED.
+
 ### Documentação
 
 - S2 Static Portal Audit concluído sem alterar runtime.

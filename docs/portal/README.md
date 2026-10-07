@@ -21,6 +21,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Modo de entrega GitHub-first / Runtime-last](DELIVERY-MODE.md)
 - [S2 — Static Portal Audit](STATIC-AUDIT.md)
 - [Mapa de refatoração](REFACTOR-MAP.md)
+- [S3.5 — Domain policy](S3-5-DOMAIN-POLICY.md)
 - [S3.1 — Hooks + Dependency Injection](S3-1-HOOKS-DI.md)
 - [Testes](TESTING.md)
 - [Versionamento](VERSIONING.md)

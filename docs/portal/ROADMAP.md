@@ -132,6 +132,20 @@ Gates e escopo:
 
 O código desta subfase não deve ser mergeado até passar no Homelab.
 
+## S3.5 — Domain policy
+
+**Estado: preparada em draft; Runtime deferred.**
+
+Documento:
+[S3-5-DOMAIN-POLICY.md](S3-5-DOMAIN-POLICY.md).
+
+Entregas:
+
+- ContentPurposeResolver;
+- subscriber reduzido a enforcement;
+- Domain entity clonada antes de scheme local;
+- FORUM continua não ativado.
+
 ## S3.2 — Minha Conta -> SDC
 
 Executar em pequenos drafts, preferencialmente nesta ordem:
