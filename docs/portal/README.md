@@ -33,6 +33,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Portal 0.16 — Search](S4-0.16-SEARCH.md)
 - [Portal 0.17 — Engagement](S4-0.17-ENGAGEMENT.md)
 - [Portal 0.18 — Deduplication](S4-0.18-DEDUPLICATION.md)
+- [Portal 0.19 — Hardening](S4-0.19-HARDENING.md)
 - [Roadmap](ROADMAP.md)
 - [Integrações Google](../integrations/GOOGLE.md)
 

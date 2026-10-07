@@ -385,19 +385,26 @@ Executar:
 - mobile/a11y onde aplicável;
 - regressão Wiki/Cursos/Commerce/Conta.
 
-## R3 — Hardening
+## R3 — Hardening / Portal 0.19
 
-Equivale ao alvo Portal 0.19:
+**Especificação concluída.**
 
-- permissions;
-- CSRF;
-- Security Review;
+Documento: [S4-0.19-HARDENING.md](S4-0.19-HARDENING.md).
+
+Executar no Runtime:
+
+- access/cache;
+- proteção de mutações;
+- session/Domain;
+- higiene de configuração sensível;
+- integrações;
 - performance;
-- cron;
-- logs;
+- cron/queues;
+- logs/headers;
+- dependency audit;
 - SQLite/MariaDB portability;
-- falhas externas;
-- deploy/runbook.
+- failure modes;
+- rollback.
 
 ## R4 — Releases
 
