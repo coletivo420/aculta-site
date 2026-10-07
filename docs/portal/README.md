@@ -32,6 +32,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Portal 0.15 — AJAX Consolidation](S4-0.15-AJAX-CONSOLIDATION.md)
 - [Portal 0.16 — Search](S4-0.16-SEARCH.md)
 - [Portal 0.17 — Engagement](S4-0.17-ENGAGEMENT.md)
+- [Portal 0.18 — Deduplication](S4-0.18-DEDUPLICATION.md)
 - [Roadmap](ROADMAP.md)
 - [Integrações Google](../integrations/GOOGLE.md)
 

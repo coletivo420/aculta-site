@@ -328,15 +328,20 @@ Documento: [S4-0.17-ENGAGEMENT.md](S4-0.17-ENGAGEMENT.md).
 
 ### Portal 0.18 — Deduplication
 
+**Especificação concluída.**
+
+Documento: [S4-0.18-DEDUPLICATION.md](S4-0.18-DEDUPLICATION.md).
+
 - breadcrumb;
 - Schema Metatag;
 - menus;
 - busca antiga;
 - AJAX antigo;
 - Support tables;
-- CEP override excessivo.
+- CEP somente onde upstream atingir paridade;
+- service locator.
 
-Não remover customização necessária do CEP sem paridade comprovada.
+Nenhuma remoção sem substituto e teste de paridade.
 
 # Macrofase R — retorno ao Runtime/Codex
 
