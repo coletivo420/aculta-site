@@ -84,3 +84,6 @@ uma segunda implementação da mesma capacidade.
 
 A matriz de módulos Core/contrib e decisões de compatibilidade fica em
 [docs/modules/README.md](../modules/README.md).
+
+- [Conta, AJAX e Views interativas](../modules/ACCOUNT-UI.md)
+- [Autenticação e identidade](../modules/AUTHENTICATION.md)
