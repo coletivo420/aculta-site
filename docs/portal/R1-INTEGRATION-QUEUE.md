@@ -56,6 +56,13 @@ Gates principais:
 
 ### 2. PR #30 — S3.5 Domain policy
 
+**Runtime bloqueado por finding Wiki/Media Library.**
+
+Ver [R1-2-WIKI-MEDIA-BLOCKER.md](R1-2-WIKI-MEDIA-BLOCKER.md).
+
+Antes de concluir #30, executar R1.2A em PR próprio e repetir os gates Wiki
+add/edit.
+
 Branch:
 
 `refactor/portal-s3.5-domain-policy`
