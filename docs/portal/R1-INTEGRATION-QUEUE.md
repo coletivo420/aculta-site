@@ -35,6 +35,10 @@ Snapshot documental em 2026-10-06/07.
 
 ### 1. PR #23 — S3.1 Hooks + DI
 
+**Runtime PASS e merge concluídos.**
+
+Ver [R1-1-PR23-PASS.md](R1-1-PR23-PASS.md).
+
 Branch:
 
 `refactor/portal-s3.1-hooks-di`

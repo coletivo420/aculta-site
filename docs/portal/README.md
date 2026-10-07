@@ -40,6 +40,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [R0 — primeira execução / blocker Apache](R0-FIRST-EXECUTION.md)
 - [R0 — PASS / fechamento](R0-PASS.md)
 - [R1 — Dependency/Config Integration Queue](R1-INTEGRATION-QUEUE.md)
+- [R1.1 — PR #23 PASS](R1-1-PR23-PASS.md)
 - [R2 — Functional Validation Matrix](R2-FUNCTIONAL-VALIDATION.md)
 - [R3 — Hardening Execution Runbook](R3-HARDENING-EXECUTION.md)
 - [R4 — Release and Tagging Runbook](R4-RELEASE-TAGGING.md)
