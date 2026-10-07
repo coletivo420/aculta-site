@@ -111,6 +111,72 @@ Permanecem estáveis quando representam:
 Isso evita quebrar configuração/conteúdo sem benefício. O machine name do tema,
 por outro lado, é sempre `aculta420`.
 
+## Shell multidomínio planejado
+
+A Foundation 0.1.0 documenta o contrato sem executar o redesign completo.
+
+Hierarquia:
+
+```text
+Plataforma/instituição
+ACULTA
+       ↓
+Domain purpose/produto
+Wiki420 / Coletivo420 / Cursos / Loja / Institucional / ...
+       ↓
+Conteúdo da página
+```
+
+Fluxo obrigatório de resolução:
+
+```text
+Domain
+  ↓
+DomainPurposeManager
+  ↓
+aculta_portal
+  ↓
+contexto de apresentação
+  ↓
+ACULTA420
+```
+
+O tema não lê hostname para escolher identidade. `aculta_portal` resolve o
+purpose e prepara dados simples/renderables. Um contrato futuro pode expor:
+
+```text
+domain_presentation
+├── purpose
+├── title
+├── short_title
+├── home_url
+├── logo
+├── logo_alt
+├── navigation
+└── optional accent
+```
+
+Isso não autoriza passar entidade `Domain` para Twig/SDC. Presenter/render array
+transforma tudo antes e preserva cache/access.
+
+O branding segue fallback:
+
+```text
+logo específico do purpose
+        ↓ se inexistente
+branding ACULTA padrão
+        ↓
+título textual
+```
+
+Um novo purpose não depende de logo próprio.
+
+`page.html.twig` continua compositor do shell. A composição alvo é Institution Bar
++ Domain Header; não criar agora um SDC monolítico da página. Quando o contrato
+amadurecer, `domain-header` pode virar SDC recebendo apenas props simples e slots.
+
+Detalhes: [shell.md](shell.md).
+
 ## SDC
 
 - components podem viver em subdiretórios;

@@ -19,7 +19,9 @@ Inclui:
 - `enforce_prop_schemas: true`;
 - primeiro SDC stable: editorial-card;
 - Bootstrap5 4.0.8 como infraestrutura;
-- assets globais/contextuais já separados onde comprovado.
+- assets globais/contextuais já separados onde comprovado;
+- contrato arquitetural do shell multidomínio documentado sem executar o redesign;
+- provider funcional e shim legado diferenciados em toda documentação normativa.
 
 Gate de release:
 
@@ -29,7 +31,8 @@ Gate de release:
 - config import sem referência runtime ao provider `aculta`;
 - blocks continuam posicionados;
 - SDC e libraries descobertos;
-- todos os domains representativos passam smoke test.
+- todos os domains representativos passam smoke test;
+- nenhuma instrução normativa trata `web/themes/custom/aculta/` como provider funcional.
 
 ## 0.1.1 — Remove legacy shim
 
@@ -45,6 +48,9 @@ A entrega remove `web/themes/custom/aculta/` definitivamente.
 ## 0.2.0 — Foundations 2.0
 
 - semantic tokens de surface/text/interactive;
+- semantic tokens do shell (`surface`, `text`, `border`, Institution Bar e Domain Header);
+- preparar contrato `domain_presentation` no Portal sem expor entidade Domain ao tema;
+- fallback de branding purpose → ACULTA → texto, sem exigir logo próprio;
 - motion tokens;
 - remoção de durations hardcoded equivalentes;
 - foundation para light/dark sem ativar UI incompleta;
@@ -80,6 +86,13 @@ Gate: editorial e cursos compartilham linguagem de carousel sem JS duplicado.
 
 ## 0.5.0 — Shell + Icons + Color mode UI
 
+- implementar o shell multidomínio em duas camadas: Institution Bar + Domain Header;
+- direção visual próxima ao “Design B”: superfícies claras, verde estrutural e item
+  atual de alto contraste, sempre via semantic tokens;
+- Institution Bar discreta (~28–34 px desktop) e Domain Header dominante
+  (~56–68 px desktop), sem tornar essas medidas contrato rígido;
+- logo principal/título/navegação variáveis por purpose a partir do contexto do Portal;
+- começar com `position: sticky`; `fixed` exige necessidade comprovada;
 - Core Icon API;
 - UI Icons 2.x;
 - Bootstrap Icons por API, não markup espalhado;
@@ -87,7 +100,7 @@ Gate: editorial e cursos compartilham linguagem de carousel sem JS duplicado.
 - Bootstrap Offcanvas mobile;
 - account dropdown;
 - search trigger;
-- auto/light/dark com persistência;
+- auto/light/dark com persistência usando `data-bs-theme`;
 - mega menu somente após shell básico estável.
 
 ## 0.6.0 — Search + Feedback

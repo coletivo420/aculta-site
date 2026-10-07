@@ -88,6 +88,23 @@ Se a lógica começa a conhecer:
 
 ela provavelmente está no lugar errado.
 
+## Shell multidomínio
+
+Ao evoluir o shell:
+
+- usar Domain purpose como chave funcional; nunca hostname hardcoded;
+- manter `DomainPurposeManager` e resolução funcional no `aculta_portal`;
+- passar ao tema apenas contexto de apresentação preparado;
+- nunca passar entidade `Domain` diretamente para Twig/SDC;
+- manter branding de purpose opcional com fallback ACULTA/texto;
+- manter um único shell e variar dados, não criar headers paralelos;
+- color modes alteram tokens, não markup/geometria;
+- preferir `position: sticky` a `fixed` como ponto de partida;
+- reutilizar Bootstrap Collapse/Offcanvas em vez de criar engine JS própria.
+
+A Foundation 0.1.0 não autoriza o redesign visual completo. Ver
+[shell.md](shell.md).
+
 ## Configuração
 
 Renomear machine name do tema exige sincronizar:

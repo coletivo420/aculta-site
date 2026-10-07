@@ -7,14 +7,15 @@ Esta pasta contém a documentação normativa do tema e design system.
 1. [architecture.md](architecture.md) — fronteiras e direção de dependências.
 2. [features.md](features.md) — o que existe hoje.
 3. [design-system.md](design-system.md) — foundations e linguagem visual.
-4. [components.md](components.md) — contratos SDC e catálogo.
-5. [development.md](development.md) — workflow e anti-regressão.
-6. [accessibility.md](accessibility.md) — requisitos de acessibilidade.
-7. [decisions.md](decisions.md) — decisões que não devem ser rediscutidas sem
+4. [shell.md](shell.md) — contrato multidomínio planejado e limites da Foundation.
+5. [components.md](components.md) — contratos SDC e catálogo.
+6. [development.md](development.md) — workflow e anti-regressão.
+7. [accessibility.md](accessibility.md) — requisitos de acessibilidade.
+8. [decisions.md](decisions.md) — decisões que não devem ser rediscutidas sem
    evidência nova.
-8. [roadmap.md](roadmap.md) — evolução versionada.
-9. [versioning.md](versioning.md) — SemVer e releases.
-10. [migration-0.1.0.md](migration-0.1.0.md) — rename `aculta` -> `aculta420`.
+9. [roadmap.md](roadmap.md) — evolução versionada.
+10. [versioning.md](versioning.md) — SemVer e releases.
+11. [migration-0.1.0.md](migration-0.1.0.md) — rename `aculta` -> `aculta420`.
 
 ## Fonte de verdade
 
@@ -43,3 +44,9 @@ Prioridade quando houver conflito:
 - `aculta_portal` = módulo de integração;
 - `.aculta-*` e `--aculta-*` = vocabulário visual mantido por decisão
   arquitetural; não são o machine name do tema.
+
+## Provider funcional e shim
+
+`web/themes/custom/aculta420/` é o único provider funcional do tema.
+`web/themes/custom/aculta/` é somente o shim temporário da migração 0.1.0 e não
+pode receber documentação de feature, Twig, CSS, JS, libraries ou SDC.

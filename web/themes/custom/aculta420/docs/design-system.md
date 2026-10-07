@@ -48,10 +48,26 @@ resolve o problema.
 
 Próximos foundations previstos:
 
-- semantic surface/text tokens;
+- semantic surface/text/interactive tokens;
+- semantic tokens específicos do shell, sem amarrá-los a um purpose;
 - motion durations/easings;
 - color modes;
 - spacing scale mais explícita quando houver uso comprovado.
+
+Vocabulário alvo do shell inclui conceitos como:
+
+```css
+--aculta-surface-page: ...;
+--aculta-surface-raised: ...;
+--aculta-surface-header: ...;
+--aculta-text-primary: ...;
+--aculta-text-secondary: ...;
+--aculta-border-subtle: ...;
+--aculta-shell-institution-bg: ...;
+--aculta-shell-domain-bg: ...;
+```
+
+Os nomes semânticos definem função, não cor literal.
 
 ## Color modes
 
@@ -69,6 +85,10 @@ Ordem de implementação:
 
 Não ativar dark mode enquanto componentes dependerem de cores literais que não
 tenham equivalente semântico.
+
+Modo de cor troca tokens, não geometria nem markup do shell. Logos específicos de
+purpose podem futuramente ter variantes light/dark, mas o contrato inicial não
+as torna obrigatórias.
 
 Referência:
 https://getbootstrap.com/docs/5.3/customize/color-modes/
@@ -127,6 +147,9 @@ Assets técnicos do tema ficam em:
 
 Originais e exports devem permanecer separados. Alterar nome de arquivo não
 significa redesenhar identidade visual.
+
+Branding de purpose é opcional e deve respeitar o fallback documentado em
+[shell.md](shell.md).
 
 ## Anti-regressão
 

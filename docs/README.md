@@ -23,6 +23,7 @@ Snapshots de PR/fase, SHAs e logs pertencem ao Git/GitHub.
 | decisões arquiteturais | [decisions/](decisions/) |
 | ACULTA420 | [../web/themes/custom/aculta420/README.md](../web/themes/custom/aculta420/README.md) |
 | roadmap ACULTA420 | [../web/themes/custom/aculta420/docs/roadmap.md](../web/themes/custom/aculta420/docs/roadmap.md) |
+| shell multidomínio ACULTA420 | [../web/themes/custom/aculta420/docs/shell.md](../web/themes/custom/aculta420/docs/shell.md) |
 | Homelab | [../scripts/homelab/README.md](../scripts/homelab/README.md) |
 | Estados SQLite | [../estados/README.md](../estados/README.md) |
 
@@ -69,6 +70,7 @@ ACULTA420/      apresentação e Component Design System
 - [Integração Portal ↔ ACULTA420](portal/COMPONENT-DESIGN-SYSTEM.md)
 - [Tema ACULTA420](../web/themes/custom/aculta420/README.md)
 - [Arquitetura ACULTA420](../web/themes/custom/aculta420/docs/architecture.md)
+- [Shell multidomínio ACULTA420](../web/themes/custom/aculta420/docs/shell.md)
 - [Componentes ACULTA420](../web/themes/custom/aculta420/docs/components.md)
 - [Desenvolvimento ACULTA420](../web/themes/custom/aculta420/docs/development.md)
 
