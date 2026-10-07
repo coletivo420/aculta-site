@@ -1,6 +1,6 @@
-# Associação Cultural Antiproibicionista - plataforma Drupal
+# Associação Cultural Antiproibicionista — plataforma Drupal
 
-Plataforma Drupal 11 da Associação Cultural Antiproibicionista. Uma única instalação atende sete contexts ativos por meio de Domain, com um oitavo context de Fórum planejado, compartilhando usuários e subsistemas especializados sem duplicar suas fontes de verdade.
+Plataforma Drupal 11 multidomínio da Associação Cultural Antiproibicionista.
 
 ## Contextos
 
@@ -13,61 +13,44 @@ Plataforma Drupal 11 da Associação Cultural Antiproibicionista. Uma única ins
 | `wiki` | `wiki420.aculta.org` | Wiki420 |
 | `shop` | `loja.aculta.org` | comércio |
 | `courses` | `cursos.aculta.org` | aprendizagem |
-| `forum` *(planejado)* | `forum.aculta.org` | fórum e participação comunitária |
+| `forum` *(planejado)* | `forum.aculta.org` | comunidade |
 
 ## Componentes próprios
 
-- [aculta_portal](web/modules/custom/aculta_portal/README.md) - integração entre Drupal, Domain, conta, Commerce, LMS e conteúdo.
-- [tema aculta](web/themes/custom/aculta/README.md) - identidade visual e apresentação.
+- [aculta_portal](web/modules/custom/aculta_portal/README.md) — integração e
+  orquestração.
+- [ACULTA420](web/themes/custom/aculta420/README.md) — tema público e Bootstrap
+  Component Design System.
 
-## Fontes de verdade
+## Arquitetura
 
-User cuida de autenticação; Profile/Address de dados pessoais; Social Auth de identidades externas; Commerce de pedidos e pagamentos; Drupal LMS/Group de cursos, matrículas e progresso; Nodes/Taxonomy/Views de conteúdo; Domain do contexto de host.
+```text
+Core + contrib -> aculta_portal -> ACULTA420 -> Bootstrap5
+```
+
+User/Profile/Commerce/LMS/Group/Node/Views/Domain continuam fontes de verdade.
+O Portal integra. ACULTA420 apresenta.
 
 ## Ambientes
 
 - Homelab: Debian + Apache + PHP-FPM + SQLite.
 - Produção: Hostinger + Apache + PHP + MariaDB.
 
-Apache é o baseline definitivo de servidor web do projeto. Homelab e produção
-usam a mesma família de servidor, mas VirtualHosts, módulos disponíveis,
-permissões, certificados e integrações continuam específicos de cada ambiente.
-Nginx não é alvo de compatibilidade; referências remanescentes servem apenas
-como histórico de migração.
-
-## Roadmap
-
-O projeto opera temporariamente em modo **GitHub-first / Runtime-last** para
-economizar a janela do Codex/Homelab.
-
-A base autoritativa é `origin/main`; trabalho local antigo não publicado é
-descartado. Documentação, arquitetura, inventários e preparação avançam pelo
-GitHub. Código funcional que depende do Drupal pode ser preparado em draft, mas
-só é integrado/released depois da validação Runtime.
-
-| Macrofase | Objetivo |
-| --- | --- |
-| **S1 — Component contracts** | alinhar o Portal ao ACULTA Bootstrap Component Design System |
-| **S2 — Static Portal Audit** | mapear DI, access, cache, markup, queries, AJAX e duplicações |
-| **S3 — Behavior-preserving preparation** | preparar presenters/services/refactors em drafts pequenos |
-| **S4 — Feature preparation** | preparar Fórum, Participation Hub, Admin, AJAX, Search e Engagement |
-| **R0 — Clean baseline** | retornar ao Codex descartando o worktree antigo e sincronizando `origin/main` |
-| **R1 — Dependencies/config** | aplicar Composer, módulos e configuração um conjunto por vez |
-| **R2 — Functional validation** | Drush, Domain/HTTP, User A/B, AJAX, access/cache e regressão |
-| **R3 — Hardening** | segurança, performance, logs e portabilidade SQLite/MariaDB |
-| **R4 — Releases** | merge/tag somente do que passou no Runtime |
-
-O roadmap detalhado está em
-[docs/portal/ROADMAP.md](docs/portal/ROADMAP.md), e o modo de entrega em
-[docs/portal/DELIVERY-MODE.md](docs/portal/DELIVERY-MODE.md).
-
-O Portal consome o
-[ACULTA Bootstrap Component Design System](docs/portal/COMPONENT-DESIGN-SYSTEM.md);
-o tema avançado é preservado, não reiniciado.
-
-A trilha Google continua paralela:
-`G0 Prepared → G1 Production Minimum → G2 Google for Nonprofits → G3 Learning Integration`.
+Apache é o baseline de servidor web. Configuração específica de ambiente não
+pertence ao tema.
 
 ## Documentação
 
-Comece em [docs/README.md](docs/README.md). Segredos e settings locais nunca pertencem ao Git.
+Comece em [docs/README.md](docs/README.md).
+
+Referências transversais:
+
+- [Camadas anti-regressão](docs/ANTI-REGRESSION.md)
+- [Política de documentação](docs/DOCUMENTATION.md)
+- [Operação, testes e releases](docs/operations/README.md)
+
+- Portal: [docs/portal](docs/portal/README.md)
+- Módulos: [docs/modules](docs/modules/README.md)
+- Tema/design system: [ACULTA420 docs](web/themes/custom/aculta420/docs/README.md)
+
+Segredos e settings locais nunca pertencem ao Git.

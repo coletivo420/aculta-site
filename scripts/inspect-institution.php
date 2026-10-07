@@ -12,6 +12,6 @@ echo 'Nodes: ' . \Drupal::entityTypeManager()->getStorage('node')->getQuery()->a
 echo 'Custom blocks: ' . \Drupal::entityTypeManager()->getStorage('block_content')->getQuery()->accessCheck(FALSE)->count()->execute() . PHP_EOL;
 echo 'Front: ' . \Drupal::config('system.site')->get('page.front') . PHP_EOL;
 echo 'Full HTML filters: ' . json_encode(\Drupal::config('filter.format.full_html')->get('filters')) . PHP_EOL;
-foreach (\Drupal::entityTypeManager()->getStorage('block')->loadByProperties(['theme' => 'aculta']) as $block) {
+foreach (\Drupal::entityTypeManager()->getStorage('block')->loadByProperties(['theme' => 'aculta420']) as $block) {
   echo 'Block: ' . $block->id() . ' / ' . $block->getPluginId() . ' / ' . $block->getRegion() . PHP_EOL;
 }

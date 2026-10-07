@@ -34,7 +34,7 @@ if (!empty($state['official_applied'])) {
       $record->set('info', 'Dados institucionais anteriores — preservados, sem uso público')->save();
     }
   }
-  \Drupal::configFactory()->getEditable('aculta.settings')->set('institution_data_uuid', $data_entity->uuid())->save();
+  \Drupal::configFactory()->getEditable('aculta420.settings')->set('institution_data_uuid', $data_entity->uuid())->save();
   foreach (['aculta_institution_data', 'aculta_footer_data', 'aculta_contact_data', 'aculta_data_institutional', 'aculta_data_registration'] as $id) {
     $placement = \Drupal\block\Entity\Block::load($id);
     if ($placement && $placement->getPluginId() !== 'block_content:' . $data_entity->uuid()) {
@@ -56,7 +56,7 @@ if (!empty($state['official_applied'])) {
       $link->set('link', ['uri' => $contact_uri])->save();
     }
   }
-  \Drupal::configFactory()->getEditable('aculta.settings')->clear('institution_contact_nid')->save();
+  \Drupal::configFactory()->getEditable('aculta420.settings')->clear('institution_contact_nid')->save();
 }
 if (!empty($state['cms_enhancements']) && \Drupal::moduleHandler()->moduleExists('media_library')) {
   $metatags = \Drupal\metatag\Entity\MetatagDefaults::load('global');

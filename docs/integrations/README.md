@@ -1,11 +1,12 @@
-# Integrações externas
+# Integrações
 
-Esta pasta documenta serviços externos que atravessam mais de um subsistema da
-plataforma.
+Documentação operacional/comportamental das integrações sensíveis.
 
-- [Google](GOOGLE.md)
-- [CAPTCHA e Turnstile](CAPTCHA.md)
+- [Autenticação](AUTHENTICATION.md)
+- [CAPTCHA / Cloudflare Turnstile](CAPTCHA.md)
+- [Google OAuth](GOOGLE.md)
 
-Integração externa não deve ser implementada como regra de tema.
+Para saber **quais módulos** implementam essas capacidades e quem é fonte de
+verdade, consulte [../modules/AUTHENTICATION.md](../modules/AUTHENTICATION.md).
 
-Credenciais nunca entram no Git ou Configuration Sync em texto claro.
+Segredos e credenciais nunca pertencem ao Git.

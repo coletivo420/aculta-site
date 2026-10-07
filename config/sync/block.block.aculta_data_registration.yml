@@ -9,9 +9,9 @@ dependencies:
     - block_content
     - system
   theme:
-    - aculta
+    - aculta420
 id: aculta_data_registration
-theme: aculta
+theme: aculta420
 region: content
 weight: 10
 provider: null

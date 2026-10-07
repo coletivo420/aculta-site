@@ -1,4 +1,4 @@
-# ADR-007: ACULTA Bootstrap Component Design System
+# ADR-007: ACULTA420 Bootstrap Component Design System
 
 Status: Accepted
 
@@ -6,9 +6,7 @@ Data: 2026-10-06
 
 ## Contexto
 
-O tema `aculta` já concluiu a refatoração estrutural A–G4 e entrou na Fase H,
-com Single-Directory Components (SDC) do Drupal Core e Bootstrap 5 como base
-estrutural/comportamental.
+ACULTA420 0.1.0 nasce da base técnica do antigo tema `aculta`, já com Single-Directory Components (SDC) do Drupal Core e Bootstrap 5 como base estrutural/comportamental.
 
 O projeto precisa evoluir o `aculta_portal` sem criar uma segunda linguagem
 visual, duplicar markup Bootstrap ou deslocar regras de negócio para o tema.
@@ -23,7 +21,7 @@ Responsabilidades:
 - **Bootstrap 5**: grid, utilities, estados, markup/behaviors estruturais e APIs
   públicas;
 - **Drupal Core SDC**: contrato e empacotamento de componentes reutilizáveis;
-- **tema `aculta`**: tokens, identidade visual, componentes, patterns e shell;
+- **tema `aculta420`**: tokens, identidade visual, componentes, patterns e shell;
 - **`aculta_portal`**: dados, presenters/view-models, access, cache, Domain
   purpose e orquestração;
 - **módulos funcionais**: fonte de verdade e regras de negócio.
@@ -31,7 +29,7 @@ Responsabilidades:
 A direção de dependência é:
 
 ```text
-Core/contrib -> aculta_portal -> contratos visuais -> tema aculta/SDC -> Bootstrap
+Core/contrib -> aculta_portal -> contratos visuais -> tema ACULTA420/SDC -> Bootstrap
 ```
 
 SDCs não consultam entidades, services, storage ou regras de Domain.
@@ -43,7 +41,7 @@ deixar a camada de apresentação aplicar os SDCs do tema.
 
 Quando uma rota pública exigir apresentação específica ACULTA, o contrato deve
 ser explícito e documentado. Referências diretas a componentes
-`aculta:*` só são aceitáveis quando o acoplamento ao tema público é
+`aculta420:*` só são aceitáveis quando o acoplamento ao tema público é
 intencional e não afeta admin/fallbacks.
 
 O Portal não deve construir markup Bootstrap duplicado em controllers quando
@@ -74,7 +72,7 @@ Especializações só entram quando existe diferença semântica real:
 
 Páginas administrativas continuam seguindo o tema/admin UI do Drupal.
 
-O ACULTA Bootstrap Component Design System é o sistema de apresentação pública
+O ACULTA420 Bootstrap Component Design System é o sistema de apresentação pública
 e da experiência ACCOUNT; não deve sobrescrever gratuitamente o admin theme.
 
 ## Dependências
@@ -91,7 +89,7 @@ tema atual.
 
 ## Consequências
 
-- o tema avançado é preservado, não reiniciado;
+- a base madura do tema anterior é preservada, mas o provider público passa a ser `aculta420`;
 - Portal e tema passam a compartilhar contratos previsíveis;
 - novas telas Portal devem preferir composição a CSS/HTML ad hoc;
 - business logic permanece fora do SDC;
@@ -101,6 +99,6 @@ tema atual.
 
 ## Referências internas
 
-- `web/themes/custom/aculta/docs/component-design-system.md`
-- `web/themes/custom/aculta/docs/components.md`
+- `web/themes/custom/aculta420/docs/architecture.md`
+- `web/themes/custom/aculta420/docs/components.md`
 - `docs/portal/COMPONENT-DESIGN-SYSTEM.md`

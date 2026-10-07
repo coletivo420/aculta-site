@@ -125,7 +125,7 @@ function institution_place(string $id, string $plugin, string $region, int $weig
     return;
   }
   $visibility = $paths ? ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $paths]] : [];
-  Block::create(['id' => $id, 'theme' => 'aculta', 'region' => $region, 'plugin' => $plugin, 'weight' => $weight, 'status' => TRUE, 'visibility' => $visibility, 'settings' => array_replace(['id' => $plugin, 'label' => $label, 'label_display' => '0'], $extra)])->save();
+  Block::create(['id' => $id, 'theme' => 'aculta420', 'region' => $region, 'plugin' => $plugin, 'weight' => $weight, 'status' => TRUE, 'visibility' => $visibility, 'settings' => array_replace(['id' => $plugin, 'label' => $label, 'label_display' => '0'], $extra)])->save();
 }
 function institution_block(string $key, string $label, string $html, int $weight, string $paths = '<front>', string $region = 'content'): void {
   global $state;
@@ -375,7 +375,7 @@ if ($account) {
   $visibility['user_role'] = ['id' => 'user_role', 'negate' => FALSE, 'roles' => ['authenticated' => 'authenticated'], 'context_mapping' => ['user' => '@user.current_user_context:current_user']];
   $account->setVisibilityConfig('user_role', $visibility['user_role'])->save();
 }
-\Drupal::configFactory()->getEditable('aculta.settings')->set('institution_home_nid', (int) $home->id())->set('institution_data_uuid', $institution_data->uuid())->save();
+\Drupal::configFactory()->getEditable('aculta420.settings')->set('institution_home_nid', (int) $home->id())->set('institution_data_uuid', $institution_data->uuid())->save();
 $state['complete'] = TRUE;
 // Preserve section wrappers and their classes when editing via CKEditor 5.
 $editor = \Drupal\editor\Entity\Editor::load('full_html');

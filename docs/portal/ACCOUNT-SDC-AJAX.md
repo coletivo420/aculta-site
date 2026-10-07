@@ -5,7 +5,7 @@ Data: 2026-10-06
 ## Objetivo
 
 Definir explicitamente como a experiência **Minha Conta** evolui para o
-ACULTA Bootstrap Component Design System sem confundir:
+ACULTA420 Bootstrap Component Design System sem confundir:
 
 - **fonte de verdade**;
 - **integração/presenter do Portal**;
@@ -25,9 +25,9 @@ fonte de verdade
 aculta_portal
 access + cache + presenter + URL/purpose
       ↓
-SDC do tema aculta
+SDC do tema ACULTA420
       ↓
-Bootstrap 5 + tokens ACULTA
+Bootstrap 5 + tokens ACULTA420
       ↓
 Drupal AJAX / Views AJAX / Form API / HTMX
 quando houver comportamento assíncrono
@@ -64,18 +64,18 @@ Status, ações, empty states, summaries e action lists seguem o contrato de
 [ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md).
 
 Esses contratos não autorizam automaticamente novos SDCs. A maturidade visual
-continua sob o roadmap H3/H4 do tema.
+continua sob o roadmap versionado do tema.
 
-O primeiro consumidor executável desta semântica é o Course presenter de
-[S3.2A](S3-2-ACCOUNT-SDC.md). Ele mantém o render atual como fallback e não
-introduz dependência de um SDC ainda inexistente.
+Os consumidores executáveis devem seguir os contratos de
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md), mantendo o render
+funcional como fallback até existir um SDC aprovado pelo tema.
 
 ## O que vira SDC primeiro
 
 Ordem preferencial:
 
 1. validar semanticamente status/empty/summary/action no Portal;
-2. `course-card` quando o tema H4 fornecer o contrato visual;
+2. `course-card` quando o Card System 0.3.0 fornecer o contrato visual;
 3. promover status/empty/summary/action a SDC somente se a reutilização real justificar;
 6. `account-shell`;
 7. `account-identity`;

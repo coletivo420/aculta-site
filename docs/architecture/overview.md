@@ -10,25 +10,27 @@ Drupal Core + módulos funcionais
           integração e orquestração
                     |
                     v
-                  aculta
-               apresentação
+               ACULTA420
+       apresentação/design system
+                    |
+                    v
+                Bootstrap5
 ```
 
 ## Regra arquitetural
 
 `aculta_portal` integra capacidades existentes. Pode organizar rotas, Domain
-purpose, experiência da conta, painéis, subscribers, adapters e integrações,
-mas não substitui storage ou regras dos módulos especializados.
+purpose, conta, presenters, subscribers, adapters e integrações, mas não
+substitui storage ou regras dos módulos especializados.
 
-O tema `aculta` cuida da apresentação e não implementa autenticação, pagamento,
-matrícula, progresso, autorização, fórum, comentários, Wiki ou integrações
-Google.
+O tema `aculta420` cuida da apresentação. Não implementa autenticação,
+pagamento, matrícula, progresso, autorização, fórum, Wiki ou integrações
+externas.
+
+ACULTA420 é a única linguagem visual pública do projeto. Bootstrap é
+infraestrutura, não design system concorrente.
 
 ## Integrações externas
 
-Serviços que atravessam múltiplos subsistemas, como Google Analytics, Search
-Console, OAuth e futura integração Classroom, ficam documentados em
-[`docs/integrations`](../integrations/README.md).
-
-Essas integrações devem ser desacopladas do tema e falhar de forma segura sem
-interromper o Drupal.
+Integrações transversais ficam desacopladas do tema e documentadas em
+[docs/integrations](../integrations/README.md).

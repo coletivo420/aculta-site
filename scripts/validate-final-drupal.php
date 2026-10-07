@@ -19,7 +19,7 @@ foreach (['node', 'block_content', 'menu_link_content', 'path_alias', 'redirect'
 foreach (['node_type','block_content_type','menu'] as $type) foreach (\Drupal::entityTypeManager()->getStorage($type)->loadMultiple() as $entity) {
   $assert((bool) $entity->getDescription(), 'Administrative description ' . $type . ':' . $entity->id());
 }
-$templates = glob(DRUPAL_ROOT . '/themes/custom/aculta/templates/*.html.twig');
+$templates = glob(DRUPAL_ROOT . '/themes/custom/aculta420/templates/*.html.twig');
 $twig = \Drupal::service('twig');
 foreach ($templates as $path) {
   $name = str_replace('\\', '/', substr($path, strlen(DRUPAL_ROOT) + 1));

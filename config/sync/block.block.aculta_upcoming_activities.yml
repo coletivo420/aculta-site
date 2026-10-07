@@ -9,9 +9,9 @@ dependencies:
     - system
     - views
   theme:
-    - aculta
+    - aculta420
 id: aculta_upcoming_activities
-theme: aculta
+theme: aculta420
 region: content
 weight: 25
 provider: null

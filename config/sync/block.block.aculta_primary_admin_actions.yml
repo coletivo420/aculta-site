@@ -3,11 +3,11 @@ langcode: en
 status: true
 dependencies:
   theme:
-    - aculta
+    - aculta420
 _core:
   default_config_hash: Q9_2whdOj1YIomfvsIfopROW4FT_X5pY0DjdOiOaQ5U
 id: aculta_primary_admin_actions
-theme: aculta
+theme: aculta420
 region: highlighted
 weight: -5
 provider: null

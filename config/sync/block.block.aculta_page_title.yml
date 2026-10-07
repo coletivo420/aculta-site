@@ -3,11 +3,11 @@ langcode: en
 status: true
 dependencies:
   theme:
-    - aculta
+    - aculta420
 _core:
   default_config_hash: 6aOgWsNTXjqrDm98TXSAjP6qd2nCijD1xw45MrnbK-Y
 id: aculta_page_title
-theme: aculta
+theme: aculta420
 region: header
 weight: -5
 provider: null
