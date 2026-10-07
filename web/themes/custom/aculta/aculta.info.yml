@@ -4,6 +4,7 @@ description: 'Temporary compatibility shim used only to migrate installed sites 
 package: Custom
 core_version_requirement: ^11
 base theme: bootstrap5
+hidden: true
 regions:
   header: Cabeçalho
   primary_menu: Menu principal

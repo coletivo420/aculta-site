@@ -88,6 +88,7 @@ ACULTA420/      apresentação e Component Design System
 - [ADR-005 — LMS como fonte de verdade](decisions/ADR-005-lms-integration.md)
 - [ADR-006 — Apache](decisions/ADR-006-web-servers.md)
 - [ADR-007 — ACULTA420 Component Design System](decisions/ADR-007-bootstrap-component-design-system.md)
+- [ADR-008 — ACULTA420 como nova fundação](decisions/ADR-008-aculta420-theme-foundation.md)
 
 ## Regra documental
 

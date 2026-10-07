@@ -69,16 +69,18 @@ Não desenvolver nada nele.
 Em ambiente de desenvolvimento:
 
 1. criar backup/restore point;
-2. atualizar código — o shim `aculta` e o novo `aculta420` devem estar presentes;
-3. `drush theme:enable aculta420 -y`;
-4. `drush config:set system.theme default aculta420 -y`;
-5. importar a configuração sincronizada;
-6. reconstruir cache;
-7. confirmar `system.theme: default=aculta420`;
-8. confirmar que `core.extension` não lista `aculta`;
-9. confirmar blocos posicionados;
-10. validar library/SDC discovery;
-11. validar todos os Domain purposes.
+2. ativar maintenance mode para impedir requests durante a troca de provider;
+3. atualizar código — o shim `aculta` e o novo `aculta420` devem estar presentes;
+4. `drush theme:enable aculta420 -y`;
+5. `drush config:set system.theme default aculta420 -y`;
+6. importar a configuração sincronizada;
+7. reconstruir cache;
+8. confirmar `system.theme: default=aculta420`;
+9. confirmar que `core.extension` não lista `aculta`;
+10. confirmar blocos posicionados;
+11. validar library/SDC discovery;
+12. validar todos os Domain purposes;
+13. desativar maintenance mode somente após o smoke test.
 
 Não desinstalar `aculta` manualmente **antes** do config import: blocos ainda
 associados ao tema antigo podem ser removidos pelo processo de uninstall. A
