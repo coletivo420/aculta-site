@@ -37,6 +37,8 @@ fontes de verdade.
 
 - trabalhar com Domain purpose, não hostname hardcoded;
 - preferir DI, Entity API, Views e serviços públicos;
+- em controllers novos/refatorados, dependências de runtime entram por DI explícita; não depender de helpers de `ControllerBase` que resolvam serviços de forma lazy;
+- `ContainerInjectionInterface::create()` pode montar as dependências do controller, mas a lógica funcional não consulta o container;
 - não consultar tabelas contrib diretamente quando houver API;
 - não criar storage paralelo;
 - respeitar entity access antes de expor metadata;
