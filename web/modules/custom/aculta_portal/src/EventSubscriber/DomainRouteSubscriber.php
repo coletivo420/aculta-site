@@ -34,7 +34,6 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'user.logout' => '/sair',
       'user.logout.confirm' => '/sair/confirmar',
       'user.logout.http' => '/sair',
-      'user.page' => '/identidade',
       'user.edit' => '/identidade/editar',
       'entity.user.canonical' => '/identidade/{user}',
       'entity.user.edit_form' => '/painel-administrativo/pessoas/{user}/editar',
@@ -49,6 +48,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     ];
     $accountRoutes = array_fill_keys(array_keys($pathChanges), TRUE);
     unset($accountRoutes['commerce_payment.notify']);
+
+    // The Portal owns the account landing page. Do not expose Drupal Core's
+    // generic profile landing route at either /user or a translated alias.
+    $collection->remove('user.page');
 
     foreach ($pathChanges as $name => $path) {
       if ($route = $collection->get($name)) {

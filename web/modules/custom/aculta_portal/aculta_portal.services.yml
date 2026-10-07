@@ -61,3 +61,8 @@ services:
     arguments: ['@user.data']
     tags:
       - { name: kernel.event_subscriber }
+  aculta_portal.social_auth_profile_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\SocialAuthProfileSubscriber
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: kernel.event_subscriber }

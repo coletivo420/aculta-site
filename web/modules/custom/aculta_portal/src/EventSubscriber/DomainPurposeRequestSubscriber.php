@@ -20,6 +20,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /** Enforces route purpose after Drupal has resolved the active Domain alias. */
 final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
+  private const LOGIN_DESTINATION_SESSION_KEY = 'aculta_portal.login_destination';
+
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly RequestMatcherInterface $accessFreeMatcher,
@@ -38,10 +40,32 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
   /** Sends completed logouts to the public account login page. */
   public function onResponse(ResponseEvent $event): void {
-    if (!$event->isMainRequest()
-      || $event->getRequest()->attributes->get('_route') !== 'user.logout'
-      || !$event->getResponse()->isRedirection()
-      || $this->currentUser->isAuthenticated()) {
+    if (!$event->isMainRequest() || !$event->getResponse()->isRedirection()) {
+      return;
+    }
+
+    $request = $event->getRequest();
+    $route = $request->attributes->get('_route');
+    if (in_array($route, ['user.login', 'social_auth.network.callback'], TRUE)
+      && $this->currentUser->isAuthenticated()
+      && $request->hasSession()) {
+      $destination = $request->getSession()->get(self::LOGIN_DESTINATION_SESSION_KEY);
+      $request->getSession()->remove(self::LOGIN_DESTINATION_SESSION_KEY);
+      if (is_array($destination)
+        && isset($destination['purpose'], $destination['path'])
+        && is_string($destination['purpose'])
+        && is_string($destination['path'])
+        && str_starts_with($destination['path'], '/')
+        && !str_starts_with($destination['path'], '//')) {
+        $url = $this->domainPurposeManager->pathUrl($destination['purpose'], $destination['path']);
+        if ($url !== NULL) {
+          $event->getResponse()->headers->set('Location', $url->toString());
+          return;
+        }
+      }
+    }
+
+    if ($route !== 'user.logout' || $this->currentUser->isAuthenticated()) {
       return;
     }
 
@@ -80,6 +104,28 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
     $request = $event->getRequest();
+    $routeName = (string) $request->attributes->get('_route');
+    if (in_array($routeName, ['user.login', 'social_auth.network.redirect'], TRUE)
+      && !$this->currentUser->isAuthenticated()
+      && $request->hasSession()) {
+      $destinationPath = $request->query->get('destination');
+      $destinationPurpose = $request->query->get('aculta_destination_purpose');
+      if (is_string($destinationPath)
+        && str_starts_with($destinationPath, '/')
+        && !str_starts_with($destinationPath, '//')
+        && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $destinationPath)) {
+        $destinationPurpose = is_string($destinationPurpose) && $this->domainPurposeManager->getDomain($destinationPurpose)
+          ? $destinationPurpose
+          : $this->domainPurposeManager->getCurrentPurpose();
+        if ($destinationPurpose !== NULL) {
+          $request->getSession()->set(self::LOGIN_DESTINATION_SESSION_KEY, [
+            'purpose' => $destinationPurpose,
+            'path' => $destinationPath,
+          ]);
+        }
+      }
+    }
+
     $route = $request->attributes->get('_route_object');
     if (!$route || !method_exists($route, 'getOption')) {
       return;

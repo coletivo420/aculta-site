@@ -34,7 +34,20 @@ O Social Auth Google usa um fluxo OAuth do lado do servidor. O fluxo começa em
 redirecionamento exatos abaixo no cliente OAuth Web:
 
 Após autenticação concluída, o Social Auth direciona a pessoa para
-`/identidade`, rota de perfil substituta da antiga `/user`.
+`/conta-interna`, rota `aculta_portal.dashboard` (“Minha conta”) do
+`aculta_portal`. A rota genérica de perfil `/user` foi removida; `/identidade`
+também não é um destino válido. O destino preferencial é a página visitada
+antes do login, transportada como `destination` e acompanhada pelo purpose do
+Domain durante a autenticação. Isso vale para senha e Google OAuth. Sem um
+destino anterior, o fallback é a rota do Portal “Minha conta”. O fluxo e seus
+limites estão documentados em [Autenticação](AUTHENTICATION.md).
+
+O Social API 4.0.2 emite uma depreciação PHP 8.4 ao instanciar o gerenciador
+OAuth. O projeto aplica por Composer o ajuste upstream proposto em
+[Drupal.org #3593752](https://www.drupal.org/project/social_api/issues/3593752)
+(MR !17), sem editar o módulo contrib diretamente. Esse aviso não identifica,
+por si só, uma falha de autenticação; a conclusão do callback Google ainda
+precisa de validação interativa após as alterações.
 
 | Ambiente | URI de redirecionamento autorizado |
 | --- | --- |

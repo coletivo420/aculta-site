@@ -97,7 +97,7 @@ final class PortalHooks {
     if (isset($variables['#cache']) && is_array($variables['#cache'])) {
       $variables['#cache']['contexts'] = array_values(array_unique(array_merge(
         $variables['#cache']['contexts'] ?? [],
-        ['domain'],
+        ['domain', 'url.path'],
       )));
     }
   }
@@ -133,6 +133,18 @@ final class PortalHooks {
         $target = NULL;
         if (in_array($route, ['user.login', 'user.register', 'user.pass', 'user.logout'], TRUE)) {
           $target = $resolver->routeUrl('account', $route, $url->getRouteParameters());
+          if ($route === 'user.login' && !$this->currentUser->isAuthenticated()
+            && $this->routeMatch->getRouteName() !== 'user.login') {
+            $purpose = $resolver->getCurrentPurpose();
+            $path = $this->requestStack->getCurrentRequest()?->getPathInfo() ?? $this->currentPath->getPath();
+            if ($purpose !== NULL && str_starts_with($path, '/') && !str_starts_with($path, '//')
+              && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $path)) {
+              $target?->setOption('query', [
+                'destination' => $path,
+                'aculta_destination_purpose' => $purpose,
+              ]);
+            }
+          }
         }
         elseif ($route === 'aculta_portal.dashboard' || $route === 'user.page') {
           $target = $resolver->pathUrl('account', '/');

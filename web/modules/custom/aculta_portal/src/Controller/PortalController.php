@@ -12,6 +12,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /** Private user account area. */
 final class PortalController extends ControllerBase {
 
+  /** Social Auth stores the network plugin ID, not its URL short name. */
+  private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
@@ -121,7 +124,7 @@ final class PortalController extends ControllerBase {
     if ($this->moduleHandler()->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
       $links = $this->entities->getStorage('social_auth')->loadByProperties([
         'user_id' => $account->id(),
-        'plugin_id' => 'google',
+        'plugin_id' => self::GOOGLE_SOCIAL_AUTH_PLUGIN_ID,
       ]);
     }
 
@@ -130,9 +133,25 @@ final class PortalController extends ControllerBase {
       'google_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => 'Google'],
     ];
     if ($links) {
-      $items['google_status'] = ['#plain_text' => $this->t('Conta conectada.')];
+      $social_auth = reset($links);
+      $provider_email = $social_auth->getAdditionalData()['provider_email'] ?? NULL;
+      if (is_string($provider_email) && filter_var($provider_email, FILTER_VALIDATE_EMAIL)) {
+        $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
+        $items['google_account'] = [
+          '#plain_text' => $this->t('Conta Google: @email', ['@email' => $provider_email]),
+        ];
+      }
+      else {
+        $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
+        $items['google_account'] = ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')];
+        $items['google_reconnect'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Atualizar conexão Google'),
+          '#url' => Url::fromRoute('social_auth.network.redirect', ['network' => 'google']),
+          '#attributes' => ['class' => ['button', 'button--secondary']],
+        ];
+      }
       if ($account->getPassword()) {
-        $social_auth = reset($links);
         $items['disconnect'] = [
           '#type' => 'link',
           '#title' => $this->t('Desconectar Google'),
