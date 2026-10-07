@@ -24,7 +24,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 - Portal 0.15.0: consolidação AJAX — especificação concluída.
 - Portal 0.16.0: Search API — especificação concluída.
 - Portal 0.17.0: engagement — especificação concluída.
-- Portal 0.18.0: deduplicação.
+- Portal 0.18.0: deduplicação — especificação concluída.
 - Portal 0.19.0: hardening.
 - Portal 1.0.0: baseline estável do Portal.
 
