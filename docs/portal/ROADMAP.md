@@ -347,12 +347,17 @@ Nenhuma remoção sem substituto e teste de paridade.
 
 ## R0 — Clean baseline
 
+**Runbook concluído.**
+
+Documento: [R0-CLEAN-BASELINE.md](R0-CLEAN-BASELINE.md).
+
 Primeira ação no Homelab:
 
 - descartar trabalho local antigo;
 - sincronizar exatamente com `origin/main`;
 - não recuperar a antiga 9.3B;
-- validar baseline Apache + SQLite.
+- validar baseline Apache + SQLite;
+- parar se o baseline puro falhar.
 
 ## R1 — Dependency and config integration
 
