@@ -316,9 +316,15 @@ Documento: [S4-0.16-SEARCH.md](S4-0.16-SEARCH.md).
 
 ### Portal 0.17 — Engagement
 
-- Flag;
-- Comment Notify;
-- privacidade/SMTP/opt-in.
+**Especificação concluída.**
+
+Documento: [S4-0.17-ENGAGEMENT.md](S4-0.17-ENGAGEMENT.md).
+
+- Flag ^5.1;
+- Comment Notify ^1.6;
+- favoritos/follows/notificações como conceitos separados;
+- privacidade/SMTP/opt-in;
+- usar AJAX/upstream, sem toggle/storage paralelo.
 
 ### Portal 0.18 — Deduplication
 

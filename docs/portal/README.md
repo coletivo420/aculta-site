@@ -31,6 +31,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Portal 0.14 — Admin Hub](S4-0.14-ADMIN-HUB.md)
 - [Portal 0.15 — AJAX Consolidation](S4-0.15-AJAX-CONSOLIDATION.md)
 - [Portal 0.16 — Search](S4-0.16-SEARCH.md)
+- [Portal 0.17 — Engagement](S4-0.17-ENGAGEMENT.md)
 - [Roadmap](ROADMAP.md)
 - [Integrações Google](../integrations/GOOGLE.md)
 
