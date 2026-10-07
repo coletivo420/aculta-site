@@ -2,6 +2,9 @@
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Presentation\AccountConnectionsPresenter;
+use Drupal\aculta_portal\Presentation\AccountSecurityPresenter;
+use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -17,6 +20,9 @@ final class PortalController extends ControllerBase {
     private readonly EntityFormBuilderInterface $forms,
     private readonly FormBuilderInterface $accountFormBuilder,
     private readonly \Drupal\aculta_portal\AccountCoursesManager $accountCourses,
+    private readonly AccountConnectionsPresenter $connectionsPresenter,
+    private readonly AccountSecurityPresenter $securityPresenter,
+    private readonly BlockManagerInterface $blockManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -25,6 +31,9 @@ final class PortalController extends ControllerBase {
       $container->get('entity.form_builder'),
       $container->get('form_builder'),
       $container->get('aculta_portal.account_courses'),
+      $container->get('aculta_portal.presentation.account_connections'),
+      $container->get('aculta_portal.presentation.account_security'),
+      $container->get('plugin.manager.block'),
     );
   }
 
@@ -115,129 +124,99 @@ final class PortalController extends ControllerBase {
 
   public function connections(): array {
     $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
-    $config = $this->config('social_auth_google.settings');
-    $google_ready = !empty($config->get('client_id')) && !empty($config->get('client_secret'));
-    $links = [];
-    if ($this->moduleHandler()->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
-      $links = $this->entities->getStorage('social_auth')->loadByProperties([
-        'user_id' => $account->id(),
-        'plugin_id' => 'google',
-      ]);
-    }
+    $view = $this->connectionsPresenter->present($account);
 
     $items = [
-      'description' => ['#plain_text' => $this->t('Gerencie as contas externas conectadas à sua conta.')],
-      'google_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => 'Google'],
+      'description' => ['#plain_text' => $view['description']],
+      'google_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $view['provider']],
+      'google_status' => ['#plain_text' => $view['status']['label']],
     ];
-    if ($links) {
-      $items['google_status'] = ['#plain_text' => $this->t('Conta conectada.')];
-      if ($account->getPassword()) {
-        $social_auth = reset($links);
-        $items['disconnect'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Desconectar Google'),
-          '#url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()]),
-          '#attributes' => ['class' => ['button', 'button--secondary']],
-          '#access' => $social_auth->access('delete'),
-        ];
-      }
-      else {
-        $items['password_notice'] = ['#plain_text' => $this->t('Defina uma senha para sua conta antes de desconectar o Google.')];
-        $items['password_link'] = ['#type' => 'link', '#title' => $this->t('Gerenciar segurança da conta'), '#url' => Url::fromRoute('aculta_portal.security')];
-      }
+
+    if ($view['notice'] !== NULL) {
+      $items['password_notice'] = ['#plain_text' => $view['notice']];
     }
-    elseif ($google_ready) {
-      $items['google_status'] = ['#plain_text' => $this->t('Nenhuma conta Google está conectada.')];
-      $items['google_login'] = \Drupal::service('plugin.manager.block')
+    if ($view['action'] !== NULL) {
+      $items['action'] = [
+        '#type' => 'link',
+        '#title' => $view['action']['label'],
+        '#url' => $view['action']['url'],
+        '#attributes' => [
+          'class' => $view['action']['kind'] === 'secondary'
+            ? ['button', 'button--secondary']
+            : [],
+        ],
+      ];
+    }
+    if ($view['login_available']) {
+      $items['google_login'] = $this->blockManager
         ->createInstance('social_auth_login', [])
         ->build();
     }
-    else {
-      $items['google_status'] = ['#plain_text' => $this->t('A conexão com o Google estará disponível quando a configuração institucional estiver concluída.')];
-    }
-    $items['#cache'] = ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0];
+
+    $items['#cache'] = [
+      'contexts' => ['user'],
+      'tags' => $account->getCacheTags(),
+      'max-age' => 0,
+    ];
     return $items;
   }
 
   public function security(): array {
     $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
-    $email_ready = $this->transactionalMailReady();
+    $view = $this->securityPresenter->present($account);
+
     $content = [
-      'intro' => ['#plain_text' => $this->t('Gerencie como você acessa sua conta.')],
+      'intro' => ['#plain_text' => $view['intro']],
       'email_section' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-security-card']],
-        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('E-mail de acesso')],
-        'current_label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
-        'current_email' => ['#plain_text' => $account->getEmail()],
+        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $view['email']['heading']],
+        'current_label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $view['email']['current_label']],
+        'current_email' => ['#plain_text' => $view['email']['current']],
       ],
       'password_section' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-security-card']],
-        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Senha')],
-        'description' => ['#plain_text' => $this->t('Mantenha uma senha segura para acessar sua conta.')],
+        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $view['password']['heading']],
+        'description' => ['#plain_text' => $view['password']['description']],
       ],
-      '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions'],
+        'tags' => $account->getCacheTags(),
+        'max-age' => 0,
+      ],
     ];
 
-    if ($email_ready && $this->moduleHandler()->moduleExists('email_confirmer_user') && $this->moduleHandler()->moduleExists('change_mail_page')) {
-      $content['email_section']['change_form'] = $this->accountFormBuilder->getForm(\Drupal\change_mail_page\Form\ChangeMailForm::class, $account);
-      $pending_email = $this->pendingEmail($account->id());
-      if ($pending_email !== NULL) {
+    if ($view['email']['change_available']) {
+      $content['email_section']['change_form'] = $this->accountFormBuilder
+        ->getForm(\Drupal\change_mail_page\Form\ChangeMailForm::class, $account);
+
+      if ($view['email']['pending'] !== NULL) {
         $content['email_section']['pending'] = [
           '#type' => 'container',
           '#attributes' => ['class' => ['aculta-security-pending'], 'aria-live' => 'polite'],
-          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
-          'email' => ['#plain_text' => $pending_email],
-          'message' => ['#plain_text' => $this->t('Aguardando confirmação no novo endereço.')],
+          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $view['email']['pending']['label']],
+          'email' => ['#plain_text' => $view['email']['pending']['email']],
+          'message' => ['#plain_text' => $view['email']['pending']['message']],
         ];
       }
     }
-    else {
-      $content['email_section']['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
+    elseif ($view['email']['unavailable_message'] !== NULL) {
+      $content['email_section']['mail_notice'] = [
+        '#plain_text' => $view['email']['unavailable_message'],
+      ];
     }
 
-    $social_password_unset = (bool) \Drupal::service('user.data')->get('aculta_portal', $account->id(), 'social_auth_password_unset');
-    if ($account->getPassword() && !$social_password_unset) {
+    if ($view['password']['change_available']) {
       $content['password_section']['change_form'] = $this->buildPortalAccountForm($account);
     }
-    else {
-      $content['password_section']['social_notice'] = ['#plain_text' => $this->t('Sua conta utiliza acesso externo. Quando o fluxo de definição de senha local estiver homologado, ele poderá ser oferecido aqui.')];
+    elseif ($view['password']['unavailable_message'] !== NULL) {
+      $content['password_section']['social_notice'] = [
+        '#plain_text' => $view['password']['unavailable_message'],
+      ];
     }
 
-    return [
-      'content' => $content,
-    ];
-  }
-
-  private function transactionalMailReady(): bool {
-    $smtp = $this->config('smtp.settings');
-    $mail_system = $this->config('system.mail')->get('interface.default');
-    $site_mail = trim((string) $this->config('system.site')->get('mail'));
-    return $this->moduleHandler()->moduleExists('smtp')
-      && $mail_system === 'SMTPMailSystem'
-      && (bool) $smtp->get('smtp_on')
-      && trim((string) $smtp->get('smtp_host')) !== ''
-      && trim((string) $smtp->get('smtp_username')) !== ''
-      && trim((string) $smtp->get('smtp_password')) !== ''
-      && $site_mail !== '';
-  }
-
-  private function pendingEmail(int|string $uid): ?string {
-    if (!$this->moduleHandler()->moduleExists('email_confirmer_user')) {
-      return NULL;
-    }
-    $pending = \Drupal::service('user.data')->get('email_confirmer_user', $uid, 'email_change_new_address');
-    if (!is_string($pending) || $pending === '') {
-      return NULL;
-    }
-    $confirmations = \Drupal::service('email_confirmer')->getConfirmations($pending, 'pending', 0, 'email_confirmer_user');
-    foreach ($confirmations as $confirmation) {
-      if ((int) $confirmation->get('uid')->target_id === (int) $uid) {
-        return $pending;
-      }
-    }
-    return NULL;
+    return ['content' => $content];
   }
 
   private function buildDataSection(string $section): array {
