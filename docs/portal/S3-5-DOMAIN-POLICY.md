@@ -168,6 +168,11 @@ correção de environment não altera o mapa de Domain nem adiciona purpose.
 
 **Merge com main:** `ccf996172ffbf352e9fb7528c9b16f618b7e0bdd`; sem conflitos.
 
+O main avançou durante a revisão para
+`530d138a9576e88f2facca5d8352c6d534dc7400` (somente documentação de slugs).
+Foi incorporado pelo merge normal `ef8cc8f`; os gates Drupal/Homelab e os
+smokes HTTP autenticados foram repetidos nesse HEAD.
+
 ### Gatilhos e gates
 
 - PHP lint dos três alvos S3.5, `git diff --check` e busca de service locator:
