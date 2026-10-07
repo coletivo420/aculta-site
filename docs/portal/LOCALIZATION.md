@@ -261,6 +261,22 @@ um a um e separar:
 Nunca usar `drush cex` diretamente sobre `config/sync` para “limpar” essa
 diferença sem revisão.
 
+## Verificador Homelab versionado
+
+O gate reproduzível de i18n está em:
+
+`scripts/homelab/verify-i18n.sh`
+
+- sem argumentos: verifica estado ativo, páginas e drift sem aplicar tradução;
+- com `--apply`: aplica apenas chaves i18n conhecidas, atualiza/importa Locale e
+  executa os mesmos asserts;
+- recusa Runtime que não use SQLite;
+- não executa `config:import` global;
+- drift não relacionado continua apenas informativo e deve ser classificado.
+
+A mensagem de privacidade pós-submit da recuperação continua sendo um gate
+interativo porque o submit anônimo precisa de token Turnstile real.
+
 ## Testes
 
 Validar:

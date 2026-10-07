@@ -36,3 +36,28 @@ continuam ativos separados em MariaDB.
 
 Uma migração futura do Runtime do Homelab para MariaDB será reavaliada quando o
 BDTGN estiver maduro. Até lá, SQLite permanece o Runtime operacional.
+
+
+## Verificação de i18n
+
+A internacionalização possui um verificador separado porque `locale:update` e
+`locale:import` alteram estado. O verificador geral do Homelab continua
+read-only em relação a traduções.
+
+Para apenas conferir o estado atual:
+
+```sh
+bash scripts/homelab/verify-i18n.sh
+```
+
+Para aplicar **somente** as chaves/configurações pertencentes ao PR de i18n e
+atualizar/importar os catálogos:
+
+```sh
+bash scripts/homelab/verify-i18n.sh --apply
+```
+
+O modo `--apply` recusa banco diferente de SQLite, não executa
+`config:import` global e exporta Configuration Sync apenas para
+`/tmp/aculta-i18n-config` para classificação de drift. Ele não altera
+produção.
