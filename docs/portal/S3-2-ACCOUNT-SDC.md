@@ -6,7 +6,7 @@ Data de atualização: 2026-10-07
 
 RUNTIME STATUS: **DEFERRED**
 
-STATIC STATUS: **PREPARED AGAINST `main@bf5faa0`**
+STATIC STATUS: **PASS — diff audit + PHP 8.4 syntax; Drupal Runtime deferred**
 
 ## Objetivo
 
@@ -135,7 +135,9 @@ Regras que não podem regredir:
 
 ## Revisão estática feita no chat
 
-Confirmado por inspeção do diff contra a `main`:
+Confirmado por inspeção do diff contra a `main` e lint sintático local:
+
+- `php -l` PASS em `AccountCoursesManager.php`, `AccountCoursePresenter.php` e `AccountCoursesController.php` com PHP 8.4.23 CLI;
 
 - manager continua sendo a fronteira LMS/Group/access;
 - presenter não carrega Group/User/CourseStatus por storage;
