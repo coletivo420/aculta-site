@@ -6,10 +6,25 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Processo
+
+- Macrofase S encerrada no limite seguro sem Runtime; drafts funcionais continuam DEFERRED e a próxima execução começa em R0.
+
+### Refatoração preparada
+
+- S3.2A introduz `AccountCoursePresenter` como fronteira semântica entre LMS/Group e a apresentação da Conta, mantendo o render atual e o tema inalterado até Runtime PASS.
+- S3.5 separa resolução de purpose do enforcement HTTP e evita mutação de Domain em URLs locais.
+- S3.5 passou os gates Runtime em R1.2B; `pathUrl()` agora respeita o Domain purpose e o alias de ambiente.
+
+### Roadmap
+
+- Portal 0.18.1 adiciona a padronização transversal de slugs públicos amigáveis em português para todos os Domains/purposes, com redirects/canonical/sitemap e preservação das rotas técnicas upstream.
+
 ### Documentação
 
 - S2 Static Portal Audit concluído sem alterar runtime.
 - S2.1 documenta a matriz Minha Conta: SDC, integrações, AJAX e fallback.
+- S3.2B define semântica compartilhada de status, ações, empty states e summaries sem antecipar SDCs não aprovados pelo tema.
 - Mapa de refatoração classifica KEEP, REFACTOR, UPSTREAM/CONFIG e RUNTIME-SENSITIVE.
 - Bootstrap Component Design System definido como destino da apresentação pública do Portal.
 
@@ -19,13 +34,13 @@ O Portal usa tags `portal-vX.Y.Z`.
 - Portal 0.11.0: fundação do Fórum.
 - Portal 0.12.0: participação do Fórum na Conta.
 - Portal 0.13.0: hub integrado de participação.
-- Portal 0.14.0: hub administrativo.
-- Portal 0.15.0: consolidação AJAX.
-- Portal 0.16.0: Search API.
-- Portal 0.17.0: engagement.
-- Portal 0.18.0: deduplicação.
-- Portal 0.19.0: hardening.
-- Portal 1.0.0: baseline estável do Portal.
+- Portal 0.14.0: hub administrativo — especificação concluída.
+- Portal 0.15.0: consolidação AJAX — especificação concluída.
+- Portal 0.16.0: Search API — especificação concluída.
+- Portal 0.17.0: engagement — especificação concluída.
+- Portal 0.18.0: deduplicação — especificação concluída.
+- Portal 0.19.0: hardening — especificação concluída.
+- Portal 1.0.0: gates de release especificados; release ainda bloqueado por Runtime.
 
 ## 0.10.0 — Foundation
 

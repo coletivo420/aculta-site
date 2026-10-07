@@ -2,108 +2,154 @@
 
 ## S3.2A — Course presentation boundary
 
-Data de preparação: 2026-10-06
+Data de atualização: 2026-10-07
 
 RUNTIME STATUS: **DEFERRED**
 
+STATIC STATUS: **PREPARED AGAINST `main@bf5faa0`**
+
 ## Objetivo
 
-Criar a primeira fronteira presenter -> futuro SDC dentro da Minha Conta sem
-alterar o tema e sem depender de um componente ainda inexistente.
+Criar a primeira fronteira executável entre dados autorizados de Cursos e a
+apresentação da Minha Conta, sem alterar o tema e sem depender de um SDC ainda
+inexistente.
 
-O piloto escolhido é Cursos porque:
+O piloto é Cursos porque:
 
-- LMS/Group já são fontes de verdade claras;
+- LMS/Group já são as fontes de verdade;
 - `AccountCoursesManager` já verifica access antes de metadata;
 - não existe storage paralelo;
-- o controller possui markup de card simples;
-- `course-card` já é candidato oficial no design system do tema.
+- o controller possui fallback de render simples;
+- `course-card` continua candidato do design system, não dependência do Portal.
 
-## Mudanças preparadas
+## Relação com S3.2B
 
-### AccountCoursesManager
+A `main` já contém
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md), que é a fonte
+normativa para status, ações, empty states, summary e cache/access.
 
-Antes misturava:
+S3.2A **consome** esse contrato. Não mantém uma segunda especificação paralela.
 
-- integração LMS/Group;
-- access;
-- URLs;
-- label de status em português.
+Fluxo:
 
-Agora mantém:
+```text
+Drupal LMS + Group
+        ↓
+AccountCoursesManager
+access + source data + URLs por purpose + cache tags
+        ↓
+AccountCoursePresenter
+status + tone + score label + CTA + empty state
+        ↓
+render atual da Conta
+        ↓
+futuro course-card SDC, somente quando aprovado no tema
+```
 
-- membership;
-- group access;
+## AccountCoursesManager
+
+Permanece responsável por:
+
+- membership Group;
+- access do Group antes de metadata;
 - CourseStatus;
 - description renderable;
-- score;
-- finished;
-- URL COURSES;
+- score bruto;
+- estado finished;
+- URL no purpose COURSES;
 - cache tags.
 
-A label de apresentação sai desta camada.
+Deixa de possuir label de status voltada ao usuário.
 
-### AccountCoursePresenter
+A política de URL já incorpora S3.5: `routeUrl('courses', ...)` deve continuar
+resolvendo para COURSES tanto em produção quanto nos aliases Homelab.
 
-Novo service:
+## AccountCoursePresenter
+
+Service:
 
 `aculta_portal.presentation.account_course`
 
 Responsável por:
 
-- status label;
+- status `code + label + tone`;
 - score label;
-- CTA label;
-- empty-state;
+- CTA `label + url + kind`;
+- empty state;
 - view-model estável para apresentação.
 
-Não persiste estado e não consulta storage diretamente.
+Não:
 
-### AccountCoursesController
+- persiste estado;
+- consulta storage diretamente;
+- decide access;
+- cria membership/progresso paralelo;
+- conhece Domain entity;
+- implementa AJAX;
+- depende de SDC.
 
-Continua usando render arrays atuais como fallback.
+## AccountCoursesController
 
-O controller passa a consumir o presenter, mas **não referencia
-`aculta:course-card`** porque esse SDC ainda não existe no tema.
+Passa a consumir o presenter.
 
-Isso permite validar a separação antes de trocar a apresentação.
+O markup atual continua sendo o fallback funcional. O controller não referencia
+`aculta:course-card` nem qualquer outro SDC inexistente.
 
-## Tema
+## Cache e access
 
-Nenhum arquivo em `web/themes/custom/aculta/**` foi alterado.
+A ordem permanece:
 
-Quando os agentes do tema implementarem `course-card`, poderão consumir o
-contrato documentado em
-[ACCOUNT-COMPONENT-CONTRACTS.md](ACCOUNT-COMPONENT-CONTRACTS.md).
+```text
+membership
+  ↓
+Group access
+  ↓
+metadata + LMS progress
+  ↓
+view-model
+  ↓
+render
+```
 
-## AJAX
+Cache tags de Group/CourseStatus continuam propagadas para cada card. Os
+contexts existentes da página permanecem inalterados.
 
-Nenhuma alteração.
+## Tema e AJAX
 
-A rota de Meus Cursos continua participando da navegação assíncrona da Conta
-pela infraestrutura atual.
+Nenhum arquivo em `web/themes/custom/aculta/**` faz parte desta subfase.
 
-O card não ganha transporte AJAX próprio.
+Nenhuma alteração de transporte AJAX faz parte desta subfase. A navegação da
+Conta continua com o comportamento atual e fallback full-page.
 
-## Revisão estática
+## Compatibilidade com S3.5
 
-Confirmado:
+Este PR foi sincronizado semanticamente com a `main` após S3.5.
 
-- presenter não carrega Group/User/Status entity por storage;
-- manager continua usando LMS/Group como fontes;
-- access do Group permanece antes de metadata;
-- cache tags permanecem no view-model;
-- controller mantém fallback atual;
-- nenhuma dependência Composer;
-- nenhum arquivo do tema;
-- nenhuma configuração Drupal nova.
+Regras que não podem regredir:
 
-A tentativa de clonar a branch para `php -l` falhou porque o ambiente auxiliar
-não resolveu `github.com`. Não registrar como PASS.
+- CTA de curso usa purpose COURSES;
+- `DomainPurposeManager` permanece o dono das URLs cross-domain;
+- nenhum service locator volta a ser introduzido;
+- nenhum Domain entity é mutado pelo presenter;
+- curso aguardando avaliação continua sem CTA enganosa.
 
-## Gates Runtime
+## Revisão estática feita no chat
 
-Antes do merge funcional:
+Confirmado por inspeção do diff contra a `main`:
+
+- manager continua sendo a fronteira LMS/Group/access;
+- presenter não carrega Group/User/CourseStatus por storage;
+- controller não referencia SDC;
+- tema não é alterado;
+- Composer/config sync não são alterados;
+- documentação aponta para uma única fonte semântica compartilhada;
+- mudanças S3.5 em services/Domain policy são preservadas no merge.
+
+Essa revisão não substitui bootstrap Drupal nem testes de runtime.
+
+## Gates delegados ao Homelab
+
+Executar antes de marcar Runtime PASS:
 
 ```sh
 php -l web/modules/custom/aculta_portal/src/AccountCoursesManager.php
@@ -111,6 +157,8 @@ php -l web/modules/custom/aculta_portal/src/Presentation/AccountCoursePresenter.
 php -l web/modules/custom/aculta_portal/src/Controller/AccountCoursesController.php
 
 composer validate
+composer audit
+composer check-platform-reqs
 
 vendor/bin/drush status
 vendor/bin/drush cr
@@ -118,35 +166,34 @@ vendor/bin/drush config:status
 vendor/bin/drush updatedb:status
 ```
 
-Funcional:
+Validar funcionalmente:
 
-- User sem cursos;
-- User com 1 curso;
-- User com múltiplos cursos;
-- curso não iniciado;
+- usuário sem cursos;
+- usuário com um curso;
+- usuário com múltiplos cursos;
+- não iniciado;
 - em andamento;
-- aprovado;
-- reprovado;
-- aguardando avaliação sem CTA enganosa;
-- score visível;
-- curso sem score;
-- Group sem access não vaza metadata;
-- CTA aponta para COURSES Domain;
+- concluído/aprovado;
+- não aprovado;
+- aguardando avaliação sem CTA;
+- score presente e ausente;
+- Group sem access sem vazamento de metadata;
+- CTA no hostname COURSES;
 - cache tags;
 - navegação AJAX da Conta;
-- fallback full-page.
+- fallback full-page;
+- regressão dos sete hosts após `drush cr`.
+
+O servidor de desenvolvimento usa **Apache + PHP-FPM**. Não usar gates Nginx.
 
 ## Merge policy
 
-Manter PR em draft até Runtime PASS.
+Manter o PR em draft até Runtime PASS no Homelab.
+
+Nenhuma mudança em SQLite, conteúdo, produção ou Hostinger pertence a S3.2A.
 
 ## Próxima subfase
 
-S3.2B — primitives/view-models compartilhados da Conta:
-
-- status badge semantics;
-- empty state;
-- summary card;
-- action list.
-
-A implementação visual desses componentes continua pertencendo ao tema.
+Após S3.2A Runtime PASS, seguir o roadmap atual. S3.2B já estabeleceu a
+semântica compartilhada; os próximos presenters funcionais são Segurança e
+Conexões (S3.2C), sem antecipar novos SDCs.

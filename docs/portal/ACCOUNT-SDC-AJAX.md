@@ -58,23 +58,25 @@ quando houver comportamento assíncrono
 | Favoritos/seguir | Flag | adapter mínimo | `follow-action`, `status-badge` | usar comportamento AJAX do Flag quando adotado; não criar toggle próprio |
 | Notificações | Comment Notify | integração/preferences | `notification-preference` | usar forms/APIs do módulo; não criar transporte próprio |
 
-## Contratos
+## Semântica compartilhada
 
-Os contratos visuais propostos estão em
-[ACCOUNT-COMPONENT-CONTRACTS.md](ACCOUNT-COMPONENT-CONTRACTS.md).
+Status, ações, empty states, summaries e action lists seguem o contrato de
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md).
 
-O primeiro piloto Portal é a fronteira de Cursos documentada em
-[S3-2-ACCOUNT-SDC.md](S3-2-ACCOUNT-SDC.md).
+Esses contratos não autorizam automaticamente novos SDCs. A maturidade visual
+continua sob o roadmap H3/H4 do tema.
+
+O primeiro consumidor executável desta semântica é o Course presenter de
+[S3.2A](S3-2-ACCOUNT-SDC.md). Ele mantém o render atual como fallback e não
+introduz dependência de um SDC ainda inexistente.
 
 ## O que vira SDC primeiro
 
 Ordem preferencial:
 
-1. `status-badge`;
-2. `empty-state`;
-3. `summary-card`;
-4. `action-list`;
-5. `course-card`;
+1. validar semanticamente status/empty/summary/action no Portal;
+2. `course-card` quando o tema H4 fornecer o contrato visual;
+3. promover status/empty/summary/action a SDC somente se a reutilização real justificar;
 6. `account-shell`;
 7. `account-identity`;
 8. `data-section`;

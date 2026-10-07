@@ -13,8 +13,8 @@ use Drupal\lms\Entity\CourseStatusInterface;
  * Prepares ACCOUNT course view-models without owning LMS/Group state.
  *
  * AccountCoursesManager remains responsible for authorized source data and
- * cross-domain course URLs. This presenter adds user-facing labels and CTA
- * semantics that can feed the current fallback render arrays or a future SDC.
+ * cross-domain course URLs. This presenter adds user-facing semantics that can
+ * feed the current fallback render arrays or a future theme component.
  */
 final class AccountCoursePresenter {
 
@@ -31,16 +31,16 @@ final class AccountCoursePresenter {
    *     id: string,
    *     title: string,
    *     description: array,
-   *     status: array{code: string, label: string},
-   *     score: int|float|null,
+   *     status: array{code: string, label: string, tone: string},
+   *     score: int|float|string|null,
    *     score_label: string|null,
    *     finished: bool,
-   *     cta: array{label: string, url: \Drupal\Core\Url}|null,
+   *     cta: array{label: string, url: \Drupal\Core\Url, kind: string}|null,
    *     cache_tags: string[]
    *   }>,
    *   empty: array{
    *     message: string,
-   *     cta: array{label: string, url: \Drupal\Core\Url}|null
+   *     cta: array{label: string, url: \Drupal\Core\Url, kind: string}|null
    *   }
    * }
    */
@@ -56,10 +56,7 @@ final class AccountCoursePresenter {
         'id' => (string) $course['id'],
         'title' => (string) $course['label'],
         'description' => $course['description'],
-        'status' => [
-          'code' => $statusCode,
-          'label' => $this->statusLabel($statusCode),
-        ],
+        'status' => $this->statusPresentation($statusCode),
         'score' => $score,
         'score_label' => $score !== NULL
           ? (string) $this->translation->translate('Resultado: @score%', ['@score' => $score])
@@ -70,6 +67,7 @@ final class AccountCoursePresenter {
             $course['finished'] ? 'Ver resultado' : 'Acessar curso'
           ),
           'url' => $url,
+          'kind' => 'primary',
         ] : NULL,
         'cache_tags' => $course['cache_tags'],
       ];
@@ -84,18 +82,44 @@ final class AccountCoursePresenter {
         'cta' => $catalog !== NULL ? [
           'label' => (string) $this->translation->translate('Ver cursos disponíveis'),
           'url' => $catalog,
+          'kind' => 'primary',
         ] : NULL,
       ],
     ];
   }
 
-  private function statusLabel(string $status): string {
-    return (string) match ($status) {
-      CourseStatusInterface::STATUS_PROGRESS => $this->translation->translate('Em andamento'),
-      CourseStatusInterface::STATUS_PASSED => $this->translation->translate('Concluído'),
-      CourseStatusInterface::STATUS_FAILED => $this->translation->translate('Não aprovado'),
-      CourseStatusInterface::STATUS_NEEDS_EVALUATION => $this->translation->translate('Aguardando avaliação'),
-      default => $this->translation->translate('Não iniciado'),
+  /**
+   * Maps LMS state to the shared semantic presentation contract.
+   *
+   * @return array{code: string, label: string, tone: string}
+   */
+  private function statusPresentation(string $status): array {
+    return match ($status) {
+      CourseStatusInterface::STATUS_PROGRESS => [
+        'code' => $status,
+        'label' => (string) $this->translation->translate('Em andamento'),
+        'tone' => 'info',
+      ],
+      CourseStatusInterface::STATUS_PASSED => [
+        'code' => $status,
+        'label' => (string) $this->translation->translate('Concluído'),
+        'tone' => 'success',
+      ],
+      CourseStatusInterface::STATUS_FAILED => [
+        'code' => $status,
+        'label' => (string) $this->translation->translate('Não aprovado'),
+        'tone' => 'danger',
+      ],
+      CourseStatusInterface::STATUS_NEEDS_EVALUATION => [
+        'code' => $status,
+        'label' => (string) $this->translation->translate('Aguardando avaliação'),
+        'tone' => 'warning',
+      ],
+      default => [
+        'code' => $status,
+        'label' => (string) $this->translation->translate('Não iniciado'),
+        'tone' => 'neutral',
+      ],
     };
   }
 

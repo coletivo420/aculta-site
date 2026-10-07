@@ -6,7 +6,9 @@ namespace Drupal\aculta_portal\Domain;
 
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
+use Drupal\Core\Controller\TitleResolverInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
@@ -39,6 +41,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   public function __construct(
     private readonly DomainPurposeManager $domainPurpose,
     private readonly RequestStack $requestStack,
+    private readonly TitleResolverInterface $titleResolver,
+    private readonly PathMatcherInterface $pathMatcher,
   ) {}
 
   /** {@inheritdoc} */
@@ -123,7 +127,7 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     if ($entity instanceof NodeInterface || $entity instanceof TermInterface) {
       return trim(strip_tags((string) $entity->label())) ?: NULL;
     }
-    $title = \Drupal::service('title_resolver')->getTitle($this->requestStack->getCurrentRequest(), $route);
+    $title = $this->titleResolver->getTitle($this->requestStack->getCurrentRequest(), $route);
     if (is_array($title) || !is_scalar($title) && !$title instanceof \Stringable) {
       return NULL;
     }
@@ -158,7 +162,7 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   }
 
   private function isFrontPage(): bool {
-    return \Drupal::service('path.matcher')->isFrontPage();
+    return $this->pathMatcher->isFrontPage();
   }
 
 }

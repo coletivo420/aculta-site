@@ -20,6 +20,10 @@ Nenhum item abaixo está funcionalmente validado até a Macrofase R.
 
 ## S3.1 — Hooks e service locator
 
+**Estado: preparada em draft; Runtime deferred.**
+
+Ver [S3-1-HOOKS-DI.md](S3-1-HOOKS-DI.md).
+
 ### Objetivo
 
 Reduzir `\Drupal::...` em classes sem alterar regra funcional.
@@ -53,13 +57,13 @@ Não migrar todos os hooks num único PR.
 
 ## S3.2 — Account presentation boundary
 
-**Estado: S3.2A preparada em draft; Runtime deferred.**
+**Estado: S3.2B semântica documental concluída; S3.2A Course presenter preparado em draft, Runtime deferred.**
 
-Contratos:
+Contratos normativos:
 
 - [ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md)
-- [ACCOUNT-COMPONENT-CONTRACTS.md](ACCOUNT-COMPONENT-CONTRACTS.md)
-- [S3-2-ACCOUNT-SDC.md](S3-2-ACCOUNT-SDC.md).
+- [ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md)
+- [S3-2-ACCOUNT-SDC.md](S3-2-ACCOUNT-SDC.md)
 
 ### Objetivo
 
@@ -91,6 +95,11 @@ Primeiros contratos a definir/usar:
 AJAX é uma dimensão separada do componente: a navegação parcial da Conta
 permanece enquanto o transporte é migrado gradualmente para APIs Core.
 
+A semântica comum de status/actions/empty/summary está em
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md). Esses contratos
+não devem ser convertidos automaticamente em SDC antes de aprovação no roadmap
+do tema.
+
 Usar render element SDC quando apropriado:
 
 ```php
@@ -104,6 +113,25 @@ Usar render element SDC quando apropriado:
 ```
 
 Não passar entidade inteira como prop.
+
+## S3.2B — Shared presentation semantics
+
+**Estado: concluída documentalmente.**
+
+Define status, action, empty state, summary e action list sem criar abstrações
+visuais prematuras.
+
+## S3.2C — Security and connections presenters
+
+Próxima extração do `PortalController`:
+
+- Social Auth/Google;
+- status conectado/desconectado/configuração pendente;
+- segurança;
+- transactional mail readiness;
+- pending e-mail.
+
+Não alterar OAuth redirect/callback nem Form API.
 
 ## S3.3 — Support access first
 
