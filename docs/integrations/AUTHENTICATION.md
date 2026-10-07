@@ -80,8 +80,9 @@ real continua pendente de validação interativa.
 ## Turnstile
 
 O Turnstile é o desafio ativo para visitantes anônimos nos formulários públicos
-em rotas não administrativas. O CAPTCHA global cobre formulários sem uma regra
-específica; os pontos configurados também permanecem ativos. As chaves são
+em rotas não administrativas. O Turnstile global protege formulários de
+visitantes anônimos; o papel `authenticated` usa `skip CAPTCHA` para não receber
+o widget. As chaves são
 mantidas na configuração de Key do runtime; seus valores não pertencem ao
 código nem à documentação. Após o
 responsável confirmar que o Turnstile estava funcionando, foi desativado o

@@ -275,7 +275,8 @@ $assert(\Drupal::config('smtp.settings')->get('smtp_password') === '', 'SMTP pas
 $assert(\Drupal::config('smtp.settings')->get('smtp_username') === '', 'SMTP username is absent from active ordinary configuration.');
 
 $captcha = \Drupal::config('captcha.settings');
-$assert((int) $captcha->get('enable_globally') === 0, 'CAPTCHA is not globally attached to every form.');
+$assert((int) $captcha->get('enable_globally') === 1, 'Turnstile is globally enabled for anonymous forms.');
+$assert(\Drupal\user\Entity\Role::load('authenticated')?->hasPermission('skip CAPTCHA') === TRUE, 'Authenticated users can skip the global CAPTCHA challenge.');
 $expected_forms = [
   'user_login_form',
   'user_register_form',
