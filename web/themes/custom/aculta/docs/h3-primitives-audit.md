@@ -1,5 +1,7 @@
 # H3 — Auditoria de primitives reutilizáveis
 
+> Documento histórico de auditoria. O plano de execução H3 foi absorvido pelo roadmap SemVer em `roadmap.md`. As conclusões técnicas permanecem válidas, mas a ordem atual é 0.2.0 Foundations 2.0 → 0.3.0 Card System → 0.4.0 Patterns.
+
 ## Objetivo
 
 Determinar quais primitives do ACULTA Bootstrap Component Design System
@@ -68,15 +70,12 @@ H4, quando project/course/product cards fornecerem requisitos comuns reais.
 implementação H3, mas deve entrar em commit próprio e ser validado contra todos
 os SDCs existentes.
 
-## Ordem recomendada
+## Mapeamento para o roadmap versionado
 
-1. ativar e validar `enforce_prop_schemas: true`;
-2. criar `aculta:category-label` como experimental;
-3. migrar apenas editorial-card e project presenter;
-4. manter button como primitive CSS/Bootstrap;
-5. não criar heading/media/icon nesta fase;
-6. validar markup, cache/access, desktop/mobile e labels longas;
-7. promover `category-label` apenas após uso real em pelo menos dois componentes.
+- 0.2.0: `enforce_prop_schemas`, `category-label`, foundations/motion/semantic tokens;
+- 0.3.0: família de cards e eventual primitive de media se houver contrato real;
+- 0.4.0: `content-section`/section heading e patterns compostos;
+- 0.5.0: Icon API/UI Icons substituem a conclusão antiga de “não criar icon” por um sistema de ícones baseado em API, não por um SDC inventado isoladamente.
 
 ## Anti-regressão
 

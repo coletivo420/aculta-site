@@ -2,6 +2,8 @@
 
 Tema público da plataforma Drupal da Associação Cultural Antiproibicionista. `aculta` é o machine name técnico.
 
+**Versão do tema: 0.1.0.** O tema usa roadmap e versionamento próprios, independentes da versão do site Drupal. Veja [docs/versioning.md](docs/versioning.md), [docs/roadmap.md](docs/roadmap.md) e [CHANGELOG.md](CHANGELOG.md).
+
 ## Papel arquitetural
 
 `aculta` é a camada de apresentação e, desde a Fase H, o **ACULTA Bootstrap Component Design System**:
@@ -118,4 +120,6 @@ A divisão de CSS/JS continua sem introduzir Sass, Webpack, Vite, Node, PostCSS 
 
 Ambientes de desenvolvimento e produção usam Apache; a configuração continua específica por ambiente e o tema não pode depender de comportamento exclusivo do servidor web.
 
-Veja [docs/development.md](docs/development.md) e [a arquitetura geral](../../../../docs/README.md).
+O roadmap histórico por fases H foi substituído por releases SemVer iniciando em `0.1.0`; novas entregas devem seguir [docs/roadmap.md](docs/roadmap.md).
+
+Veja [docs/development.md](docs/development.md), [docs/versioning.md](docs/versioning.md), [docs/roadmap.md](docs/roadmap.md) e [a arquitetura geral](../../../../docs/README.md).

@@ -230,9 +230,7 @@ Sempre:
 
 ## Auditoria H3
 
-A auditoria de primitives aprovou apenas `category-label` como novo SDC imediato.
-`button` permanece primitive CSS/Bootstrap; `section-heading` foi adiado para
-H5; `media` para H4; `icon` não possui caso de uso atual.
+A auditoria de primitives continua válida como diagnóstico: `category-label` é um candidato forte, button permanece primitive CSS/Bootstrap, e heading/media devem nascer apenas quando patterns/cards comprovarem contrato comum. A execução foi absorvida pelo roadmap versionado: category-label entra em 0.2.0; media/cards em 0.3.0; section-heading/content-section em 0.4.0.
 
 Detalhes: [h3-primitives-audit.md](h3-primitives-audit.md).
 
@@ -244,19 +242,14 @@ Detalhes: [h3-primitives-audit.md](h3-primitives-audit.md).
 
 Essas referências explicam mecanismo upstream; os contratos ACULTA deste documento continuam sendo a regra do projeto.
 
-## Roadmap da Fase H
+## Roadmap versionado
 
-| Fase | Objetivo | Estado |
-| --- | --- | --- |
-| H1 | formalizar o Component Design System | concluído |
-| H2 | tornar `editorial-card` o primeiro SDC completo | concluído |
-| H3 | primitives reutilizáveis | auditado; implementação pendente |
-| H4 | família de cards | planejado |
-| H5 | patterns compostos, incluindo carousel/rail | planejado |
-| H6 | revisão seletiva do shell | planejado |
-| H7 | reduzir assets globais conforme ownership real | planejado |
-| H8 | catálogo visual / Style Guide | planejado |
-| H9 | integração editorial com ferramentas de composição | futura, após maturidade dos componentes |
-| H10 | light/dark/auto/alto contraste por tokens | futura |
+A taxonomia H1–H10 foi útil durante a transição, mas deixou de ser o plano de
+execução principal. O tema agora usa releases SemVer iniciando em **0.1.0**.
 
-O roadmap é direcional, não autorização para implementar fases seguintes sem revisar o estado real do código.
+- versão e compatibilidade: [versioning.md](versioning.md);
+- planejamento de 0.1.0 até 1.0.0+: [roadmap.md](roadmap.md);
+- histórico de releases: [../CHANGELOG.md](../CHANGELOG.md).
+
+A auditoria H3 permanece como evidência histórica e alimenta 0.2.0/0.3.0, mas
+não determina isoladamente a ordem futura.

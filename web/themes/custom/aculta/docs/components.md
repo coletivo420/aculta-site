@@ -9,7 +9,7 @@ Ele descreve componentes existentes ou reconhecidos no tema. Não é autorizaç�
 | Camada | Exemplos/estado atual |
 | --- | --- |
 | Foundations | `tokens.css`, `base.css`, `layout.css`, integração Bootstrap |
-| Primitives | button como contrato CSS/Bootstrap; `category-label` aprovado para H3; heading/media adiados |
+| Primitives | button como contrato CSS/Bootstrap; `category-label` planejado para 0.2.0; media avaliado em 0.3.0; icons via Icon API em 0.5.0 |
 | Components | `aculta:editorial-card`, project card, breadcrumb; course/product cards planejados |
 | Patterns | hero atual; carousel/rail, content-grid e content-section planejados |
 | Shell | header, navigation, utility/account, footer |
@@ -18,15 +18,15 @@ A classificação é de responsabilidade, não obrigação de converter cada ite
 
 ## Auditoria de primitives
 
-Resultado H3:
+A auditoria H3 foi incorporada ao roadmap SemVer. Resultado técnico:
 
-- `category-label`: candidato aprovado a SDC experimental;
+- `category-label`: candidato aprovado a SDC experimental em 0.2.0;
 - button: primitive global via Bootstrap/Form API, sem SDC neste momento;
-- section-heading: adiado para o pattern `content-section` em H5;
-- media: adiado até a família de cards H4 fornecer requisitos comuns;
-- icon: sem caso de uso suficiente.
+- section-heading: avaliar com `content-section` em 0.4.0;
+- media: avaliar com a família de cards em 0.3.0;
+- icon: usar Core Icon API/UI Icons em 0.5.0 em vez de inventar markup de ícone espalhado.
 
-Ver [h3-primitives-audit.md](h3-primitives-audit.md).
+Ver [h3-primitives-audit.md](h3-primitives-audit.md) e [roadmap.md](roadmap.md).
 
 ## Contrato geral
 

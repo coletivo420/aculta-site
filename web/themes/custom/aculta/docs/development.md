@@ -48,7 +48,7 @@ Apache em ambos os ambientes não significa configuração idêntica. O tema nã
 
 Mudanças devem ser pequenas, testáveis e reversíveis. A refatoração A–G4 está encerrada; a macrofase ativa é a **Fase H — ACULTA Bootstrap Component Design System**.
 
-A arquitetura, camadas, critérios de maturidade e roadmap H1–H10 estão em [component-design-system.md](component-design-system.md).
+A arquitetura e critérios de maturidade estão em [component-design-system.md](component-design-system.md). O planejamento ativo é versionado em [roadmap.md](roadmap.md), começando em 0.1.0; regras de release estão em [versioning.md](versioning.md).
 
 Não misturar reorganização estrutural, redesign e otimização agressiva de carregamento no mesmo passo.
 
@@ -171,16 +171,13 @@ O H2 move somente regras exclusivas de `aculta:editorial-card` para o SDC. Selet
 
 Não duplicar de volta regras do card em `content.css`, `breadcrumb.css` ou `editorial-carousel.css`.
 
-### Regra H3 para primitives
+### Regra para primitives
 
-Primitive não implica SDC. Se o contrato precisa estilizar markup produzido por
-Core/Bootstrap/Form API, CSS global pode ser a implementação correta.
+Primitive não implica SDC. Se o contrato precisa estilizar markup produzido por Core/Bootstrap/Form API, CSS global pode ser a implementação correta.
 
-O primeiro primitive SDC aprovado é `category-label`. Button permanece
-CSS/Bootstrap; section-heading e media aguardam H5/H4 respectivamente.
+`category-label` é o primeiro primitive SDC planejado para 0.2.0. Button permanece CSS/Bootstrap; media só entra se a família de cards 0.3.0 comprovar contrato comum; section-heading deve ser avaliado junto do pattern `content-section` em 0.4.0.
 
-Antes de adicionar novos SDCs, considerar ativar `enforce_prop_schemas: true`
-em commit próprio e validar todos os componentes existentes.
+`enforce_prop_schemas: true` é requisito planejado para 0.2.0 e deve ser validado contra todos os SDCs existentes antes de merge.
 
 ## Testes mínimos por etapa
 
@@ -211,3 +208,5 @@ Qualquer mudança estrutural no tema deve atualizar `README.md` e o documento co
 Se a mudança altera a fronteira tema/Portal, atualizar também `web/modules/custom/aculta_portal/README.md` e o ADR correspondente.
 
 Documentação deve descrever o estado atual, não um “futuro” já implementado.
+
+Cada release do tema deve atualizar `aculta.info.yml`, `CHANGELOG.md` e `docs/roadmap.md` de acordo com [versioning.md](versioning.md).
