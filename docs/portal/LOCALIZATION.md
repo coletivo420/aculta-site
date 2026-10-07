@@ -75,6 +75,10 @@ virar uma cópia de Core/contrib.
 Baseline atual cobre somente lacunas dos formulários Core de login e recuperação
 de senha observadas no Homelab, incluindo título, instruções, senha e submit.
 
+O título/descrição do identificador no login usam wording ACULTA já aplicado
+pelo `PortalHooks` com `TranslationInterface`; não duplicar essa frase no
+catálogo PO.
+
 O catálogo também cobre a mensagem de privacidade pós-envio do Drupal 11:
 `If %identifier is a valid account, an email will be sent with instructions to reset your password.`
 Overrides de versões antigas devem ser removidos quando o `msgid` deixar de
