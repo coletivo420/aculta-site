@@ -103,7 +103,8 @@ snapshots de fases e runbooks históricos.
 - Bootstrap5 continua infraestrutura estrutural/comportamental;
 - não reimplementar behavior Bootstrap/VVJ;
 - não converter Twig em massa para SDC;
-- mover CSS apenas quando ownership do componente estiver comprovado;
+- não manter `css/style.css` ou outro catch-all residual no tema; CSS deve ter ownership explícito;
+- mover CSS para SDC apenas quando ownership exclusivo do componente estiver comprovado;
 - regra antiga só sai após paridade visual, mobile, teclado/foco, AJAX
   reattachment e fallback;
 - CSS de admin/diagnóstico pode permanecer no módulo.

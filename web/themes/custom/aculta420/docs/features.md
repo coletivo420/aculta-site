@@ -86,8 +86,10 @@ Global:
 - tokens/base/layout;
 - shell;
 - integrações Drupal/Bootstrap;
-- CSS transversal;
+- componentes globais com ownership explícito, incluindo forms/account/footer;
 - `navigation.js`.
+
+A Foundation não mantém `css/style.css` catch-all.
 
 Contextual:
 

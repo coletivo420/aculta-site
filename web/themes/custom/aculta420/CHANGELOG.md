@@ -68,12 +68,19 @@ conjunto normativo:
 - estabelece como gate da 0.1.0 a ausência de provider legado no código e na configuração;
 - histórico da transição permanece no Git/ADR, sem virar contrato de runtime.
 
+### Ownership de CSS
+
+- remove o catch-all `css/style.css`;
+- footer, institucional/participação, formulários e Conta passam a ter ownership explícito;
+- o validador percorre a árvore CSS real em vez de depender de um arquivo agregado obsoleto;
+- regra anti-regressão impede recriação de CSS residual genérico.
+
 ### Base herdada
 
 0.1.0 reaproveita a base madura do antigo tema `aculta`:
 
 - tokens;
-- split CSS/JS;
+- CSS/JS organizados por responsabilidade;
 - contextual asset loading;
 - cleanup Twig;
 - boundary Portal/theme;

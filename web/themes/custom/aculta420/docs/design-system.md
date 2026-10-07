@@ -135,6 +135,8 @@ arbitrária de opções.
 ## Assets
 
 - foundations realmente globais ficam em `aculta420/global`;
+- CSS global não significa CSS sem ownership: cada arquivo representa uma responsabilidade;
+- não manter `css/style.css` ou outro catch-all residual;
 - CSS/JS exclusivo de SDC fica no diretório do componente;
 - integrations/patterns podem usar libraries contextuais;
 - evitar asset global “por conveniência”.

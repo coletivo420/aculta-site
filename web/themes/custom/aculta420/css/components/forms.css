@@ -1,0 +1,23 @@
+/* Public form actions and cross-feature action controls. */
+.webform-submission-form .form-submit,
+.aculta-actions .btn,
+.aculta-content .button {
+  font-family: var(--aculta-font-display);
+  font-weight: 600;
+}
+.webform-submission-form .form-submit {
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
+  color: var(--aculta-red);
+  background: var(--aculta-yellow);
+  border: 1px solid var(--aculta-yellow);
+  border-radius: var(--bs-border-radius);
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+.webform-submission-form .form-submit:is(:hover, :focus-visible),
+.aculta-actions .btn-primary:is(:hover, :focus-visible),
+.aculta-content .button:is(:hover, :focus-visible) {
+  color: var(--aculta-white);
+  background: var(--aculta-green-dark);
+  border-color: var(--aculta-green-dark);
+}

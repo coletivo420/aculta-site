@@ -38,14 +38,19 @@ Não reintroduzir provider `aculta`.
 
 ## Estrutura de CSS
 
-O CSS global existente permanece dividido por responsabilidade:
+O CSS global é dividido por responsabilidade explícita:
 
 - tokens;
 - base;
 - layout;
 - shell/component CSS;
-- Drupal/Bootstrap integration;
-- residual legacy controlado.
+- formulários;
+- Conta/apresentação;
+- Drupal/Bootstrap integration.
+
+Não existe `css/style.css` genérico/catch-all. Regra nova deve entrar no arquivo
+da responsabilidade que a possui; se nenhuma responsabilidade existente servir,
+criar uma unidade nomeada e documentada em vez de recriar um arquivo residual.
 
 Mover CSS para SDC somente quando ownership exclusivo estiver provado.
 
