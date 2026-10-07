@@ -37,6 +37,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Portal 1.0 — Release Gates](PORTAL-1.0-RELEASE-GATES.md)
 - [R0 — Clean Baseline Runbook](R0-CLEAN-BASELINE.md)
 - [R1 — Dependency/Config Integration Queue](R1-INTEGRATION-QUEUE.md)
+- [R2 — Functional Validation Matrix](R2-FUNCTIONAL-VALIDATION.md)
 - [Roadmap](ROADMAP.md)
 - [Integrações Google](../integrations/GOOGLE.md)
 

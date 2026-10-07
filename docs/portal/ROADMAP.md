@@ -374,19 +374,22 @@ Depois seguir as features 0.11 -> 0.19 na ordem do roadmap.
 
 ## R2 — Functional validation
 
-Executar:
+**Runbook concluído.**
+
+Documento: [R2-FUNCTIONAL-VALIDATION.md](R2-FUNCTIONAL-VALIDATION.md).
+
+Executar matriz por feature/purpose/identidade:
 
 - Drupal bootstrap;
 - config/updatedb;
-- Domain matrix;
-- HTTP;
+- Domain/HTTP;
 - shared session;
 - User A/User B;
-- access;
-- cache;
-- AJAX;
-- mobile/a11y onde aplicável;
-- regressão Wiki/Cursos/Commerce/Conta.
+- access/cache;
+- AJAX/fallback;
+- failure modes;
+- mobile/a11y;
+- regressão dos subsistemas.
 
 ## R3 — Hardening / Portal 0.19
 
