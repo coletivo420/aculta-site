@@ -417,13 +417,19 @@ Executar no Runtime:
 
 ## R4 — Releases
 
+**Runbook concluído.**
+
+Documento: [R4-RELEASE-TAGGING.md](R4-RELEASE-TAGGING.md).
+
 Somente depois de PASS Runtime:
 
 - merge dos PRs funcionais;
 - CHANGELOG;
 - tags `portal-vX.Y.Z`;
-- snapshots/Estados quando realmente necessários;
-- preparação de produção.
+- evidence pack;
+- deploy/rollback;
+- GitHub Release;
+- smoke pós-deploy.
 
 # Trilha paralela — Google
 

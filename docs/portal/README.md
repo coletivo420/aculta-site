@@ -39,6 +39,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [R1 — Dependency/Config Integration Queue](R1-INTEGRATION-QUEUE.md)
 - [R2 — Functional Validation Matrix](R2-FUNCTIONAL-VALIDATION.md)
 - [R3 — Hardening Execution Runbook](R3-HARDENING-EXECUTION.md)
+- [R4 — Release and Tagging Runbook](R4-RELEASE-TAGGING.md)
 - [Roadmap](ROADMAP.md)
 - [Integrações Google](../integrations/GOOGLE.md)
 
