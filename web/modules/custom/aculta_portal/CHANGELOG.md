@@ -26,7 +26,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 - Portal 0.17.0: engagement — especificação concluída.
 - Portal 0.18.0: deduplicação — especificação concluída.
 - Portal 0.19.0: hardening — especificação concluída.
-- Portal 1.0.0: baseline estável do Portal.
+- Portal 1.0.0: gates de release especificados; release ainda bloqueado por Runtime.
 
 ## 0.10.0 — Foundation
 
