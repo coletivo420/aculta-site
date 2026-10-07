@@ -359,13 +359,13 @@ A evolução do Portal e a refatoração do tema são linhas separadas.
 
 Para tarefas do `aculta_portal`:
 
-- o modo atual é GitHub-first / Runtime-last; consultar `docs/portal/DELIVERY-MODE.md`;
+- o modo atual é GitHub-first / Runtime-last; consultar `docs/portal/README.md` e `docs/operations/RELEASES.md`;
 - `origin/main` é a base autoritativa; trabalho local antigo não publicado foi descartado;
 - mudanças executáveis sem Runtime ficam em draft com `RUNTIME STATUS: DEFERRED`;
 - não modificar `web/themes/custom/aculta420/**` sem autorização explícita;
 - nunca adicionar funcionalidade a `web/themes/custom/aculta/**`; esse diretório é apenas shim temporário de migração da 0.1.0;
 - consultar `docs/portal/` antes de implementar;
-- manter as fontes de verdade definidas em `SOURCE-OF-TRUTH.md`;
+- manter as fontes de verdade definidas em `docs/portal/SOURCE-OF-TRUTH.md`;
 - não instalar dependência planejada antes da versão correspondente;
 - não reescrever roadmap/arquitetura por iniciativa própria;
 - atualizar CHANGELOG e evidência de testes junto do código implementado;

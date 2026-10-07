@@ -299,7 +299,7 @@ final class PortalRequirementsController extends ControllerBase {
     $status = $exists && $compatible ? 'ok' : 'error';
     return [
       'name' => ['data' => ['#plain_text' => 'Tema base Bootstrap 5 (bootstrap5)']],
-      'purpose' => ['data' => ['#plain_text' => $this->t('Tema base declarado pelo tema público aculta.')]],
+      'purpose' => ['data' => ['#plain_text' => $this->t('Tema base declarado pelo tema público ACULTA420.')]],
       'minimum' => ['data' => ['#plain_text' => $minimum]],
       'installed' => ['data' => ['#plain_text' => $version ?: $this->t('Não encontrado')]],
       'status' => [
@@ -311,12 +311,12 @@ final class PortalRequirementsController extends ControllerBase {
 
   /** Builds the enabled public theme row. */
   private function buildThemeRow(): array {
-    $theme_exists = \Drupal::service('theme_handler')->themeExists('aculta');
+    $theme_exists = \Drupal::service('theme_handler')->themeExists('aculta420');
     $default_theme = $this->config('system.theme')->get('default');
-    $enabled = $theme_exists && $default_theme === 'aculta';
+    $enabled = $theme_exists && $default_theme === 'aculta420';
     $status = $enabled ? 'ok' : 'error';
     return [
-      'name' => ['data' => ['#plain_text' => 'Tema aculta (tema público)']],
+      'name' => ['data' => ['#plain_text' => 'Tema ACULTA420 (aculta420)']],
       'purpose' => ['data' => ['#plain_text' => $this->t('Identidade visual global, componentes, header e footer usados pelo Portal.')]],
       'minimum' => ['data' => ['#plain_text' => '^11 (core_version_requirement)']],
       'installed' => ['data' => ['#plain_text' => $theme_exists ? $this->t('Tema custom do repositório; sem versão Composer') : $this->t('Não encontrado')]],

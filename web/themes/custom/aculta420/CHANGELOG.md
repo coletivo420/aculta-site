@@ -55,6 +55,13 @@ conjunto normativo:
 - D-012 e regras anti-regressão para impedir hostname/Domain entity no tema;
 - instruções de agentes corrigidas para distinguir `aculta420` do shim `aculta`.
 
+### Saneamento pós-rename
+
+- relatório de requisitos do Portal passa a reconhecer `aculta420` como provider público;
+- tokens institucionais passam a ler `aculta420.settings` e sua cache tag;
+- validadores ativos passam a inspecionar `web/themes/custom/aculta420/` e `aculta420.theme`;
+- instruções de agentes deixam de apontar para documentação Portal removida;
+- gate de autenticação reflete o baseline atual sem `user_registrationpassword`.
 ### Base herdada
 
 0.1.0 reaproveita a base madura do antigo tema `aculta`:
