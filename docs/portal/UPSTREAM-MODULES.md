@@ -11,6 +11,25 @@ instalar/atualizar qualquer pacote, confirmar novamente no Drupal.org e com
 
 ## Já adotados
 
+### Drupal Core — Language, Locale e Config Translation
+
+**Status:** fonte de verdade da internacionalização de interface/configuração.
+
+Uso:
+
+- `language`: idioma padrão e negociação;
+- `locale`: traduções oficiais de Core, módulos e temas;
+- `config_translation`: tradução de textos configuráveis.
+
+O projeto usa `pt-br` como idioma padrão e permite ao Locale obter catálogos
+oficiais compatíveis com as versões instaladas. Não manter cópias paralelas de
+traduções de Core/contrib dentro do Portal quando upstream já fornece o catálogo.
+
+`content_translation` permanece fora de escopo até existir requisito editorial
+multilíngue.
+
+Detalhes: [LOCALIZATION.md](LOCALIZATION.md).
+
 ### Profile + Address
 
 **Status:** fonte de verdade.
