@@ -136,6 +136,17 @@ Para cada mudança:
 7. testar páginas representativas;
 8. comparar visual quando houver mudança visual.
 
+## Gate de Foundation
+
+Após qualquer mudança estrutural do tema:
+
+```sh
+vendor/bin/drush php:script validate-aculta420-foundation --script-path=scripts
+```
+
+O gate falha se reaparecerem provider legado, arquivo `.theme`, catch-all CSS,
+asset web sem contrato, dependência direta do tema no Portal ou library quebrada.
+
 ## Testes mínimos
 
 Para mudanças runtime:

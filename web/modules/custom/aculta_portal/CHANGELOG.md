@@ -8,9 +8,10 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Correções da fundação ACULTA420
 
+- Portal passa a preparar breadcrumb e URL de transparência institucional sem criar dependência reversa no tema.
 - Atualiza o relatório de requisitos para reconhecer `aculta420` como tema público/default.
-- Migra os tokens institucionais e cache tag de `aculta.settings` para `aculta420.settings`.
-- Atualiza validadores pós-rename para `aculta420.theme` e para o provider funcional.
+- Move dados institucionais funcionais para `aculta_portal.settings`; o tema mantém apenas configuração de apresentação.
+- Separa o gate ACULTA420 do gate Portal/Commerce e acompanha os hooks OOP do tema.
 - Alinha o gate de autenticação à remoção de `user_registrationpassword` e à permanência de `username_enumeration_prevention`.
 
 ### Autenticação

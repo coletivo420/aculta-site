@@ -84,6 +84,13 @@ conjunto normativo:
 - remove exports web sem consumidor; preserva originais de branding e os assets efetivamente usados;
 - hooks do tema usam OOP/DI em `src/Hook/ThemeHooks.php`; o arquivo procedural `.theme` deixa de existir.
 
+### Gate da Foundation
+
+- cria `scripts/validate-aculta420-foundation.php` como gate runtime exclusivo do tema;
+- separa validação ACULTA420 de Portal/Commerce/security;
+- valida OOP hooks, provider/config, libraries/assets, Twig/YAML, SDC e invariantes de CSS;
+- corrige documentação normativa do Portal para o provider `aculta420`.
+
 ### Base herdada
 
 0.1.0 reaproveita a base madura do antigo tema `aculta`:

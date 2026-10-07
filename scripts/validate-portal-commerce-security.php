@@ -59,42 +59,6 @@ $portal_hooks = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/s
 $assert(str_contains($portal_hooks, "^/user/([1-9][0-9]*)/edit$") && str_contains($portal_hooks, "aculta_account_edit_blocked") && str_contains($portal_hooks, "aculta_portal.security"), 'A blocked own generic account edit page offers a direct Portal Security link.');
 $portal_hooks_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
 $assert(str_contains($portal_hooks_source, 'Nome de usuário ou e-mail'), 'The public login label supports either username or email.');
-$theme_css_root = DRUPAL_ROOT . '/../web/themes/custom/aculta420/css';
-$theme_styles = '';
-foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($theme_css_root, FilesystemIterator::SKIP_DOTS)) as $css_file) {
-  if ($css_file->isFile() && strtolower($css_file->getExtension()) === 'css') {
-    $theme_styles .= "\n" . file_get_contents($css_file->getPathname());
-  }
-}
-$assert(!is_file($theme_css_root . '/style.css'), 'Theme CSS has explicit ownership; no residual css/style.css catch-all exists.');
-$theme_source = file_get_contents(DRUPAL_ROOT . '/../web/themes/custom/aculta420/aculta420.theme');
-foreach ([
-  '--aculta-button-primary-bg: var(--aculta-yellow)',
-  '--aculta-button-primary-text: var(--aculta-red)',
-  '--aculta-button-secondary-bg: transparent',
-  '--aculta-button-secondary-border: var(--aculta-green-dark)',
-  '.aculta-actions .btn-primary',
-  '.aculta-actions .btn-outline-primary',
-  '--aculta-nav-current-bg: var(--aculta-yellow)',
-  '--aculta-nav-current-text: var(--aculta-red)',
-  '--aculta-nav-current-underline: var(--aculta-red)',
-  '--aculta-nav-hover-bg: var(--aculta-green-dark)',
-  '--aculta-nav-hover-text: var(--aculta-white)',
-  '--aculta-nav-hover-underline: var(--aculta-white)',
-  '--aculta-link-editorial: var(--aculta-red)',
-  '--aculta-link-editorial-hover: var(--aculta-green-dark)',
-  '.nav-link.is-active',
-  '[aria-current="page"]',
-  '.aculta-prose :is(p, li, dd, blockquote) a',
-  '.aculta-editorial-list .views-more-link',
-  '.aculta-breadcrumb .breadcrumb-item a',
-  'prefers-reduced-motion: reduce',
-  '[class*="google"]',
- ] as $theme_requirement) {
-  $assert(str_contains($theme_styles, $theme_requirement), 'Theme exposes the approved CTA/navigation behavior: ' . $theme_requirement);
-}
-$assert(!preg_match('/(?:^|})\s*a\s*\{|\.region-content\s+a\s*\{|\.node\s+a\s*\{|\.view-content\s+a\s*\{/m', $theme_styles), 'There is no global or broad editorial anchor selector.');
-$assert(str_contains($theme_source, 'function aculta420_preprocess_field') && str_contains($theme_source, "'entity_type'] ?? '') !== 'node'") && str_contains($theme_source, "'field_name'] ?? '') !== 'body'") && str_contains($theme_source, "['page', 'article', 'activity', 'project', 'editorial_highlight', 'document']") && str_contains($theme_source, "addClass('aculta-prose')"), 'Editorial prose opt-in is limited to the approved editorial Node bundles.');
 $assert((bool) \Drupal::service('user.data')->get('aculta_portal', 999999, 'social_auth_password_unset') === FALSE, 'Social-only password marker is read per user and is not globally shared.');
 $authenticated_role = \Drupal\user\Entity\Role::load('authenticated');
 foreach ([

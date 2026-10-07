@@ -33,6 +33,7 @@ Gate de release:
 - blocks continuam posicionados;
 - SDC e libraries descobertos;
 - todos os domains representativos passam smoke test;
+- `validate-aculta420-foundation` passa no Runtime;
 - documentação corrente não instrui compatibilidade com provider legado.
 
 ## 0.2.0 — Foundations 2.0

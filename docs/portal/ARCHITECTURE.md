@@ -128,10 +128,10 @@ Ver [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md).
 
 ## Tema
 
-O tema `web/themes/custom/aculta` é responsável por apresentação visual,
+O tema `web/themes/custom/aculta420` é responsável por apresentação visual,
 componentes, Twig, CSS, responsividade e identidade.
 
-O `aculta_portal` fornece render arrays, dados, forms e integração.
+O `aculta_portal` fornece render arrays, dados, forms e integração. Contexto institucional, breadcrumb e URLs por Domain purpose são preparados no Portal; o tema não chama serviços do Portal.
 
 A apresentação pública segue o **ACULTA Bootstrap Component Design System** já
 estabelecido pelo tema. O Portal prepara dados/estados e presenters; SDCs do

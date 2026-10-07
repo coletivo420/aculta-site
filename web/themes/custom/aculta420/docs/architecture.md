@@ -53,6 +53,16 @@ Não deve empurrar storage ou regra de negócio para o tema.
 Não é dono de autenticação, pagamento, matrícula, progresso, Domain access,
 persistência ou autorização.
 
+### Hooks e configuração
+
+Hooks do tema vivem em `src/Hook/ThemeHooks.php`, usam `#[Hook]` e DI/autowiring.
+A Foundation não usa arquivo `.theme` procedural nem service locator
+`\\Drupal::` no tema.
+
+`aculta420.settings` contém somente apresentação/integração com Bootstrap e
+assets padrão do tema. Referências funcionais institucionais pertencem ao
+`aculta_portal.settings`, que prepara URLs/renderables antes de Twig.
+
 ### Bootstrap5
 
 É infraestrutura. ACULTA420 não embarca outra cópia do Bootstrap e não
