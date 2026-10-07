@@ -73,3 +73,54 @@ vendor/bin/drush updatedb:status
 
 Em instalação nova, o módulo já não faz parte do Composer nem de
 `core.extension`.
+
+## Roadmap — verificação de conta e e-mail ACULTA
+
+### Estado
+
+**PLANEJADO / CONDICIONAL. Não implementado.**
+
+Antes de criar código próprio, pesquisar alternativa Core/contrib mantida e compatível com Drupal 11. Se nenhuma alternativa adequada existir, implementar ferramenta própria de verificação de e-mail.
+
+Nome provisório documental: `aculta_email_verification`.
+
+### Casos obrigatórios
+
+1. **Conta criada fora de OAuth**
+   - confirmar o endereço por link de uso único;
+   - permitir reenvio controlado;
+   - ativação/status continuam pertencendo ao Drupal User.
+
+2. **Mudança de e-mail**
+   - confirmar o novo endereço antes de torná-lo efetivo;
+   - preservar o endereço anterior até a confirmação;
+   - invalidar pedido anterior quando substituído.
+
+3. **OAuth**
+   - contas OAuth não entram automaticamente no mesmo fluxo;
+   - considerar a informação de e-mail verificado fornecida pelo provedor;
+   - não duplicar verificação pertencente ao provedor sem decisão explícita.
+
+### Requisitos de segurança
+
+- token de uso único e expirável;
+- não armazenar token recuperável em texto puro;
+- respostas genéricas para evitar enumeração;
+- rate limit/flood para emissão e reenvio;
+- invalidar tokens antigos quando o estado mudar;
+- links canônicos no purpose ACCOUNT;
+- não registrar token/segredo em logs;
+- isolamento estrito por UID;
+- cache privado/no-store em respostas sensíveis;
+- testes User A/User B;
+- usar Mail API/SMTP do Drupal, sem transporte paralelo.
+
+### Relação com Email Confirmer e Change Mail
+
+`email_confirmer`, `email_confirmer_user` e `change_mail_page` permanecem o baseline atual.
+
+A ferramenta própria só deve ser criada se esses módulos deixarem de atender o projeto e nenhuma alternativa Core/contrib melhor existir. Se houver substituição, remover a solução anterior; nunca manter dois sistemas concorrentes de confirmação.
+
+### Fora de escopo
+
+A ferramenta não substitui recuperação de senha, autenticação, Social Auth/OAuth ou Drupal User.

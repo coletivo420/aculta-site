@@ -191,3 +191,9 @@ por SDCs, sem perder:
 - fontes de verdade;
 - access/cache;
 - isolamento multidomínio.
+
+## VVJT
+
+VVJT é um style plugin de Views e **não substitui** a navegação AJAX principal da Conta. Pode ser avaliado apenas dentro de seções cuja unidade funcional já seja uma View.
+
+Decisão detalhada: [docs/modules/ACCOUNT-UI.md](../../modules/ACCOUNT-UI.md).
