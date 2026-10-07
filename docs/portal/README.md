@@ -1,89 +1,63 @@
 # ACULTA Portal
 
-Esta pasta é a fonte de verdade documental do `aculta_portal`.
+Documentação canônica da camada de integração `aculta_portal`.
 
-O módulo existe para integrar capacidades nativas do Drupal e módulos contrib em
-uma experiência única para usuários e administradores. Ele não substitui as
-fontes de verdade funcionais dessas ferramentas.
+O Portal integra Drupal Core/contrib, Domain, Conta, Commerce, LMS e conteúdo.
+Ele não substitui as fontes de verdade desses subsistemas.
 
-## Documentos
+## Ler primeiro
 
 - [Arquitetura](ARCHITECTURE.md)
 - [Fontes de verdade](SOURCE-OF-TRUTH.md)
-- [Módulos upstream](UPSTREAM-MODULES.md)
+- [Camadas anti-regressão](../ANTI-REGRESSION.md)
+- [Módulos Drupal](../modules/README.md)
+- [Roadmap atual](ROADMAP.md)
+
+## Conta
+
 - [Política AJAX](AJAX.md)
-- [Política de slugs amigáveis em português](FRIENDLY-PORTUGUESE-SLUGS.md)
-- [S3.3A — Minha Conta AJAX boundary](S3-3A-AJAX-BOUNDARY.md)
-- [Integração com o Bootstrap Component Design System](COMPONENT-DESIGN-SYSTEM.md)
-- [Minha Conta — matriz SDC, integrações e AJAX](ACCOUNT-SDC-AJAX.md)
-- [Minha Conta — semântica compartilhada de apresentação](ACCOUNT-PRESENTATION-MODEL.md)
-- [S3.2A — Course presentation boundary](S3-2-ACCOUNT-SDC.md)
+- [Semântica de apresentação](ACCOUNT-PRESENTATION-MODEL.md)
+- [Matriz SDC/AJAX](ACCOUNT-SDC-AJAX.md)
+- [Conta, AJAX e Views interativas](../modules/ACCOUNT-UI.md)
+- [Autenticação e identidade](../modules/AUTHENTICATION.md)
+
+## Produto/domínios
+
 - [Fórum](FORUM.md)
 - [Wiki420](WIKI.md)
-- [Revista / Observatório Coletivo 420](MAGAZINE.md)
+- [Revista](MAGAZINE.md)
 - [Loja](SHOP.md)
-- [Modo de entrega GitHub-first / Runtime-last](DELIVERY-MODE.md)
-- [S2 — Static Portal Audit](STATIC-AUDIT.md)
-- [Mapa de refatoração](REFACTOR-MAP.md)
-- [S3.5 — Domain policy](S3-5-DOMAIN-POLICY.md)
-- [S3.1 — Hooks + Dependency Injection](S3-1-HOOKS-DI.md)
-- [S3.8 — Lifecycle/install audit](S3-8-LIFECYCLE-INSTALL.md)
-- [S3.9 — Inventário de assets de avatar](S3-9-AVATAR-ASSETS.md)
-- [S3.6 — Public CSS ownership](S3-6-CSS-OWNERSHIP.md)
-- [Testes](TESTING.md)
-- [Versionamento](VERSIONING.md)
-- [Portal 0.14 — Admin Hub](S4-0.14-ADMIN-HUB.md)
-- [Portal 0.15 — AJAX Consolidation](S4-0.15-AJAX-CONSOLIDATION.md)
-- [Portal 0.16 — Search](S4-0.16-SEARCH.md)
-- [Portal 0.17 — Engagement](S4-0.17-ENGAGEMENT.md)
-- [Portal 0.18 — Deduplication](S4-0.18-DEDUPLICATION.md)
-- [Portal 0.19 — Hardening](S4-0.19-HARDENING.md)
-- [Portal 1.0 — Release Gates](PORTAL-1.0-RELEASE-GATES.md)
-- [R0 — Clean Baseline Runbook](R0-CLEAN-BASELINE.md)
-- [R0 — primeira execução / blocker Apache](R0-FIRST-EXECUTION.md)
-- [R0 — PASS / fechamento](R0-PASS.md)
-- [R1 — Dependency/Config Integration Queue](R1-INTEGRATION-QUEUE.md)
-- [R1.1 — PR #23 PASS](R1-1-PR23-PASS.md)
-- [R1.2 — blocker Wiki/Media Library](R1-2-WIKI-MEDIA-BLOCKER.md)
-- R1.2A — corrigido no PR #60; S3.5 / PR #30 passou Runtime em R1.2B
-- [R2 — Functional Validation Matrix](R2-FUNCTIONAL-VALIDATION.md)
-- [R3 — Hardening Execution Runbook](R3-HARDENING-EXECUTION.md)
-- [R4 — Release and Tagging Runbook](R4-RELEASE-TAGGING.md)
-- [Fechamento da Macrofase S](S-MACROPHASE-CLOSURE.md)
-- [Roadmap](ROADMAP.md)
-- [Integrações Google](../integrations/GOOGLE.md)
+- [Slugs públicos em português](FRIENDLY-PORTUGUESE-SLUGS.md)
 
-## Estado atual
+## Tema
 
-- baseline web do Homelab: Apache + PHP-FPM;
-- Runtime de desenvolvimento: SQLite;
-- produção: Apache + MariaDB;
-- sete purposes ativos: MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP e COURSES;
-- oitavo purpose planejado: FORUM;
-- `aculta_portal` continua sendo a camada de integração;
-- o tema `aculta420` já está em fase avançada do ACULTA Bootstrap Component Design System;
-- o Portal opera temporariamente em modo GitHub-first / Runtime-last;
-- trabalho local antigo não publicado não é baseline; `origin/main` é autoritativo.
+- [Integração com o Component Design System](COMPONENT-DESIGN-SYSTEM.md)
+- [Documentação ACULTA420](../../web/themes/custom/aculta420/README.md)
+
+## Operação
+
+- [Testes](../operations/TESTING.md)
+- [Hardening](../operations/HARDENING.md)
+- [Releases](../operations/RELEASES.md)
+- [Homelab](../../scripts/homelab/README.md)
+
+## Integrações
+
+- [Autenticação](../integrations/AUTHENTICATION.md)
+- [CAPTCHA / Turnstile](../integrations/CAPTCHA.md)
+- [Google](../integrations/GOOGLE.md)
 
 ## Regra principal
 
-Antes de escrever código para uma capacidade nova, identificar:
+Antes de escrever código novo:
 
-1. qual módulo já é fonte de verdade;
-2. qual API pública esse módulo oferece;
-3. qual Domain purpose recebe a experiência;
-4. qual parte realmente precisa de adaptação pelo Portal;
-5. como acesso, cache e privacidade serão preservados;
-6. como a feature será testada no Homelab.
+1. identificar a fonte de verdade;
+2. usar a API pública de Core/contrib;
+3. decidir o Domain purpose;
+4. aplicar access/cache antes da apresentação;
+5. preservar progressive enhancement;
+6. atualizar a documentação canônica;
+7. validar no Runtime quando houver mudança funcional.
 
-Código custom deve existir para **orquestrar, adaptar e integrar**, não para criar
-uma segunda implementação da mesma capacidade.
-
-
-## Módulos do projeto
-
-A matriz de módulos Core/contrib e decisões de compatibilidade fica em
-[docs/modules/README.md](../modules/README.md).
-
-- [Conta, AJAX e Views interativas](../modules/ACCOUNT-UI.md)
-- [Autenticação e identidade](../modules/AUTHENTICATION.md)
+Histórico de fases/PRs não é fonte de verdade. Consulte o Git/GitHub quando
+precisar de evidência histórica.

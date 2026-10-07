@@ -1,0 +1,11 @@
+# Operação, testes e releases
+
+Documentação operacional durável do ACULTA.
+
+- [TESTING.md](TESTING.md) — matriz de validação funcional e Runtime.
+- [HARDENING.md](HARDENING.md) — segurança, cache, performance e failure modes.
+- [RELEASES.md](RELEASES.md) — gates, SemVer, tags, deploy e rollback.
+- [Homelab](../../scripts/homelab/README.md) — ambiente de desenvolvimento.
+- [Estados SQLite](../../estados/README.md) — snapshots/estados de desenvolvimento.
+
+Histórico de rodadas, SHAs e PRs fica no GitHub/Git, não nesta pasta.

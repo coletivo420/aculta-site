@@ -43,6 +43,12 @@ pertence ao tema.
 
 Comece em [docs/README.md](docs/README.md).
 
+Referências transversais:
+
+- [Camadas anti-regressão](docs/ANTI-REGRESSION.md)
+- [Política de documentação](docs/DOCUMENTATION.md)
+- [Operação, testes e releases](docs/operations/README.md)
+
 - Portal: [docs/portal](docs/portal/README.md)
 - Módulos: [docs/modules](docs/modules/README.md)
 - Tema/design system: [ACULTA420 docs](web/themes/custom/aculta420/docs/README.md)
