@@ -61,6 +61,10 @@ Permanece responsável por:
 
 Deixa de possuir label de status voltada ao usuário.
 
+O retorno do manager é contrato interno de **dados autorizados**, não um card de
+apresentação. Labels, tones, CTA semântico e empty state pertencem ao presenter;
+essa separação deve ser preservada em refatorações futuras.
+
 A política de URL já incorpora S3.5: `routeUrl('courses', ...)` deve continuar
 resolvendo para COURSES tanto em produção quanto nos aliases Homelab.
 

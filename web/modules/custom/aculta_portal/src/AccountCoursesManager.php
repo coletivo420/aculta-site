@@ -32,7 +32,9 @@ final class AccountCoursesManager {
    * and is checked before course metadata or LMS progress is loaded.
    *
    * @return array<int, array<string, mixed>>
-   *   Course cards keyed sequentially for rendering.
+   *   Authorized LMS/Group source records keyed sequentially for presentation.
+   *   User-facing labels, tones, CTA semantics and empty states belong to the
+   *   presenter, not to this integration boundary.
    */
   public function getCourses(AccountInterface $account): array {
     $items = [];
