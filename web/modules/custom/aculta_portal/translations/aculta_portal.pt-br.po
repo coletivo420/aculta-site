@@ -1,0 +1,43 @@
+# Portuguese (Brazil) interface overrides for ACULTA Portal.
+#
+# Keep this file intentionally small. It exists only for user-facing gaps
+# observed after importing the official pt-BR catalogs for Drupal Core/contrib.
+msgid ""
+msgstr ""
+"Project-Id-Version: ACULTA Portal\n"
+"POT-Creation-Date: 2026-10-07 00:00+0000\n"
+"PO-Revision-Date: 2026-10-07 00:00+0000\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+# Drupal Core user.login route/form.
+msgid "Log in"
+msgstr "Entrar"
+
+msgid "Password"
+msgstr "Senha"
+
+msgid "Enter the password that accompanies your username."
+msgstr "Digite a senha da sua conta."
+
+# Drupal Core user.pass route/form.
+msgid "Reset your password"
+msgstr "Redefinir sua senha"
+
+msgid "Username or email address"
+msgstr "Nome de usuário ou endereço de e-mail"
+
+msgid "Password reset instructions will be sent to your registered email address."
+msgstr "As instruções para redefinir sua senha serão enviadas para o endereço de e-mail cadastrado."
+
+msgid "Password reset instructions will be mailed to %email. You must log out to use the password reset link in the email."
+msgstr "As instruções para redefinir sua senha serão enviadas para %email. Você precisa sair da conta para usar o link de redefinição recebido por e-mail."
+
+msgid "Submit"
+msgstr "Enviar"
+
+msgid "Further instructions have been sent to your email address."
+msgstr "Enviamos instruções adicionais para o seu endereço de e-mail."

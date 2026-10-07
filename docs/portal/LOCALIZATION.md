@@ -40,8 +40,10 @@ O idioma padrão é `pt-br`.
 
 A entidade de idioma deve aparecer como `Português (Brasil)`.
 
-`locale.settings` usa fonte `remote_and_local`, importação habilitada,
-preserva traduções customizadas e verifica traduções oficiais semanalmente.
+`locale.settings` usa fonte `remote_and_local`, importação habilitada e
+preserva traduções customizadas. A verificação automática permanece manual
+(`update_interval_days: 0`) para não introduzir drift silencioso em Configuration
+Sync; atualizações oficiais são executadas deliberadamente durante manutenção/release.
 
 ## Autenticação
 
@@ -56,7 +58,29 @@ O Portal e o tema não recriam esses formulários apenas para traduzir strings.
 As traduções oficiais devem ser importadas pelo Locale conforme as versões
 realmente instaladas.
 
-## CAPTCHA
+## Overrides locais versionados
+
+Quando o catálogo oficial pt-BR não cobre uma string visível confirmada no
+Runtime, o Portal pode manter um override mínimo em:
+
+`web/modules/custom/aculta_portal/translations/aculta_portal.pt-br.po`
+
+O módulo declara o catálogo via propriedades nativas do Locale em
+`aculta_portal.info.yml`. O arquivo não substitui os catálogos oficiais e não
+deve virar uma cópia de Core/contrib.
+
+Baseline atual cobre somente lacunas dos formulários Core de login e recuperação
+de senha observadas no Homelab, incluindo título, instruções, senha e submit.
+
+Ao adicionar uma string:
+
+1. confirmar a fonte exata em Core/contrib;
+2. confirmar que o catálogo oficial pt-BR realmente deixou a string visível em
+   inglês no Runtime;
+3. preservar placeholders como `@s`, `%email` e URLs;
+4. registrar o motivo na documentação/changelog;
+5. remover o override se upstream passar a fornecer tradução equivalente.
+
 
 `captcha.settings` contém texto local visível e fica versionado em pt-BR.
 
@@ -92,18 +116,44 @@ multilíngue e política editorial/canonical/Domain correspondente.
 
 ## Runtime / deploy
 
+### Diretório `translations://`
+
+O caminho resolvido por `translations://` precisa ser gravável pelo usuário que
+executa Drupal/Drush quando houver download de catálogos. Por padrão o Core usa
+`public://translations`, salvo override por `locale_translation_path`.
+
+No Homelab, corrigir ownership/permissões do diretório real; não persistir um
+diretório temporário em Configuration Sync e não ampliar permissões além do
+necessário.
+
+
 Após importar a configuração:
 
 ```sh
 vendor/bin/drush config:import -y
 vendor/bin/drush locale:check
 vendor/bin/drush locale:update --langcodes=pt-br -y
+# O catálogo local aculta_portal.pt-br.po deve ser descoberto pelo Locale.
 vendor/bin/drush cr
 vendor/bin/drush config:status
 vendor/bin/drush updatedb:status
 ```
 
 A atualização de catálogos depende de acesso ao servidor oficial de traduções.
+
+### Configuration Sync após `locale:update`
+
+Importar catálogos pode alterar traduções de configuração. Portanto, uma
+atualização de traduções é uma operação de manutenção controlada:
+
+1. executar `locale:check` / `locale:update`;
+2. revisar `drush config:status`;
+3. separar traduções de configuração legítimas de drift não relacionado;
+4. exportar e revisar somente as mudanças pretendidas;
+5. exigir `config:status` limpo antes do merge/deploy.
+
+Não habilitar atualização semanal automática num ambiente governado por
+Configuration Sync.
 
 ## Testes
 

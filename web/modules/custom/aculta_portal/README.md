@@ -47,6 +47,14 @@ fontes de verdade.
 - AJAX usa preferencialmente APIs Drupal;
 - toda feature identifica fonte de verdade, access, cache, Domain e testes.
 
+### Tradução de interface
+
+Drupal `Language + Locale` continua sendo a fonte de verdade para traduções de
+Core/contrib. O módulo declara um catálogo local pt-BR pequeno em
+`translations/aculta_portal.pt-br.po` apenas para lacunas de interface
+confirmadas no Runtime. Não recriar formulários de User/CAPTCHA para traduzir
+strings e não ampliar esse catálogo sem evidência de lacuna upstream.
+
 ### Breadcrumb público
 
 `AcultaBreadcrumbBuilder` é a fonte de verdade para purpose público, rotas ocultas, raiz por domínio, hierarquia, cache metadata e resolução segura do título atual. O tema `aculta` não replica essa política: consome os links Drupal e `currentTitle()` apenas para renderização.

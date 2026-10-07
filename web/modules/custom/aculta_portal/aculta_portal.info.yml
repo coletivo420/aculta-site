@@ -3,6 +3,8 @@ type: module
 description: 'Integra a identidade do tema ACULTA aos módulos de conta e ao conteúdo institucional do Drupal.'
 package: Associação Cultural Antiproibicionista
 core_version_requirement: ^11
+'interface translation project': aculta_portal
+'interface translation server pattern': modules/custom/%project/translations/%project.%language.po
 dependencies:
   - profile:profile
   - domain:domain
