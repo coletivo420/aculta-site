@@ -67,10 +67,10 @@ final class DomainPurposeManager {
       return NULL;
     }
     $activeDomain = $this->domainNegotiator->getActiveDomain();
-    // Never mutate the loaded Domain entity when adapting a local alias URL.
+    // Never mutate the loaded Domain entity when adapting a non-default alias URL.
     $domain = clone $domain;
     if ($activeDomain && isset($activeDomain->alias)
-      && $activeDomain->alias->getEnvironment() === 'local') {
+      && $activeDomain->alias->getEnvironment() !== 'default') {
       $request = $this->getCurrentRequest();
       if ($request) {
         $domain->set('scheme', $request->getScheme());
@@ -118,10 +118,10 @@ final class DomainPurposeManager {
       return NULL;
     }
     $activeDomain = $this->domainNegotiator->getActiveDomain();
-    // Never mutate the loaded Domain entity when adapting a local alias URL.
+    // Never mutate the loaded Domain entity when adapting a non-default alias URL.
     $domain = clone $domain;
     if ($activeDomain && isset($activeDomain->alias)
-      && $activeDomain->alias->getEnvironment() === 'local') {
+      && $activeDomain->alias->getEnvironment() !== 'default') {
       $request = $this->getCurrentRequest();
       if ($request) {
         $domain->set('scheme', $request->getScheme());
