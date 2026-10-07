@@ -30,12 +30,12 @@ final class DomainPurposeManager {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainNegotiatorInterface $domainNegotiator,
     private readonly ConfigFactoryInterface $configFactory,
-    private readonly ?RequestStack $requestStack = NULL,
+    private readonly RequestStack $requestStack,
   ) {}
 
-  /** Returns the current request, including for an older compiled container. */
+  /** Returns the current request. */
   private function getCurrentRequest(): ?Request {
-    return $this->requestStack?->getCurrentRequest() ?? \Drupal::request();
+    return $this->requestStack->getCurrentRequest();
   }
 
   /** Returns the purpose associated with the active canonical Domain entity. */
@@ -67,9 +67,8 @@ final class DomainPurposeManager {
       return NULL;
     }
     $activeDomain = $this->domainNegotiator->getActiveDomain();
-    // Domain Alias rewrites the host for the active environment, but keeps the
-    // canonical scheme. Local aliases are intentionally HTTP on the current
-    // built-in server; production remains canonical HTTPS.
+    // Never mutate the loaded Domain entity when adapting a local alias URL.
+    $domain = clone $domain;
     if ($activeDomain && isset($activeDomain->alias)
       && $activeDomain->alias->getEnvironment() === 'local') {
       $request = $this->getCurrentRequest();
@@ -119,6 +118,8 @@ final class DomainPurposeManager {
       return NULL;
     }
     $activeDomain = $this->domainNegotiator->getActiveDomain();
+    // Never mutate the loaded Domain entity when adapting a local alias URL.
+    $domain = clone $domain;
     if ($activeDomain && isset($activeDomain->alias)
       && $activeDomain->alias->getEnvironment() === 'local') {
       $request = $this->getCurrentRequest();
