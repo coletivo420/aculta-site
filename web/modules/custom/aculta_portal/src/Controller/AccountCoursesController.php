@@ -44,11 +44,11 @@ final class AccountCoursesController implements ContainerInjectionInterface {
         '#type' => 'container',
         'message' => ['#plain_text' => $view['empty']['message']],
       ];
-      if ($view['empty']['cta'] !== NULL) {
+      if ($view['empty']['action'] !== NULL) {
         $build['empty']['link'] = [
           '#type' => 'link',
-          '#title' => $view['empty']['cta']['label'],
-          '#url' => $view['empty']['cta']['url'],
+          '#title' => $view['empty']['action']['label'],
+          '#url' => $view['empty']['action']['url'],
           '#attributes' => ['class' => ['btn', 'btn-primary']],
         ];
       }
@@ -78,11 +78,11 @@ final class AccountCoursesController implements ContainerInjectionInterface {
       if ($course['score_label'] !== NULL) {
         $card['meta']['score'] = ['#plain_text' => $course['score_label']];
       }
-      if ($course['cta'] !== NULL) {
+      if ($course['action'] !== NULL) {
         $card['action'] = [
           '#type' => 'link',
-          '#title' => $course['cta']['label'],
-          '#url' => $course['cta']['url'],
+          '#title' => $course['action']['label'],
+          '#url' => $course['action']['url'],
           '#attributes' => ['class' => ['btn', 'btn-primary']],
         ];
       }

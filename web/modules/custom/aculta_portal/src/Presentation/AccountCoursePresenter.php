@@ -32,9 +32,7 @@ final class AccountCoursePresenter {
    *     title: string,
    *     description: array,
    *     status: array{code: string, label: string, tone: string},
-   *     score: int|float|string|null,
    *     score_label: string|null,
-   *     finished: bool,
    *     cta: array{label: string, url: \Drupal\Core\Url, kind: string}|null,
    *     cache_tags: string[]
    *   }>,
@@ -57,12 +55,10 @@ final class AccountCoursePresenter {
         'title' => (string) $course['label'],
         'description' => $course['description'],
         'status' => $this->statusPresentation($statusCode),
-        'score' => $score,
         'score_label' => $score !== NULL
           ? (string) $this->translation->translate('Resultado: @score%', ['@score' => $score])
           : NULL,
-        'finished' => (bool) $course['finished'],
-        'cta' => $url !== NULL ? [
+        'action' => $url !== NULL ? [
           'label' => (string) $this->translation->translate(
             $course['finished'] ? 'Ver resultado' : 'Acessar curso'
           ),
@@ -79,7 +75,7 @@ final class AccountCoursePresenter {
       'items' => $items,
       'empty' => [
         'message' => (string) $this->translation->translate('Você ainda não está participando de nenhum curso.'),
-        'cta' => $catalog !== NULL ? [
+        'action' => $catalog !== NULL ? [
           'label' => (string) $this->translation->translate('Ver cursos disponíveis'),
           'url' => $catalog,
           'kind' => 'primary',

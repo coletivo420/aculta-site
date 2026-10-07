@@ -39,7 +39,7 @@ AccountCoursesManager
 access + source data + URLs por purpose + cache tags
         ↓
 AccountCoursePresenter
-status + tone + score label + CTA + empty state
+status + tone + score label + action + empty state
         ↓
 render atual da Conta
         ↓
@@ -62,7 +62,7 @@ Permanece responsável por:
 Deixa de possuir label de status voltada ao usuário.
 
 O retorno do manager é contrato interno de **dados autorizados**, não um card de
-apresentação. Labels, tones, CTA semântico e empty state pertencem ao presenter;
+apresentação. Labels, tones, action semântica e empty state pertencem ao presenter;
 essa separação deve ser preservada em refatorações futuras.
 
 A política de URL já incorpora S3.5: `routeUrl('courses', ...)` deve continuar
@@ -78,7 +78,7 @@ Responsável por:
 
 - status `code + label + tone`;
 - score label;
-- CTA `label + url + kind`;
+- action `label + url + kind`;
 - empty state;
 - view-model estável para apresentação.
 
@@ -138,11 +138,11 @@ Este PR foi sincronizado semanticamente com a `main` após S3.5.
 
 Regras que não podem regredir:
 
-- CTA de curso usa purpose COURSES;
+- action de curso usa purpose COURSES;
 - `DomainPurposeManager` permanece o dono das URLs cross-domain;
 - nenhum service locator volta a ser introduzido;
 - nenhum Domain entity é mutado pelo presenter;
-- curso aguardando avaliação continua sem CTA enganosa.
+- curso aguardando avaliação continua sem action enganosa.
 
 ## Revisão estática feita no chat
 
@@ -152,6 +152,7 @@ Confirmado por inspeção do diff contra a `main` e lint sintático local:
 
 - manager continua sendo a fronteira LMS/Group/access;
 - presenter não carrega Group/User/CourseStatus por storage;
+- o view-model usa a chave normativa `action` da S3.2B e não repassa `score`/`finished` brutos para a camada de apresentação;
 - controller não referencia SDC e não depende de helpers lazy de `ControllerBase`;
 - presenter, current user e tradução entram por DI explícita;
 - tema não é alterado;
@@ -189,10 +190,10 @@ Validar funcionalmente:
 - em andamento;
 - concluído/aprovado;
 - não aprovado;
-- aguardando avaliação sem CTA;
+- aguardando avaliação sem action;
 - score presente e ausente;
 - Group sem access sem vazamento de metadata;
-- CTA no hostname COURSES;
+- action no hostname COURSES;
 - cache tags;
 - navegação AJAX da Conta;
 - fallback full-page;
