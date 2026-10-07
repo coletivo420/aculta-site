@@ -20,7 +20,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 - Portal 0.11.0: fundação do Fórum.
 - Portal 0.12.0: participação do Fórum na Conta.
 - Portal 0.13.0: hub integrado de participação.
-- Portal 0.14.0: hub administrativo.
+- Portal 0.14.0: hub administrativo — especificação concluída.
 - Portal 0.15.0: consolidação AJAX.
 - Portal 0.16.0: Search API.
 - Portal 0.17.0: engagement.
