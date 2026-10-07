@@ -182,7 +182,32 @@ Preservar:
 - SMTP readiness;
 - progressive enhancement.
 
-## S3.3 — Minha Conta AJAX boundary
+## S3.4 — Wiki boundary
+
+**Estado: preparada em draft; Runtime deferred.**
+
+Documento:
+[S3-4-WIKI-BOUNDARY.md](S3-4-WIKI-BOUNDARY.md).
+
+Entregas:
+
+- WikiController com DI;
+- Views por ViewExecutableFactory;
+- access explícito;
+- busca LIKE preservada até Search API.
+
+## S3.5 — Domain policy
+
+**Estado: próxima.**
+
+Objetivo:
+
+- extrair resolução de purpose por conteúdo/rota;
+- preservar fail-closed 404;
+- evitar mutação desnecessária de Domain;
+- preparar FORUM sem ativá-lo.
+
+## S3.3A — Minha Conta AJAX boundary
 
 Preservar como requisito:
 

@@ -6,6 +6,11 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Refatoração preparada
+
+- S3.4 injeta dependências da Wiki e preserva a busca transitória até Search API.
+- Runtime status da S3.4 permanece DEFERRED.
+
 ### Documentação
 
 - S2 Static Portal Audit concluído sem alterar runtime.
