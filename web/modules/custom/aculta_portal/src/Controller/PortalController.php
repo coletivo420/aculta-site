@@ -248,7 +248,9 @@ final class PortalController extends ControllerBase {
 
   /** Returns TRUE only when the account has a user-chosen local password. */
   private function hasUserChosenPassword(UserInterface $account): bool {
-    return $account->getPassword() !== ''
+    $password = $account->getPassword();
+    return is_string($password)
+      && $password !== ''
       && !(bool) $this->userData->get('aculta_portal', $account->id(), 'social_auth_password_unset');
   }
 
