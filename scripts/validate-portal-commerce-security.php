@@ -86,7 +86,6 @@ foreach ([
   '.nav-link.is-active',
   '[aria-current="page"]',
   '.aculta-prose :is(p, li, dd, blockquote) a',
-  '.aculta-editorial-cta a',
   '.aculta-editorial-list .views-more-link',
   '.aculta-breadcrumb .breadcrumb-item a',
   'prefers-reduced-motion: reduce',
