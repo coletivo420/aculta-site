@@ -51,6 +51,16 @@ OAuth. O projeto aplica por Composer o ajuste upstream proposto em
 por si só, uma falha de autenticação; a conclusão do callback Google ainda
 precisa de validação interativa após as alterações.
 
+### Acesso OAuth do administrador Drupal
+
+O perfil Google atualmente vinculado ao administrador Drupal (UID 1) só pode
+autenticá-lo quando `social_auth.settings:disable_admin_login` está desativado.
+Essa opção do Social Auth é global: ela permite autenticação OAuth para UID 1
+em qualquer provedor Social Auth habilitado, não apenas Google. No momento,
+Google é o provedor Social Auth ativo. Alterações futuras que habilitem outros
+provedores devem reavaliar essa exposição antes de ativá-los. O Drupal continua
+sendo responsável por validar o usuário e o vínculo OAuth existente.
+
 | Ambiente | URI de redirecionamento autorizado |
 | --- | --- |
 | Homelab | `https://conta.aculta.toca.net.br/oauth/google/retorno` |
