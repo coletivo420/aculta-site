@@ -11,6 +11,10 @@ O Portal usa tags `portal-vX.Y.Z`.
 - Portal passa a preparar breadcrumb e URL de transparência institucional sem criar dependência reversa no tema.
 - Atualiza o relatório de requisitos para reconhecer `aculta420` como tema público/default.
 - Move dados institucionais funcionais para `aculta_portal.settings`; o tema mantém apenas configuração de apresentação.
+- Tokens institucionais ignoram UUID ausente/vazio antes da consulta de entidade, evitando condições SQL `uuid IN ()` durante configurações incompletas; o gate da Foundation protege essa ordem.
+- O contato público é servido pelo Webform `aculta_contact` em `/contato`; o gate deixa de exigir publicação do node histórico `contact`, e o instalador não cria mais esse node nem o formulário legado do módulo Contact.
+- Atualiza o teste de redirects de Conta para comparar URLs geradas pelas rotas vigentes, sem exigir slugs antigos (`/minha-conta/...`).
+- Freelinking permanece ativo porque o formato de texto Wiki o utiliza; Composer foi atualizado para 4.0.3, corrigindo SA-CONTRIB-2026-213 (CVE-2026-107310; versões afetadas `<4.0.3`).
 - Separa o gate ACULTA420 do gate Portal/Commerce e acompanha os hooks OOP do tema.
 - Alinha o gate de autenticação à remoção de `user_registrationpassword` e à permanência de `username_enumeration_prevention`.
 
