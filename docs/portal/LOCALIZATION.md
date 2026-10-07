@@ -155,6 +155,23 @@ continuar funcional sem seu JavaScript próprio, mas uma sessão de teste pode s
 preparada server-side para validar esse requisito sem contornar CAPTCHA em
 produção.
 
+### Runtime da matriz CAPTCHA — PR #68
+
+Em 2026-10-07, o PR #68 validou no Homelab e integrou à `main` a matriz de
+segurança que esta documentação assume:
+
+- anônimo: Turnstile global visível em pt-BR;
+- submit de `/entrar` sem token: bloqueado pelo CAPTCHA, sem avançar para erro
+  de autenticação;
+- autenticado: `skip CAPTCHA`, sem widget em login/recuperação;
+- OAuth: início 302, fora dos formulários protegidos;
+- fallback/challenge alternativo: nenhum;
+- Turnstile: challenge padrão único.
+
+O #63 não deve repetir essa matriz como trabalho principal. Seus gates Runtime
+restantes são internacionalização de interface, importação do catálogo local e
+classificação do drift de Configuration Sync.
+
 ### Baseline pós-PR #66
 
 A internacionalização não pode regredir as decisões de segurança já integradas:
