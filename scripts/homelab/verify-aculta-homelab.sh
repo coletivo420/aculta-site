@@ -5,6 +5,15 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
 APACHE_CTL="$(command -v apache2ctl || command -v apachectl || true)"
+if [[ -z "$APACHE_CTL" ]]; then
+  for candidate in /usr/sbin/apache2ctl /usr/sbin/apachectl; do
+    if [[ -x "$candidate" ]]; then
+      APACHE_CTL="$candidate"
+      break
+    fi
+  done
+fi
+
 [[ -n "$APACHE_CTL" ]] || {
   echo "Apache is required: it is the canonical Homelab web-server baseline." >&2
   exit 1
