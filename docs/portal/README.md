@@ -78,3 +78,9 @@ Antes de escrever código para uma capacidade nova, identificar:
 
 Código custom deve existir para **orquestrar, adaptar e integrar**, não para criar
 uma segunda implementação da mesma capacidade.
+
+
+## Módulos do projeto
+
+A matriz de módulos Core/contrib e decisões de compatibilidade fica em
+[docs/modules/README.md](../modules/README.md).
