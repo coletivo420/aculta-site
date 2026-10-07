@@ -53,7 +53,6 @@
         "drupal/social_auth": "^4.1",
         "drupal/social_auth_google": "^4.0",
         "drupal/turnstile": "^1.2",
-        "drupal/user_registrationpassword": "^2.0",
         "drupal/username_enumeration_prevention": "^1.4",
         "drupal/vvjb": "^2.0",
         "drupal/webform": "^6.3",
