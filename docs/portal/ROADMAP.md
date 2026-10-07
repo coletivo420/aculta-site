@@ -20,6 +20,15 @@ Ver [DELIVERY-MODE.md](DELIVERY-MODE.md).
 
 # Macrofase S — trabalho sem Homelab
 
+**Status global: encerrada no limite seguro do trabalho sem Runtime.**
+
+Documento de fechamento:
+[S-MACROPHASE-CLOSURE.md](S-MACROPHASE-CLOSURE.md).
+
+Código executável preparado permanece em PRs draft; "encerrada" aqui significa
+que o trabalho seguro sem Homelab foi esgotado, não que esses drafts passaram em
+Runtime.
+
 ## S1 — Component contracts
 
 **Estado: concluída documentalmente.**
@@ -92,7 +101,7 @@ Decisões:
 
 ## S3 — Behavior-preserving preparation
 
-**Estado: próxima.**
+**Estado: preparação disponível concluída; drafts aguardam Runtime.**
 
 Objetivo:
 
@@ -134,6 +143,9 @@ O código desta subfase não deve ser mergeado até passar no Homelab.
 
 ## S3.2 — Minha Conta -> SDC
 
+A evolução da Conta deve separar semântica Portal de implementação visual do
+tema. Contrato Portal não equivale a SDC aprovado.
+
 Executar em pequenos drafts, preferencialmente nesta ordem:
 
 1. status badge;
@@ -154,7 +166,97 @@ Cada conversão deve remover CSS/markup antigo somente depois de paridade.
 A matriz normativa está em
 [ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
 
-## S3.3 — Minha Conta AJAX boundary
+## S3.2B — Shared presentation semantics
+
+**Estado: concluída documentalmente.**
+
+Define os view-models semânticos compartilhados da Conta sem antecipar SDCs que
+o tema ainda não aprovou.
+
+Contratos:
+
+- status;
+- action;
+- empty state;
+- summary;
+- action list.
+
+A auditoria H3 do tema continua autoritativa sobre quais desses contratos
+realmente viram SDC.
+
+Documento:
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md).
+
+## S3.2C — Segurança e Conexões
+
+**Estado: próxima.**
+
+Objetivo:
+
+extrair presenters para:
+
+- Social Auth/Google;
+- estados de conexão;
+- segurança;
+- disponibilidade de mudança de e-mail;
+- alteração de e-mail pendente.
+
+Preservar:
+
+- OAuth redirect/callback;
+- Form API;
+- Email Confirmer;
+- SMTP readiness;
+- progressive enhancement.
+
+## S3.6 — Public CSS ownership
+
+**Estado: concluída documentalmente.**
+
+Documento:
+[S3-6-CSS-OWNERSHIP.md](S3-6-CSS-OWNERSHIP.md).
+
+Nenhum CSS foi movido. Ownership e ordem de migração foram definidos para evitar
+conflito com a Fase H do tema.
+
+## S3.7 — Procedural hooks
+
+**Estado: próxima.**
+
+Objetivo:
+
+preparar migração por grupos para Hook classes OOP, sem conversão massiva.
+
+## S3.8 — Lifecycle/install
+
+**Estado: concluída documentalmente.**
+
+Documento:
+[S3-8-LIFECYCLE-INSTALL.md](S3-8-LIFECYCLE-INSTALL.md).
+
+Decisão: nenhum update hook histórico será reescrito sem fresh-install e
+upgrade-path tests.
+
+## S3.9 — Assets/avatar inventory
+
+**Estado: concluída documentalmente.**
+
+Documento:
+[S3-9-AVATAR-ASSETS.md](S3-9-AVATAR-ASSETS.md).
+
+Resultado:
+
+- 107 PNGs / ~107,7 MiB;
+- nenhum consumidor versionado encontrado por busca estática;
+- nenhuma remoção autorizada sem inventário Runtime;
+- ownership futuro definido como decisão separada.
+
+## S3.3A — Minha Conta AJAX boundary
+
+**Estado: concluída documentalmente.**
+
+Documento:
+[S3-3A-AJAX-BOUNDARY.md](S3-3A-AJAX-BOUNDARY.md).
 
 Preservar como requisito:
 
@@ -202,32 +304,60 @@ Composer/config/runtime ficam pendentes da janela R.
 
 ### Portal 0.14 — Admin Hub
 
+**Especificação concluída.**
+
+Documento: [S4-0.14-ADMIN-HUB.md](S4-0.14-ADMIN-HUB.md).
+
 - atalhos/status;
+- access-first;
 - sem CRUD paralelo;
-- admin theme permanece Drupal-native.
+- admin theme permanece Drupal-native;
+- diagnóstico sem segredos.
 
 ### Portal 0.15 — AJAX Consolidation
 
-- plano de migração de `account-navigation.js`;
+**Especificação concluída.**
+
+Documento: [S4-0.15-AJAX-CONSOLIDATION.md](S4-0.15-AJAX-CONSOLIDATION.md).
+
+- preservar UX assíncrona;
+- migrar `account-navigation.js` por fluxo, não em massa;
 - Views AJAX;
 - Form API AJAX;
 - Drupal Ajax;
-- Core HTMX quando apropriado.
+- Core HTMX quando apropriado;
+- CEP permanece AJAX específico.
 
 ### Portal 0.16 — Search
 
-- Search API;
+**Especificação concluída.**
+
+Documento: [S4-0.16-SEARCH.md](S4-0.16-SEARCH.md).
+
+- Search API + Views;
+- backend Database Search como candidato inicial;
 - Wiki;
 - Fórum;
-- substituição futura da busca LIKE.
+- access/grants/revision-aware;
+- substituição da busca LIKE somente após paridade.
 
 ### Portal 0.17 — Engagement
 
-- Flag;
-- Comment Notify;
-- privacidade/SMTP/opt-in.
+**Especificação concluída.**
+
+Documento: [S4-0.17-ENGAGEMENT.md](S4-0.17-ENGAGEMENT.md).
+
+- Flag ^5.1;
+- Comment Notify ^1.6;
+- favoritos/follows/notificações como conceitos separados;
+- privacidade/SMTP/opt-in;
+- usar AJAX/upstream, sem toggle/storage paralelo.
 
 ### Portal 0.18 — Deduplication
+
+**Especificação concluída.**
+
+Documento: [S4-0.18-DEDUPLICATION.md](S4-0.18-DEDUPLICATION.md).
 
 - breadcrumb;
 - Schema Metatag;
@@ -235,75 +365,98 @@ Composer/config/runtime ficam pendentes da janela R.
 - busca antiga;
 - AJAX antigo;
 - Support tables;
-- CEP override excessivo.
+- CEP somente onde upstream atingir paridade;
+- service locator.
 
-Não remover customização necessária do CEP sem paridade comprovada.
+Nenhuma remoção sem substituto e teste de paridade.
 
 # Macrofase R — retorno ao Runtime/Codex
 
 ## R0 — Clean baseline
+
+**Runbook concluído.**
+
+Documento: [R0-CLEAN-BASELINE.md](R0-CLEAN-BASELINE.md).
 
 Primeira ação no Homelab:
 
 - descartar trabalho local antigo;
 - sincronizar exatamente com `origin/main`;
 - não recuperar a antiga 9.3B;
-- validar baseline Apache + SQLite.
+- validar baseline Apache + SQLite;
+- parar se o baseline puro falhar.
 
 ## R1 — Dependency and config integration
 
+**Runbook concluído.**
+
+Documento: [R1-INTEGRATION-QUEUE.md](R1-INTEGRATION-QUEUE.md).
+
 Aplicar um conjunto preparado por vez.
 
-Começar por Portal 0.11:
+Primeiro reconciliar/validar os drafts estruturais existentes (#23, #30, #24,
+#26, #27, #28, #29, #32–#35) respeitando suas dependências.
 
-- Composer;
-- Forum;
-- Domain;
-- config export/import;
-- cache;
-- bootstrap.
-
-Depois seguir versões na ordem do roadmap.
+Depois seguir as features 0.11 -> 0.19 na ordem do roadmap.
 
 ## R2 — Functional validation
 
-Executar:
+**Runbook concluído.**
+
+Documento: [R2-FUNCTIONAL-VALIDATION.md](R2-FUNCTIONAL-VALIDATION.md).
+
+Executar matriz por feature/purpose/identidade:
 
 - Drupal bootstrap;
 - config/updatedb;
-- Domain matrix;
-- HTTP;
+- Domain/HTTP;
 - shared session;
 - User A/User B;
-- access;
-- cache;
-- AJAX;
-- mobile/a11y onde aplicável;
-- regressão Wiki/Cursos/Commerce/Conta.
+- access/cache;
+- AJAX/fallback;
+- failure modes;
+- mobile/a11y;
+- regressão dos subsistemas.
 
-## R3 — Hardening
+## R3 — Hardening / Portal 0.19
 
-Equivale ao alvo Portal 0.19:
+**Especificação e runbook concluídos.**
 
-- permissions;
-- CSRF;
-- Security Review;
+Documentos:
+
+- [S4-0.19-HARDENING.md](S4-0.19-HARDENING.md)
+- [R3-HARDENING-EXECUTION.md](R3-HARDENING-EXECUTION.md).
+
+Executar no Runtime:
+
+- access/cache;
+- proteção de mutações;
+- session/Domain;
+- higiene de configuração sensível;
+- integrações;
 - performance;
-- cron;
-- logs;
+- cron/queues;
+- logs/headers;
+- dependency audit;
 - SQLite/MariaDB portability;
-- falhas externas;
-- deploy/runbook.
+- failure modes;
+- rollback.
 
 ## R4 — Releases
+
+**Runbook concluído.**
+
+Documento: [R4-RELEASE-TAGGING.md](R4-RELEASE-TAGGING.md).
 
 Somente depois de PASS Runtime:
 
 - merge dos PRs funcionais;
 - CHANGELOG;
 - tags `portal-vX.Y.Z`;
-- snapshots/Estados quando realmente necessários;
-- preparação de produção.
+- evidence pack;
+- deploy/rollback;
+- GitHub Release;
+- smoke pós-deploy.
 
 # Trilha paralela — Google
 
@@ -314,6 +467,10 @@ Mantida fora do SemVer Portal:
 Ver [Integrações Google](../integrations/GOOGLE.md).
 
 # Portal 1.0.0 — Stable
+
+**Gates especificados.**
+
+Documento: [PORTAL-1.0-RELEASE-GATES.md](PORTAL-1.0-RELEASE-GATES.md).
 
 Gates finais:
 

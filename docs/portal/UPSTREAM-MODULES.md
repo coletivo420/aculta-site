@@ -251,3 +251,10 @@ Código de outro projeto não deve ser copiado para dentro do Portal quando o
 módulo pode ser usado como dependência. Quando um padrão upstream for estudado,
 preferir adaptar sua API/documentação; qualquer código incorporado exige
 compatibilidade de licença, atribuição e justificativa.
+
+## Engagement — versões pesquisadas em 2026-10-06
+
+- `drupal/flag:^5.1`: stable 5.1.0, Drupal ^10.3 || ^11 || ^12, security-covered.
+- `drupal/comment_notify:^1.6`: stable 1.6, Drupal ^9 || ^10 || ^11, security-covered.
+
+Instalação permanece adiada para Portal 0.17 Runtime.
