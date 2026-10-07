@@ -133,6 +133,14 @@ Relatório mínimo:
 - worktree;
 - blockers.
 
+## Primeira execução registrada
+
+A primeira execução do R0 encontrou um blocker de infraestrutura Apache/TLS.
+Ver [R0-FIRST-EXECUTION.md](R0-FIRST-EXECUTION.md).
+
+Enquanto o `apache2ctl configtest` não retornar sucesso, R1 permanece
+bloqueado.
+
 ## Próxima fase
 
 R1 — Dependency and Config Integration.
