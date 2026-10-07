@@ -20,6 +20,15 @@ Ver [DELIVERY-MODE.md](DELIVERY-MODE.md).
 
 # Macrofase S — trabalho sem Homelab
 
+**Status global: encerrada no limite seguro do trabalho sem Runtime.**
+
+Documento de fechamento:
+[S-MACROPHASE-CLOSURE.md](S-MACROPHASE-CLOSURE.md).
+
+Código executável preparado permanece em PRs draft; "encerrada" aqui significa
+que o trabalho seguro sem Homelab foi esgotado, não que esses drafts passaram em
+Runtime.
+
 ## S1 — Component contracts
 
 **Estado: concluída documentalmente.**
@@ -92,7 +101,7 @@ Decisões:
 
 ## S3 — Behavior-preserving preparation
 
-**Estado: próxima.**
+**Estado: preparação disponível concluída; drafts aguardam Runtime.**
 
 Objetivo:
 
