@@ -6,10 +6,9 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
-### Refatoração preparada
+### Processo
 
-- S3.1 prepara Dependency Injection na camada de hooks, breadcrumb e policy de Domain.
-- Runtime status da S3.1 permanece DEFERRED; nenhum release é autorizado.
+- Macrofase S encerrada no limite seguro sem Runtime; drafts funcionais continuam DEFERRED e a próxima execução começa em R0.
 
 ### Refatoração preparada
 
@@ -20,6 +19,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 - S2 Static Portal Audit concluído sem alterar runtime.
 - S2.1 documenta a matriz Minha Conta: SDC, integrações, AJAX e fallback.
+- S3.2B define semântica compartilhada de status, ações, empty states e summaries sem antecipar SDCs não aprovados pelo tema.
 - Mapa de refatoração classifica KEEP, REFACTOR, UPSTREAM/CONFIG e RUNTIME-SENSITIVE.
 - Bootstrap Component Design System definido como destino da apresentação pública do Portal.
 
@@ -29,13 +29,13 @@ O Portal usa tags `portal-vX.Y.Z`.
 - Portal 0.11.0: fundação do Fórum.
 - Portal 0.12.0: participação do Fórum na Conta.
 - Portal 0.13.0: hub integrado de participação.
-- Portal 0.14.0: hub administrativo.
-- Portal 0.15.0: consolidação AJAX.
-- Portal 0.16.0: Search API.
-- Portal 0.17.0: engagement.
-- Portal 0.18.0: deduplicação.
-- Portal 0.19.0: hardening.
-- Portal 1.0.0: baseline estável do Portal.
+- Portal 0.14.0: hub administrativo — especificação concluída.
+- Portal 0.15.0: consolidação AJAX — especificação concluída.
+- Portal 0.16.0: Search API — especificação concluída.
+- Portal 0.17.0: engagement — especificação concluída.
+- Portal 0.18.0: deduplicação — especificação concluída.
+- Portal 0.19.0: hardening — especificação concluída.
+- Portal 1.0.0: gates de release especificados; release ainda bloqueado por Runtime.
 
 ## 0.10.0 — Foundation
 

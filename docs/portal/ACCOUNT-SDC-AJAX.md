@@ -58,15 +58,21 @@ quando houver comportamento assíncrono
 | Favoritos/seguir | Flag | adapter mínimo | `follow-action`, `status-badge` | usar comportamento AJAX do Flag quando adotado; não criar toggle próprio |
 | Notificações | Comment Notify | integração/preferences | `notification-preference` | usar forms/APIs do módulo; não criar transporte próprio |
 
+## Semântica compartilhada
+
+Status, ações, empty states, summaries e action lists seguem o contrato de
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md).
+
+Esses contratos não autorizam automaticamente novos SDCs. A maturidade visual
+continua sob o roadmap H3/H4 do tema.
+
 ## O que vira SDC primeiro
 
 Ordem preferencial:
 
-1. `status-badge`;
-2. `empty-state`;
-3. `summary-card`;
-4. `action-list`;
-5. `course-card`;
+1. validar semanticamente status/empty/summary/action no Portal;
+2. `course-card` quando o tema H4 fornecer o contrato visual;
+3. promover status/empty/summary/action a SDC somente se a reutilização real justificar;
 6. `account-shell`;
 7. `account-identity`;
 8. `data-section`;
