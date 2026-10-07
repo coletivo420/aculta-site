@@ -361,18 +361,16 @@ Primeira ação no Homelab:
 
 ## R1 — Dependency and config integration
 
+**Runbook concluído.**
+
+Documento: [R1-INTEGRATION-QUEUE.md](R1-INTEGRATION-QUEUE.md).
+
 Aplicar um conjunto preparado por vez.
 
-Começar por Portal 0.11:
+Primeiro reconciliar/validar os drafts estruturais existentes (#23, #30, #24,
+#26, #27, #28, #29, #32–#35) respeitando suas dependências.
 
-- Composer;
-- Forum;
-- Domain;
-- config export/import;
-- cache;
-- bootstrap.
-
-Depois seguir versões na ordem do roadmap.
+Depois seguir as features 0.11 -> 0.19 na ordem do roadmap.
 
 ## R2 — Functional validation
 
