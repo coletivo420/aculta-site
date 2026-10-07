@@ -56,19 +56,36 @@ configuração. Eles não identificam o provider do tema.
 O rename de machine name deve ser tratado como substituição de extensão, não
 como simples troca visual.
 
+### Shim de compatibilidade
+
+A versão 0.1.0 mantém temporariamente `web/themes/custom/aculta/` com apenas um
+`aculta.info.yml` mínimo. Ele existe para que ambientes que ainda possuem
+`aculta` instalado consigam inicializar e importar a configuração que habilita
+`aculta420`.
+
+O shim não possui libraries, templates, SDCs ou apresentação do tema antigo.
+Não desenvolver nada nele.
+
 Em ambiente de desenvolvimento:
 
-1. atualizar código;
-2. garantir que `aculta420` é descoberto;
-3. importar/sincronizar config;
-4. reconstruir cache;
-5. confirmar `system.theme: default=aculta420`;
-6. confirmar blocos posicionados;
-7. validar library/SDC discovery;
-8. validar todos os Domain purposes.
+1. criar backup/restore point;
+2. atualizar código — o shim `aculta` e o novo `aculta420` devem estar presentes;
+3. `drush theme:enable aculta420 -y`;
+4. `drush config:set system.theme default aculta420 -y`;
+5. importar a configuração sincronizada;
+6. reconstruir cache;
+7. confirmar `system.theme: default=aculta420`;
+8. confirmar que `core.extension` não lista `aculta`;
+9. confirmar blocos posicionados;
+10. validar library/SDC discovery;
+11. validar todos os Domain purposes.
 
-Não remover o tema antigo manualmente de um ambiente antes de a configuração
-nova estar pronta para importação.
+Não desinstalar `aculta` manualmente **antes** do config import: blocos ainda
+associados ao tema antigo podem ser removidos pelo processo de uninstall. A
+configuração sincronizada deve conduzir a troca.
+
+O diretório shim só será removido em patch posterior, depois que todos os
+ambientes tiverem migrado.
 
 ## Compatibilidade
 

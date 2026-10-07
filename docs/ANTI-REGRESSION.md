@@ -87,7 +87,7 @@ snapshots de fases e runbooks históricos.
 
 ## Tema e CSS
 
-- o provider público do tema é `aculta420`; não reintroduzir `aculta` como machine name;
+- o provider público do tema é `aculta420`; `aculta` só pode existir como shim temporário de migração 0.1.0, sem código de apresentação;
 - libraries usam `aculta420/*` e SDCs usam `aculta420:*`;
 
 - Bootstrap5 continua infraestrutura estrutural/comportamental;

@@ -9,7 +9,8 @@ tema `aculta`.
 
 Inclui:
 
-- rename completo do provider do tema;
+- rename completo do provider funcional do tema;
+- shim legado mínimo apenas para migração de ambientes existentes;
 - versionamento SemVer próprio;
 - documentação reestruturada;
 - config sync apontando para `aculta420`;
@@ -22,11 +23,24 @@ Inclui:
 
 Gate de release:
 
+- migration shim presente, mas sem runtime funcional;
+
 - tema descoberto/instalável;
 - config import sem referência runtime ao provider `aculta`;
 - blocks continuam posicionados;
 - SDC e libraries descobertos;
 - todos os domains representativos passam smoke test.
+
+## 0.1.1 — Remove legacy shim
+
+Patch planejado somente após todos os ambientes confirmarem:
+
+- `system.theme default = aculta420`;
+- `core.extension` sem `aculta`;
+- config clean;
+- smoke tests de ACULTA420 aprovados.
+
+A entrega remove `web/themes/custom/aculta/` definitivamente.
 
 ## 0.2.0 — Foundations 2.0
 

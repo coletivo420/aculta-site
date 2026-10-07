@@ -8,7 +8,7 @@ O antigo tema `aculta` é base histórica. A fundação atual usa:
 - machine name: `aculta420`;
 - diretório: `web/themes/custom/aculta420`.
 
-Não manter alias runtime do provider antigo.
+Não manter alias runtime funcional do provider antigo. Um shim mínimo de extensão é permitido temporariamente apenas para a migração 0.1.0 e não pode receber código de apresentação.
 
 ## D-002 — prefixo visual ACULTA permanece
 
@@ -76,3 +76,17 @@ ACULTA420 usa SemVer próprio. Tags são namespaced:
 `aculta420-theme-v0.1.0`.
 
 O versionamento do tema não substitui o versionamento do site ou do Portal.
+
+## D-011 — shim legado é temporário
+
+`web/themes/custom/aculta/` pode existir em 0.1.0 somente como extensão mínima
+de compatibilidade para sites onde o provider antigo ainda está instalado antes
+do config import.
+
+Ele:
+
+- não possui libraries, Twig, CSS, JS ou SDC;
+- não é default na configuração sincronizada;
+- não é dependência de nenhum block placement novo;
+- deve ser removido após todos os ambientes migrarem.
+

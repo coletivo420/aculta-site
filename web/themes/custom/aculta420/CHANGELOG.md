@@ -8,13 +8,16 @@ Este changelog versiona o tema/design system ACULTA420.
 
 - novo nome: **ACULTA420**;
 - novo machine name: `aculta420`;
-- novo diretório: `web/themes/custom/aculta420`;
+- novo diretório funcional: `web/themes/custom/aculta420`;
+- shim mínimo `web/themes/custom/aculta/` mantido temporariamente apenas para migração segura de ambientes existentes;
 - provider SDC: `aculta420:*`;
 - libraries: `aculta420/*`;
 - settings: `aculta420.settings`;
 - hooks PHP: `aculta420_preprocess_*`.
 
 ### Configuração
+
+- a transição de extensão é feita com shim mínimo para evitar tema instalado ausente do filesystem durante deploy;
 
 - `core.extension` passa a instalar `aculta420`;
 - `system.theme` passa a usar `aculta420` como default;
