@@ -3,7 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   content:
-    - 'block_content:aculta_institution:123eb3c7-726e-4fb9-9909-9c92c61f67ed'
+    - 'block_content:aculta_institution:80f3fc02-39b5-4386-8a32-78301b635007'
   module:
     - block_content
   theme:
@@ -15,7 +15,7 @@ weight: 0
 provider: null
 plugin: 'block_content:80f3fc02-39b5-4386-8a32-78301b635007'
 settings:
-  id: 'block_content:123eb3c7-726e-4fb9-9909-9c92c61f67ed'
+  id: 'block_content:80f3fc02-39b5-4386-8a32-78301b635007'
   label: 'Associação Cultural Antiproibicionista'
   label_display: '0'
   provider: block_content

@@ -94,6 +94,12 @@ $syncThemeSettings = Yaml::parseFile($root . '/config/sync/aculta420.settings.ym
 foreach (['logo', 'favicon'] as $assetSetting) {
   $assert(($installThemeSettings[$assetSetting]['path'] ?? NULL) === ($syncThemeSettings[$assetSetting]['path'] ?? NULL), 'Fresh-install and sync agree on theme ' . $assetSetting . '.');
 }
+$syncThemeSettingsForComparison = $syncThemeSettings;
+unset($syncThemeSettingsForComparison['_core']);
+$assert(
+  $installThemeSettings === $syncThemeSettingsForComparison,
+  'Fresh-install and sync agree on all ACULTA420 presentation settings.',
+);
 
 $portalSettings = \Drupal::config('aculta_portal.settings');
 $assert(trim((string) $portalSettings->get('institution_data_uuid')) !== '', 'Portal owns the institutional block UUID.');
@@ -106,11 +112,58 @@ $assert(!isset($syncCoreExtension['theme']['aculta']), 'Config sync contains no 
 $assert(($syncSystemTheme['default'] ?? NULL) === 'aculta420', 'Config sync selects ACULTA420 as default.');
 
 $configStorage = \Drupal::service('config.storage');
+$blockContentStorage = \Drupal::entityTypeManager()->getStorage('block_content');
+$validateBlockPlacement = static function (array $data, string $configName) use (
+  $assert,
+  $info,
+  $blockContentStorage,
+): void {
+  $assert(
+    ($data['theme'] ?? NULL) === 'aculta420',
+    'ACULTA block placement uses the current provider: ' . $configName,
+  );
+
+  $regions = $info['regions'] ?? [];
+  $assert(
+    isset($regions[$data['region'] ?? '']),
+    'ACULTA block placement uses a declared theme region: ' . $configName,
+  );
+
+  $plugin = (string) ($data['plugin'] ?? '');
+  if (!str_starts_with($plugin, 'block_content:')) {
+    return;
+  }
+
+  $uuid = substr($plugin, strlen('block_content:'));
+  $assert(
+    ($data['settings']['id'] ?? NULL) === $plugin,
+    'Block content plugin and settings IDs match: ' . $configName,
+  );
+  $hasMatchingDependency = FALSE;
+  foreach ($data['dependencies']['content'] ?? [] as $dependency) {
+    if (str_ends_with($dependency, ':' . $uuid)) {
+      $hasMatchingDependency = TRUE;
+      break;
+    }
+  }
+  $assert(
+    $hasMatchingDependency,
+    'Block content dependency matches the plugin UUID: ' . $configName,
+  );
+  $assert(
+    (bool) $blockContentStorage->loadByProperties(['uuid' => $uuid]),
+    'Block content UUID exists: ' . $configName,
+  );
+};
+
 foreach ($configStorage->listAll('block.block.aculta_') as $configName) {
   $data = $configStorage->read($configName);
-  if (isset($data['theme'])) {
-    $assert($data['theme'] === 'aculta420', 'ACULTA block placement uses the current provider: ' . $configName);
-  }
+  $validateBlockPlacement($data, $configName);
+}
+
+foreach (glob($root . '/config/sync/block.block.aculta_*.yml') ?: [] as $path) {
+  $data = Yaml::parseFile($path);
+  $validateBlockPlacement($data, 'config/sync/' . basename($path));
 }
 
 $expectedTemplates = [

@@ -140,6 +140,10 @@ Renomear machine name do tema exige sincronizar:
 - libraries/component provider IDs.
 
 IDs históricos de conteúdo/config não são renomeados sem benefício funcional.
+Para placements de blocos customizados, `plugin`, `settings.id` e a dependência
+de conteúdo devem apontar para o mesmo UUID existente; tema e região também
+precisam corresponder ao provider e às regiões declaradas pelo ACULTA420. O gate
+da Foundation verifica tanto a configuração ativa quanto `config/sync`.
 
 ## Workflow
 
@@ -159,7 +163,7 @@ Para cada mudança:
 Após qualquer mudança estrutural do tema:
 
 ```sh
-vendor/bin/drush php:script validate-aculta420-foundation --script-path=scripts
+vendor/bin/drush php:script validate-aculta420-foundation --script-path=../scripts
 ```
 
 O gate falha se reaparecerem provider legado, arquivo `.theme`, catch-all CSS,

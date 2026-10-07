@@ -118,6 +118,8 @@ snapshots de fases e runbooks históricos.
 - segredos permanecem em environment/Key;
 - não versionar credenciais reais ou de teste;
 - alterações de módulos/config exigem documentação correspondente.
+- block placements do ACULTA420 devem usar região declarada e manter `plugin`,
+  `settings.id` e a dependência de conteúdo alinhados ao UUID existente.
 
 ## Lifecycle / updates
 

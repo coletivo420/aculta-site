@@ -41,7 +41,7 @@ Adicionar lint e testes específicos dos arquivos alterados.
 O tema possui gate próprio, separado de Portal/Commerce:
 
 ```sh
-vendor/bin/drush php:script validate-aculta420-foundation --script-path=scripts
+vendor/bin/drush php:script validate-aculta420-foundation --script-path=../scripts
 ```
 
 Esse gate é somente leitura e valida provider/config, OOP hooks, fronteira

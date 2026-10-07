@@ -94,6 +94,7 @@ conjunto normativo:
 - cria `scripts/validate-aculta420-foundation.php` como gate runtime exclusivo do tema;
 - separa validação ACULTA420 de Portal/Commerce/security;
 - valida OOP hooks, provider/config, libraries/assets, Twig/YAML, SDC e invariantes de CSS;
+- valida consistência de plugin, settings e dependências por UUID nos block placements ativos e sincronizados;
 - corrige documentação normativa do Portal para o provider `aculta420`.
 
 ### Base herdada
