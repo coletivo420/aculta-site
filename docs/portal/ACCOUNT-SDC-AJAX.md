@@ -66,9 +66,9 @@ Status, ações, empty states, summaries e action lists seguem o contrato de
 Esses contratos não autorizam automaticamente novos SDCs. A maturidade visual
 continua sob o roadmap H3/H4 do tema.
 
-O primeiro consumidor executável desta semântica é o Course presenter de
-[S3.2A](S3-2-ACCOUNT-SDC.md). Ele mantém o render atual como fallback e não
-introduz dependência de um SDC ainda inexistente.
+Os consumidores executáveis devem seguir os contratos de
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md), mantendo o render
+funcional como fallback até existir um SDC aprovado pelo tema.
 
 ## O que vira SDC primeiro
 

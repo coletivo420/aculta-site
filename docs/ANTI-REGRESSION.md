@@ -1,0 +1,133 @@
+# Camadas anti-regressão
+
+Data da revisão: 2026-10-07.
+
+Este documento consolida regras duráveis que antes estavam espalhadas por
+snapshots de fases e runbooks históricos.
+
+## Arquitetura e ownership
+
+- Drupal Core/contrib são a fonte de verdade das capacidades que já fornecem.
+- `aculta_portal` integra/orquestra; não cria storage paralelo sem necessidade.
+- o tema `aculta` é apresentação; não decide autenticação, access, Domain,
+  Commerce, LMS ou persistência.
+- SDC recebe dados preparados; não consulta storage/serviços/entidades diretamente.
+- não criar segunda suíte de design system concorrente ao Bootstrap5 + ACULTA.
+
+## Dependency Injection e hooks
+
+- preferir DI explícita e hooks OOP do Drupal 11 em código novo/refatorado;
+- não introduzir novo service locator `\Drupal::...` em classes onde DI cabe;
+- callbacks procedurais registrados nominalmente pelo Form API podem permanecer
+  procedurais enquanto o contrato exigir o nome da função;
+- refactor de hook não pode alterar comportamento/access/cache como efeito colateral.
+
+## Domain
+
+- URLs e hosts especializados são resolvidos por purpose/Domain, nunca por
+  hostname hardcoded;
+- wrong-host deve falhar conforme a política definida, normalmente 404;
+- canonical público usa `*.aculta.org`; aliases Homelab não viram canonical;
+- geração de URL não pode mutar persistentemente a entidade Domain;
+- FORUM só entra no mapa quando sua feature/configuração forem realmente ativadas.
+
+## Autenticação
+
+- Drupal User continua fonte de verdade para conta, senha, sessão e status;
+- Social Auth continua fonte dos vínculos OAuth;
+- Google OAuth não é um submit alternativo de formulário Drupal;
+- `username_enumeration_prevention` permanece no baseline;
+- `user_registrationpassword` foi removido e não deve ser reintroduzido enquanto
+  houver conflito de responsabilidade;
+- Turnstile é o único challenge CAPTCHA e falha fechado;
+- não criar fallback para Math CAPTCHA/reCAPTCHA/outro challenge;
+- usuário `authenticated` usa `skip CAPTCHA`; anônimo protegido vê Turnstile;
+- segredos OAuth/Turnstile/SMTP não entram no Git.
+
+## E-mail e verificação de conta
+
+- Email Confirmer/Change Mail são o baseline enquanto atenderem ao projeto;
+- ferramenta própria de verificação só nasce se não houver alternativa
+  Core/contrib adequada;
+- nunca manter dois sistemas concorrentes de confirmação;
+- futura solução deve cobrir contas não-OAuth e mudança de e-mail com token
+  único/expirável, flood control e proteção contra enumeração.
+
+## AJAX e Conta
+
+- AJAX é progressive enhancement; rotas normais/full-page continuam válidas;
+- não transformar a Conta em SPA paralela;
+- OAuth, checkout/pagamento e confirmação externa de e-mail ficam fora de AJAX genérico;
+- CEP mantém integração específica enquanto upstream for fonte;
+- VVJT pode ser usado em Views específicas, não como engine da navegação da Conta;
+- remover infraestrutura de `account-navigation.js` apenas por fluxo e após
+  paridade de URL/history/focus/a11y/behaviors/fallback.
+
+## Commerce
+
+- Commerce é fonte de verdade para order/payment/checkout;
+- não criar ledger paralelo de apoio;
+- validar entity access antes de expor itens, totais ou pagamentos;
+- credenciais Mercado Pago nunca entram em config versionada;
+- não remover hardening custom do gateway sem substituto comprovado.
+
+## LMS / Group
+
+- Group/LMS são fontes de matrícula, membership, progresso e avaliação;
+- não copiar esses estados para User/Profile como storage primário;
+- links de curso respeitam purpose COURSES;
+- presenter/SDC só apresenta dados autorizados.
+
+## Editorial / Wiki
+
+- Wiki continua Node + Taxonomy + Views + revisions/workflow;
+- não substituir Views/entidades por storage custom;
+- acesso a unpublished/revisions precisa preceder exposição de metadata;
+- busca antiga só é removida depois de substituto com paridade funcional.
+
+## Tema e CSS
+
+- Bootstrap5 continua infraestrutura estrutural/comportamental;
+- não reimplementar behavior Bootstrap/VVJ;
+- não converter Twig em massa para SDC;
+- mover CSS apenas quando ownership do componente estiver comprovado;
+- regra antiga só sai após paridade visual, mobile, teclado/foco, AJAX
+  reattachment e fallback;
+- CSS de admin/diagnóstico pode permanecer no módulo.
+
+## Configuração e segredos
+
+- Configuration Sync representa configuração aprovada, não um dump cego do Runtime;
+- não executar/exportar config em massa apenas para “limpar drift” sem classificar paths;
+- segredos permanecem em environment/Key;
+- não versionar credenciais reais ou de teste;
+- alterações de módulos/config exigem documentação correspondente.
+
+## Lifecycle / updates
+
+- update hooks históricos não são reescritos só para “limpar” o arquivo;
+- mudança em `.install` exige fresh-install e upgrade-path tests;
+- migrações de dados devem ser idempotentes/resumíveis quando aplicável;
+- não remover update de migração crítica sem provar caminho de upgrade.
+
+## Assets
+
+- ausência de referência por grep não prova que um asset é morto;
+- coleções grandes só são removidas após inventário de Runtime/conteúdo;
+- assets de conteúdo devem tender a Media/File/CDN, não payload PHP do módulo,
+  quando houver migração segura.
+
+## Cache, access e privacidade
+
+- access vem antes de metadata privada;
+- cacheability preserva contexts + tags + max-age necessários;
+- não resolver performance de dados privados com cache compartilhado inseguro;
+- testar User A/User B em Profile, Address, apoio, cursos e participação.
+
+## Ambientes
+
+- Homelab: Apache + PHP-FPM + SQLite;
+- produção: Apache + PHP + MariaDB;
+- Nginx não é baseline;
+- custom SQL precisa preservar portabilidade SQLite/MariaDB;
+- produção não é ambiente de experimento/desenvolvimento.
