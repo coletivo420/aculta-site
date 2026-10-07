@@ -3,6 +3,8 @@
 namespace Drupal\aculta_portal\Controller;
 
 use Drupal\aculta_portal\Presentation\AccountConnectionsPresenter;
+use Drupal\aculta_portal\Presentation\AccountDataPresenter;
+use Drupal\aculta_portal\Presentation\AccountIdentityPresenter;
 use Drupal\aculta_portal\Presentation\AccountSecurityPresenter;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -22,6 +24,8 @@ final class PortalController extends ControllerBase {
     private readonly \Drupal\aculta_portal\AccountCoursesManager $accountCourses,
     private readonly AccountConnectionsPresenter $connectionsPresenter,
     private readonly AccountSecurityPresenter $securityPresenter,
+    private readonly AccountIdentityPresenter $identityPresenter,
+    private readonly AccountDataPresenter $dataPresenter,
     private readonly BlockManagerInterface $blockManager,
   ) {}
 
@@ -33,28 +37,30 @@ final class PortalController extends ControllerBase {
       $container->get('aculta_portal.account_courses'),
       $container->get('aculta_portal.presentation.account_connections'),
       $container->get('aculta_portal.presentation.account_security'),
+      $container->get('aculta_portal.presentation.account_identity'),
+      $container->get('aculta_portal.presentation.account_data'),
       $container->get('plugin.manager.block'),
     );
   }
 
   public function dashboard(): array {
     $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
-    $profile = $this->loadParticipantProfile($account);
-    $nickname = $profile && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty() ? $profile->get('field_nickname')->value : '';
-    $first_name = $profile && !$profile->get('field_first_name')->isEmpty() ? $profile->get('field_first_name')->value : '';
-    $display_name = $nickname ?: ($first_name ?: $account->getDisplayName());
-    $file = $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty() ? $account->get('user_picture')->entity : NULL;
-    $photo = $file ? [
+    $identity = $this->identityPresenter->present($account);
+
+    $photo = $identity['avatar']['has_picture'] ? [
       '#theme' => 'image_style',
       '#style_name' => 'aculta_avatar',
-      '#uri' => $file->getFileUri(),
-      '#alt' => $this->t('Foto de perfil de @name', ['@name' => $display_name]),
+      '#uri' => $identity['avatar']['uri'],
+      '#alt' => $identity['avatar']['alt'],
       '#attributes' => ['class' => ['aculta-account__avatar']],
     ] : [
       '#type' => 'html_tag',
       '#tag' => 'span',
-      '#value' => mb_strtoupper(mb_substr($display_name, 0, 1)),
-      '#attributes' => ['class' => ['aculta-account__avatar', 'aculta-account__avatar--empty'], 'aria-hidden' => 'true'],
+      '#value' => $identity['avatar']['initial'],
+      '#attributes' => [
+        'class' => ['aculta-account__avatar', 'aculta-account__avatar--empty'],
+        'aria-hidden' => 'true',
+      ],
     ];
 
     return [
@@ -65,19 +71,23 @@ final class PortalController extends ControllerBase {
           '#theme' => 'aculta_portal_photo_editor',
           '#photo' => $photo,
           '#photo_form' => $this->buildPortalAccountForm($account),
-          '#display_name' => $display_name,
+          '#display_name' => $identity['display_name'],
         ],
         'details' => [
           '#type' => 'container',
-          'name' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $display_name],
-          'email' => ['#plain_text' => $account->getEmail()],
+          'name' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $identity['display_name']],
+          'email' => ['#plain_text' => $identity['email']],
         ],
       ],
       'intro' => [
         '#plain_text' => $this->t('Use o menu para acompanhar seu apoio, seus cursos, atualizar seus dados e gerenciar sua conta.'),
       ],
       'courses_summary' => $this->buildCoursesSummary($account),
-      '#cache' => ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+      '#cache' => [
+        'contexts' => ['user'],
+        'tags' => $identity['cache_tags'],
+        'max-age' => 0,
+      ],
     ];
   }
 
@@ -221,80 +231,68 @@ final class PortalController extends ControllerBase {
 
   private function buildDataSection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
-    $profile = $section === 'address'
-      ? $this->loadCommerceAddressProfile($account)
-      : $this->loadParticipantProfile($account);
-    $route = $section === 'address' ? 'aculta_portal.my_data_address' : 'aculta_portal.my_data';
-    $title = $section === 'address' ? $this->t('Endereço') : $this->t('Informações básicas');
+    $view = $this->dataPresenter->present($account, $section);
     $links = [];
-    foreach ([
-      'basics' => ['title' => $this->t('Informações básicas'), 'route' => 'aculta_portal.my_data'],
-      'address' => ['title' => $this->t('Endereço'), 'route' => 'aculta_portal.my_data_address'],
-    ] as $key => $tab) {
+
+    foreach ($view['tabs'] as $tab) {
       $link = [
         '#type' => 'link',
-        '#title' => $tab['title'],
-        '#url' => Url::fromRoute($tab['route']),
-        '#attributes' => ['data-aculta-account-data-link' => 'true', 'class' => ['aculta-account-data__link']],
+        '#title' => $tab['label'],
+        '#url' => $tab['url'],
+        '#attributes' => [
+          'data-aculta-account-data-link' => 'true',
+          'class' => ['aculta-account-data__link'],
+        ],
       ];
-      if ($section === $key) {
+      if ($tab['current']) {
         $link['#attributes']['aria-current'] = 'page';
         $link['#attributes']['class'][] = 'is-active';
       }
       $links[] = $link;
     }
+
     return [
-      'description' => ['#plain_text' => $this->t('Mantenha suas informações pessoais e de contato atualizadas.')],
+      'description' => ['#plain_text' => $view['description']],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-account-data__nav'], 'aria-label' => $this->t('Seções de meus dados'), 'data-aculta-account-data-nav' => 'true'],
+        '#attributes' => [
+          'class' => ['aculta-account-data__nav'],
+          'aria-label' => $this->t('Seções de meus dados'),
+          'data-aculta-account-data-nav' => 'true',
+        ],
         'links' => $links,
       ],
       'content' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-account-data__content'], 'data-aculta-account-data-content' => 'true', 'aria-busy' => 'false'],
-        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $title, '#attributes' => ['tabindex' => '-1']],
-        'account_email' => $section === 'basics' ? [
+        '#attributes' => [
+          'class' => ['aculta-account-data__content'],
+          'data-aculta-account-data-content' => 'true',
+          'aria-busy' => 'false',
+        ],
+        'heading' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h3',
+          '#value' => $view['title'],
+          '#attributes' => ['tabindex' => '-1'],
+        ],
+        'account_email' => $view['account_email'] !== NULL ? [
           '#type' => 'container',
           '#attributes' => ['class' => ['aculta-account-data__email']],
-          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail')],
-          'value' => ['#plain_text' => $account->getEmail()],
+          'label' => [
+            '#type' => 'html_tag',
+            '#tag' => 'h4',
+            '#value' => $this->t('E-mail'),
+          ],
+          'value' => ['#plain_text' => $view['account_email']],
         ] : [],
-        'form' => $this->forms->getForm($profile, 'edit'),
+        'form' => $this->forms->getForm($view['profile'], 'edit'),
       ],
-      '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions', 'route'],
+        'tags' => $view['cache_tags'],
+        'max-age' => 0,
+      ],
     ];
-  }
-
-  private function loadParticipantProfile($account) {
-    $profiles = $this->entities->getStorage('profile')->loadByUser($account, 'participante');
-    return $profiles ?: $this->entities->getStorage('profile')->create([
-      'type' => 'participante',
-      'uid' => $account->id(),
-      'status' => TRUE,
-      'is_default' => TRUE,
-    ]);
-  }
-
-  /**
-   * Loads or prepares the account's canonical Commerce customer address.
-   *
-   * An unsaved Profile entity lets the standard Commerce Address field form
-   * create the customer profile through normal Form API submission.
-   */
-  private function loadCommerceAddressProfile($account) {
-    $storage = $this->entities->getStorage('profile');
-    $existing = $storage->loadByUser($account, 'customer');
-    if (!$existing) {
-      $profiles = $storage->loadByProperties(['uid' => $account->id(), 'type' => 'customer']);
-      $existing = $profiles ? reset($profiles) : NULL;
-    }
-    return $existing ?: $storage->create([
-      'type' => 'customer',
-      'uid' => $account->id(),
-      'status' => TRUE,
-      'is_default' => TRUE,
-    ]);
   }
 
   /**
