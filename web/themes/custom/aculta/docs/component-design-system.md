@@ -228,6 +228,14 @@ Sempre:
 - validar desktop/mobile/teclado/reduced motion quando houver mudança visual;
 - registrar por que um componente existe e quem é dono de seus dados.
 
+## Auditoria H3
+
+A auditoria de primitives aprovou apenas `category-label` como novo SDC imediato.
+`button` permanece primitive CSS/Bootstrap; `section-heading` foi adiado para
+H5; `media` para H4; `icon` não possui caso de uso atual.
+
+Detalhes: [h3-primitives-audit.md](h3-primitives-audit.md).
+
 ## Referências upstream
 
 - Drupal SDC — criação e convenção de assets: https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/creating-a-single-directory-component
@@ -242,7 +250,7 @@ Essas referências explicam mecanismo upstream; os contratos ACULTA deste docume
 | --- | --- | --- |
 | H1 | formalizar o Component Design System | concluído |
 | H2 | tornar `editorial-card` o primeiro SDC completo | concluído |
-| H3 | primitives reutilizáveis | planejado |
+| H3 | primitives reutilizáveis | auditado; implementação pendente |
 | H4 | família de cards | planejado |
 | H5 | patterns compostos, incluindo carousel/rail | planejado |
 | H6 | revisão seletiva do shell | planejado |
