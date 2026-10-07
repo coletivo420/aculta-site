@@ -189,27 +189,6 @@ function aculta_portal_metatags_alter(array &$tags, array $context): void {
   }
 }
 
-/** Implements hook_form_BASE_FORM_ID_alter(). Core details groups, no builder. */
-function aculta_portal_form_node_form_alter(array &$form, FormStateInterface $state): void {
-  $node = $state->getFormObject()->getEntity();
-  if (!in_array($node->bundle(), ['article', 'activity', 'project'], TRUE)) { return; }
-  $groups = [
-    'editorial_content' => ['Conteúdo', -40, ['title', 'body', 'field_summary', 'field_subtitle', 'field_editorial_category', 'field_tags', 'field_editorial_author', 'field_credits', 'field_references']],
-    'editorial_image' => ['Imagem', -30, ['field_media_image', 'field_gallery']],
-    'editorial_relations' => ['Relacionamentos', -20, ['field_project', 'field_related_activity']],
-    'editorial_seo' => ['SEO e compartilhamento', 70, ['field_meta_tags']],
-  ];
-  foreach ($groups as $id => [$title, $weight, $fields]) {
-    $form[$id] = ['#type' => 'details', '#title' => $title, '#open' => $id === 'editorial_content', '#weight' => $weight];
-    foreach ($fields as $field) { if (isset($form[$field])) { $form[$field]['#group'] = $id; } }
-  }
-  if (isset($form['author'])) { $form['author']['#title'] = t('Conta responsável pelo cadastro'); }
-  if (isset($form['options'])) { $form['options']['#title'] = t('Publicação'); }
-  if ($node->bundle() === 'activity') {
-    $form['#validate'][] = 'aculta_portal_validate_activity';
-  }
-}
-
 /** Form-level conditional validation, in addition to typed required fields. */
 function aculta_portal_validate_activity(array &$form, FormStateInterface $state): void {
   $node = $state->getFormObject()->buildEntity($form, $state);
