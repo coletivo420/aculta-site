@@ -29,14 +29,14 @@ O projeto já possui:
 
 ### Google Login — URIs do cliente Web
 
-O Social Auth Google usa um fluxo OAuth do lado do servidor. O callback
-configurado pelo Portal é `/entrar/{provedor}/retorno`; para o Google, cadastre
-os URIs de redirecionamento exatos abaixo no cliente OAuth Web:
+O Social Auth Google usa um fluxo OAuth do lado do servidor. O fluxo começa em
+`/oauth/google` e retorna a `/oauth/google/retorno`. Cadastre os URIs de
+redirecionamento exatos abaixo no cliente OAuth Web:
 
 | Ambiente | URI de redirecionamento autorizado |
 | --- | --- |
-| Homelab | `https://conta.aculta.toca.net.br/entrar/google/retorno` |
-| Produção | `https://conta.aculta.org/entrar/google/retorno` |
+| Homelab | `https://conta.aculta.toca.net.br/oauth/google/retorno` |
+| Produção | `https://conta.aculta.org/oauth/google/retorno` |
 
 Se o cliente também usar APIs Google iniciadas diretamente por JavaScript,
 cadastre estas origens autorizadas (origem é somente esquema + host, sem

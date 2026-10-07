@@ -8,7 +8,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Autenticação
 
-- Altera o callback do Social Auth para `/entrar/{provedor}/retorno`; o URI do Google passa a terminar em `/entrar/google/retorno`.
+- Define `/oauth/{provedor}` como início do Social Auth e `/oauth/{provedor}/retorno` como callback; Google usa `/oauth/google` e `/oauth/google/retorno`.
 
 ### Processo
 
