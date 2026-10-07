@@ -6,6 +6,10 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Processo
+
+- Macrofase S encerrada no limite seguro sem Runtime; drafts funcionais continuam DEFERRED e a próxima execução começa em R0.
+
 ### Documentação
 
 - S2 Static Portal Audit concluído sem alterar runtime.
