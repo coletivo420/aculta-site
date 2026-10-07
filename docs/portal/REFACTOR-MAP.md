@@ -114,7 +114,9 @@ visuais prematuras.
 
 ## S3.2C — Security and connections presenters
 
-Próxima extração do `PortalController`:
+**Estado: preparada em draft; Runtime deferred.**
+
+Extraída do `PortalController`:
 
 - Social Auth/Google;
 - status conectado/desconectado/configuração pendente;
@@ -122,7 +124,20 @@ Próxima extração do `PortalController`:
 - transactional mail readiness;
 - pending e-mail.
 
-Não alterar OAuth redirect/callback nem Form API.
+OAuth redirect/callback e Form API permanecem inalterados.
+
+Ver [S3-2C-SECURITY-CONNECTIONS.md](S3-2C-SECURITY-CONNECTIONS.md).
+
+## S3.2D — Identity and data presenters
+
+Próxima extração:
+
+- display name/avatar state;
+- Profile participante;
+- tabs Básicos/Endereço;
+- apresentação das seções de dados.
+
+Não mover Profile/Address/CEP para storage próprio.
 
 ## S3.3 — Support access first
 

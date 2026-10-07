@@ -45,9 +45,9 @@ quando houver comportamento assíncrono
 | Meus dados | Profile participante | data-section presenter | `data-section`, `action-list` | troca Básicos/Endereço continua assíncrona; submit permanece Form API |
 | Endereço | Commerce customer Profile + Address | Profile/Address integration | `data-section`, `form-feedback` | CEP continua AJAX/JS específico; submit do endereço continua Form API |
 | CEP | CEP Autocomplete/ViaCEP | adaptação acessível ACULTA | feedback/status visual reutilizável | **permanece AJAX** via endpoint contrib; stale-response, aria-live e focus permanecem |
-| Conexões | Social Auth + Drupal User | connections presenter | `integration-card`, `status-badge`, `action-list` | painel pode carregar assíncrono; OAuth redirect/callback não deve ser convertido em AJAX genérico |
+| Conexões | Social Auth + Drupal User | `AccountConnectionsPresenter` | `integration-card`, `status-badge`, `action-list` | painel pode carregar assíncrono; OAuth redirect/callback não deve ser convertido em AJAX genérico |
 | Google Login | Social Auth Google | integração configurável | `integration-card` | OAuth continua navegação/redirect completa; não interceptar handshake |
-| Segurança | Drupal User | security presenter | `security-card`, `alert`, `status-badge` | painel pode carregar assíncrono; alteração de senha continua Form API |
+| Segurança | Drupal User | `AccountSecurityPresenter` | `security-card`, `alert`, `status-badge` | painel pode carregar assíncrono; alteração de senha continua Form API |
 | E-mail | Change Mail + Email Confirmer | status/pending presenter | `security-card`, `pending-state` | solicitação é Form API; confirmação por e-mail continua fluxo externo |
 | Meu Apoio | Commerce Order/Payment | support presenter | `support-summary`, `order-card`, `status-badge`, `empty-state` | painel pode carregar assíncrono; paginação/filtro futuro pode usar Views AJAX |
 | Apoiar | Commerce Donation Flow | entrada/links | `action-card` | checkout/pagamento segue Commerce; não envolver o fluxo financeiro em fetch próprio |

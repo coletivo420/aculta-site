@@ -6,6 +6,12 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Refatoração preparada
+
+- S3.2C extrai presenters de Segurança e Conexões da Minha Conta.
+- Social Auth, Google OAuth, Email Confirmer, SMTP e Form API continuam upstream.
+- Runtime status da S3.2C permanece DEFERRED.
+
 ### Documentação
 
 - S2 Static Portal Audit concluído sem alterar runtime.

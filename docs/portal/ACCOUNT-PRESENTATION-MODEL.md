@@ -310,18 +310,20 @@ Um contrato semântico pode virar SDC no tema quando houver:
 | course card | presenter preparado no PR #24 | SDC planejado H4 |
 | category label | não específico da Conta | primitive SDC aprovado em H3 |
 
+## S3.2C
+
+**Preparada em draft; Runtime deferred.**
+
+A implementação preparada cria:
+
+- `AccountConnectionsPresenter`;
+- `AccountSecurityPresenter`.
+
+Ver [S3-2C-SECURITY-CONNECTIONS.md](S3-2C-SECURITY-CONNECTIONS.md).
+
+Os presenters aplicam os contratos desta página sem obrigar o tema a criar
+`integration-card`, `security-card` ou status SDC neste momento.
+
 ## Próxima subfase
 
-S3.2C — presenters da Conta para Segurança e Conexões.
-
-Objetivo:
-
-retirar de `PortalController` a construção semântica de:
-
-- Google/Social Auth;
-- estado de conexão;
-- segurança;
-- disponibilidade de mudança de e-mail;
-- e-mail pendente;
-
-sem alterar OAuth, Form API ou fluxo de confirmação.
+S3.2D — Identidade + Dados.

@@ -162,7 +162,10 @@ Documento:
 
 ## S3.2C — Segurança e Conexões
 
-**Estado: próxima.**
+**Estado: preparada em draft; Runtime deferred.**
+
+Documento:
+[S3-2C-SECURITY-CONNECTIONS.md](S3-2C-SECURITY-CONNECTIONS.md).
 
 Objetivo:
 
@@ -174,13 +177,40 @@ extrair presenters para:
 - disponibilidade de mudança de e-mail;
 - alteração de e-mail pendente.
 
-Preservar:
+Preservado:
 
 - OAuth redirect/callback;
 - Form API;
 - Email Confirmer;
 - SMTP readiness;
 - progressive enhancement.
+
+Entregas preparadas:
+
+- AccountConnectionsPresenter;
+- AccountSecurityPresenter;
+- PortalController mais fino;
+- entity access explícito antes da ação de disconnect.
+
+## S3.2D — Identidade + Dados
+
+**Estado: próxima.**
+
+Objetivo:
+
+extrair do PortalController:
+
+- identidade/display name;
+- avatar state;
+- Profile participante;
+- apresentação das seções Básicos/Endereço.
+
+Preservar:
+
+- User/Profile/Address como fontes de verdade;
+- Image Widget Crop;
+- Form API;
+- CEP AJAX.
 
 ## S3.3 — Minha Conta AJAX boundary
 
