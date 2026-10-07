@@ -1,6 +1,6 @@
 # R0 — Clean Baseline Runbook
 
-Status: **pronto para execução futura no Homelab**
+Status: **PASS em 2026-10-06/07; repetir quando o baseline mudar**
 
 ## Objetivo
 
@@ -132,6 +132,12 @@ Relatório mínimo:
 - HTTP matrix;
 - worktree;
 - blockers.
+
+## Execução concluída
+
+O R0 passou após revalidação do Apache/TLS e integração do PR #56.
+
+Ver [R0-PASS.md](R0-PASS.md).
 
 ## Primeira execução registrada
 
