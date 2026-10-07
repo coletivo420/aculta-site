@@ -48,6 +48,29 @@ utilities e behaviors.
 - schema obrigatório para SDCs via `enforce_prop_schemas: true`;
 - versionamento SemVer próprio.
 
+## Limite da Foundation 0.1.0
+
+A 0.1.0 estabelece provider, namespace, configuração, documentação e fronteiras
+arquiteturais. Ela **não** incorpora o redesign completo do shell multidomínio.
+
+A direção já está congelada para evitar contratos incompatíveis na próxima fase:
+
+```text
+instituição/plataforma ACULTA
+            ↓
+Domain purpose/produto
+            ↓
+conteúdo da página
+```
+
+O shell futuro terá uma Institution Bar global e discreta sobre um Domain Header
+visualmente dominante. Logo, título e navegação podem variar por purpose, mas são
+preparados pelo `aculta_portal`; o tema nunca escolhe identidade por hostname.
+
+O contrato detalhado e a direção visual estão em [docs/shell.md](docs/shell.md).
+A implementação visual pertence às fases posteriores de foundations/shell, junto
+dos semantic tokens.
+
 ## Estrutura
 
 ```text
@@ -78,6 +101,7 @@ Documentos normativos:
 - [Arquitetura](docs/architecture.md)
 - [Features atuais](docs/features.md)
 - [Design system](docs/design-system.md)
+- [Shell multidomínio](docs/shell.md)
 - [Componentes](docs/components.md)
 - [Desenvolvimento](docs/development.md)
 - [Acessibilidade](docs/accessibility.md)

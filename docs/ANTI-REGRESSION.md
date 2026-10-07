@@ -9,8 +9,9 @@ snapshots de fases e runbooks históricos.
 
 - Drupal Core/contrib são a fonte de verdade das capacidades que já fornecem.
 - `aculta_portal` integra/orquestra; não cria storage paralelo sem necessidade.
-- o tema `aculta` é apresentação; não decide autenticação, access, Domain,
-  Commerce, LMS ou persistência.
+- o tema funcional `aculta420` é apresentação; não decide autenticação, access,
+  Domain, Commerce, LMS ou persistência. `aculta` é apenas shim temporário da
+  migração 0.1.0 e não recebe funcionalidade.
 - SDC recebe dados preparados; não consulta storage/serviços/entidades diretamente.
 - não criar segunda suíte de design system concorrente ao Bootstrap5 + ACULTA420.
 
@@ -29,7 +30,10 @@ snapshots de fases e runbooks históricos.
 - wrong-host deve falhar conforme a política definida, normalmente 404;
 - canonical público usa `*.aculta.org`; aliases Homelab não viram canonical;
 - geração de URL não pode mutar persistentemente a entidade Domain;
-- FORUM só entra no mapa quando sua feature/configuração forem realmente ativadas.
+- FORUM só entra no mapa quando sua feature/configuração forem realmente ativadas;
+- apresentação por subdomínio usa **Domain purpose**, nunca hostname, como chave;
+- `DomainPurposeManager` permanece no `aculta_portal`; o tema não replica nem move
+  essa resolução.
 
 ## Autenticação
 
@@ -89,7 +93,14 @@ snapshots de fases e runbooks históricos.
 
 - o provider público do tema é `aculta420`; `aculta` só pode existir como shim temporário de migração 0.1.0, sem código de apresentação;
 - libraries usam `aculta420/*` e SDCs usam `aculta420:*`;
-
+- logo, título, menu e accent por domain devem chegar ao tema como contexto de
+  apresentação já resolvido pelo Portal; nunca escolher por hostname em Twig/PHP do tema;
+- nunca passar entidade `Domain` diretamente para Twig/SDC;
+- branding específico de purpose é opcional: fallback ACULTA e, depois, título textual;
+- todos os purposes compartilham a mesma arquitetura de shell; variam dados, não um
+  header paralelo por subdomínio;
+- light/dark/auto troca tokens e assets compatíveis, não geometria ou markup do shell;
+- não criar segunda engine de navegação quando Bootstrap já fornece Collapse/Offcanvas;
 - Bootstrap5 continua infraestrutura estrutural/comportamental;
 - não reimplementar behavior Bootstrap/VVJ;
 - não converter Twig em massa para SDC;

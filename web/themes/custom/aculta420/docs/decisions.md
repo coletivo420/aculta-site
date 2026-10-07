@@ -90,3 +90,22 @@ Ele:
 - não é dependência de nenhum block placement novo;
 - deve ser removido após todos os ambientes migrarem.
 
+## D-012 — shell institucional global e identidade visual por Domain purpose
+
+ACULTA420 possui um shell público em duas camadas. A camada institucional
+representa a Associação Cultural Antiproibicionista e permanece comum e
+visualmente discreta em todos os domains. A camada de domínio representa a
+identidade primária do purpose corrente e pode possuir logo, título e navegação
+específicos.
+
+A identidade do domínio é preparada pelo `aculta_portal` a partir de Domain
+purpose; ACULTA420 não resolve hostnames nem Domain access.
+
+Na ausência de branding específico, deve ser utilizado o branding ACULTA como
+fallback e, se necessário, título textual.
+
+Todos os purposes compartilham a mesma arquitetura de shell. O que varia são os
+dados de apresentação, não um header paralelo por subdomínio.
+
+Na Foundation 0.1.0 esta decisão é arquitetural/documental. O redesign visual
+completo fica fora do escopo e entra nas fases posteriores de foundations/shell.

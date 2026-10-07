@@ -50,7 +50,10 @@ conjunto normativo:
 - decisions;
 - migration;
 - roadmap;
-- versioning.
+- versioning;
+- shell multidomínio planejado, com Institution Bar global e Domain Header por purpose;
+- D-012 e regras anti-regressão para impedir hostname/Domain entity no tema;
+- instruções de agentes corrigidas para distinguir `aculta420` do shim `aculta`.
 
 ### Base herdada
 
