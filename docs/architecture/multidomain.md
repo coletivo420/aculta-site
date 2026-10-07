@@ -16,6 +16,12 @@ Código customizado depende do purpose, não do hostname de ambiente.
 e purpose atual. Rotas podem declarar `_aculta_domain_purpose`; o subscriber
 central bloqueia hosts incorretos.
 
+A mesma regra vale para apresentação: logo, título, navegação e outros dados de
+branding específicos são resolvidos a partir do purpose pelo `aculta_portal` e
+entregues ao tema como contexto simples. ACULTA420 não escolhe identidade por
+hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado em
+`web/themes/custom/aculta420/docs/shell.md`.
+
 | Purpose | Produção | Homelab | Estado |
 | --- | --- | --- | --- |
 | main | aculta.org | aculta.toca.net.br | ativo |

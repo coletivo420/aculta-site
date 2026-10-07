@@ -74,6 +74,32 @@ Requisitos:
 - não incluir entidades inteiras como prop de SDC;
 - não usar SDC como service locator.
 
+## Shell multidomínio
+
+O shell público segue a mesma fronteira Portal → apresentação.
+
+```text
+Domain
+  ↓
+DomainPurposeManager
+  ↓
+aculta_portal
+  ↓
+domain_presentation/render array
+  ↓
+ACULTA420
+```
+
+O Portal pode preparar `purpose`, títulos, URL inicial, branding, navegação e
+accent. O tema não resolve hostname, Domain access ou storage. Nenhuma entidade
+`Domain` deve ser passada diretamente para SDC/Twig.
+
+Branding específico é opcional. O contrato deve permitir fallback para ACULTA e
+depois para título textual, sem impedir a criação de um novo purpose.
+
+A arquitetura visual planejada está em
+`web/themes/custom/aculta420/docs/shell.md`.
+
 ## Bootstrap primeiro
 
 Antes de criar markup custom, verificar se Bootstrap já fornece o primitive ou

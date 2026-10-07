@@ -28,7 +28,8 @@ $assert($modules->moduleExists('crop') && $modules->moduleExists('image_widget_c
 $assert($modules->moduleExists('social_auth') && $modules->moduleExists('social_auth_google'), 'Social Auth providers are available.');
 $assert($modules->moduleExists('captcha') && $modules->moduleExists('turnstile'), 'CAPTCHA and Turnstile integration are enabled.');
 $assert($modules->moduleExists('agreement') && $modules->moduleExists('key'), 'Agreement and Key infrastructure are enabled.');
-$assert($modules->moduleExists('user_registrationpassword'), 'Password-at-registration integration is enabled.');
+$assert(!$modules->moduleExists('user_registrationpassword'), 'Incompatible user_registrationpassword remains removed.');
+$assert($modules->moduleExists('username_enumeration_prevention'), 'Username Enumeration Prevention remains enabled.');
 $assert(!$modules->moduleExists('honeypot'), 'Honeypot is not enabled.');
 $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email or Username module is enabled.');
 $assert($modules->moduleExists('email_confirmer') && $modules->moduleExists('email_confirmer_user'), 'Email Confirmer and its user integration are enabled.');
@@ -59,7 +60,7 @@ $assert(str_contains($portal_hooks, "^/user/([1-9][0-9]*)/edit$") && str_contain
 $portal_hooks_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
 $assert(str_contains($portal_hooks_source, 'Nome de usuário ou e-mail'), 'The public login label supports either username or email.');
 $theme_styles = file_get_contents(DRUPAL_ROOT . '/../web/themes/custom/aculta420/css/style.css');
-$theme_source = file_get_contents(DRUPAL_ROOT . '/../web/themes/custom/aculta420/aculta.theme');
+$theme_source = file_get_contents(DRUPAL_ROOT . '/../web/themes/custom/aculta420/aculta420.theme');
 foreach ([
   '--aculta-button-primary-bg: var(--aculta-yellow)',
   '--aculta-button-primary-text: var(--aculta-red)',
@@ -87,7 +88,7 @@ foreach ([
   $assert(str_contains($theme_styles, $theme_requirement), 'Theme exposes the approved CTA/navigation behavior: ' . $theme_requirement);
 }
 $assert(!preg_match('/(?:^|})\s*a\s*\{|\.region-content\s+a\s*\{|\.node\s+a\s*\{|\.view-content\s+a\s*\{/m', $theme_styles), 'There is no global or broad editorial anchor selector.');
-$assert(str_contains($theme_source, 'function aculta_preprocess_field') && str_contains($theme_source, "'entity_type'] ?? '') !== 'node'") && str_contains($theme_source, "'field_name'] ?? '') !== 'body'") && str_contains($theme_source, "['page', 'article', 'activity', 'project', 'editorial_highlight', 'document']") && str_contains($theme_source, "addClass('aculta-prose')"), 'Editorial prose opt-in is limited to the approved editorial Node bundles.');
+$assert(str_contains($theme_source, 'function aculta420_preprocess_field') && str_contains($theme_source, "'entity_type'] ?? '') !== 'node'") && str_contains($theme_source, "'field_name'] ?? '') !== 'body'") && str_contains($theme_source, "['page', 'article', 'activity', 'project', 'editorial_highlight', 'document']") && str_contains($theme_source, "addClass('aculta-prose')"), 'Editorial prose opt-in is limited to the approved editorial Node bundles.');
 $assert((bool) \Drupal::service('user.data')->get('aculta_portal', 999999, 'social_auth_password_unset') === FALSE, 'Social-only password marker is read per user and is not globally shared.');
 $authenticated_role = \Drupal\user\Entity\Role::load('authenticated');
 foreach ([

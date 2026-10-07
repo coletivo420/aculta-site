@@ -42,7 +42,11 @@ web/
 
 ## Estrutura do desenvolvimento customizado
 
-Tema customizado:
+Tema customizado funcional:
+
+web/themes/custom/aculta420/
+
+Shim legado de migração (0.1.0 apenas; sem código funcional):
 
 web/themes/custom/aculta/
 
@@ -83,7 +87,7 @@ web/themes/contrib/
 
 5. Todo desenvolvimento específico da ACULTA deve ficar preferencialmente em:
 
-web/themes/custom/aculta/
+web/themes/custom/aculta420/
 
 ou:
 
@@ -254,13 +258,19 @@ Quando uma informação institucional necessária não estiver disponível, util
 
 ## Front-end
 
-Criar um tema próprio chamado:
+Tema público atual:
 
-aculta
+ACULTA420
 
-Local:
+Machine name:
 
-web/themes/custom/aculta/
+aculta420
+
+Provider funcional:
+
+web/themes/custom/aculta420/
+
+`web/themes/custom/aculta/` é somente o shim temporário de migração da 0.1.0 e não pode receber novas features, Twig, CSS, JS, libraries ou SDC.
 
 Prioridades:
 
@@ -315,7 +325,7 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
 
 ## Bootstrap Component Design System
 
-- O tema `aculta` já implementa o **ACULTA Bootstrap Component Design System**.
+- O tema `aculta420` implementa o **ACULTA420 Bootstrap Component Design System**.
 - Bootstrap 5 é a infraestrutura estrutural/comportamental; SDC do Drupal Core é
   o mecanismo preferencial para componentes reutilizáveis.
 - O `aculta_portal` prepara dados, access, cache, URLs e presenters; não move
@@ -326,7 +336,7 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
   concorrente sem nova decisão arquitetural.
 - Não reiniciar a refatoração avançada do tema para adequá-la ao Portal.
 - Consultar `docs/portal/COMPONENT-DESIGN-SYSTEM.md` e
-  `web/themes/custom/aculta/docs/component-design-system.md`.
+  `web/themes/custom/aculta420/docs/design-system.md`.
 
 ## Regra de encerramento de fase
 
@@ -349,12 +359,13 @@ A evolução do Portal e a refatoração do tema são linhas separadas.
 
 Para tarefas do `aculta_portal`:
 
-- o modo atual é GitHub-first / Runtime-last; consultar `docs/portal/DELIVERY-MODE.md`;
+- o modo atual é GitHub-first / Runtime-last; consultar `docs/portal/README.md` e `docs/operations/RELEASES.md`;
 - `origin/main` é a base autoritativa; trabalho local antigo não publicado foi descartado;
 - mudanças executáveis sem Runtime ficam em draft com `RUNTIME STATUS: DEFERRED`;
-- não modificar `web/themes/custom/aculta/**` sem autorização explícita;
+- não modificar `web/themes/custom/aculta420/**` sem autorização explícita;
+- nunca adicionar funcionalidade a `web/themes/custom/aculta/**`; esse diretório é apenas shim temporário de migração da 0.1.0;
 - consultar `docs/portal/` antes de implementar;
-- manter as fontes de verdade definidas em `SOURCE-OF-TRUTH.md`;
+- manter as fontes de verdade definidas em `docs/portal/SOURCE-OF-TRUTH.md`;
 - não instalar dependência planejada antes da versão correspondente;
 - não reescrever roadmap/arquitetura por iniciativa própria;
 - atualizar CHANGELOG e evidência de testes junto do código implementado;

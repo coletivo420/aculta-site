@@ -4,7 +4,7 @@
 use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
-$theme = $root . '/web/themes/custom/aculta';
+$theme = $root . '/web/themes/custom/aculta420';
 if (is_dir($root . '/config/sync')) {
   $count = 0;
   foreach (glob($root . '/config/sync/*.yml') as $path) {
