@@ -66,8 +66,11 @@ Runtime, o Portal pode manter um override mínimo em:
 `web/modules/custom/aculta_portal/translations/aculta_portal.pt-br.po`
 
 O módulo declara o catálogo via propriedades nativas do Locale em
-`aculta_portal.info.yml`. O arquivo não substitui os catálogos oficiais e não
-deve virar uma cópia de Core/contrib.
+`aculta_portal.info.yml`. Em deploy/manutenção, ele também é importado
+explicitamente como `customized` **depois** dos catálogos oficiais. Assim,
+`overwrite_customized: false` protege esses overrides locais de uma atualização
+upstream posterior. O arquivo não substitui os catálogos oficiais e não deve
+virar uma cópia de Core/contrib.
 
 Baseline atual cobre somente lacunas dos formulários Core de login e recuperação
 de senha observadas no Homelab, incluindo título, instruções, senha e submit.
@@ -133,7 +136,7 @@ Após importar a configuração:
 vendor/bin/drush config:import -y
 vendor/bin/drush locale:check
 vendor/bin/drush locale:update --langcodes=pt-br -y
-# O catálogo local aculta_portal.pt-br.po deve ser descoberto pelo Locale.
+vendor/bin/drush locale:import pt-br web/modules/custom/aculta_portal/translations/aculta_portal.pt-br.po --type=customized --override=all
 vendor/bin/drush cr
 vendor/bin/drush config:status
 vendor/bin/drush updatedb:status
