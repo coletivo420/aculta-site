@@ -4,7 +4,7 @@
 
 Data de atualização: 2026-10-07
 
-RUNTIME STATUS: **PARCIAL — core/LMS PASS; HTTP autenticado pendente**
+RUNTIME STATUS: **PASS**
 
 STATIC STATUS: **PASS — diff audit + PHP 8.4 syntax**
 
@@ -204,7 +204,7 @@ O servidor de desenvolvimento usa **Apache + PHP-FPM**. Não usar gates Nginx.
 
 ## Validação Runtime — 2026-10-07
 
-**Resultado: PARCIAL.**
+**Resultado: PASS.**
 
 Passaram:
 
@@ -227,33 +227,25 @@ Passaram:
 Fixtures temporárias foram removidas ao final. O Homelab voltou para
 `main@bf5faa0` com worktree limpo.
 
-### Cobertura HTTP autenticada pendente
+### Cobertura HTTP autenticada
 
-O teste tentou usar o login normal com JavaScript desabilitado para então validar
-o fallback full-page da Conta. O submit não produziu token Cloudflare Turnstile e
-foi rejeitado pelo CAPTCHA.
+O login normal sem JavaScript foi rejeitado pelo Turnstile, como esperado para
+esse mecanismo. A cobertura da S3.2A foi concluída com sessões autenticadas de
+fixture preparadas server-side, sem criar bypass de CAPTCHA em produção.
 
-Isso **não é regressão S3.2A**. Turnstile depende de JavaScript para produzir o
-token de validação e não oferece fallback no-JS automático seguro.
+Resultados:
 
-A mensagem observada ainda estava em inglês:
+- User A autenticado: `/meus-cursos` 200, curso listado e action em COURSES;
+- User B autenticado sem matrícula: estado vazio, sem curso/action indevidos;
+- request AJAX com `X-Requested-With: XMLHttpRequest`: 200;
+- request HTML direta, independente da navegação JavaScript: 200;
+- sessão compartilhada reconhecida em ACCOUNT e COURSES;
+- COURSES autenticado exibiu saída; anônimo exibiu entrada;
+- fixtures, sessões e associação de teste removidas ao final;
+- curso piloto preservado.
 
-`The answer you entered for the CAPTCHA was not correct.`
-
-A internacionalização de login/CAPTCHA está sendo tratada separadamente no PR
-#63. Esse PR não deve introduzir bypass de CAPTCHA.
-
-Para concluir S3.2A, preparar sessão autenticada de fixture server-side e testar,
-sem depender do login UI:
-
-- `/meus-cursos` autenticado;
-- navegação parcial/AJAX com JavaScript normal;
-- fallback full-page da navegação da Conta com o JavaScript da Conta ausente;
-- action para COURSES e sessão compartilhada;
-- isolamento User A/User B se a fixture estiver disponível.
-
-O requisito de fallback full-page é da **navegação da Conta**, não uma exigência
-de que Cloudflare Turnstile autentique usuários sem JavaScript.
+O requisito de fallback full-page da **navegação da Conta** está satisfeito.
+A internacionalização de login/CAPTCHA permanece separada no PR #63.
 
 ## Merge policy
 
