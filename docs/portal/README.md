@@ -12,6 +12,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Fontes de verdade](SOURCE-OF-TRUTH.md)
 - [Módulos upstream](UPSTREAM-MODULES.md)
 - [Política AJAX](AJAX.md)
+- [S3.3A — Minha Conta AJAX boundary](S3-3A-AJAX-BOUNDARY.md)
 - [Integração com o Bootstrap Component Design System](COMPONENT-DESIGN-SYSTEM.md)
 - [Minha Conta — matriz SDC, integrações e AJAX](ACCOUNT-SDC-AJAX.md)
 - [Minha Conta — semântica compartilhada de apresentação](ACCOUNT-PRESENTATION-MODEL.md)
