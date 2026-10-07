@@ -295,6 +295,12 @@ Não alterar configurações de segurança sem explicar a mudança.
 
 O ambiente local pode utilizar configurações de desenvolvimento diferentes das configurações de produção.
 
+Credenciais de integrações devem usar Drupal Key com provider `env`; nunca
+preencher segredo diretamente em config, exportar configuração com segredo,
+mover credenciais para o tema ou hardcodar caminhos Homelab/Hostinger no
+Portal. Adicionar credencial exige Key, nome de variável, atualização do
+ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
+
 ## Bancos e Sistema de Estados
 
 - Desenvolvimento usa `var/database/aculta-runtime.sqlite`, uma cópia mutável restaurada de `estados/`.

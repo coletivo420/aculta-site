@@ -20,6 +20,10 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Autenticação
 
+- Formaliza o ACULTA Secrets Contract: Drupal Key/env permanece a interface
+  única e o provisioning fica desacoplado do sistema operacional. Homelab e
+  Hostinger compartilham Keys e nomes de variáveis; config exportada continua
+  sem credenciais. A migração do Runtime permanece pendente da R0.4.
 - Define a prova OAuth no gate pela separação entre storage bruto vazio, Keys Environment, Key Configuration Overrides ativos e configuração efetiva coincidente, sem exibir valores.
 - Preserva query string no destination de login/OAuth e adiciona `url.query_args` ao cache do menu, mantendo buscas, filtros e paginação após autenticação.
 - Corrige o identificador do usuário externo no callback Google para `SocialAuthUserInterface::getId()`.

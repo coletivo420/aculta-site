@@ -23,6 +23,10 @@ bash scripts/homelab/verify-aculta-homelab.sh
 O `settings.php` local deve incluir `settings.homelab.php` depois da
 configuração base de banco. Mantenha esse loader local/ignorado; o bootstrap
 recusa continuar se o Drupal não estiver usando o Runtime SQLite esperado.
+O `settings.homelab.php` permanece local/ignorado. Secrets podem vir do
+environment nativo do processo ou do adapter bootstrap seguro descrito em
+[`docs/operations/SECRETS.md`](../../docs/operations/SECRETS.md); nunca grave
+credenciais no SQLite para simplificar o desenvolvimento.
 
 O VirtualHost Apache deve apontar o DocumentRoot para `web/`, preservar
 `web/.htaccess` e usar PHP-FPM. O verificador do Homelab exige configuração
@@ -31,7 +35,8 @@ encontrar um processo Nginx ativo.
 
 Estados integrais podem ser versionados publicamente por decisão explícita do
 projeto e não são sanitizados. Não adicione deliberadamente credenciais
-externas ou de produção ao Runtime/Estado. O banco e os settings de produção
+externas ou de produção ao Runtime/Estado; nenhum Estado que contenha secret
+persistido pode ser versionado ou publicado. O banco e os settings de produção
 continuam ativos separados em MariaDB.
 
 Uma migração futura do Runtime do Homelab para MariaDB será reavaliada quando o

@@ -20,11 +20,16 @@ $databases['default']['default'] = [
 
 // The seven homelab hostnames are handled by the project's normal local
 // settings and Domain aliases. No production hostname is redirected here.
-// Turnstile credentials must be supplied by the PHP-FPM/CLI environment via
-// TURNSTILE_KEYS_JSON as Base64-encoded JSON. Do not silently substitute
-// public test keys: Cloudflare displays a testing notice for those keys, and a
-// missing production key must be fixed in the environment instead of weakening
-// the challenge.
+// Secrets use the shared ACULTA contract. The preferred native adapter passes
+// TURNSTILE_KEYS_JSON to PHP-FPM and CLI. If the host cannot provide native
+// environment variables, configure a restricted file outside the document
+// root and load the portable bootstrap adapter below. The loader gives an
+// existing native variable precedence over the file. Do not place credentials
+// in SQLite or substitute public test keys in a real environment.
+//
+// Optional secure bootstrap adapter (uncomment only when needed):
+// $settings['aculta_secrets_file'] = '/etc/aculta/secrets.env';
+// require __DIR__ . '/aculta.secrets.php';
 
 
 /**

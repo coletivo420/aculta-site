@@ -101,3 +101,21 @@ Release estável não aceita Critical/High abertos.
 
 Finding pertence ao issue/PR e deve registrar severidade, impacto, evidência,
 correção, retest e status.
+
+## Segredos e integrações
+
+- Segredo nunca permanece em config storage persistido nem em export de
+  configuração; a configuração efetiva pode recebê-lo em memória via Key
+  Configuration Override.
+- Não registrar credenciais em documentação, logs, URLs, screenshots ou saída
+  de gates. Gates mostram somente estados e comparações booleanas.
+- Arquivos de secrets ficam fora do document root e usam a menor permissão que
+  permita leitura pelo Runtime necessário.
+- O loader ACULTA aceita somente a allowlist versionada e não sobrescreve
+  environment nativo não vazio.
+- Cópias de backup anteriores à limpeza do storage continuam sendo material
+  sensível e precisam de inventário, retenção e permissões restritas.
+- Antes de publicar um Estado SQLite, verificar que nenhum secret está
+  persistido no banco; Estado contendo credencial não pode ser versionado ou
+  publicado, ainda que outros Estados possam ser públicos por decisão do
+  projeto.

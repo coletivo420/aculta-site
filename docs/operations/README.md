@@ -4,6 +4,7 @@ Documentação operacional durável do ACULTA.
 
 - [TESTING.md](TESTING.md) — matriz de validação funcional e Runtime.
 - [HARDENING.md](HARDENING.md) — segurança, cache, performance e failure modes.
+- [SECRETS.md](SECRETS.md) — contrato portátil de credenciais e provisioning por ambiente.
 - [RELEASES.md](RELEASES.md) — gates, SemVer, tags, deploy e rollback.
 - [Homelab](../../scripts/homelab/README.md) — ambiente de desenvolvimento.
 - [Estados SQLite](../../estados/README.md) — snapshots/estados de desenvolvimento.

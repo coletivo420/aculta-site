@@ -61,12 +61,19 @@ As configurações exportadas de Social Auth Google mantêm `client_id` e
 `client_secret` vazios. As Keys `google_oauth_client_id` e
 `google_oauth_client_secret` usam o provider Environment com
 `GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CLIENT_SECRET`; os objetos Key
-Configuration Override injetam esses valores no runtime. Por isso,
-`\Drupal::config('social_auth_google.settings')` representa a configuração
-**efetiva** e pode retornar valores resolvidos pelas Keys. Para verificar que
-nenhum segredo foi persistido, use o storage bruto (`config.storage`) ou a
-configuração exportada, nunca a leitura efetiva. Segredo efetivo em runtime é
-esperado; segredo persistido no storage comum ou exportado é proibido.
+Configuration Override injetam esses valores no runtime quando as Keys os
+resolvem. Native Environment e Secure Bootstrap Adapter são operacionalmente
+equivalentes e não alteram as rotas/callbacks OAuth. Consulte o
+[ACULTA Secrets Contract](../operations/SECRETS.md).
+
+No estado atual da R0.3.5, o Runtime ainda preserva valores legados no storage
+bruto e as Keys Environment não resolvem esses valores sem provisioning. A
+migração e a limpeza do storage bruto são R0.4. Portanto,
+`\Drupal::config('social_auth_google.settings')` pode refletir o valor legado
+do storage neste Runtime. Para verificar persistência, leia o storage bruto
+(`config.storage`) ou o YAML exportado; a leitura efetiva não prova ausência de
+credenciais. Depois da R0.4, o estado desejado é bruto/sync vazio, Key
+resolvida pelo environment e valor efetivo aplicado pelo override.
 
 ### Vínculos em Minha Conta
 
