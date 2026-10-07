@@ -50,6 +50,6 @@ filters:
       default_view_mode: default
       allowed_view_modes: {  }
       allowed_media_types:
-        - image
-        - document
-        - remote_video
+        image: image
+        document: document
+        remote_video: remote_video
