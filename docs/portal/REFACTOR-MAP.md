@@ -57,8 +57,13 @@ Não migrar todos os hooks num único PR.
 
 ## S3.2 — Account presentation boundary
 
-Contrato normativo:
-[ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
+**Estado: S3.2B semântica documental concluída; S3.2A Course presenter preparado em draft, Runtime deferred.**
+
+Contratos normativos:
+
+- [ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md)
+- [ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md)
+- [S3-2-ACCOUNT-SDC.md](S3-2-ACCOUNT-SDC.md)
 
 ### Objetivo
 

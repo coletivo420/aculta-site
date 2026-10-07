@@ -143,7 +143,7 @@ O código desta subfase passou no Homelab antes do merge.
 
 ## S3.5 — Domain policy
 
-**Estado: Runtime PASS; validação R1.2B concluída, integração do PR #30 em andamento.**
+**Estado: Runtime PASS; validação R1.2B concluída; PR #30 integrado em `main`.**
 
 Documento:
 [S3-5-DOMAIN-POLICY.md](S3-5-DOMAIN-POLICY.md).
@@ -157,10 +157,22 @@ Entregas:
 
 ## S3.2 — Minha Conta -> SDC
 
+**Estado: S3.2B semântica compartilhada concluída documentalmente; S3.2A Course presenter preparado em draft, Runtime deferred.**
+
+O primeiro consumidor executável da semântica compartilhada é Cursos. O
+`AccountCoursePresenter` prepara status, score, action e empty state sem mover
+LMS/Group/access/URLs/cache para o tema. O render atual permanece fallback até
+o tema aprovar e implementar `course-card`.
+
+Documentos:
+
+- [ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md)
+- [S3-2-ACCOUNT-SDC.md](S3-2-ACCOUNT-SDC.md)
+
 A evolução da Conta deve separar semântica Portal de implementação visual do
 tema. Contrato Portal não equivale a SDC aprovado.
 
-Executar em pequenos drafts, preferencialmente nesta ordem:
+Executar as próximas conversões em pequenos drafts, preferencialmente nesta ordem:
 
 1. status badge;
 2. empty state;
