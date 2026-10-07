@@ -182,7 +182,25 @@ Preservar:
 - SMTP readiness;
 - progressive enhancement.
 
-## S3.3 — Minha Conta AJAX boundary
+## S3.6 — Public CSS ownership
+
+**Estado: concluída documentalmente.**
+
+Documento:
+[S3-6-CSS-OWNERSHIP.md](S3-6-CSS-OWNERSHIP.md).
+
+Nenhum CSS foi movido. Ownership e ordem de migração foram definidos para evitar
+conflito com a Fase H do tema.
+
+## S3.7 — Procedural hooks
+
+**Estado: próxima.**
+
+Objetivo:
+
+preparar migração por grupos para Hook classes OOP, sem conversão massiva.
+
+## S3.3A — Minha Conta AJAX boundary
 
 Preservar como requisito:
 

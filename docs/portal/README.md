@@ -22,6 +22,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Modo de entrega GitHub-first / Runtime-last](DELIVERY-MODE.md)
 - [S2 — Static Portal Audit](STATIC-AUDIT.md)
 - [Mapa de refatoração](REFACTOR-MAP.md)
+- [S3.6 — Public CSS ownership](S3-6-CSS-OWNERSHIP.md)
 - [Testes](TESTING.md)
 - [Versionamento](VERSIONING.md)
 - [Roadmap](ROADMAP.md)
