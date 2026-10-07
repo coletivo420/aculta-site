@@ -28,6 +28,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [S3.6 — Public CSS ownership](S3-6-CSS-OWNERSHIP.md)
 - [Testes](TESTING.md)
 - [Versionamento](VERSIONING.md)
+- [Portal 0.14 — Admin Hub](S4-0.14-ADMIN-HUB.md)
 - [Roadmap](ROADMAP.md)
 - [Integrações Google](../integrations/GOOGLE.md)
 

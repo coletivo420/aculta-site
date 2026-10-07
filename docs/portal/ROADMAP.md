@@ -277,9 +277,15 @@ Composer/config/runtime ficam pendentes da janela R.
 
 ### Portal 0.14 — Admin Hub
 
+**Especificação concluída.**
+
+Documento: [S4-0.14-ADMIN-HUB.md](S4-0.14-ADMIN-HUB.md).
+
 - atalhos/status;
+- access-first;
 - sem CRUD paralelo;
-- admin theme permanece Drupal-native.
+- admin theme permanece Drupal-native;
+- diagnóstico sem segredos.
 
 ### Portal 0.15 — AJAX Consolidation
 
