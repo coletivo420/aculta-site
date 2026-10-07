@@ -42,13 +42,9 @@ web/
 
 ## Estrutura do desenvolvimento customizado
 
-Tema customizado funcional:
+Tema customizado:
 
 web/themes/custom/aculta420/
-
-Shim legado de migração (0.1.0 apenas; sem código funcional):
-
-web/themes/custom/aculta/
 
 Módulos customizados:
 
@@ -270,7 +266,7 @@ Provider funcional:
 
 web/themes/custom/aculta420/
 
-`web/themes/custom/aculta/` é somente o shim temporário de migração da 0.1.0 e não pode receber novas features, Twig, CSS, JS, libraries ou SDC.
+Não recriar provider, alias, shim ou camada de compatibilidade de tema com machine name diferente de `aculta420`.
 
 Prioridades:
 
@@ -363,7 +359,7 @@ Para tarefas do `aculta_portal`:
 - `origin/main` é a base autoritativa; trabalho local antigo não publicado foi descartado;
 - mudanças executáveis sem Runtime ficam em draft com `RUNTIME STATUS: DEFERRED`;
 - não modificar `web/themes/custom/aculta420/**` sem autorização explícita;
-- nunca adicionar funcionalidade a `web/themes/custom/aculta/**`; esse diretório é apenas shim temporário de migração da 0.1.0;
+- não recriar `web/themes/custom/aculta/` nem qualquer provider legado/alias do tema;
 - consultar `docs/portal/` antes de implementar;
 - manter as fontes de verdade definidas em `docs/portal/SOURCE-OF-TRUTH.md`;
 - não instalar dependência planejada antes da versão correspondente;

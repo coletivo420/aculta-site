@@ -10,8 +10,7 @@ snapshots de fases e runbooks históricos.
 - Drupal Core/contrib são a fonte de verdade das capacidades que já fornecem.
 - `aculta_portal` integra/orquestra; não cria storage paralelo sem necessidade.
 - o tema funcional `aculta420` é apresentação; não decide autenticação, access,
-  Domain, Commerce, LMS ou persistência. `aculta` é apenas shim temporário da
-  migração 0.1.0 e não recebe funcionalidade.
+  Domain, Commerce, LMS ou persistência.
 - SDC recebe dados preparados; não consulta storage/serviços/entidades diretamente.
 - não criar segunda suíte de design system concorrente ao Bootstrap5 + ACULTA420.
 
@@ -91,7 +90,7 @@ snapshots de fases e runbooks históricos.
 
 ## Tema e CSS
 
-- o provider público do tema é `aculta420`; `aculta` só pode existir como shim temporário de migração 0.1.0, sem código de apresentação;
+- o único provider público do tema é `aculta420`; não manter alias, shim ou provider legado de compatibilidade;
 - libraries usam `aculta420/*` e SDCs usam `aculta420:*`;
 - logo, título, menu e accent por domain devem chegar ao tema como contexto de
   apresentação já resolvido pelo Portal; nunca escolher por hostname em Twig/PHP do tema;

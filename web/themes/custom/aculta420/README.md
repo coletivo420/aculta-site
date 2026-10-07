@@ -108,7 +108,6 @@ Documentos normativos:
 - [Decisões](docs/decisions.md)
 - [Roadmap](docs/roadmap.md)
 - [Versionamento](docs/versioning.md)
-- [Migração 0.1.0](docs/migration-0.1.0.md)
 - [CHANGELOG](CHANGELOG.md)
 
 ## Regra principal

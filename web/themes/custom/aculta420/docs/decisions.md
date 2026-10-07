@@ -8,7 +8,7 @@ O antigo tema `aculta` é base histórica. A fundação atual usa:
 - machine name: `aculta420`;
 - diretório: `web/themes/custom/aculta420`.
 
-Não manter alias runtime funcional do provider antigo. Um shim mínimo de extensão é permitido temporariamente apenas para a migração 0.1.0 e não pode receber código de apresentação.
+Não manter alias, shim ou provider runtime de compatibilidade. A Foundation 0.1.0 suporta apenas `aculta420` como provider do tema.
 
 ## D-002 — prefixo visual ACULTA permanece
 
@@ -77,18 +77,14 @@ ACULTA420 usa SemVer próprio. Tags são namespaced:
 
 O versionamento do tema não substitui o versionamento do site ou do Portal.
 
-## D-011 — shim legado é temporário
+## D-011 — sem camada de compatibilidade de provider
 
-`web/themes/custom/aculta/` pode existir em 0.1.0 somente como extensão mínima
-de compatibilidade para sites onde o provider antigo ainda está instalado antes
-do config import.
+ACULTA420 0.1.0 não mantém provider alternativo, alias ou shim de tema.
 
-Ele:
-
-- não possui libraries, Twig, CSS, JS ou SDC;
-- não é default na configuração sincronizada;
-- não é dependência de nenhum block placement novo;
-- deve ser removido após todos os ambientes migrarem.
+O estado suportado contém apenas `web/themes/custom/aculta420/` como provider
+custom público. Migrações de ambientes históricos são responsabilidade
+operacional anterior ao deploy do estado final da Foundation e não justificam
+código legado no runtime atual.
 
 ## D-012 — shell institucional global e identidade visual por Domain purpose
 
