@@ -226,6 +226,11 @@ Resultado:
 
 ## S3.3A — Minha Conta AJAX boundary
 
+**Estado: concluída documentalmente.**
+
+Documento:
+[S3-3A-AJAX-BOUNDARY.md](S3-3A-AJAX-BOUNDARY.md).
+
 Preservar como requisito:
 
 - navegação parcial entre seções;
