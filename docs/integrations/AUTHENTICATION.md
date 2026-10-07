@@ -66,14 +66,11 @@ resolvem. Native Environment e Secure Bootstrap Adapter são operacionalmente
 equivalentes e não alteram as rotas/callbacks OAuth. Consulte o
 [ACULTA Secrets Contract](../operations/SECRETS.md).
 
-No estado atual da R0.3.5, o Runtime ainda preserva valores legados no storage
-bruto e as Keys Environment não resolvem esses valores sem provisioning. A
-migração e a limpeza do storage bruto são R0.4. Portanto,
-`\Drupal::config('social_auth_google.settings')` pode refletir o valor legado
-do storage neste Runtime. Para verificar persistência, leia o storage bruto
-(`config.storage`) ou o YAML exportado; a leitura efetiva não prova ausência de
-credenciais. Depois da R0.4, o estado desejado é bruto/sync vazio, Key
-resolvida pelo environment e valor efetivo aplicado pelo override.
+Na R0.4, o Homelab migrou para o Secure Bootstrap Adapter. O storage bruto e o
+YAML mantêm ambos os campos vazios; o loader local publica as variáveis para
+Drupal Key, e os Config Overrides fornecem os valores somente à configuração
+efetiva em memória. Web e Drush usam o mesmo bootstrap. Hostinger ainda não foi
+provisionada. OAuth e seus callbacks não dependem do adapter escolhido.
 
 ### Vínculos em Minha Conta
 

@@ -105,11 +105,11 @@ os mesmos Key IDs, `GOOGLE_OAUTH_CLIENT_ID`,
 environment nativo ou arquivo seguro carregado no bootstrap. Drupal e Social
 Auth não dependem do sistema operacional, do PHP-FPM ou do fornecedor.
 
-O Configuration Sync mantém `client_id` e `client_secret` vazios. O Runtime
-Homelab ainda preserva os valores legados no armazenamento bruto; a migração
-para Environment/Key sem valor bruto pertence à R0.4 e não foi executada nesta
-etapa de contrato. Por isso, a configuração efetiva atual ainda pode vir do
-storage bruto. Não use a leitura efetiva como prova de ausência de segredo;
+O Configuration Sync e o storage bruto do Homelab mantêm `client_id` e
+`client_secret` vazios após a R0.4. O Secure Bootstrap Adapter fornece as
+variáveis ao Drupal Key para web e Drush; a configuração efetiva é preenchida
+somente em memória pelos Config Overrides. Hostinger Web/Cloud ainda não foi
+provisionada. Não use a leitura efetiva como prova de ausência de segredo;
 essa prova deve ler `config.storage` e o sync diretamente.
 
 Não preencher valores reais em Configuration Sync nem imprimir credenciais em

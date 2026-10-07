@@ -310,12 +310,21 @@ $oauth_sync = $oauth_sync_storage->read('social_auth_google.settings') ?: [];
 $assert(trim((string) ($oauth_raw['client_id'] ?? '')) === '' && trim((string) ($oauth_raw['client_secret'] ?? '')) === '', 'Google OAuth credentials are absent from ordinary active configuration.');
 $assert(trim((string) ($oauth_sync['client_id'] ?? '')) === '' && trim((string) ($oauth_sync['client_secret'] ?? '')) === '', 'Google OAuth credentials are absent from synchronized configuration.');
 
-$oauth_key_environment = [
-  'google_oauth_client_id' => 'GOOGLE_OAUTH_CLIENT_ID',
-  'google_oauth_client_secret' => 'GOOGLE_OAUTH_CLIENT_SECRET',
+$oauth_contract = [
+  'google_oauth_client_id' => [
+    'environment' => 'GOOGLE_OAUTH_CLIENT_ID',
+    'config_item' => 'client_id',
+    'override_id' => 'google_client_id',
+  ],
+  'google_oauth_client_secret' => [
+    'environment' => 'GOOGLE_OAUTH_CLIENT_SECRET',
+    'config_item' => 'client_secret',
+    'override_id' => 'google_client_secret',
+  ],
 ];
 $oauth_key_values = [];
-foreach ($oauth_key_environment as $key_id => $environment_variable) {
+foreach ($oauth_contract as $key_id => $contract) {
+  $environment_variable = $contract['environment'];
   $key = $key_storage->load($key_id);
   $provider = $key?->getKeyProvider();
   $provider_configuration = $provider?->getConfiguration() ?? [];
@@ -340,10 +349,10 @@ foreach ($oauth_key_environment as $key_id => $environment_variable) {
 }
 
 $oauth_overrides = \Drupal::entityTypeManager()->getStorage('key_config_override');
-$expected_oauth_overrides = [
-  'google_client_id' => ['client_id', 'google_oauth_client_id'],
-  'google_client_secret' => ['client_secret', 'google_oauth_client_secret'],
-];
+$expected_oauth_overrides = [];
+foreach ($oauth_contract as $key_id => $contract) {
+  $expected_oauth_overrides[$contract['override_id']] = [$contract['config_item'], $key_id];
+}
 foreach ($expected_oauth_overrides as $override_id => [$config_item, $key_id]) {
   $override = $oauth_overrides->load($override_id);
   $data = $override?->toArray() ?? [];
@@ -359,7 +368,8 @@ foreach ($expected_oauth_overrides as $override_id => [$config_item, $key_id]) {
 }
 
 $oauth_effective = \Drupal::config('social_auth_google.settings');
-foreach ($oauth_key_environment as $key_id => $config_item) {
+foreach ($oauth_contract as $key_id => $contract) {
+  $config_item = $contract['config_item'];
   $key_value = $oauth_key_values[$key_id];
   $effective_value = (string) ($oauth_effective->get($config_item) ?? '');
   $assert($effective_value !== '', 'Google OAuth effective setting is available: ' . $config_item);

@@ -11,20 +11,26 @@ e CI.
 - Drupal Key é a interface única para integrações.
 - Providers Key permanecem `env`; código e configuração Drupal usam somente o
   Key ID e o nome estável da variável.
-- No estado final, configuração bruta e sincronizada não contêm valores reais;
-  a limpeza do Runtime legado é a migração R0.4.
+- Configuração bruta e sincronizada não contêm valores reais. O Runtime
+  Homelab concluiu a limpeza Google na R0.4.
 - A configuração efetiva pode conter o valor em memória após o Key Config
   Override. Isso não significa que o valor foi persistido.
 - O código Drupal não conhece caminhos físicos, serviços systemd, PHP-FPM ou
   detalhes do provedor de hospedagem.
 - Segredos usam least privilege e ficam fora do document root.
 
-## Estado desta preparação
+## Estado operacional
 
-R0.3.5 versiona o contrato e o loader, mas não migra os valores reais. No
-Runtime Homelab atual, os valores legados Google continuam no storage bruto e
-as Keys Environment não resolvem sem provisioning. A migração operacional e a
-limpeza desses campos pertencem à R0.4.
+R0.3.5 versionou o contrato portátil e o loader. Na R0.4, o Homelab passou a
+usar o Secure Bootstrap Adapter: o settings local ignorado carrega
+`/etc/aculta/secrets.env`, e os processos web e Drush usam o mesmo bootstrap.
+Os campos Google do storage bruto e do Configuration Sync estão vazios; as
+Keys resolvem os valores fora do banco e os Config Overrides preenchem a
+configuração efetiva em memória. Hostinger Web/Cloud e produção ainda não foram
+provisionadas. O gate completo Portal/Security continua bloqueado por uma
+diferença preexistente entre active config e sync em
+`captcha.captcha_point.user_login_form` (`langcode` e `label`); essa
+configuração não foi alterada nem o gate foi flexibilizado nesta migração.
 
 ## Variáveis atuais
 
@@ -94,8 +100,10 @@ globalmente.
 
 `settings.homelab.php` continua local e ignorado pelo Git. O Homelab pode usar
 environment nativo no processo PHP ou o adapter bootstrap apontado pelo próprio
-settings local. O arquivo `/etc/aculta/secrets.env` é uma opção operacional do
-host, não uma dependência do Drupal.
+settings local. Atualmente o Homelab exercita o Secure Bootstrap Adapter por
+meio de `/etc/aculta/secrets.env`; esse caminho está somente no settings local
+ignorado e não é uma dependência do Portal ou do tema. A mesma configuração
+bootstrap atende Drush e requests web. Hostinger ainda não foi provisionada.
 
 No adapter bootstrap, use proprietário/grupo definidos pelos usuários reais do
 Runtime e o menor acesso necessário para PHP-FPM e CLI. Por exemplo, diretório
@@ -143,14 +151,17 @@ override é a ponte entre a abstração Key e a configuração contrib.
 
 Três camadas devem permanecer distintas:
 
-1. **Raw config storage:** no estado final, sem credenciais; por exemplo,
-   `client_id: ''` e `client_secret: ''`. O Runtime atual ainda aguarda R0.4.
+1. **Raw config storage:** sem credenciais; no Homelab após R0.4,
+   `client_id: ''` e `client_secret: ''`.
 2. **Key config:** somente Key ID, provider `env` e nome da variável.
 3. **Effective config:** pode conter valores em memória pelo override durante
    a requisição. Não exportar essa visão efetiva como segredo persistente.
 
 Nunca preencher credenciais reais diretamente no formulário de configuração
 contrib como solução permanente, nem executar export que grave esses valores.
+Não usar `drush config:set social_auth_google.settings client_secret <valor>`
+como estado permanente; a recuperação operacional deve seguir o fluxo da fonte
+externa para Key/env e Config Override.
 
 ## Database
 
@@ -160,10 +171,10 @@ ambiente.
 
 ## Backups
 
-Após a migração R0.4, novos dumps do banco não devem transportar credenciais
-Google. Até essa migração ser concluída, o Runtime existente ainda pode conter
-valores legados no storage bruto. Backups e snapshots criados antes da limpeza
-continuam sensíveis e precisam de inventário, retenção e permissões restritas.
+Após a migração R0.4, novos dumps do banco não transportam credenciais Google
+no storage bruto. Backups e snapshots criados antes da limpeza continuam
+sensíveis e precisam de inventário, retenção e permissões restritas. O backup
+pós-migração do Homelab foi verificado com os campos Google brutos vazios.
 Nunca publicar em Git um dump ou Estado SQLite que contenha secret persistido;
 isso também se aplica aos Estados Homelab que, por decisão do projeto, podem
 ser públicos quando sanitizados.
