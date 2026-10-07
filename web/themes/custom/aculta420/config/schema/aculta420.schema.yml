@@ -2,15 +2,6 @@ aculta420.settings:
   type: theme_settings
   label: 'Configurações do tema ACULTA420'
   mapping:
-    institution_transparency_nid:
-      type: integer
-      label: 'Página de transparência'
-    institution_home_nid:
-      type: integer
-      label: 'Página inicial institucional'
-    institution_data_uuid:
-      type: string
-      label: 'Identificador do bloco de dados institucionais'
     b5_body_schema:
       type: string
       label: 'Esquema de texto do corpo'

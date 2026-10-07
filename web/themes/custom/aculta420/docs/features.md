@@ -89,7 +89,7 @@ Global:
 - componentes globais com ownership explícito, incluindo forms/account/footer;
 - `navigation.js`.
 
-A Foundation não mantém `css/style.css` catch-all.
+A Foundation não mantém `css/style.css` nem `css/responsive.css` catch-all.
 
 Contextual:
 

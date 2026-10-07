@@ -16,7 +16,6 @@ global:
       css/components/forms.css: {}
       css/components/account.css: {}
       css/components/editorial-carousel.css: {}
-      css/responsive.css: {}
       css/components/auth.css: {}
   js:
     js/navigation.js: {}

@@ -12,7 +12,7 @@
   background: var(--aculta-yellow);
   border: 1px solid var(--aculta-yellow);
   border-radius: var(--bs-border-radius);
-  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+  transition: color var(--aculta-motion-fast) var(--aculta-ease-standard), background-color var(--aculta-motion-fast) var(--aculta-ease-standard), border-color var(--aculta-motion-fast) var(--aculta-ease-standard);
 }
 .webform-submission-form .form-submit:is(:hover, :focus-visible),
 .aculta-actions .btn-primary:is(:hover, :focus-visible),

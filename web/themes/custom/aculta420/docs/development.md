@@ -20,7 +20,8 @@ Tema: `aculta420`.
 
 Hooks:
 
-`aculta420_preprocess_*`
+`src/Hook/ThemeHooks.php` com `#[Hook]` e DI/autowiring. A Foundation não usa
+arquivo `.theme` procedural.
 
 Libraries:
 
@@ -48,7 +49,7 @@ O CSS global é dividido por responsabilidade explícita:
 - Conta/apresentação;
 - Drupal/Bootstrap integration.
 
-Não existe `css/style.css` genérico/catch-all. Regra nova deve entrar no arquivo
+Não existem `css/style.css` ou `css/responsive.css` genéricos/catch-all. Regra nova deve entrar no arquivo
 da responsabilidade que a possui; se nenhuma responsabilidade existente servir,
 criar uma unidade nomeada e documentada em vez de recriar um arquivo residual.
 

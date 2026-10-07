@@ -57,8 +57,8 @@ conjunto normativo:
 ### Saneamento pós-rename
 
 - relatório de requisitos do Portal passa a reconhecer `aculta420` como provider público;
-- tokens institucionais passam a ler `aculta420.settings` e sua cache tag;
-- validadores ativos passam a inspecionar `web/themes/custom/aculta420/` e `aculta420.theme`;
+- dados institucionais saem do tema e passam para `aculta_portal.settings`;
+- validadores ativos passam a inspecionar o contrato atual do provider `aculta420`;
 - instruções de agentes deixam de apontar para documentação Portal removida;
 - gate de autenticação reflete o baseline atual sem `user_registrationpassword`.
 ### Limpeza da Foundation
@@ -74,6 +74,15 @@ conjunto normativo:
 - footer, institucional/participação, formulários e Conta passam a ter ownership explícito;
 - o validador percorre a árvore CSS real em vez de depender de um arquivo agregado obsoleto;
 - regra anti-regressão impede recriação de CSS residual genérico.
+
+### Runtime mínimo
+
+- remove override de ícone RSS sem display feed público consumidor;
+- remove `css/responsive.css` e devolve media queries aos componentes donos;
+- centraliza duração rápida/easing e sombra de hover em tokens;
+- remove hook de login duplicado no Portal;
+- remove exports web sem consumidor; preserva originais de branding e os assets efetivamente usados;
+- hooks do tema usam OOP/DI em `src/Hook/ThemeHooks.php`; o arquivo procedural `.theme` deixa de existir.
 
 ### Base herdada
 

@@ -3,8 +3,6 @@
 .aculta-page-heading h1 { margin: 0; }
 .aculta-highlighted:has(.alert, .nav, .button, .help) { margin-bottom: 1.5rem; }
 .aculta-content .view-empty { max-width: 70ch; padding-block: 1rem; }
-.aculta-content .feed-icons { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--aculta-border); font-size: 0.875rem; }
-.aculta-content .feed-icon { display: inline-block; width: auto; height: auto; background: none; text-indent: 0; overflow: visible; }
 
 /* 9. Section headers, ready for future content. */
 /* Oswald em faixas de seção; detalhes discretos em CSS, sem imagens. */
@@ -70,15 +68,18 @@
 .card,
 .aculta-project,
 .aculta-editorial-list .views-row {
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  transition: border-color var(--aculta-motion-fast) var(--aculta-ease-standard), box-shadow var(--aculta-motion-fast) var(--aculta-ease-standard), transform var(--aculta-motion-fast) var(--aculta-ease-standard);
 }
 .card:is(:hover, :focus-within),
 .aculta-project:is(:hover, :focus-within),
 .aculta-editorial-list .views-row:is(:hover, :focus-within) {
   border-color: var(--aculta-yellow);
-  box-shadow: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
+  box-shadow: var(--aculta-shadow-hover);
   transform: translateY(-2px);
 }
 .aculta-metadata, .aculta-category { line-height: 1.5; }
 .aculta-category { color: var(--aculta-link); font-weight: 600; }
 
+@media (max-width: 575.98px) {
+  .aculta-section-title { gap: 0.75rem; }
+}

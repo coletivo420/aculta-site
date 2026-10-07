@@ -413,15 +413,6 @@ final class PortalHooks {
   }
 
   /**
-   * Applies the approved public login wording after generic form alters.
-   */
-  #[Hook('form_user_login_form_alter')]
-  public function userLoginFormAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
-    $form['name']['#title'] = $this->translation->translate('Nome de usuário ou e-mail');
-    $form['name']['#description'] = $this->translation->translate('Informe seu e-mail ou nome de usuário.');
-  }
-
-  /**
    * Implements hook_page_attachments_alter().
    */
   #[Hook('page_attachments_alter')]
