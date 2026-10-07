@@ -16,6 +16,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Minha Conta — matriz SDC, integrações e AJAX](ACCOUNT-SDC-AJAX.md)
 - [Minha Conta — semântica compartilhada de apresentação](ACCOUNT-PRESENTATION-MODEL.md)
 - [S3.2C — Segurança + Conexões](S3-2C-SECURITY-CONNECTIONS.md)
+- [S3.2D — Identidade + Dados](S3-2D-IDENTITY-DATA.md)
 - [Fórum](FORUM.md)
 - [Wiki420](WIKI.md)
 - [Revista / Observatório Coletivo 420](MAGAZINE.md)

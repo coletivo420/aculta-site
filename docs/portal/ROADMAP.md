@@ -194,7 +194,10 @@ Entregas preparadas:
 
 ## S3.2D — Identidade + Dados
 
-**Estado: próxima.**
+**Estado: preparada em draft; Runtime deferred.**
+
+Documento:
+[S3-2D-IDENTITY-DATA.md](S3-2D-IDENTITY-DATA.md).
 
 Objetivo:
 
@@ -205,12 +208,19 @@ extrair do PortalController:
 - Profile participante;
 - apresentação das seções Básicos/Endereço.
 
-Preservar:
+Preservado:
 
 - User/Profile/Address como fontes de verdade;
 - Image Widget Crop;
 - Form API;
 - CEP AJAX.
+
+Entregas preparadas:
+
+- AccountProfileManager;
+- AccountIdentityPresenter;
+- AccountDataPresenter;
+- PortalController mais fino.
 
 ## S3.3 — Minha Conta AJAX boundary
 

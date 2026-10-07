@@ -9,6 +9,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 ### Refatoração preparada
 
 - S3.2C extrai presenters de Segurança e Conexões da Minha Conta.
+- S3.2D extrai identidade, seleção de Profiles e semântica de Básicos/Endereço.
 - Social Auth, Google OAuth, Email Confirmer, SMTP e Form API continuam upstream.
 - Runtime status da S3.2C permanece DEFERRED.
 
