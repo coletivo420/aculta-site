@@ -38,7 +38,10 @@ function aculta_portal_token_info(): array {
 function aculta_portal_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $metadata): array {
   $result = [];
   if ($type === 'institution') {
-    $uuid = \Drupal::config('aculta_portal.settings')->get('institution_data_uuid');
+    $uuid = trim((string) \Drupal::config('aculta_portal.settings')->get('institution_data_uuid'));
+    if ($uuid === '') {
+      return [];
+    }
     $blocks = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['uuid' => $uuid]);
     $block = $blocks ? reset($blocks) : NULL;
     if (!$block) {

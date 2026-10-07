@@ -49,6 +49,10 @@ conjunto normativo:
 - decisions;
 - roadmap;
 - versioning;
+
+### Validação Runtime R0.1
+
+- O gate compila o Twig do SDC pelo ID canônico `aculta420:editorial-card`, resolvido pelo loader de componentes do Drupal.
 - shell multidomínio planejado, com Institution Bar global e Domain Header por purpose;
 - D-012 e regras anti-regressão para impedir hostname/Domain entity no tema;
 - instruções de agentes consolidam `aculta420` como único provider e proíbem aliases/shims legados.

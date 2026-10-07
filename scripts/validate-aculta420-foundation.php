@@ -104,6 +104,10 @@ $assert(
 $portalSettings = \Drupal::config('aculta_portal.settings');
 $assert(trim((string) $portalSettings->get('institution_data_uuid')) !== '', 'Portal owns the institutional block UUID.');
 $assert((int) $portalSettings->get('institution_transparency_nid') > 0, 'Portal owns the institutional transparency page reference.');
+$portalModule = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/aculta_portal.module');
+$emptyUuidGuard = strpos($portalModule, "if (\$uuid === '')") ?: FALSE;
+$uuidLookup = strpos($portalModule, "loadByProperties(['uuid' => \$uuid])") ?: FALSE;
+$assert($emptyUuidGuard !== FALSE && $uuidLookup !== FALSE && $emptyUuidGuard < $uuidLookup, 'Institutional token lookup returns before storage access when its UUID configuration is empty.');
 
 $syncCoreExtension = Yaml::parseFile($root . '/config/sync/core.extension.yml');
 $syncSystemTheme = Yaml::parseFile($root . '/config/sync/system.theme.yml');
@@ -202,7 +206,10 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
     Yaml::parseFile($file->getPathname());
   }
   if ($extension === 'twig') {
-    $source = new \Twig\Source(file_get_contents($file->getPathname()), $file->getFilename(), $file->getPathname());
+    $sourceName = $file->getPathname() === $themeRoot . '/components/content/editorial-card/editorial-card.twig'
+      ? 'aculta420:editorial-card'
+      : $file->getFilename();
+    $source = new \Twig\Source(file_get_contents($file->getPathname()), $sourceName, $file->getPathname());
     $twig->compile($twig->parse($twig->tokenize($source)));
   }
 }
