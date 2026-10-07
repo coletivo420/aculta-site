@@ -123,6 +123,24 @@ Sem Runtime:
 - declarar `RUNTIME STATUS: DEFERRED`;
 - não taggear release.
 
+## S3.1 — Hooks + Dependency Injection
+
+**Estado: preparada em draft; Runtime deferred.**
+
+Entregas preparadas:
+
+- `PortalHooks` com constructor injection;
+- `AccountShellBuilder` como serviço;
+- breadcrumb sem service locator;
+- Domain purpose subscriber com collaborators injetados;
+- política funcional preservada;
+- hooks procedurais do `.module` deixados para S3.7.
+
+Gates e escopo:
+[S3-1-HOOKS-DI.md](S3-1-HOOKS-DI.md).
+
+O código desta subfase não deve ser mergeado até passar no Homelab.
+
 ## S3.2 — Minha Conta -> SDC
 
 A evolução da Conta deve separar semântica Portal de implementação visual do

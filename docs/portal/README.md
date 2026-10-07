@@ -23,6 +23,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Modo de entrega GitHub-first / Runtime-last](DELIVERY-MODE.md)
 - [S2 — Static Portal Audit](STATIC-AUDIT.md)
 - [Mapa de refatoração](REFACTOR-MAP.md)
+- [S3.1 — Hooks + Dependency Injection](S3-1-HOOKS-DI.md)
 - [S3.8 — Lifecycle/install audit](S3-8-LIFECYCLE-INSTALL.md)
 - [S3.9 — Inventário de assets de avatar](S3-9-AVATAR-ASSETS.md)
 - [S3.6 — Public CSS ownership](S3-6-CSS-OWNERSHIP.md)

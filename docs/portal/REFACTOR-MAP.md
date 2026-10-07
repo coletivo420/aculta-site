@@ -20,6 +20,10 @@ Nenhum item abaixo está funcionalmente validado até a Macrofase R.
 
 ## S3.1 — Hooks e service locator
 
+**Estado: preparada em draft; Runtime deferred.**
+
+Ver [S3-1-HOOKS-DI.md](S3-1-HOOKS-DI.md).
+
 ### Objetivo
 
 Reduzir `\Drupal::...` em classes sem alterar regra funcional.
