@@ -177,7 +177,7 @@ $displays['block_upcoming'] = ['id' => 'block_upcoming', 'display_title' => 'Pr�
 $displays['block_upcoming']['display_options']['filters']['field_event_start_value']['operator'] = '>=';
 $displays['block_upcoming']['display_options']['sorts']['field_event_start_value']['order'] = 'ASC';
 $view->set('display', $displays)->set('description', 'Atividades publicadas organizadas por data de início; sem dependência de IDs locais.')->save();
-$block = Block::load('aculta_upcoming_activities') ?: Block::create(['id' => 'aculta_upcoming_activities', 'theme' => 'aculta', 'region' => 'content', 'weight' => 25, 'plugin' => 'views_block:aculta_activities-block_upcoming']);
+$block = Block::load('aculta_upcoming_activities') ?: Block::create(['id' => 'aculta_upcoming_activities', 'theme' => 'aculta420', 'region' => 'content', 'weight' => 25, 'plugin' => 'views_block:aculta_activities-block_upcoming']);
 $block->set('settings', ['id' => 'views_block:aculta_activities-block_upcoming', 'label' => 'Próximas atividades', 'label_display' => 'visible', 'provider' => 'views', 'views_label' => '', 'items_per_page' => NULL])->set('visibility', ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => '/atividades']])->save();
 $old = Block::load('aculta_activities');
 $settings = $old->get('settings'); $settings['label'] = 'Atividades realizadas'; $settings['label_display'] = 'visible'; $old->set('settings', $settings)->save();

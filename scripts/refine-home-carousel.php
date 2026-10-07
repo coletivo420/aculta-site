@@ -82,7 +82,7 @@ $options['header']['area']['content']['value'] = '<h2>CULTURA, INFORMAÇÃO E CU
 $definition['display']['block_1']['display_options']['block_description'] = 'Destaques editoriais da Home';
 View::create($definition)->save();
 $names[] = 'views.view.home_editorial_highlights';
-Block::create(['id' => 'aculta_home_editorial_highlights', 'theme' => 'aculta', 'region' => 'content', 'weight' => 50, 'plugin' => 'views_block:home_editorial_highlights-block_1', 'settings' => ['id' => 'views_block:home_editorial_highlights-block_1', 'label' => 'Destaques editoriais da Home', 'label_display' => '0', 'provider' => 'views', 'views_label' => '', 'items_per_page' => 'none'], 'visibility' => ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => '<front>']]])->save();
+Block::create(['id' => 'aculta_home_editorial_highlights', 'theme' => 'aculta420', 'region' => 'content', 'weight' => 50, 'plugin' => 'views_block:home_editorial_highlights-block_1', 'settings' => ['id' => 'views_block:home_editorial_highlights-block_1', 'label' => 'Destaques editoriais da Home', 'label_display' => '0', 'provider' => 'views', 'views_label' => '', 'items_per_page' => 'none'], 'visibility' => ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => '<front>']]])->save();
 $names[] = 'block.block.aculta_home_editorial_highlights';
 foreach (['knowledge', 'care', 'research'] as $old) {
   Block::load('aculta_home_' . $old)->disable()->save();

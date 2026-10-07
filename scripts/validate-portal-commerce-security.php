@@ -58,8 +58,8 @@ $portal_hooks = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/s
 $assert(str_contains($portal_hooks, "^/user/([1-9][0-9]*)/edit$") && str_contains($portal_hooks, "aculta_account_edit_blocked") && str_contains($portal_hooks, "aculta_portal.security"), 'A blocked own generic account edit page offers a direct Portal Security link.');
 $portal_hooks_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
 $assert(str_contains($portal_hooks_source, 'Nome de usuário ou e-mail'), 'The public login label supports either username or email.');
-$theme_styles = file_get_contents(DRUPAL_ROOT . '/../web/themes/custom/aculta/css/style.css');
-$theme_source = file_get_contents(DRUPAL_ROOT . '/../web/themes/custom/aculta/aculta.theme');
+$theme_styles = file_get_contents(DRUPAL_ROOT . '/../web/themes/custom/aculta420/css/style.css');
+$theme_source = file_get_contents(DRUPAL_ROOT . '/../web/themes/custom/aculta420/aculta.theme');
 foreach ([
   '--aculta-button-primary-bg: var(--aculta-yellow)',
   '--aculta-button-primary-text: var(--aculta-red)',

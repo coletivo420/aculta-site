@@ -57,12 +57,12 @@ foreach ([
 ] as $id => [$label, $html, $path, $weight]) {
   $entity = BlockContent::create(['type' => 'basic', 'info' => $label, 'langcode' => 'pt-br', 'body' => ['value' => $html, 'format' => 'full_html']]);
   $entity->save();
-  Block::create(['id' => $id, 'langcode' => 'pt-br', 'theme' => 'aculta', 'region' => 'content', 'weight' => $weight, 'plugin' => 'block_content:' . $entity->uuid(), 'settings' => ['id' => 'block_content:' . $entity->uuid(), 'label' => $label, 'label_display' => FALSE, 'provider' => 'block_content', 'view_mode' => 'full'], 'visibility' => ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $path]]])->save();
+  Block::create(['id' => $id, 'langcode' => 'pt-br', 'theme' => 'aculta420', 'region' => 'content', 'weight' => $weight, 'plugin' => 'block_content:' . $entity->uuid(), 'settings' => ['id' => 'block_content:' . $entity->uuid(), 'label' => $label, 'label_display' => FALSE, 'provider' => 'block_content', 'view_mode' => 'full'], 'visibility' => ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $path]]])->save();
   $newBlocks[$id] = ['id' => $entity->id(), 'uuid' => $entity->uuid()];
 }
 Block::load('aculta_data_registration')->setWeight(10)->save();
 Block::load('aculta_documents')->setWeight(30)->save();
-$uuid = \Drupal::config('aculta.settings')->get('institution_data_uuid');
+$uuid = \Drupal::config('aculta420.settings')->get('institution_data_uuid');
 $officialBlocks = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['uuid' => $uuid]);
 $official = reset($officialBlocks);
 $official->set('field_org_description', 'Lutando por um futuro livre da proibição.')->setNewRevision(TRUE); $official->save();

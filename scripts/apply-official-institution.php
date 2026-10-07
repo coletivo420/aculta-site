@@ -97,7 +97,7 @@ $home_placement->set('settings', $settings)->setVisibilityConfig('request_path',
 foreach (['institutional' => ['institutional', 'DADOS INSTITUCIONAIS', '/institucional'], 'registration' => ['transparency', 'DADOS CADASTRAIS', '/transparencia']] as $mode => [$node_key, $label, $path]) {
   $id = 'aculta_data_' . $mode;
   if (!Block::load($id)) {
-    Block::create(['id' => $id, 'theme' => 'aculta', 'region' => 'content', 'plugin' => 'block_content:' . $block->uuid(), 'weight' => 90, 'status' => TRUE, 'settings' => ['id' => 'block_content:' . $block->uuid(), 'label' => $label, 'label_display' => 'visible', 'view_mode' => $mode], 'visibility' => ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $path]]])->save();
+    Block::create(['id' => $id, 'theme' => 'aculta420', 'region' => 'content', 'plugin' => 'block_content:' . $block->uuid(), 'weight' => 90, 'status' => TRUE, 'settings' => ['id' => 'block_content:' . $block->uuid(), 'label' => $label, 'label_display' => 'visible', 'view_mode' => $mode], 'visibility' => ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $path]]])->save();
   }
 }
 
@@ -118,7 +118,7 @@ $contact->set('label', 'Contato')->set('recipients', [$data['email']])->save();
 foreach (['anonymous', 'authenticated'] as $role_id) {
   \Drupal\user\Entity\Role::load($role_id)->grantPermission('access site-wide contact form')->save();
 }
-\Drupal::configFactory()->getEditable('aculta.settings')->set('institution_data_uuid', $block->uuid())->set('institution_transparency_nid', (int) $state['nodes']['transparency'])->save();
+\Drupal::configFactory()->getEditable('aculta420.settings')->set('institution_data_uuid', $block->uuid())->set('institution_transparency_nid', (int) $state['nodes']['transparency'])->save();
 
 // Create a private, editable document record. No download appears without its PDF.
 if (empty($state['nodes']['cnpj_document'])) {
