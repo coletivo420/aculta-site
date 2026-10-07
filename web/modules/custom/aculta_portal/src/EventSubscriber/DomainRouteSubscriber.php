@@ -49,9 +49,14 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     $accountRoutes = array_fill_keys(array_keys($pathChanges), TRUE);
     unset($accountRoutes['commerce_payment.notify']);
 
-    // The Portal owns the account landing page. Do not expose Drupal Core's
-    // generic profile landing route at either /user or a translated alias.
-    $collection->remove('user.page');
+    // Keep Core's user.page route registered because password-reset and other
+    // upstream flows still redirect to it. The route never renders Core's
+    // generic profile page: it is ACCOUNT-only and redirects to the Domain
+    // front page handled by the ACULTA Portal.
+    if ($route = $collection->get('user.page')) {
+      $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\PortalController::legacyUserPageRedirect');
+      $route->setOption('_aculta_domain_purpose', 'account');
+    }
 
     foreach ($pathChanges as $name => $path) {
       if ($route = $collection->get($name)) {

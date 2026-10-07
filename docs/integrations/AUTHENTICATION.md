@@ -10,11 +10,17 @@ e OAuth não podem virar destinos de retorno.
 
 O parâmetro Drupal `destination`, quando já fornecido por uma rota protegida,
 tem precedência. Social Auth preserva esse parâmetro durante o redirecionamento
-ao provedor. Quando não há página anterior ou destino explícito, o destino
-padrão é `/conta-interna`, rota `aculta_portal.dashboard` (“Minha conta”).
+ao provedor. Quando não há página anterior ou destino explícito, o destino público padrão é
+a raiz do Domain ACCOUNT (`/` em `conta.aculta.org` ou no alias Homelab).
+A configuração Domain de ACCOUNT resolve essa raiz internamente para
+`/conta-interna`, rota `aculta_portal.dashboard`, sem expor esse caminho
+técnico como URL pós-login.
 
-A página genérica de perfil do Drupal (`user.page`) não é publicada; nem `/user`
-nem `/identidade` são destinos de login. O portal substitui essa experiência.
+A página genérica de perfil do Drupal não é publicada. A rota técnica
+`user.page` continua registrada porque fluxos Core, inclusive recuperação de
+senha, ainda geram redirects para ela; quando alcançada no Domain ACCOUNT, ela
+redireciona imediatamente para a raiz da Conta e nunca renderiza o perfil
+genérico. `/identidade` também não é destino de login.
 
 ## Google OAuth
 
@@ -83,8 +89,10 @@ interação de navegador nesta alteração.
 ## Estado operacional desta revisão
 
 - Homelab: config ativa do Social Auth aponta o fallback para `/conta-interna`.
-- `/user` e `/identidade` responderam 404 no host ACCOUNT; `/conta-interna`
-  respondeu 403 anônimo, como esperado para uma rota autenticada.
+- a UI genérica de `/user` foi removida da experiência: `user.page` é mantida
+  apenas como rota técnica de compatibilidade e redireciona usuários autenticados
+  para a raiz ACCOUNT; `/identidade` não é destino de login;
+- `/conta-interna` permanece somente como front page interna do Domain ACCOUNT.
 - Os links de login renderizados em MAIN, MAGAZINE, WIKI e COURSES carregaram
   `destination` com o caminho visível e o purpose respectivo.
 - O link Google gerado em `/entrar` preservou `destination`; o início OAuth

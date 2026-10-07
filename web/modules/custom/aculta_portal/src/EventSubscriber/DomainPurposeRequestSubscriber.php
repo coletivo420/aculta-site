@@ -63,6 +63,14 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
           return;
         }
       }
+
+      // ACCOUNT's Domain root is the public landing URL. Its domain-specific
+      // front page resolves /conta-interna internally.
+      $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
+      if ($accountRoot !== NULL) {
+        $event->getResponse()->headers->set('Location', $accountRoot->toString());
+        return;
+      }
     }
 
     if ($route !== 'user.logout' || $this->currentUser->isAuthenticated()) {

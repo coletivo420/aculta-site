@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /** Private user account area. */
 final class PortalController extends ControllerBase {
@@ -29,6 +30,13 @@ final class PortalController extends ControllerBase {
       $container->get('form_builder'),
       $container->get('aculta_portal.account_courses'),
     );
+  }
+
+  /**
+   * Keeps Core's legacy user.page route compatible without exposing its UI.
+   */
+  public function legacyUserPageRedirect(): RedirectResponse {
+    return new RedirectResponse(Url::fromRoute('<front>')->toString());
   }
 
   public function dashboard(): array {

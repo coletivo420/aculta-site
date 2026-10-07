@@ -33,10 +33,12 @@ O Social Auth Google usa um fluxo OAuth do lado do servidor. O fluxo começa em
 `/oauth/google` e retorna a `/oauth/google/retorno`. Cadastre os URIs de
 redirecionamento exatos abaixo no cliente OAuth Web:
 
-Após autenticação concluída, o Social Auth direciona a pessoa para
-`/conta-interna`, rota `aculta_portal.dashboard` (“Minha conta”) do
-`aculta_portal`. A rota genérica de perfil `/user` foi removida; `/identidade`
-também não é um destino válido. O destino preferencial é a página visitada
+Após autenticação concluída, o Social Auth direciona a pessoa para a raiz do
+Domain ACCOUNT. Esse Domain usa `/conta-interna` apenas como front page interna
+para `aculta_portal.dashboard`; o caminho técnico não é o destino público
+normal. A rota `user.page` permanece somente para compatibilidade com redirects
+do Core e redireciona para a raiz da Conta, sem renderizar o perfil genérico;
+`/identidade` também não é um destino válido. O destino preferencial é a página visitada
 antes do login, transportada como `destination` e acompanhada pelo purpose do
 Domain durante a autenticação. Isso vale para senha e Google OAuth. Sem um
 destino anterior, o fallback é a rota do Portal “Minha conta”. O fluxo e seus
