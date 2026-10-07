@@ -10,6 +10,11 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 - Macrofase S encerrada no limite seguro sem Runtime; drafts funcionais continuam DEFERRED e a próxima execução começa em R0.
 
+### Refatoração preparada
+
+- S3.5 separa resolução de purpose do enforcement HTTP e evita mutação de Domain em URLs locais.
+- S3.5 passou os gates Runtime em R1.2B; `pathUrl()` agora respeita o Domain purpose e o alias de ambiente.
+
 ### Roadmap
 
 - Portal 0.18.1 adiciona a padronização transversal de slugs públicos amigáveis em português para todos os Domains/purposes, com redirects/canonical/sitemap e preservação das rotas técnicas upstream.

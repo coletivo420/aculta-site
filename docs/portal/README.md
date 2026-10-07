@@ -24,6 +24,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Modo de entrega GitHub-first / Runtime-last](DELIVERY-MODE.md)
 - [S2 — Static Portal Audit](STATIC-AUDIT.md)
 - [Mapa de refatoração](REFACTOR-MAP.md)
+- [S3.5 — Domain policy](S3-5-DOMAIN-POLICY.md)
 - [S3.1 — Hooks + Dependency Injection](S3-1-HOOKS-DI.md)
 - [S3.8 — Lifecycle/install audit](S3-8-LIFECYCLE-INSTALL.md)
 - [S3.9 — Inventário de assets de avatar](S3-9-AVATAR-ASSETS.md)
@@ -43,7 +44,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [R1 — Dependency/Config Integration Queue](R1-INTEGRATION-QUEUE.md)
 - [R1.1 — PR #23 PASS](R1-1-PR23-PASS.md)
 - [R1.2 — blocker Wiki/Media Library](R1-2-WIKI-MEDIA-BLOCKER.md)
-- R1.2A — corrigido no PR #60; próximo gate: R1.2B / PR #30
+- R1.2A — corrigido no PR #60; S3.5 / PR #30 passou Runtime em R1.2B
 - [R2 — Functional Validation Matrix](R2-FUNCTIONAL-VALIDATION.md)
 - [R3 — Hardening Execution Runbook](R3-HARDENING-EXECUTION.md)
 - [R4 — Release and Tagging Runbook](R4-RELEASE-TAGGING.md)
