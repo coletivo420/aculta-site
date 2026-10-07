@@ -1,125 +1,102 @@
-# Tema aculta
+# ACULTA420
 
-Tema público da plataforma Drupal da Associação Cultural Antiproibicionista. `aculta` é o machine name técnico.
+**ACULTA420** é o tema público e o Bootstrap Component Design System da
+plataforma Drupal da Associação Cultural Antiproibicionista.
 
-**Versão do tema: 0.1.0.** O tema usa roadmap e versionamento próprios, independentes da versão do site Drupal. Veja [docs/versioning.md](docs/versioning.md), [docs/roadmap.md](docs/roadmap.md) e [CHANGELOG.md](CHANGELOG.md).
+- machine name: `aculta420`;
+- versão: **0.1.0**;
+- Drupal: `^11`;
+- base theme: `bootstrap5`;
+- Bootstrap fixado pelo projeto: `4.0.8`;
+- SDC: Drupal Core;
+- build tooling: nenhum por padrão.
 
-## Papel arquitetural
-
-`aculta` é a camada de apresentação e, desde a Fase H, o **ACULTA Bootstrap Component Design System**:
+## Arquitetura
 
 ```text
 Drupal Core + contrib
         |
         v
-  aculta_portal
+   aculta_portal
         |
         v
-ACULTA Component Design System
- Foundations -> Primitives -> Components -> Patterns -> Shell
+     ACULTA420
+  Bootstrap Component
+    Design System
         |
         v
     Bootstrap 5
 ```
 
-O tema possui identidade visual, tipografia, design tokens, layout, header/footer, navegação, Twig overrides, apresentação de formulários, foco, responsividade e componentes visuais.
+Drupal/contrib são donos de dados e regras. `aculta_portal` integra e prepara
+contexto. ACULTA420 apresenta. Bootstrap fornece infraestrutura de layout,
+utilities e behaviors.
 
-O tema não é fonte de verdade de autenticação, pagamentos, Commerce, cursos, matrícula/progresso, Domain access, Wiki ou outras regras de negócio. Essas responsabilidades permanecem no Core, módulos especializados e `aculta_portal`.
+## O que já existe em 0.1.0
 
-## Base theme e assets
+- tokens ACULTA mapeados para custom properties Bootstrap;
+- tipografia Inter + Oswald;
+- shell responsivo;
+- navegação com Bootstrap Collapse e progressive enhancement;
+- breadcrumb público integrado ao presenter do Portal;
+- formulários/auth com herança Bootstrap5;
+- primeiro SDC stable: `aculta420:editorial-card`;
+- CSS do editorial card auto-carregado pelo SDC;
+- carrossel editorial VVJB com JS contextual;
+- cards/prosa/projetos/institucional/footer;
+- foco visível, teclado e reduced-motion;
+- schema obrigatório para SDCs via `enforce_prop_schemas: true`;
+- versionamento SemVer próprio.
 
-- Drupal Core: `^11`.
-- Base theme: `bootstrap5`.
-- Bootstrap pertence exclusivamente ao base theme; não embarcar uma segunda cópia.
-- A library global atual é `aculta/global`.
-- CSS atual: fundações em `tokens.css`/`base.css`/`layout.css`, componentes em `css/components/` e integrações ainda residuais em `css/style.css`.
-- JavaScript atual: `js/navigation.js` global e `js/editorial-carousel.js` contextual no carrossel editorial da Home.
-- Fontes web: Inter e Oswald via Google Fonts.
+## Estrutura
 
-## Design system
+```text
+web/themes/custom/aculta420/
+├── aculta420.info.yml
+├── aculta420.libraries.yml
+├── aculta420.theme
+├── assets/
+├── components/
+│   └── content/
+│       └── editorial-card/
+├── config/
+├── css/
+├── docs/
+├── js/
+└── templates/
+```
 
-Cores oficiais:
+Os componentes podem ser agrupados em subdiretórios de `components/`; o Core
+SDC suporta essa organização.
 
-| Papel | Valor |
-| --- | --- |
-| verde escuro | `#0c3c29` |
-| verde estrutural | `#689427` |
-| amarelo | `#f2ca36` |
-| vermelho | `#d4452d` |
-| creme | `#fbf4e8` |
-| branco | `#ffffff` |
+## Documentação
 
-Tipografia: Oswald para display/headings/nav/CTAs; Inter para corpo, formulários, metadados e UI.
+Comece por [docs/README.md](docs/README.md).
 
-Semântica: verde = estrutura, verde escuro = contraste/interação, amarelo = ação, vermelho = ênfase editorial, creme/branco = superfície.
+Documentos normativos:
 
-Detalhes: [docs/design-system.md](docs/design-system.md) e [docs/component-design-system.md](docs/component-design-system.md).
+- [Arquitetura](docs/architecture.md)
+- [Features atuais](docs/features.md)
+- [Design system](docs/design-system.md)
+- [Componentes](docs/components.md)
+- [Desenvolvimento](docs/development.md)
+- [Acessibilidade](docs/accessibility.md)
+- [Decisões](docs/decisions.md)
+- [Roadmap](docs/roadmap.md)
+- [Versionamento](docs/versioning.md)
+- [Migração 0.1.0](docs/migration-0.1.0.md)
+- [CHANGELOG](CHANGELOG.md)
 
-## Estrutura atual
+## Regra principal
 
-- `assets/branding` - originais e exports de marca.
-- `config/install` e `config/schema` - defaults e schema de theme settings.
-- `css/tokens.css` - paleta, tokens do tema e integração de custom properties Bootstrap.
-- `css/base.css` - base tipográfica e regras globais de elementos.
-- `css/layout.css` - container e geometria estrutural geral.
-- `css/components/header.css` - header e branding textual.
-- `css/components/navigation.css` - navegação principal e progressive enhancement visual.
-- `css/components/breadcrumb.css` - breadcrumb e links editoriais associados.
-- `css/components/content.css` - espaçamento principal, títulos de seção, superfícies e cards.
-- `css/components/buttons.css` - botões/CTAs públicos e estados.
-- `css/components/auth.css` - apresentação das rotas Drupal de login/registro/recuperação.
-- `css/components/footer.css` - base visual do footer.
-- `css/drupal-bootstrap.css` - integração visual com componentes Drupal/Bootstrap.
-- `css/components/institutional.css` - composição institucional, projetos e conteúdo editorial relacionado.
-- `css/components/editorial-carousel.css` - apresentação do pattern/engine VVJB; não contém mais CSS exclusivo do card editorial.
-- `css/responsive.css` - ajustes responsivos globais remanescentes.
-- `css/style.css` - trecho residual ainda misto de footer-layout, formulários, Conta/segurança e participação.
-- `components/editorial-card` - primeiro SDC `stable`; Twig, metadata e CSS exclusivo carregado automaticamente pelo Drupal.
-- `js/navigation.js` - progressive enhancement da navegação e integração com Bootstrap Collapse.
-- `js/editorial-carousel.js` - integração de foco com o carousel editorial VVJB; carregado pela library contextual `aculta/editorial-carousel` apenas na View da Home.
-- `templates` - overrides Twig.
-- `docs` - contratos e inventário técnico do tema.
+> O tema não vira fonte de verdade de autenticação, Commerce, LMS, Domain,
+> Wiki, fórum, pagamentos ou persistência.
 
-O inventário auditado está em [docs/inventory.md](docs/inventory.md).
+SDCs recebem contratos de apresentação. Não consultam storage, entidades ou
+serviços de domínio.
 
-## Componentes reconhecidos
+## Histórico
 
-Header, branding, navegação desktop/mobile, menu utilitário/Conta, breadcrumb, hero, pares de CTA, cards, listas editoriais, bloco institucional, formulários, alerts, tables, footer e apresentação integrada de Conta/Cursos.
-
-Componentes visuais nunca armazenam estado funcional.
-
-Veja [docs/components.md](docs/components.md).
-
-## Acessibilidade
-
-O tema deve preservar WCAG AA, foco visível, teclado, Escape no menu mobile, `aria-current`, headings, labels, alt text, landmarks e `prefers-reduced-motion`. Links editoriais vermelhos são opt-in, não regra global para todo `a`.
-
-Veja [docs/accessibility.md](docs/accessibility.md).
-
-## JavaScript
-
-Usar Drupal behaviors e `once()`; manter progressive enhancement; deixar Bootstrap e módulos contrib responsáveis por suas engines. O tema adiciona integração de teclado/foco sem reimplementar componentes.
-
-Veja [docs/javascript.md](docs/javascript.md).
-
-## Templates
-
-Twig recebe dados preparados para apresentação. Não consulta banco, não processa pagamento, não decide matrícula, Domain access ou autorização e não persiste estado. Overrides devem preservar atributos e metadata de acesso/cache.
-
-O tema herda templates Bootstrap5/Core/contrib por padrão. Overrides existem apenas quando há delta visual/semântico ACULTA; o G4 removeu o override redundante de `input.html.twig` para restaurar a implementação do Bootstrap5 4.0.8.
-
-No breadcrumb público, `aculta_portal` é dono da política e hierarquia; o tema apenas adapta o título atual para o Twig e renderiza a semântica visual/acessível.
-
-Veja [docs/templates.md](docs/templates.md).
-
-## Evolução
-
-A refatoração estrutural defensiva A–G4 está encerrada. A evolução corrente é a **Fase H — ACULTA Bootstrap Component Design System**, mantendo Bootstrap como infraestrutura e ACULTA como linguagem visual/componentizada.
-
-A divisão de CSS/JS continua sem introduzir Sass, Webpack, Vite, Node, PostCSS ou outra cadeia de build sem benefício técnico concreto e aprovado.
-
-Ambientes de desenvolvimento e produção usam Apache; a configuração continua específica por ambiente e o tema não pode depender de comportamento exclusivo do servidor web.
-
-O roadmap histórico por fases H foi substituído por releases SemVer iniciando em `0.1.0`; novas entregas devem seguir [docs/roadmap.md](docs/roadmap.md).
-
-Veja [docs/development.md](docs/development.md), [docs/versioning.md](docs/versioning.md), [docs/roadmap.md](docs/roadmap.md) e [a arquitetura geral](../../../../docs/README.md).
+ACULTA420 0.1.0 nasce da base técnica do antigo tema `aculta`. O histórico de
+refatoração foi consolidado no CHANGELOG e nas decisões; a documentação corrente
+descreve apenas o estado suportado da versão atual.

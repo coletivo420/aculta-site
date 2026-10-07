@@ -1,71 +1,89 @@
 # Acessibilidade
 
-A refatoração deve manter ou melhorar acessibilidade sem alterar a identidade visual aprovada.
+Meta: WCAG 2.2 AA para o design system público.
 
-## Contratos mínimos
+## Contratos globais
 
-Auditar e preservar:
-
-- `:focus-visible`;
-- navegação por teclado;
-- Escape no menu mobile;
-- retorno de foco ao toggle;
-- `aria-current`;
+- teclado para toda funcionalidade interativa;
+- foco visível;
+- ordem de foco lógica;
+- headings sem saltos arbitrários;
 - labels e accessible names;
-- hierarquia de headings;
-- alt text;
 - landmarks;
-- `prefers-reduced-motion`;
-- contraste WCAG AA quando aplicável.
+- `aria-current` para navegação atual;
+- contraste AA;
+- reduced motion;
+- sem informação transmitida apenas por cor;
+- estados empty/loading/error compreensíveis.
 
-## Navegação
+## Target size
 
-O menu mobile usa Bootstrap Collapse como engine. O behavior do tema adiciona Escape e devolução de foco; não deve criar um segundo mecanismo de abrir/fechar menu.
+Controles novos devem buscar pelo menos 24 x 24 CSS px ou spacing equivalente,
+conforme WCAG 2.2 SC 2.5.8.
 
-Estado de página atual vem do Drupal (`.is-active`, `.active`, `aria-current`), nunca de comparação manual de URL no JavaScript.
+Referência:
+https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum
 
-## Carousel editorial
+## Motion
 
-VVJB continua dono de layout, controles, tempo e transições.
+`prefers-reduced-motion: reduce` deve:
 
-O tema:
+- remover/reduzir animação não essencial;
+- impedir auto-rotation quando aplicável;
+- preservar funcionalidade.
 
-- pausa o carousel quando foco de teclado entra;
-- não cria timer próprio;
-- respeita reduced motion no CSS;
-- fornece o label necessário ao `aria-labelledby`.
+## Carousel
 
-## Contraste e paleta
+Carrosséis são conteúdo de alto risco de acessibilidade.
 
-A paleta oficial não deve ser alterada automaticamente para “resolver contraste”. Corrigir aplicação semântica.
+Se houver rotação automática:
 
-Cuidados conhecidos:
+- deve existir stop/start;
+- foco dentro do carousel interrompe rotação;
+- hover interrompe rotação;
+- reduced-motion inicia pausado;
+- controles são operáveis por teclado;
+- mudanças não devem desorientar leitor de tela;
+- foco não salta ao trocar slide.
 
-- verde escuro/branco: adequado para alto contraste;
-- vermelho/branco: requer atenção em texto pequeno;
-- vermelho/creme: não usar indiscriminadamente como texto pequeno;
-- verde estrutural/branco: revisar tamanho/peso;
-- amarelo/branco: não usar como combinação de texto.
+Preferência ACULTA420: evitar autoplay por padrão em novos patterns.
 
-## Formulários
+Referências:
+- https://www.w3.org/WAI/tutorials/carousels/
+- https://www.w3.org/WAI/ARIA/apg/patterns/carousel/
 
-Preservar:
+## Menus/Offcanvas
 
-- label associado;
-- states/error messaging do Drupal;
-- focus ring visível;
-- attributes Core/Bootstrap;
-- integração de widgets externos sem sobrescrever markup crítico.
+Bootstrap fornece behavior; ACULTA420 deve validar:
 
-## Teste manual mínimo
+- botão com accessible name;
+- estado expandido correto;
+- Escape;
+- retorno de foco;
+- foco dentro do painel;
+- menu útil sem JavaScript quando houver fallback aplicável.
 
-Depois de mudanças visuais:
+## Color modes
 
-1. navegar toda a página somente por teclado;
-2. abrir e fechar menu mobile, incluindo Escape;
-3. verificar foco após fechamento;
-4. validar breadcrumb/current states;
-5. percorrer forms e mensagens de erro;
-6. testar reduced motion;
-7. revisar headings/landmarks;
-8. testar páginas representativas em viewport desktop e mobile.
+Light/dark/auto só podem ser liberados quando:
+
+- tokens semânticos cobrem todas as superfícies principais;
+- foco continua visível;
+- contraste AA é preservado;
+- assets/logos funcionam nos modos;
+- escolha explícita do usuário não é sobrescrita pelo sistema.
+
+## Component checklist
+
+Antes de promover um SDC para stable:
+
+- keyboard;
+- focus;
+- target size;
+- long title;
+- empty slot;
+- mobile;
+- zoom/reflow;
+- reduced motion;
+- color/contrast;
+- accessible name/state quando interativo.

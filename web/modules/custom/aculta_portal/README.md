@@ -27,7 +27,7 @@ progresso, Wiki, fórum ou comentários.
 ## Arquitetura
 
 ```text
-Core + módulos contrib -> aculta_portal -> tema aculta
+Core + módulos contrib -> aculta_portal -> tema ACULTA420
 ```
 
 O tema é apresentação. O Portal é integração. Os módulos funcionais continuam
@@ -49,7 +49,7 @@ fontes de verdade.
 
 ### Breadcrumb público
 
-`AcultaBreadcrumbBuilder` é a fonte de verdade para purpose público, rotas ocultas, raiz por domínio, hierarquia, cache metadata e resolução segura do título atual. O tema `aculta` não replica essa política: consome os links Drupal e `currentTitle()` apenas para renderização.
+`AcultaBreadcrumbBuilder` é a fonte de verdade para purpose público, rotas ocultas, raiz por domínio, hierarquia, cache metadata e resolução segura do título atual. O tema `aculta420` não replica essa política: consome os links Drupal e `currentTitle()` apenas para renderização.
 
 ## Documentação normativa
 

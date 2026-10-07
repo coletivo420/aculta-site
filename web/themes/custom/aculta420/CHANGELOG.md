@@ -1,45 +1,63 @@
-# Changelog — tema ACULTA
+# CHANGELOG — ACULTA420
 
-Este changelog versiona somente o tema `aculta` / ACULTA Bootstrap Component
-Design System.
+Este changelog versiona o tema/design system ACULTA420.
 
-## 0.1.0 — 2026-10-07
+## 0.1.0 — Foundation — 2026-10-07
 
-Baseline versionada do design system.
+### Identidade técnica
 
-### Arquitetura
+- novo nome: **ACULTA420**;
+- novo machine name: `aculta420`;
+- novo diretório: `web/themes/custom/aculta420`;
+- provider SDC: `aculta420:*`;
+- libraries: `aculta420/*`;
+- settings: `aculta420.settings`;
+- hooks PHP: `aculta420_preprocess_*`.
 
-- encerra a refatoração estrutural defensiva A–G4;
-- formaliza o ACULTA Bootstrap Component Design System;
-- mantém Bootstrap5 como infraestrutura e ACULTA como linguagem visual;
-- documenta a fronteira Drupal/contrib -> aculta_portal -> tema.
+### Configuração
 
-### Foundations
+- `core.extension` passa a instalar `aculta420`;
+- `system.theme` passa a usar `aculta420` como default;
+- block placements passam a depender do novo tema;
+- settings/favicons apontam para o novo diretório;
+- IDs de conteúdo/config `aculta_*` são preservados quando não representam o
+  provider do tema.
 
-- tokens ACULTA centralizados;
-- integração com custom properties Bootstrap;
-- CSS separado por responsabilidade;
-- correções de tokens/RGB auditadas.
+### Design system
 
-### Components
+- Bootstrap5 permanece infraestrutura;
+- Core SDC permanece base de componentização;
+- `enforce_prop_schemas: true` ativado;
+- `editorial-card` organizado em `components/content/`;
+- primeiro SDC stable passa a ser `aculta420:editorial-card`;
+- CSS do card continua auto-carregado pelo SDC;
+- VVJB permanece engine do carousel editorial.
 
-- `aculta:editorial-card` é o primeiro SDC `stable`;
-- CSS exclusivo do editorial card co-localizado;
-- presenter Drupal preserva attributes/title_prefix/title_suffix;
-- auditoria de primitives registrada.
+### Documentação
 
-### Assets
+A documentação histórica de refatoração foi consolidada e substituída por um
+conjunto normativo:
 
-- navigation JS permanece global;
-- editorial-carousel JS é contextual;
-- VVJB permanece responsável pela engine do carrossel editorial.
+- architecture;
+- features;
+- design-system;
+- components;
+- development;
+- accessibility;
+- decisions;
+- migration;
+- roadmap;
+- versioning.
 
-### Twig
+### Base herdada
 
-- overrides redundantes removidos;
-- herança Bootstrap5/Core priorizada.
+0.1.0 reaproveita a base madura do antigo tema `aculta`:
 
-### Próximo ciclo
+- tokens;
+- split CSS/JS;
+- contextual asset loading;
+- cleanup Twig;
+- boundary Portal/theme;
+- acessibilidade/progressive enhancement.
 
-0.2.0 inicia Foundations 2.0, schemas obrigatórios, motion/semantic tokens e
-primeiro primitive SDC experimental.
+O histórico detalhado anterior permanece no Git; não é especificação corrente.

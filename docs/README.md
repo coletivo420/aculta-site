@@ -14,23 +14,29 @@
 - [ADR-003 - Sessão compartilhada](decisions/ADR-003-shared-session.md)
 - [ADR-004 - SQLite no desenvolvimento](decisions/ADR-004-sqlite-development.md)
 - [ADR-005 - Drupal LMS como fonte de verdade](decisions/ADR-005-lms-integration.md)
-- [ADR-006 - Apache como baseline definitivo](decisions/ADR-006-web-servers.md)
-- [ADR-007 - ACULTA Bootstrap Component Design System](decisions/ADR-007-bootstrap-component-design-system.md)
+- [ADR-006 - Apache como baseline](decisions/ADR-006-web-servers.md)
+- [ADR-007 - ACULTA420 Bootstrap Component Design System](decisions/ADR-007-bootstrap-component-design-system.md)
 
 ## ACULTA Portal
 
-A documentação normativa da camada de integração fica em
-[`docs/portal`](portal/README.md): arquitetura, fontes de verdade, módulos
-upstream, AJAX, fórum, testes, versionamento e roadmap.
+Documentação normativa da integração:
+
+[docs/portal](portal/README.md)
+
+## Módulos
+
+Inventário funcional:
+
+[docs/modules](modules/README.md)
 
 ## Integrações externas
 
-- [Google](integrations/GOOGLE.md)
+[docs/integrations](integrations/README.md)
 
-## Tema aculta
+## Tema ACULTA420
 
-A documentação detalhada da camada de apresentação fica em [`web/themes/custom/aculta/docs`](../web/themes/custom/aculta/docs/), incluindo inventário, design system, componentes, templates, acessibilidade, JavaScript, branding e desenvolvimento.
+Documentação normativa do tema/design system:
 
-## Referências estudadas
+[web/themes/custom/aculta420/docs](../web/themes/custom/aculta420/docs/README.md)
 
-A organização aproveita ideias de projetos Drupal maduros: Domain para documentação de multidomínio; Varbase Core para divisão por features; Open Social para separar arquitetura/desenvolvimento/testes; Vartheme BS5 para tratar o tema como produto técnico. Copiamos disciplina e organização, não armazenamento, dependências ou build tooling.
+Versão inicial da nova fundação: **0.1.0**.

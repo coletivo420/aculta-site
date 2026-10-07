@@ -1,168 +1,139 @@
 # Design system
 
-O tema `aculta` é o **ACULTA Bootstrap Component Design System**. Ele representa a identidade aprovada e compõe Bootstrap5, Drupal e contrib sem assumir suas regras de negócio.
+## Identidade
 
-A arquitetura completa, camadas, contratos presenter/SDC e roadmap H estão em [component-design-system.md](component-design-system.md).
+ACULTA420 usa Bootstrap como infraestrutura e mantém identidade própria por
+tokens e contratos de componentes.
 
-Evolução do design system não autoriza redesign implícito.
+### Paleta
 
-## Camadas do sistema
-
-- **Foundations:** tokens, tipografia, spacing, cor, motion e acessibilidade transversal.
-- **Primitives:** unidades visuais pequenas e reutilizáveis quando houver ganho concreto.
-- **Components:** unidades compostas como cards, breadcrumb e pagination.
-- **Patterns:** composições como hero, grid, section e carousel/rail.
-- **Shell:** header, navigation, account utility e footer.
-
-Bootstrap permanece infraestrutura. ACULTA define identidade e contratos visuais.
-
-## Paleta oficial
-
-| Token conceitual | Valor | Uso |
+| Token | Valor | Uso |
 | --- | --- | --- |
-| verde estrutural | `#689427` | estrutura institucional |
-| verde escuro | `#0c3c29` | contraste e interação |
-| amarelo | `#f2ca36` | ação |
-| vermelho | `#d4452d` | editorial e ênfase |
-| creme | `#fbf4e8` | superfície |
-| branco | `#ffffff` | superfície/contraste |
+| `--aculta-green-dark` | `#0c3c29` | texto, contraste, interação |
+| `--aculta-green` | `#689427` | estrutura e marca |
+| `--aculta-yellow` | `#f2ca36` | ação/destaque |
+| `--aculta-red` | `#d4452d` | ênfase editorial |
+| `--aculta-cream` | `#fbf4e8` | superfície |
+| `--aculta-white` | `#ffffff` | superfície/contraste |
 
-Não adotar Bootstrap blue, cinzas arbitrários, gradientes como identidade ou `color-mix()` como nova cor oficial.
-
-Gradientes puramente técnicos usados para desenhar controles não são, por si, identidade visual.
+O prefixo `--aculta-*` é mantido por decisão arquitetural: representa o
+design language, não o machine name do tema.
 
 ## Tipografia
 
-### Inter
+- display/headings/navigation/CTA: Oswald;
+- corpo/forms/metadados/UI: Inter.
 
-Usar em:
+Fontes são declaradas na library global atual. Uma futura estratégia de
+self-hosting pode ser avaliada separadamente; não misturar com componentização.
 
-- corpo;
-- formulários;
-- metadados;
-- UI;
-- textos auxiliares.
+## Bootstrap mapping
 
-Pesos carregados atualmente: 400, 500, 600 e 700.
+Tokens ACULTA alimentam `--bs-*` para evitar duas paletas paralelas.
 
-### Oswald
+Sempre manter pares `color` / `color-rgb` semanticamente equivalentes.
 
-Usar em:
+Não redefinir Bootstrap em cada componente quando uma custom property global
+resolve o problema.
 
-- H1-H6;
-- navegação;
-- botões e CTAs;
-- categorias;
-- destaques.
+## Foundations
 
-Pesos carregados atualmente: 400, 500, 600 e 700.
+0.1.0 possui:
 
-Não introduzir outra família sem decisão explícita.
+- color tokens;
+- font tokens;
+- border/focus tokens;
+- section spacing;
+- Bootstrap semantic mapping.
 
-## Botões
+Próximos foundations previstos:
 
-### Primary
+- semantic surface/text tokens;
+- motion durations/easings;
+- color modes;
+- spacing scale mais explícita quando houver uso comprovado.
 
-Normal:
+## Color modes
 
-- fundo amarelo;
-- texto vermelho;
-- borda amarela.
+Bootstrap 5.3 usa `data-bs-theme` para color modes. ACULTA420 seguirá o mesmo
+contrato.
 
-Hover, focus e active:
+Ordem de implementação:
 
-- fundo verde escuro;
-- texto branco;
-- borda verde escuro.
+1. semantic tokens independentes de modo;
+2. valores light;
+3. valores dark;
+4. `auto` baseado em `prefers-color-scheme`;
+5. seletor e persistência;
+6. alto contraste somente após auditoria.
 
-### Secondary em par de CTA
+Não ativar dark mode enquanto componentes dependerem de cores literais que não
+tenham equivalente semântico.
 
-Normal:
+Referência:
+https://getbootstrap.com/docs/5.3/customize/color-modes/
 
-- fundo transparente/creme;
-- texto verde escuro;
-- borda de 2px verde escuro.
+## Motion
 
-Hover/focus:
+Motion deve ser foundation, não decisão local de cada componente.
 
-- fundo verde escuro;
-- texto branco.
+Roadmap:
 
-Widgets externos, como Google, Turnstile e Mercado Pago, não devem ser forçados a seguir esse contrato quando isso interferir em sua integração.
+```css
+--aculta-motion-fast: ...;
+--aculta-motion-normal: ...;
+--aculta-motion-slow: ...;
+--aculta-ease-standard: ...;
+```
 
-## Links editoriais
+Todos os componentes animados devem respeitar `prefers-reduced-motion`.
 
-Links editoriais são opt-in.
+## Primitives
 
-Normal:
+Primitive é uma categoria do design system, não sinônimo de SDC.
 
-- vermelho;
-- underline.
+Exemplos:
 
-Hover/focus:
+- Button: primitive Bootstrap/CSS global;
+- Category label: candidato a SDC;
+- Icon: futuramente via Core Icon API/UI Icons;
+- Media: só abstrair quando cards comprovarem contrato comum.
 
-- verde escuro;
-- underline.
+## Variants
 
-Visited:
+Drupal Core suporta variants SDC em 11.2+.
 
-- vermelho.
+Usar variant quando:
 
-Aplicar apenas em contextos semânticos como `.aculta-prose`, `.aculta-richtext` ou seletores explícitos. Não criar regras globais para `a`, `.region-content a`, `.node a` ou `.view-content a`.
+- semântica é a mesma;
+- estrutura principal é a mesma;
+- diferença é uma apresentação nomeada e finita.
 
-Não contam como links editoriais:
+Não usar variants para codificar regra de negócio ou criar combinatória
+arbitrária de opções.
 
-- header/footer/nav;
-- botões;
-- Conta;
-- formulários;
-- Commerce;
-- widgets;
-- headings clicáveis.
+## Assets
 
-## Header
+- foundations realmente globais ficam em `aculta420/global`;
+- CSS/JS exclusivo de SDC fica no diretório do componente;
+- integrations/patterns podem usar libraries contextuais;
+- evitar asset global “por conveniência”.
 
-Estados aprovados:
+## Branding assets
 
-- inativo: verde estrutural + texto branco;
-- current: amarelo + texto vermelho + underline vermelho;
-- hover/focus não-current: verde escuro + texto branco;
-- hover current: permanece amarelo/vermelho.
+Assets técnicos do tema ficam em:
 
-A fonte de estado deve ser Drupal: `.is-active`, `.active` e `[aria-current="page"]`. Não comparar URLs em JavaScript.
+`assets/branding/aculta420/`
 
-## Bootstrap
+Originais e exports devem permanecer separados. Alterar nome de arquivo não
+significa redesenhar identidade visual.
 
-Bootstrap5 continua sendo a base estrutural e comportamental.
+## Anti-regressão
 
-Preferir:
+Não:
 
-- custom properties;
-- tokens;
-- component scopes;
-- classes/markup compatíveis com o base theme.
-
-Evitar uma guerra de especificidade seletor por seletor e não duplicar Bootstrap no tema.
-
-## Tokens
-
-A evolução de `style.css` deve centralizar conceitos realmente reutilizados, como:
-
-- cores oficiais;
-- famílias e pesos tipográficos;
-- spacing recorrente;
-- container;
-- radius;
-- focus ring;
-- borders;
-- estados de botão.
-
-Não criar centenas de variáveis apenas para aumentar abstração. Um token deve representar um conceito estável e reutilizado.
-
-### Contratos Bootstrap RGB
-
-Quando um token Bootstrap possui par hexadecimal/custom-property e `-rgb`, os dois devem representar a mesma cor semântica. Exemplo: `--bs-link-color` usa o verde escuro e `--bs-link-color-rgb` deve permanecer em `12, 60, 41`.
-## Autenticação
-
-As rotas Drupal de login, registro e recuperação reutilizam exclusivamente os tokens oficiais de cor e tipografia do tema. Não introduzir literais duplicados em `css/components/auth.css`; mudanças visuais devem ocorrer nos tokens ou em regras semânticas explicitamente justificadas.
-
+- introduzir cor literal duplicada quando existe token;
+- criar nova fonte/tipografia sem decisão;
+- embarcar Bootstrap novamente;
+- usar utilitário Bootstrap para substituir contrato semântico necessário;
+- criar motion incompatível com reduced-motion.

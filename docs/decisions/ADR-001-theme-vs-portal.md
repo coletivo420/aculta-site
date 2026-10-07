@@ -2,9 +2,19 @@
 
 Status: Accepted
 
-`aculta` é apresentação. `aculta_portal` é integração. Módulos especializados continuam donos de dados e regras. O tema pode consumir contexto de apresentação fornecido pelo Portal, mas não persiste estado funcional.
+## Decisão
 
-## Aplicação: breadcrumb público
+**ACULTA420** (`aculta420`) é apresentação/design system.
 
-A política de breadcrumb pertence ao `aculta_portal`: purpose, rotas ocultas, raiz, hierarquia, cache metadata e título atual. O tema pode adaptar esses dados para Twig, mas não deve repetir a decisão de domínio ou rota.
+`aculta_portal` é integração/orquestração.
 
+Módulos especializados continuam donos de dados e regras. O tema pode consumir
+contexto de apresentação fornecido pelo Portal, mas não persiste estado
+funcional.
+
+## Breadcrumb público
+
+A política de breadcrumb pertence ao `aculta_portal`: purpose, rotas ocultas,
+raiz, hierarquia, cache metadata e título atual.
+
+ACULTA420 adapta e renderiza; não repete decisão de domínio/rota.

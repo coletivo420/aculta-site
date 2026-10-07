@@ -1,412 +1,194 @@
-# Roadmap versionado — ACULTA Bootstrap Component Design System
+# Roadmap versionado — ACULTA420
 
-## Estado atual: 0.1.0
+## 0.1.0 — Foundation
 
-A versão **0.1.0** representa o baseline consolidado existente em outubro de
-2026. Ela encerra a refatoração defensiva A–G4 e incorpora H1/H2:
+Status: **em implementação**.
 
-- Drupal 11.4.x;
-- Bootstrap5 base theme 4.0.8;
-- tokens ACULTA mapeados para variáveis Bootstrap;
-- CSS/JS separados por responsabilidade;
-- JavaScript editorial contextual;
-- fronteira tema/Portal documentada;
-- primeiro SDC `stable`: `aculta:editorial-card`;
-- CSS exclusivo do editorial card co-localizado no SDC;
-- auditoria inicial de primitives concluída.
+Objetivo: estabelecer o novo provider `aculta420` sobre a base madura do antigo
+tema `aculta`.
 
-0.1.0 **não** representa API final. É a fundação versionada a partir da qual o
-design system passa a evoluir.
+Inclui:
 
-## Princípios do roadmap
+- rename completo do provider do tema;
+- versionamento SemVer próprio;
+- documentação reestruturada;
+- config sync apontando para `aculta420`;
+- SDC namespace `aculta420:*`;
+- components organizados por domínio visual;
+- `enforce_prop_schemas: true`;
+- primeiro SDC stable: editorial-card;
+- Bootstrap5 4.0.8 como infraestrutura;
+- assets globais/contextuais já separados onde comprovado.
 
-1. Bootstrap é infraestrutura; ACULTA é a linguagem visual.
-2. SDC não consulta storage, serviços de domínio ou entidades.
-3. Presenter Drupal preserva Theme API/cache/access e alimenta SDC.
-4. Primitive não implica SDC.
-5. Components podem ser organizados em subdiretórios; IDs permanecem
-   namespaced pelo provider/componente.
-6. Variants SDC são preferíveis a componentes duplicados quando semântica e
-   estrutura são a mesma família.
-7. Engine funcional existente não é reescrita apenas para padronizar tecnologia.
-8. Assets específicos deixam `aculta/global` quando ownership estiver provado.
-9. Acessibilidade é parte do contrato do componente.
-10. Ferramentas editoriais entram depois que os componentes estão maduros.
+Gate de release:
 
-## Visão de releases
-
-| Versão | Entrega principal | Resultado esperado |
-| --- | --- | --- |
-| **0.1.0** | baseline do design system | arquitetura e primeiro SDC stable |
-| **0.2.0** | Foundations 2.0 | schemas, motion, semantic tokens, taxonomy SDC |
-| **0.3.0** | Card System v1 | editorial/project/course em família coerente |
-| **0.4.0** | Patterns v1 | section, grid, hero e carousel/rail universais |
-| **0.5.0** | Shell + Icons + Color mode UI | navbar/offcanvas/account/icon system |
-| **0.6.0** | Search + Feedback | busca transversal, autocomplete, toast/skeleton |
-| **0.7.0** | Drupal UI integration | SDCs expostos seletivamente via UI Patterns 2 |
-| **0.8.0** | Component Library + QA | catálogo visual, exemplos e validação isolada |
-| **0.9.0** | estabilização / API freeze | acessibilidade, performance, deprecações |
-| **1.0.0** | design system estável | contratos públicos e baseline de produção |
-| **1.1.0+** | autoria visual seletiva | Canvas para landing pages/campanhas |
-| experimental | Display Builder | somente avaliação até release estável adequada |
-
----
+- tema descoberto/instalável;
+- config import sem referência runtime ao provider `aculta`;
+- blocks continuam posicionados;
+- SDC e libraries descobertos;
+- todos os domains representativos passam smoke test.
 
 ## 0.2.0 — Foundations 2.0
 
-### Objetivo
+- semantic tokens de surface/text/interactive;
+- motion tokens;
+- remoção de durations hardcoded equivalentes;
+- foundation para light/dark sem ativar UI incompleta;
+- `category-label` experimental;
+- avaliar SDC Devel como dev-only;
+- validar component schemas continuamente.
 
-Tornar contratos, tokens e validação fortes o suficiente para suportar dezenas
-de componentes sem dívida estrutural.
-
-### Escopo
-
-- habilitar `enforce_prop_schemas: true`;
-- validar todos os SDCs existentes antes da ativação;
-- avaliar `sdc_devel` como dependência somente de desenvolvimento;
-- adotar organização recursiva de componentes:
-
-```text
-components/
-├── primitives/
-├── content/
-├── navigation/
-├── sections/
-└── feedback/
-```
-
-- mover `editorial-card` para `content/` somente se a mudança for
-  comprovadamente transparente ao component ID;
-- criar motion tokens: durations e easings;
-- criar semantic tokens para surface/text/border/interactive;
-- preparar tokens por `data-bs-theme` sem ativar modo escuro incompleto;
-- criar `category-label` como primeiro primitive SDC experimental;
-- manter button como primitive CSS/Bootstrap global;
-- documentar target sizes, focus e reduced-motion como foundations;
-- substituir durações hardcoded por motion tokens onde behavior for equivalente.
-
-### Não fazer
-
-- não criar SDC de button apenas para substituir `.btn`;
-- não ativar dark mode parcial;
-- não adicionar UI Patterns/Canvas ainda;
-- não reorganizar markup funcional de Form API.
-
-### Gate de saída
-
-- schemas obrigatórios sem falha;
-- `editorial-card` continua stable;
-- `category-label` usado por pelo menos editorial e project presenter;
-- zero regressão visual nos consumidores atuais.
-
----
+Não criar button SDC.
 
 ## 0.3.0 — Card System v1
 
-### Objetivo
+- project-card;
+- course-card;
+- consolidar contratos recorrentes;
+- avaliar primitive media com evidência;
+- usar variants SDC quando a família é a mesma;
+- product-card somente com catálogo Commerce real.
 
-Criar uma linguagem comum para conteúdo sem acoplar cards às entidades que os
-alimentam.
-
-### Escopo
-
-- consolidar slots semânticos recorrentes: media, category/meta, title,
-  summary, actions e footer;
-- usar SDC variants nativos para variações de apresentação quando pertencem à
-  mesma família;
-- criar/migrar:
-  - `editorial-card`;
-  - `project-card`;
-  - `course-card`;
-- criar primitive/media apenas quando project + course comprovarem contrato
-  compartilhado;
-- `product-card` fica condicionado à existência de Product Types/Variations e
-  catálogo Commerce reais;
-- presenters permanecem específicos de Node/LMS/Commerce;
-- nenhuma entidade é acessada dentro dos SDCs.
-
-### Variants
-
-Preferir, quando a semântica for a mesma:
-
-```text
-card
-├── default
-├── compact
-├── horizontal
-└── featured
-```
-
-em vez de quatro componentes independentes. Variants não devem virar depósito
-de combinações arbitrárias; diferenças de domínio continuam em presenters e
-componentes especializados.
-
-### Gate de saída
-
-- editorial/project/course compartilham tokens/contratos sem duplicação grave;
-- nenhum card calcula regra de negócio;
-- long title, missing media, empty summary e mobile validados.
-
----
+Gate: editorial/project/course sem regra de negócio no componente e com estados
+mobile/empty/long-title validados.
 
 ## 0.4.0 — Patterns v1
 
-### Objetivo
+- content-section;
+- content-grid;
+- hero;
+- carousel/rail universal.
 
-Compor componentes em estruturas universais reutilizáveis.
+Carousel define apresentação/acessibilidade. Engine permanece VVJB ou Bootstrap
+conforme o contexto.
 
-### Patterns alvo
+Gate: editorial e cursos compartilham linguagem de carousel sem JS duplicado.
 
-- `content-section`;
-- `content-grid`;
-- `hero`;
-- `carousel` / `rail`.
+## 0.5.0 — Shell + Icons + Color mode UI
 
-### Carousel
-
-O pattern ACULTA define:
-
-- heading/description/actions;
-- items;
-- spacing;
-- controles visuais;
-- foco;
-- reduced motion;
-- regras de acessibilidade.
-
-A engine continua sendo um detalhe de integração:
-
-```text
-ACULTA carousel pattern
-        |
-        +-- editorial-card
-        +-- course-card
-        +-- product-card (quando existir)
-        |
-        +-- engine adapter
-              +-- VVJB
-              +-- Bootstrap quando fizer sentido
-```
-
-VVJB não será substituído apenas para uniformizar implementação.
-
-Autoplay deve ser evitado por padrão. Quando existir, deve possuir controle
-explícito de pause/stop e respeitar reduced motion.
-
-### Gate de saída
-
-- carousel editorial e cursos compartilham pattern visual;
-- SHOP entra somente quando houver catálogo Commerce real;
-- não existem três engines JS proprietárias diferentes.
-
----
-
-## 0.5.0 — Shell, Icon System e seletor de tema
-
-### Objetivo
-
-Modernizar a navegação transversal sem criar framework JS paralelo.
-
-### Escopo
-
-- Drupal Core Icon API como contrato;
-- UI Icons 2.x como integração recomendada;
-- pack ACULTA/Bootstrap Icons definido via Icon API, sem `<i class="bi ...">`
-  espalhado;
-- navbar desktop revisada;
-- Bootstrap Offcanvas no mobile;
+- Core Icon API;
+- UI Icons 2.x;
+- Bootstrap Icons por API, não markup espalhado;
+- navbar revisada;
+- Bootstrap Offcanvas mobile;
 - account dropdown;
 - search trigger;
-- seletor acessível `auto / light / dark`;
-- persistência local da preferência;
-- `data-bs-theme` como mecanismo de aplicação;
-- mega menu somente depois da navegação básica estabilizar.
-
-### Regra
-
-Bootstrap Collapse/Offcanvas/Dropdown continuam sendo as engines. O tema só
-adiciona integração Drupal, identidade e acessibilidade complementar.
-
----
+- auto/light/dark com persistência;
+- mega menu somente após shell básico estável.
 
 ## 0.6.0 — Search + Feedback
 
-### Busca
+- Search API;
+- Search API Autocomplete quando backend suportar;
+- busca transversal por domínio de conteúdo;
+- facets na página de resultados;
+- toast para confirmações não críticas;
+- alerts para mensagens críticas;
+- skeletons apenas onde layout de loading é previsível.
 
-- Search API como índice;
-- Search API Autocomplete 1.x quando o backend suportar autocomplete;
-- experiência transversal para editorial, cursos e Commerce quando disponível;
-- resultados agrupados por domínio somente se houver relevância real;
-- facets/filtros para página de resultados, não obrigatoriamente no popup.
+## 0.7.0 — Drupal UI integration
 
-### Feedback
-
-- Alerts permanecem para mensagens críticas;
-- Toast para confirmações não críticas;
-- skeleton/placeholder para Views AJAX, busca, cursos e Commerce onde houver
-  espera real;
-- live regions e foco tratados por severidade;
-- spinner não deve ser substituído por skeleton quando não houver layout
-  previsível.
-
----
-
-## 0.7.0 — Integração com Drupal UI
-
-### Tecnologia
-
-Adotar **UI Patterns 2.x**, que usa SDC Core.
-
-### Uso seletivo
-
-Expor componentes maduros em:
+Adotar UI Patterns 2.x seletivamente para expor nossos SDCs maduros em:
 
 - Views;
-- Manage Display / field formatters;
-- Block/Layout Builder onde houver caso de uso.
+- Manage Display;
+- field formatters;
+- Block/Layout Builder quando houver caso de uso.
 
-O editor escolhe opções controladas e variants existentes; não escreve CSS.
-
-### Não adotar
-
-- UI Suite Bootstrap como theme/design system concorrente;
-- duplicação dos nossos SDCs por componentes Bootstrap externos.
-
-UI Suite Bootstrap continua apenas como referência de arquitetura.
-
----
+Não adotar UI Suite Bootstrap como design system concorrente.
 
 ## 0.8.0 — Component Library + QA
 
-### Catálogo
-
 Preferência:
 
-1. UI Patterns Library para catálogo de componentes;
-2. UI Examples para exemplos curados/estados de uso.
+1. UI Patterns Library;
+2. UI Examples.
 
-Evitar criar rota customizada de style guide antes de avaliar essas opções.
-
-### Estados obrigatórios
+Estados documentados:
 
 - normal;
 - hover/focus;
-- disabled quando aplicável;
-- vazio;
-- título longo;
-- sem media;
+- disabled;
+- empty;
+- long content;
+- no media;
 - mobile;
 - light/dark;
 - reduced motion.
 
-### Qualidade
+Storybook só entra se a stack Drupal não cobrir o objetivo.
 
-- SDC Devel/validators;
-- testes de schema;
-- auditoria de attachments;
-- matriz de acessibilidade;
-- documentação para humanos e agentes de IA.
+## 0.9.0 — Stabilization / API freeze
 
-Storybook permanece opcional: não introduzir Node/build tooling apenas para ter
-um catálogo visual se a stack Drupal já cobrir o objetivo.
-
----
-
-## 0.9.0 — Estabilização e API freeze
-
-### Objetivo
-
-Parar de adicionar arquitetura nova e preparar 1.0.
-
-### Escopo
-
-- concluir light/dark/auto;
-- avaliar high-contrast como experimental;
+- WCAG 2.2 audit;
+- asset/performance audit;
 - reduzir CSS/JS global remanescente;
-- remover/deprecar classes legadas somente com migração;
-- revisar `style.css` residual;
-- congelar contratos de componentes `stable`;
-- auditoria WCAG 2.2;
-- auditoria de performance/asset attachment;
-- revisar documentação e exemplos;
-- nenhum componente crítico pode depender de API experimental não documentada.
+- revisar residual CSS;
+- finalizar dark/auto;
+- deprecation policy;
+- congelar contratos stable;
+- nenhuma arquitetura nova.
 
----
+## 1.0.0 — Stable Design System
 
-## 1.0.0 — ACULTA Design System estável
+Critérios:
 
-Critérios mínimos:
-
-- versão e CHANGELOG coerentes;
+- components críticos stable;
 - schemas obrigatórios;
-- componentes críticos `stable`;
-- cards e patterns principais consolidados;
-- shell moderno e acessível;
-- Icon API integrada;
-- busca transversal em produção;
-- integração UI Patterns seletiva validada;
-- component library disponível para desenvolvimento/editorial;
-- contratos de acessibilidade documentados;
-- zero regra de negócio movida ao tema;
-- política de compatibilidade/depreciação ativa.
+- card/pattern system consolidado;
+- shell acessível;
+- icon system;
+- search integrada;
+- UI Patterns seletivo validado;
+- component library disponível;
+- compat/deprecation policy ativa;
+- documentação íntegra.
 
-1.0.0 significa **API do design system estável**, não que todo elemento visual
-possível precise virar SDC.
+1.0 significa API do design system estável, não “todo HTML virou SDC”.
 
----
+## 1.1.0+ — Canvas pilot
 
-## Pós-1.0
-
-### 1.1.0 — Canvas pilot
-
-Canvas já é tecnologia estável no Drupal 11.3+, mas entra somente depois do
-design system estar estável.
+Canvas é estável no ecossistema atual, mas fica pós-1.0 para não ditar a API dos
+componentes antes dela estabilizar.
 
 Escopo inicial:
 
 - landing pages;
-- páginas institucionais;
 - campanhas;
+- institucionais;
 - hotsites.
 
-Conteúdo editorial estruturado continua em entidades Drupal normais.
+Conteúdo editorial estruturado continua em entidades Drupal.
 
-Preferir nossos próprios SDCs. Canvas Bootstrap não é dependência padrão.
+## Experimental — Display Builder
 
-### Display Builder
+Display Builder permanece beta em outubro de 2026. Avaliar em sandbox, nunca
+como requisito de 1.0.
 
-Display Builder permanece trilha experimental enquanto não houver release
-estável e enquanto seu fluxo para site existente não estiver validado.
+## Matriz tecnológica — outubro de 2026
 
-Não é requisito de 1.0 nem 1.1.
-
-## Matriz de tecnologias pesquisadas
-
-| Tecnologia | Estado em out/2026 | Decisão ACULTA |
+| Tecnologia | Estado | Decisão |
 | --- | --- | --- |
-| Bootstrap5 4.0.8 | stable | manter como base |
-| SDC Core | stable | fundação do design system |
-| SDC variants | Core 11.2+ | usar seletivamente em cards/patterns |
-| SDC Devel 1.0.3 | stable | avaliar como dev-only em 0.2 |
-| UI Icons 2.0.1 | stable | adotar em 0.5 |
-| Search API Autocomplete 1.12 | stable | adotar em 0.6 se backend suportar |
-| UI Patterns 2.0.21 | stable | adotar em 0.7 |
-| UI Examples 2.1.0 | stable | adotar em 0.8 |
-| Canvas 1.12.0 | stable | pilotar pós-1.0 |
-| Display Builder 1.0 beta8 | beta | pesquisa apenas |
-| UI Suite Bootstrap 5.2.3 | stable | referência, não dependência |
-| Canvas Bootstrap 1.0.8 | stable | referência, não dependência padrão |
-| SDC Component Library 1.0.5 | stable/minimally maintained | não priorizar; overlap com UI Patterns/UI Examples |
+| Bootstrap5 4.0.8 | stable | base |
+| Core SDC | stable | fundação |
+| SDC variants | Core 11.2+ | usar seletivamente |
+| SDC Devel 1.0.3 | stable | avaliar dev-only |
+| UI Icons 2.0.1 | stable | planejar 0.5 |
+| Search API Autocomplete 1.12 | stable | planejar 0.6 |
+| UI Patterns 2.0.21 | stable | planejar 0.7 |
+| UI Examples 2.1.0 | stable | planejar 0.8 |
+| Canvas 1.12.0 | stable | pós-1.0 |
+| Display Builder 1.0.0-beta8 | beta | pesquisa |
+| UI Suite Bootstrap | stable | referência, não dependência |
 
-## Referências upstream
+Referências:
 
-- SDC Core: https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components
-- SDC FAQ: https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/frequently-asked-questions
-- SDC variants: https://www.drupal.org/node/3517062
-- Bootstrap color modes: https://getbootstrap.com/docs/5.3/customize/color-modes/
-- UI Patterns: https://www.drupal.org/project/ui_patterns
-- UI Icons: https://www.drupal.org/project/ui_icons
-- Search API Autocomplete: https://www.drupal.org/project/search_api_autocomplete
-- UI Examples: https://www.drupal.org/project/ui_examples
-- Canvas: https://www.drupal.org/project/canvas
-- Display Builder: https://www.drupal.org/project/display_builder
+- https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components
+- https://www.drupal.org/node/3517062
+- https://www.drupal.org/project/sdc_devel
+- https://www.drupal.org/project/ui_icons
+- https://www.drupal.org/project/search_api_autocomplete
+- https://www.drupal.org/project/ui_patterns
+- https://www.drupal.org/project/ui_examples
+- https://www.drupal.org/project/canvas
+- https://www.drupal.org/project/display_builder

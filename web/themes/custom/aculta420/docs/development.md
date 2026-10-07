@@ -1,212 +1,154 @@
-# Desenvolvimento do tema
+# Desenvolvimento
 
-## Princípio
+## Stack
 
-Evoluir o **ACULTA Bootstrap Component Design System** sem alterar regras de negócio, fontes de verdade Drupal/contrib/Portal ou identidade visual aprovada.
-
-```text
-Drupal/contrib = funcionalidade
-aculta_portal  = integração/orquestração
-aculta         = apresentação
-```
-
-## Sem build tooling por padrão
-
-A preferência do projeto é:
-
+- Drupal 11;
+- Bootstrap5 base theme;
+- Twig;
+- Core SDC;
 - CSS nativo;
-- Drupal Libraries;
-- JavaScript nativo;
+- ES6;
 - Drupal behaviors;
-- `once()`.
+- `once()`;
+- Drupal libraries.
 
-Não introduzir Node, npm, Webpack, Vite, Sass ou PostCSS sem benefício técnico concreto, demonstrável e aprovado.
+Sem Node/Vite/Sass/PostCSS por padrão.
 
-Simplicidade é uma decisão arquitetural.
+## Machine name
 
-## Ambientes
+Tema: `aculta420`.
 
-O servidor de desenvolvimento/homelab usa atualmente:
+Hooks:
 
-- Debian;
-- Apache;
-- PHP-FPM;
-- SQLite;
-- aliases `*.aculta.toca.net.br`;
-- noindex.
+`aculta420_preprocess_*`
 
-Produção Hostinger usa:
+Libraries:
 
-- Apache;
-- PHP;
-- MariaDB;
-- hosts `*.aculta.org`.
+`aculta420/<library>`
 
-Apache em ambos os ambientes não significa configuração idêntica. O tema não deve depender de detalhe exclusivo de VirtualHost, módulo ou configuração local.
+SDCs:
 
-## Workflow
+`aculta420:<component>`
 
-Mudanças devem ser pequenas, testáveis e reversíveis. A refatoração A–G4 está encerrada; a macrofase ativa é a **Fase H — ACULTA Bootstrap Component Design System**.
+Settings:
 
-A arquitetura e critérios de maturidade estão em [component-design-system.md](component-design-system.md). O planejamento ativo é versionado em [roadmap.md](roadmap.md), começando em 0.1.0; regras de release estão em [versioning.md](versioning.md).
+`aculta420.settings`
 
-Não misturar reorganização estrutural, redesign e otimização agressiva de carregamento no mesmo passo.
+Não reintroduzir provider `aculta`.
 
-## CSS
+## Estrutura de CSS
 
-Estrutura CSS atual após o G2:
+O CSS global existente permanece dividido por responsabilidade:
 
-```text
-css/
-├── tokens.css
-├── base.css
-├── layout.css
-├── drupal-bootstrap.css
-├── responsive.css
-├── components/
-│   ├── header.css
-│   ├── navigation.css
-│   ├── breadcrumb.css
-│   ├── content.css
-│   ├── buttons.css
-│   ├── footer.css
-│   ├── institutional.css
-│   ├── editorial-carousel.css
-│   └── auth.css
-└── style.css
-```
+- tokens;
+- base;
+- layout;
+- shell/component CSS;
+- Drupal/Bootstrap integration;
+- residual legacy controlado.
 
-A library global deve preservar a ordem documentada em `aculta.libraries.yml`. Após o G2, `style.css` contém somente o trecho ainda misto de footer-layout, formulários, Conta/segurança e participação; ele só deve ser reduzido novamente quando houver fronteiras contíguas que não reordenem a cascade.
-
-Antes de remover ou mover regra:
-
-- verificar Twig;
-- Views/configuração Drupal;
-- classes geradas por módulos;
-- estados Bootstrap;
-- páginas especializadas.
-
-Classes podem existir apenas em configuração e não aparecer em PHP/Twig.
-
-Não minificar fontes no Git; agregação de produção pertence ao Drupal/infra.
+Mover CSS para SDC somente quando ownership exclusivo estiver provado.
 
 ## JavaScript
 
-Estrutura atual após o Commit D:
-
-```text
-js/
-├── navigation.js
-└── editorial-carousel.js
-```
-
-`navigation.js` permanece em `aculta/global`. Após o G3, `editorial-carousel.js` é carregado apenas pela library `aculta/editorial-carousel`, anexada no template VVJB da View `home_editorial_highlights`.
-
-Separar responsabilidade não autoriza alterar selectors, IDs de `once()`, eventos ou APIs públicas de Bootstrap/VVJB. Libraries contextuais devem ser anexadas pelo componente/theme hook real, não por comparação de URL em JavaScript.
-
-## PHP/Twig
-
-Não mover código apenas para eliminar `\Drupal::service()` cosmeticamente.
-
-Primeiro classificar a lógica:
-
-- apresentação legítima do tema;
-- integração que pertence ao `aculta_portal`;
-- funcionalidade que pertence a Core/contrib.
-
-Twig não recebe regra de negócio.
-
-### Overrides Twig
-
-Herdar Bootstrap5/Core/contrib por padrão. Não copiar templates apenas para mantê-los idênticos ao upstream.
-
-Antes de adicionar ou manter override:
-
-- comparar com a versão efetivamente instalada do base theme/contrib;
-- documentar o delta ACULTA;
-- preservar attributes, cache/access e hooks esperados;
-- remover overrides que apenas mascaram upstream sem benefício.
-
-No G4, `form/input.html.twig` foi removido para voltar a herdar o template Bootstrap5 4.0.8.
-
-
-### Breadcrumb
-
-Após o Commit E:
-
-- `aculta_portal` decide purpose, visibilidade, raiz, hierarquia, cache metadata e título atual;
-- o preprocess do tema apenas adapta `currentTitle()` para a variável Twig;
-- o Twig renderiza somente markup e semântica acessível.
-
-Não voltar a duplicar arrays de purpose/rotas ou resolução de título em `aculta.theme`.
-
-## Single Directory Components
-
-O projeto usa SDC apenas quando houver fronteira visual e benefício concreto. Drupal 11 já fornece SDC estável no Core; não adicionar módulo contrib para essa capacidade.
-
-Componente-modelo estável após H2:
-
-```text
-components/
-└── editorial-card/
-    ├── editorial-card.component.yml
-    ├── editorial-card.twig
-    ├── editorial-card.css
-    └── README.md
-```
-
 Regras:
 
-- manter integração Drupal específica no presenter e preservar `attributes`, `title_prefix`, `title_suffix`, access/cache metadata quando aplicável;
-- usar slots para renderables/markup e props apenas para dados estruturados;
-- preferir `include(..., with_context = false)` para evitar dependência implícita de contexto;
-- não mover CSS/JS para o diretório do SDC no mesmo commit que cria o contrato, salvo quando a mudança de attachment for objetivo explícito e testado;
-- não converter templates em massa;
-- SDC não consulta serviços, storage, banco, Node/Commerce/LMS diretamente;
-- CSS/JS exclusivo pode ser co-localizado como `<component>.css`/`<component>.js` para carregamento automático do SDC.
+- Drupal behaviors;
+- `once()`;
+- attach/detach compatible;
+- progressive enhancement;
+- Bootstrap/contrib continuam donos de suas engines;
+- nada de listener global duplicado;
+- assets específicos carregam contextualmente quando possível.
 
-### Ownership de CSS no H2
+## Twig
 
-O H2 move somente regras exclusivas de `aculta:editorial-card` para o SDC. Seletores compartilhados continuam globais; regras de VVJB permanecem no CSS do pattern de carousel.
+Twig apresenta. Não decide regra de negócio.
 
-Não duplicar de volta regras do card em `content.css`, `breadcrumb.css` ou `editorial-carousel.css`.
+Overrides devem:
 
-### Regra para primitives
+- existir por delta real;
+- preservar attributes/cache/access;
+- preferir herança upstream quando markup custom não agrega valor;
+- evitar service calls e entity loading.
 
-Primitive não implica SDC. Se o contrato precisa estilizar markup produzido por Core/Bootstrap/Form API, CSS global pode ser a implementação correta.
+## PHP do tema
 
-`category-label` é o primeiro primitive SDC planejado para 0.2.0. Button permanece CSS/Bootstrap; media só entra se a família de cards 0.3.0 comprovar contrato comum; section-heading deve ser avaliado junto do pattern `content-section` em 0.4.0.
+Preprocess é aceitável para adaptação de apresentação.
 
-`enforce_prop_schemas: true` é requisito planejado para 0.2.0 e deve ser validado contra todos os SDCs existentes antes de merge.
+Integração de domínio/business rules pertence a `aculta_portal`.
 
-## Testes mínimos por etapa
+Se a lógica começa a conhecer:
 
-Quando houver mudança funcional/visual, validar:
+- Domain purpose complexo;
+- Commerce;
+- LMS;
+- storage;
+- autorização;
+
+ela provavelmente está no lugar errado.
+
+## Configuração
+
+Renomear machine name do tema exige sincronizar:
+
+- `core.extension`;
+- `system.theme`;
+- theme settings;
+- block placements;
+- libraries/component provider IDs.
+
+IDs históricos de conteúdo/config não são renomeados sem benefício funcional.
+
+## Workflow
+
+Para cada mudança:
+
+1. atualizar docs relevantes;
+2. fazer inventário de consumidores;
+3. alterar uma responsabilidade por commit;
+4. validar staticamente;
+5. `drush cr`;
+6. validar config;
+7. testar páginas representativas;
+8. comparar visual quando houver mudança visual.
+
+## Testes mínimos
+
+Para mudanças runtime:
 
 - PHP lint;
-- Twig sanity;
-- cache rebuild no runtime;
-- hosts MAIN, ACCOUNT, SUPPORT, COLETIVO420, WIKI420, SHOP e COURSES;
-- menu desktop/mobile;
+- Twig/YAML sanity;
+- cache rebuild;
+- config status/import;
+- MAIN;
+- ACCOUNT;
+- SUPPORT;
+- COLETIVO420;
+- WIKI420;
+- SHOP;
+- COURSES;
+- desktop/mobile;
 - teclado/foco;
-- home institucional;
-- página editorial;
-- Wiki420;
-- curso;
-- login;
-- Minha Conta;
-- apoio.
+- reduced-motion quando houver animação.
 
-Quando possível, comparar visualmente before/after.
+Para SDC:
 
-Commits apenas documentais não exigem rebuild de Drupal, mas devem validar links, paths e consistência com o código atual.
+- schema;
+- empty/long content;
+- slots ausentes opcionais;
+- asset attachment;
+- accessibility states.
 
-## Documentação
+## Release
 
-Qualquer mudança estrutural no tema deve atualizar `README.md` e o documento correspondente em `docs/`.
+Toda release do tema atualiza:
 
-Se a mudança altera a fronteira tema/Portal, atualizar também `web/modules/custom/aculta_portal/README.md` e o ADR correspondente.
+- `aculta420.info.yml`;
+- `CHANGELOG.md`;
+- `docs/roadmap.md`;
+- documentação afetada.
 
-Documentação deve descrever o estado atual, não um “futuro” já implementado.
+Tags:
 
-Cada release do tema deve atualizar `aculta.info.yml`, `CHANGELOG.md` e `docs/roadmap.md` de acordo com [versioning.md](versioning.md).
+`aculta420-theme-vX.Y.Z`

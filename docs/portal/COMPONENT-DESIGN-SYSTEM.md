@@ -1,13 +1,13 @@
-# ACULTA Portal + Bootstrap Component Design System
+# ACULTA Portal + ACULTA420 Component Design System
 
 ## Objetivo
 
 Este documento define como o `aculta_portal` consome o design system já
-estabelecido pelo tema `aculta`.
+estabelecido pelo tema `aculta420`.
 
 A arquitetura visual canônica do tema está em:
 
-`web/themes/custom/aculta/docs/component-design-system.md`.
+`web/themes/custom/aculta420/docs/architecture.md`.
 
 O Portal não mantém um design system concorrente.
 
@@ -25,7 +25,7 @@ módulo funcional
          contrato visual reutilizável
                     |
                     v
-             tema aculta SDC
+             tema ACULTA420 SDC
                     |
                     v
                Bootstrap 5
@@ -93,8 +93,7 @@ comportamento necessário:
 - spinner/placeholders;
 - grid/utilities.
 
-A identidade ACULTA vem dos tokens e contratos do tema, não da reinvenção do
-componente estrutural.
+A identidade ACULTA420 vem dos tokens e contratos do tema, não da reinvenção do componente estrutural.
 
 ## SDC primeiro para composição reutilizável
 

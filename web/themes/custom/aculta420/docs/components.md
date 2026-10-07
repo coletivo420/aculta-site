@@ -1,126 +1,147 @@
-# Componentes visuais
+# Componentes
 
-Este catálogo pertence ao **ACULTA Bootstrap Component Design System**. A arquitetura canônica está em [component-design-system.md](component-design-system.md).
+## Organização
 
-Ele descreve componentes existentes ou reconhecidos no tema. Não é autorização para criar storage, regras de negócio ou novos subsistemas no tema.
+Drupal Core permite SDCs aninhados. A organização alvo é:
 
-## Taxonomia
+```text
+components/
+├── primitives/
+├── content/
+├── navigation/
+├── sections/
+└── feedback/
+```
 
-| Camada | Exemplos/estado atual |
-| --- | --- |
-| Foundations | `tokens.css`, `base.css`, `layout.css`, integração Bootstrap |
-| Primitives | button como contrato CSS/Bootstrap; `category-label` planejado para 0.2.0; media avaliado em 0.3.0; icons via Icon API em 0.5.0 |
-| Components | `aculta:editorial-card`, project card, breadcrumb; course/product cards planejados |
-| Patterns | hero atual; carousel/rail, content-grid e content-section planejados |
-| Shell | header, navigation, utility/account, footer |
+0.1.0 possui:
 
-A classificação é de responsabilidade, não obrigação de converter cada item em SDC.
+```text
+components/
+└── content/
+    └── editorial-card/
+```
 
-## Auditoria de primitives
+Não criar diretórios vazios apenas para parecer completo.
 
-A auditoria H3 foi incorporada ao roadmap SemVer. Resultado técnico:
+## Regras SDC
 
-- `category-label`: candidato aprovado a SDC experimental em 0.2.0;
-- button: primitive global via Bootstrap/Form API, sem SDC neste momento;
-- section-heading: avaliar com `content-section` em 0.4.0;
-- media: avaliar com a família de cards em 0.3.0;
-- icon: usar Core Icon API/UI Icons em 0.5.0 em vez de inventar markup de ícone espalhado.
+Todo SDC ACULTA420:
 
-Ver [h3-primitives-audit.md](h3-primitives-audit.md) e [roadmap.md](roadmap.md).
+- possui schema;
+- recebe props/slots explícitos;
+- não consulta storage/services;
+- não recebe entidade inteira por conveniência;
+- documenta ownership de CSS/JS;
+- usa status `experimental` até provar contrato;
+- só vira `stable` após uso real e validação.
 
-## Contrato geral
+O tema usa `enforce_prop_schemas: true`.
 
-Todo componente visual deve:
+## Props e slots
 
-- receber dados do Drupal/Core/contrib/`aculta_portal`;
-- preservar atributos, acesso e cache metadata quando aplicável;
-- continuar utilizável com progressive enhancement;
-- respeitar o design system e acessibilidade;
-- não persistir estado funcional;
-- não consultar diretamente banco de dados.
+Slots:
 
-## Arquivos CSS atuais
+- renderables;
+- markup;
+- regiões de conteúdo.
 
-| Arquivo | Responsabilidade |
-| --- | --- |
-| `components/header.css` | header e branding textual |
-| `components/navigation.css` | navegação principal, estados active/hover/focus e progressive enhancement visual |
-| `components/breadcrumb.css` | breadcrumb e tratamento de links editoriais nesse contexto |
-| `components/content.css` | espaçamento principal, títulos de seção, superfícies e cards genéricos |
-| `components/buttons.css` | botões públicos e CTAs |
-| `components/footer.css` | base visual do footer |
-| `drupal-bootstrap.css` | integração visual com componentes Drupal/Bootstrap |
-| `components/institutional.css` | composição institucional, projetos e conteúdo relacionado |
-| `components/editorial-carousel.css` | pattern/engine visual VVJB; sem styling exclusivo do card |
-| `components/editorial-card/editorial-card.css` | CSS exclusivo do SDC `aculta:editorial-card`, auto-carregado |
-| `responsive.css` | ajustes responsivos globais remanescentes |
-| `components/auth.css` | login, registro e recuperação de senha Drupal |
-| `style.css` | trecho residual ainda intercalado de footer-layout, formulários, Conta/segurança e participação |
+Props:
 
-Esta divisão é física, não uma alteração de contrato visual. A ordem de carregamento é parte do comportamento e deve ser preservada.
+- strings/números/booleans/enums e dados estruturados simples;
+- sempre validados pelo schema.
 
-## Catálogo atual
+Preferir render element `#type: component` em PHP quando Drupal precisar
+conhecer attachment/cache/render contract; Twig inclui componentes em presenters
+quando esse boundary for mais simples.
 
-| Componente | Implementação principal | Fonte de dados/estado |
-| --- | --- | --- |
-| Header | `page.html.twig`, CSS | regions/blocks Drupal |
-| Branding | branding block Twig + preprocess | System Branding + assets do tema |
-| Navegação desktop/mobile | `page.html.twig`, `js/navigation.js`, CSS | Menu Drupal + Bootstrap Collapse |
-| Menu utilitário/Conta | page preprocess + region render arrays | blocks/menu Drupal |
-| Breadcrumb | Portal builder + Twig/preprocess atual | routing, Domain purpose, entities |
-| Hero | CSS/Twig de conteúdo existente | conteúdo Drupal |
-| CTA pair | classes visuais existentes | links/conteúdo renderizado |
-| Project card | `node--project--teaser.html.twig` | fields do node |
-| Editorial highlight | presenter `node--editorial-highlight.html.twig` + SDC `aculta:editorial-card` | fields do node + VVJB |
-| Editorial list/prose | field preprocess + CSS | fields/Views Drupal |
-| Institution block | block Twig + preprocess | custom block fields |
-| Forms | Bootstrap5/Core markup herdado + CSS do tema | Form API |
-| Alerts/tables | Bootstrap + CSS do tema | render arrays Drupal |
-| Footer | `page.html.twig`, bloco institucional, menus | regions/blocks Drupal |
-| Account shell | `page.html.twig` + apresentação Portal | User/Profile/Portal |
-| Course cards/resumo | apresentação Portal + tema | Drupal LMS/Group |
-| Wiki lists | apresentação Drupal/Portal | Node/Taxonomy/Views |
+## Componente atual
 
-## Limites
+### `aculta420:editorial-card`
 
-O fato de um componente apresentar Conta, Cursos, Wiki ou Commerce não transfere propriedade funcional ao tema.
+Status: stable.
 
-Exemplos:
+Local:
 
-- course card pode exibir progresso preparado; não calcula nem salva progresso;
-- account shell pode exibir ações; não autentica usuário;
-- institution block apresenta fields; não cria registro institucional paralelo;
-- breadcrumb apresenta a trilha; regras de Domain purpose pertencem ao Portal.
+`components/content/editorial-card/`
 
-## Single Directory Components
+Slots:
 
-Drupal 11 possui SDC estável no Core. A adoção continua seletiva e segue o contrato presenter -> SDC documentado em `component-design-system.md`.
+- category;
+- title;
+- summary;
+- complement;
+- cta.
 
-### Componente-modelo: `aculta:editorial-card`
+Presenter:
 
-O Commit F criou o piloto; o H2 o promove a primeiro SDC `stable` do design system, com markup, metadata e CSS exclusivo co-localizados.
+`templates/node--editorial-highlight.html.twig`
 
-Contrato:
+O presenter preserva Theme API e encaminha renderables. O SDC não conhece Node.
 
-- slots: `category`, `title`, `summary`, `complement`, `cta`;
-- sem props funcionais;
-- sem estado;
-- sem consulta de dados;
-- CSS exclusivo em `components/editorial-card/editorial-card.css`;
-- sem JavaScript próprio.
+## Button
 
-O presenter `node--editorial-highlight.html.twig` mantém o `<article>` e os attributes Drupal, e chama o componente com `include('aculta:editorial-card', ..., with_context = false)`.
+Button é primitive do design system, mas **não** SDC obrigatório.
 
-O Drupal carrega `editorial-card.css` automaticamente quando o SDC é renderizado. Tokens e `.aculta-category` permanecem compartilhados; VVJB continua dono do carousel.
+`css/components/buttons.css` precisa cobrir markup vindo de Bootstrap,
+Form API e contrib:
 
-### Critério para próximos SDCs
+- `.btn`;
+- `.button`;
+- submits;
+- variants Bootstrap.
 
-Um novo candidato deve:
+Criar `aculta420:button` agora criaria uma segunda API parcial.
 
-- ter reutilização real ou fronteira visual clara;
-- possuir contrato simples de props/slots;
-- reduzir duplicação ou acoplamento;
-- preservar attributes/cache/access no presenter quando aplicável;
-- melhorar legibilidade/testabilidade.
+## Cards
 
-Não migrar todo Twig apenas para uniformizar tecnologia.
+Roadmap de cards:
+
+- editorial-card;
+- project-card;
+- course-card;
+- product-card somente quando Commerce possuir catálogo real.
+
+Compartilhar contratos onde houver semântica comum, sem criar “base component”
+abstrato que force domínios diferentes.
+
+Usar variants nativos para layouts da mesma família quando apropriado.
+
+## Patterns
+
+Patterns não são engines de dados.
+
+Exemplos futuros:
+
+- content-section;
+- content-grid;
+- hero;
+- carousel/rail.
+
+Carousel pode apresentar qualquer card, enquanto VVJB/Bootstrap continuam
+fornecendo engine conforme o contexto.
+
+## Maturidade
+
+### experimental
+
+- API ainda pode mudar;
+- deve estar documentada;
+- não pode ser usada como dependência silenciosa por dezenas de telas.
+
+### stable
+
+- schema claro;
+- ownership de assets claro;
+- acessibilidade validada;
+- dois ou mais consumidores ou fronteira visual muito estável;
+- mudança incompatível exige release MINOR antes de 1.0 e nota de migração.
+
+## Ecossistema
+
+Planejado:
+
+- UI Patterns 2 para expor SDCs maduros na UI Drupal;
+- UI Icons para Icon API;
+- UI Patterns Library/UI Examples para catálogo.
+
+Não usar UI Suite Bootstrap para substituir ACULTA420.
