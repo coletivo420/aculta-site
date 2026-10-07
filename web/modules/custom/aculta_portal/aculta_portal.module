@@ -286,96 +286,6 @@ function aculta_portal_entity_presave(EntityInterface $entity): void {
   }
 }
 
-/** Implements hook_form_alter(). Redacts gateway secrets in the admin form. */
-function aculta_portal_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
-  $form_object = $form_state->getFormObject();
-
-  if ($form_id === 'change_mail_form' && \Drupal::routeMatch()->getRouteName() === 'aculta_portal.security') {
-    $form['account']['mail']['#title'] = t('Novo e-mail');
-    $form['account']['mail']['#description'] = t('Você precisará confirmar este endereço antes que ele passe a ser usado na sua conta.');
-    $form['account']['mail']['#attributes']['autocomplete'] = 'email';
-    $form['account']['current_pass']['#title'] = t('Senha atual');
-    $form['account']['current_pass']['#attributes']['autocomplete'] = 'current-password';
-    $form['actions']['submit']['#value'] = t('Solicitar alteração de e-mail');
-    $form['#submit'][] = 'aculta_portal_change_mail_confirmation_message';
-  }
-
-  if ($form_id === 'user_form'
-    && \Drupal::routeMatch()->getRouteName() === 'aculta_portal.security'
-    && $form_object instanceof \Drupal\user\AccountForm) {
-    $account = $form_object->getEntity();
-    if ((int) $account->id() === (int) \Drupal::currentUser()->id()) {
-      $form_state->set('user_pass_reset', FALSE);
-      $form['account']['current_pass']['#access'] = TRUE;
-      $form['account']['current_pass']['#required'] = TRUE;
-      $form['account']['current_pass']['#title'] = t('Senha atual');
-      $form['account']['current_pass']['#attributes']['autocomplete'] = 'current-password';
-      $form['account']['pass']['#title'] = t('Nova senha');
-      $form['account']['pass']['#attributes']['autocomplete'] = 'new-password';
-      $form['#after_build'][] = 'aculta_portal_security_password_after_build';
-      $form['#attributes']['class'][] = 'aculta-security-password-form';
-      $form['actions']['submit']['#value'] = t('Salvar nova senha');
-
-      foreach (array_keys($form) as $key) {
-        if (!str_starts_with((string) $key, '#') && !in_array($key, ['account', 'actions', 'form_build_id', 'form_token', 'form_id'], TRUE)) {
-          unset($form[$key]);
-        }
-      }
-      foreach (array_keys($form['account']) as $key) {
-        if (!str_starts_with((string) $key, '#') && !in_array($key, ['current_pass', 'pass'], TRUE)) {
-          unset($form['account'][$key]);
-        }
-      }
-      $form['actions']['submit']['#submit'][] = 'aculta_portal_security_password_redirect';
-    }
-  }
-
-  if (isset($form['commerce_donation_pane']['field_donation_amount'])) {
-    // The contrib widget converts an empty custom value to zero while
-    // massaging values. Require a real positive custom value server-side.
-    $form['#validate'][] = 'aculta_portal_validate_donation_amount';
-    $form['commerce_donation_pane']['#title'] = t('Seu apoio');
-    $amount_widget = &$form['commerce_donation_pane']['field_donation_amount']['widget'][0]['donation_level'];
-    if (isset($amount_widget)) {
-      $amount_widget['#title'] = t('Escolha um valor');
-      if (isset($amount_widget['value']['#options']['custom_amount'])) {
-        $amount_widget['value']['#options']['custom_amount'] = t('Outro valor');
-      }
-      if (isset($amount_widget['amount'])) {
-        $amount_widget['amount']['#title'] = t('Outro valor');
-        $amount_widget['amount']['#placeholder'] = t('Outro valor');
-      }
-    }
-  }
-
-  if (!$form_object instanceof \Drupal\commerce_payment\Form\PaymentGatewayForm
-    || $form_object->getEntity()->id() !== 'mercado_pago'
-    || !isset($form['configuration']['form'])) {
-    return;
-  }
-
-  $configuration_form = &$form['configuration']['form'];
-  foreach ([
-    ['credentials_test', 'access_token_test'],
-    ['credentials_stage', 'access_token_stage'],
-    ['credentials_prod', 'access_token_prod'],
-  ] as [$fieldset, $key]) {
-    if (isset($configuration_form[$fieldset][$key])) {
-      $configuration_form[$fieldset][$key]['#type'] = 'password';
-      $configuration_form[$fieldset][$key]['#default_value'] = '';
-      unset($configuration_form[$fieldset][$key]['#value']);
-      $configuration_form[$fieldset][$key]['#attributes']['autocomplete'] = 'new-password';
-    }
-  }
-
-  if (isset($configuration_form['client_secret'])) {
-    $configuration_form['client_secret']['#type'] = 'password';
-    $configuration_form['client_secret']['#default_value'] = '';
-    unset($configuration_form['client_secret']['#value']);
-    $configuration_form['client_secret']['#attributes']['autocomplete'] = 'new-password';
-  }
-}
-
 /** Replaces Change Mail Page's premature success claim with the confirmed flow. */
 function aculta_portal_change_mail_confirmation_message(array &$form, FormStateInterface $form_state): void {
   \Drupal::messenger()->deleteByType('status');
@@ -441,15 +351,6 @@ function aculta_portal_sync_customer_address_names(array &$form, FormStateInterf
   }
   if ($changed) {
     $customer->save();
-  }
-}
-
-/** Replaces the contrib CEP behavior with the accessible Portal integration. */
-function aculta_portal_library_info_alter(array &$libraries, string $extension): void {
-  if ($extension === 'cep_autocomplete' && isset($libraries['viacep'])) {
-    // Keep the contrib endpoint/client/cache, while using the local behavior
-    // for accessible status, stale-response protection, and post-fill focus.
-    $libraries['viacep']['dependencies'][] = 'aculta_portal/cep-address';
   }
 }
 
