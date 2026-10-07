@@ -5,6 +5,15 @@ services:
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
     arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose']
+  aculta_portal.account_profiles:
+    class: Drupal\aculta_portal\AccountProfileManager
+    arguments: ['@entity_type.manager']
+  aculta_portal.presentation.account_identity:
+    class: Drupal\aculta_portal\Presentation\AccountIdentityPresenter
+    arguments: ['@aculta_portal.account_profiles', '@string_translation']
+  aculta_portal.presentation.account_data:
+    class: Drupal\aculta_portal\Presentation\AccountDataPresenter
+    arguments: ['@aculta_portal.account_profiles', '@string_translation']
   aculta_portal.presentation.account_connections:
     class: Drupal\aculta_portal\Presentation\AccountConnectionsPresenter
     arguments: ['@entity_type.manager', '@config.factory', '@module_handler', '@string_translation']
