@@ -274,8 +274,10 @@ O gate reproduzível de i18n está em:
 - não executa `config:import` global;
 - drift não relacionado continua apenas informativo e deve ser classificado.
 
-A mensagem de privacidade pós-submit da recuperação continua sendo um gate
-interativo porque o submit anônimo precisa de token Turnstile real.
+A mensagem de privacidade pós-submit da recuperação é validada server-side pelo
+próprio `UserPasswordForm::submitForm()` com identificador inexistente. Isso
+testa a tradução real da mensagem sem desabilitar, substituir ou contornar o
+Turnstile no fluxo HTTP anônimo.
 
 ## Testes
 

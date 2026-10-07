@@ -61,3 +61,7 @@ O modo `--apply` recusa banco diferente de SQLite, não executa
 `config:import` global e exporta Configuration Sync apenas para
 `/tmp/aculta-i18n-config` para classificação de drift. Ele não altera
 produção.
+
+A mensagem pós-submit de recuperação é exercitada server-side diretamente por
+`UserPasswordForm::submitForm()` com conta inexistente; isso valida a tradução
+sem criar bypass HTTP de Turnstile.

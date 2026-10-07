@@ -165,6 +165,24 @@ done
 
 info "Anonymous GET rendering: PASS"
 
+PRIVACY_MESSAGE="$("${DRUSH[@]}" php:eval '
+\Drupal::messenger()->deleteAll();
+$form_object = \Drupal\user\Form\UserPasswordForm::create(\Drupal::getContainer());
+$form_state = \Drupal\Core\Form\FormState::create();
+$form_state->setValue("name", "i18n-runtime-probe@example.invalid");
+$form_state->setValue("account", NULL);
+$form = [];
+$form_object->submitForm($form, $form_state);
+$messages = \Drupal::messenger()->all();
+foreach (($messages["status"] ?? []) as $message) {
+  print((string) $message);
+}
+')"
+
+EXPECTED_PRIVACY='Se i18n-runtime-probe@example.invalid corresponder a uma conta válida, enviaremos um e-mail com instruções para redefinir sua senha.'
+[[ "$PRIVACY_MESSAGE" == *"$EXPECTED_PRIVACY"* ]] || fail "Password-reset post-submit privacy message is not translated to pt-BR"
+info "Password-reset post-submit translation: PASS"
+
 EXPORT_DIR="/tmp/aculta-i18n-config"
 rm -rf "$EXPORT_DIR"
 "${DRUSH[@]}" config:export --destination="$EXPORT_DIR" -y >/dev/null
@@ -174,5 +192,4 @@ diff -qr config/sync "$EXPORT_DIR" || true
 
 "${DRUSH[@]}" updatedb:status
 
-echo "I18N RUNTIME PASS (GET/config/Locale)."
-echo "Manual interactive gate still required only for the post-submit password-reset privacy message behind Turnstile."
+echo "I18N RUNTIME PASS (config + Locale + anonymous GET + server-side post-submit translation)."
