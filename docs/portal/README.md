@@ -36,6 +36,7 @@ fontes de verdade funcionais dessas ferramentas.
 - [Portal 0.19 — Hardening](S4-0.19-HARDENING.md)
 - [Portal 1.0 — Release Gates](PORTAL-1.0-RELEASE-GATES.md)
 - [R0 — Clean Baseline Runbook](R0-CLEAN-BASELINE.md)
+- [R1 — Dependency/Config Integration Queue](R1-INTEGRATION-QUEUE.md)
 - [Roadmap](ROADMAP.md)
 - [Integrações Google](../integrations/GOOGLE.md)
 
