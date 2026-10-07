@@ -303,10 +303,16 @@ Documento: [S4-0.15-AJAX-CONSOLIDATION.md](S4-0.15-AJAX-CONSOLIDATION.md).
 
 ### Portal 0.16 — Search
 
-- Search API;
+**Especificação concluída.**
+
+Documento: [S4-0.16-SEARCH.md](S4-0.16-SEARCH.md).
+
+- Search API + Views;
+- backend Database Search como candidato inicial;
 - Wiki;
 - Fórum;
-- substituição futura da busca LIKE.
+- access/grants/revision-aware;
+- substituição da busca LIKE somente após paridade.
 
 ### Portal 0.17 — Engagement
 
