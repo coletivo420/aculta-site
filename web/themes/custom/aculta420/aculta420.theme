@@ -1,7 +1,7 @@
 <?php
 
 /** Keep a solitary editorial highlight static using native VVJB options. */
-function aculta_preprocess_views_view_vvjb(array &$variables): void {
+function aculta420_preprocess_views_view_vvjb(array &$variables): void {
   if (($variables['view']?->id() ?? '') !== 'home_editorial_highlights') {
     return;
   }
@@ -17,7 +17,7 @@ function aculta_preprocess_views_view_vvjb(array &$variables): void {
 /**
  * Marks editorial node body fields as opt-in prose without styling other links.
  */
-function aculta_preprocess_field(array &$variables): void {
+function aculta420_preprocess_field(array &$variables): void {
   if (($variables['entity_type'] ?? '') !== 'node' || ($variables['field_name'] ?? '') !== 'body') {
     return;
   }
@@ -40,7 +40,7 @@ function aculta_preprocess_field(array &$variables): void {
 }
 
 /** Keeps the full-page login's visible label aligned with the account UX. */
-function aculta_preprocess_form_element_label(array &$variables): void {
+function aculta420_preprocess_form_element_label(array &$variables): void {
   $element = $variables['element'];
   if (($element['#id'] ?? '') === 'edit-name'
     && \Drupal::routeMatch()->getRouteName() === 'user.login'
@@ -51,13 +51,13 @@ function aculta_preprocess_form_element_label(array &$variables): void {
 
 /**
  * @file
- * Presentation hooks for the Associação Cultural Antiproibicionista theme.
+ * Presentation hooks for the ACULTA420 theme.
  */
 
 /**
  * Implements hook_preprocess_page().
  */
-function aculta_preprocess_page(array &$variables): void {
+function aculta420_preprocess_page(array &$variables): void {
   $variables['institutional_home'] = \Drupal::service('path.matcher')->isFrontPage()
     && (int) (\Drupal::routeMatch()->getParameter('node')?->id() ?? 0) === (int) theme_get_setting('institution_home_nid');
   // Keep stored block placements intact; separate header responsibilities here.
@@ -95,7 +95,7 @@ function aculta_preprocess_page(array &$variables): void {
 /**
  * Implements hook_preprocess_block().
  */
-function aculta_preprocess_block(array &$variables): void {
+function aculta420_preprocess_block(array &$variables): void {
   $entity = $variables['elements']['content']['#block_content'] ?? NULL;
   if ($entity instanceof \Drupal\block_content\BlockContentInterface && $entity->bundle() === 'aculta_institution') {
     $variables['institution_entity'] = $entity;
@@ -107,7 +107,7 @@ function aculta_preprocess_block(array &$variables): void {
   }
   $variables['site_name'] = 'Associação Cultural Antiproibicionista';
   $variables['site_slogan'] = 'Lutando por um futuro livre da proibição.';
-  $logo_path = \Drupal::service('extension.list.theme')->getPath('aculta') . '/assets/branding/aculta/web/logo-aculta-horizontal-branco-900x300.png';
+  $logo_path = \Drupal::service('extension.list.theme')->getPath('aculta420') . '/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-900x300.png';
   $logo_file = DRUPAL_ROOT . '/' . $logo_path;
   $variables['site_logo'] = is_file($logo_file) ? base_path() . $logo_path : '';
 }
@@ -115,7 +115,7 @@ function aculta_preprocess_block(array &$variables): void {
 /**
  * Implements hook_preprocess_html().
  */
-function aculta_preprocess_html(array &$variables): void {
+function aculta420_preprocess_html(array &$variables): void {
   // Once installed, Metatag owns editable page titles and descriptions.
   if (!\Drupal::moduleHandler()->moduleExists('metatag')) {
     $variables['head_title']['name'] = 'Associação Cultural Antiproibicionista';
@@ -129,7 +129,7 @@ function aculta_preprocess_html(array &$variables): void {
 /**
  * Implements hook_preprocess_breadcrumb().
  */
-function aculta_preprocess_breadcrumb(array &$variables): void {
+function aculta420_preprocess_breadcrumb(array &$variables): void {
   /** @var \Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder $builder */
   $builder = \Drupal::service('aculta_portal.breadcrumb_builder');
   $variables['aculta_current_breadcrumb'] = $builder->currentTitle(\Drupal::routeMatch());

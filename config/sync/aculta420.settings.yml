@@ -1,7 +1,5 @@
-_core:
-  default_config_hash: bdkMxbKRd2W8ODV-75uf6EViadKk6I3Qb-r8DyG4zZ0
 favicon:
-  path: themes/custom/aculta/assets/branding/aculta/web/aculta_favicon.ico
+  path: themes/custom/aculta420/assets/branding/aculta420/web/aculta420-favicon.ico
   use_default: false
 features:
   favicon: true

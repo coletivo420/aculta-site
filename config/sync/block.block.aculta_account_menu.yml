@@ -7,11 +7,11 @@ dependencies:
   module:
     - system
   theme:
-    - aculta
+    - aculta420
 _core:
   default_config_hash: gmxYWWHmgbe0Pnv8y48ZLSLH5mEHejOjAP6RLxUfdzU
 id: aculta_account_menu
-theme: aculta
+theme: aculta420
 region: header
 weight: -4
 provider: null

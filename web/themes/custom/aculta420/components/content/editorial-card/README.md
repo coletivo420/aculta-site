@@ -1,6 +1,6 @@
 # Editorial card SDC
 
-Primeiro componente `stable` do ACULTA Bootstrap Component Design System.
+Primeiro componente `stable` do ACULTA420 Bootstrap Component Design System.
 
 O SDC contém o markup interno reutilizável e seu CSS exclusivo. O presenter Drupal `node--editorial-highlight.html.twig` continua responsável pelo elemento `<article>`, pela classe de integração `.aculta-editorial-card`, pelos attributes do node, por `title_prefix`/`title_suffix` e pela integração com o Theme API.
 
@@ -18,7 +18,7 @@ Não há props funcionais, estado, consulta de serviços, storage, Node, Commerc
 
 ## Assets
 
-`editorial-card.css` pertence ao SDC e é carregado automaticamente pelo Drupal quando `aculta:editorial-card` é renderizado.
+`editorial-card.css` pertence ao SDC e é carregado automaticamente pelo Drupal quando `aculta420:editorial-card` é renderizado.
 
 O componente não possui JavaScript.
 

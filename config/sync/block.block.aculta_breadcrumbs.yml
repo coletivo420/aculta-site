@@ -5,11 +5,11 @@ dependencies:
   module:
     - system
   theme:
-    - aculta
+    - aculta420
 _core:
   default_config_hash: VhBzWb7lMRtIOg9G7VSw_0uopi-7zXeHq4vXqqV1HFE
 id: aculta_breadcrumbs
-theme: aculta
+theme: aculta420
 region: header
 weight: 0
 provider: null

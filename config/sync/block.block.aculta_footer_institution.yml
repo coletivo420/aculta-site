@@ -7,9 +7,9 @@ dependencies:
   module:
     - system
   theme:
-    - aculta
+    - aculta420
 id: aculta_footer_institution
-theme: aculta
+theme: aculta420
 region: footer
 weight: 10
 provider: null

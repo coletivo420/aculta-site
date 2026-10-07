@@ -7,9 +7,9 @@ dependencies:
   module:
     - block_content
   theme:
-    - aculta
+    - aculta420
 id: aculta_footer_data
-theme: aculta
+theme: aculta420
 region: footer
 weight: 0
 provider: null

@@ -1,6 +1,6 @@
-aculta.settings:
+aculta420.settings:
   type: theme_settings
-  label: 'Configurações do tema da Associação Cultural Antiproibicionista'
+  label: 'Configurações do tema ACULTA420'
   mapping:
     institution_transparency_nid:
       type: integer
