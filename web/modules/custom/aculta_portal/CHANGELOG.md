@@ -9,6 +9,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 ### Autenticação
 
 - Define `/oauth/{provedor}` como início do Social Auth e `/oauth/{provedor}/retorno` como callback; Google usa `/oauth/google` e `/oauth/google/retorno`.
+- Corrige o destino pós-login do Social Auth para `/identidade`, em vez da antiga rota `/user`.
 
 ### Processo
 

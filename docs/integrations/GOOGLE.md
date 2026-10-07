@@ -33,6 +33,9 @@ O Social Auth Google usa um fluxo OAuth do lado do servidor. O fluxo começa em
 `/oauth/google` e retorna a `/oauth/google/retorno`. Cadastre os URIs de
 redirecionamento exatos abaixo no cliente OAuth Web:
 
+Após autenticação concluída, o Social Auth direciona a pessoa para
+`/identidade`, rota de perfil substituta da antiga `/user`.
+
 | Ambiente | URI de redirecionamento autorizado |
 | --- | --- |
 | Homelab | `https://conta.aculta.toca.net.br/oauth/google/retorno` |
