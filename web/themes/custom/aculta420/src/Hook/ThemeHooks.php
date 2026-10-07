@@ -80,7 +80,6 @@ final class ThemeHooks {
       'page_title_block' => 'aculta_page_title',
       'system_breadcrumb_block' => 'aculta_breadcrumb',
       'system_menu_block:account' => 'aculta_account_menu',
-      'system_powered_by_block' => 'aculta_site_credit',
       'help_block' => 'aculta_help',
     ];
     foreach ($destinations as $destination) {

@@ -4,7 +4,6 @@
 .aculta-footer a { color: var(--aculta-white); text-underline-offset: 0.25em; }
 .aculta-footer a:is(:hover, :focus-visible) { color: var(--aculta-white); text-decoration-color: var(--aculta-yellow); }
 .aculta-footer :is(h1, h2, h3, h4, h5, h6) { color: var(--aculta-white); font-family: var(--aculta-font-display); }
-.aculta-site-credit { margin-top: 1rem; color: var(--aculta-white); font: 700 1.1667rem/1.5 var(--aculta-font-body); }
 
 /* Footer content composition and responsive layout. */
 .aculta-footer .region-footer { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 2rem; }

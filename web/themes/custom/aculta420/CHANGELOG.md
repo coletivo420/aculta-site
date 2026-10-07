@@ -84,6 +84,8 @@ conjunto normativo:
 - remove exports web sem consumidor; preserva originais de branding e os assets efetivamente usados;
 - hooks do tema usam OOP/DI em `src/Hook/ThemeHooks.php`; o arquivo procedural `.theme` deixa de existir.
 
+- remove caminho morto de `system_powered_by_block`/`aculta_site_credit`, sem placement configurado.
+
 ### Gate da Foundation
 
 - cria `scripts/validate-aculta420-foundation.php` como gate runtime exclusivo do tema;
