@@ -155,6 +155,23 @@ continuar funcional sem seu JavaScript próprio, mas uma sessão de teste pode s
 preparada server-side para validar esse requisito sem contornar CAPTCHA em
 produção.
 
+### Credenciais reais e fail-closed — PR #69
+
+Em 2026-10-07, o PR #69 integrou à `main` o baseline operacional das
+credenciais Turnstile no Homelab:
+
+- `TURNSTILE_KEYS_JSON` é fornecido externamente ao PHP-FPM/CLI como JSON em
+  Base64;
+- nenhuma credencial real ou de teste é versionada no Git;
+- o exemplo Homelab não injeta automaticamente as chaves públicas de teste da
+  Cloudflare;
+- sem credenciais, Turnstile falha fechado;
+- não existe fallback para Math CAPTCHA;
+- o patch versionado `turnstile-no-math-fallback.patch` garante que a falta de
+  configuração não troque silenciosamente de challenge.
+
+O #63 não altera essa configuração de credenciais nem os patches Composer.
+
 ### Runtime da matriz CAPTCHA — PR #68
 
 Em 2026-10-07, o PR #68 validou no Homelab e integrou à `main` a matriz de
