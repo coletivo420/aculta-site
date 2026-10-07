@@ -11,4 +11,4 @@ widget:
   language: pt-br
   retry: auto
   retry_interval: 8000
-  appearance: interaction-only
+  appearance: always

@@ -115,8 +115,9 @@ protegido. A lógica do módulo CAPTCHA não é duplicada no Portal.
 ## Turnstile
 
 O widget usa explicitamente `widget.language: pt-br` e
-`widget.appearance: interaction-only`: o desafio roda para visitantes anônimos,
-mas só se torna visível quando a Cloudflare exigir interação.
+`widget.appearance: always`: visitantes anônimos protegidos pelo CAPTCHA sempre
+veem o widget Turnstile. Usuários autenticados não chegam a renderizar o widget
+porque a role `authenticated` possui `skip CAPTCHA`.
 
 Cloudflare Turnstile requer JavaScript para produzir o token de validação. O
 projeto **não** deve criar bypass automático ou selecionar um CAPTCHA mais fraco
@@ -133,7 +134,7 @@ A internacionalização não pode regredir as decisões de segurança já integr
 
 - CAPTCHA global para visitantes anônimos permanece ativo;
 - `authenticated` permanece com `skip CAPTCHA`;
-- Turnstile permanece com `appearance: interaction-only` para anônimos;
+- Turnstile permanece com `appearance: always` para anônimos;
 - endpoints JSON de autenticação removidos pelo Portal não devem ser reativados
   como atalho sem Form API/Turnstile;
 - nenhum fallback sem JavaScript pode reduzir a proteção.
