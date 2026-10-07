@@ -6,6 +6,10 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Autenticação
+
+- Altera o callback do Social Auth para `/entrar/{provedor}/retorno`; o URI do Google passa a terminar em `/entrar/google/retorno`.
+
 ### Processo
 
 - Macrofase S encerrada no limite seguro sem Runtime; drafts funcionais continuam DEFERRED e a próxima execução começa em R0.
