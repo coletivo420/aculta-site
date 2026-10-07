@@ -2,21 +2,30 @@
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Url;
+use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /** Private user account area. */
 final class PortalController extends ControllerBase {
+
+  /** Social Auth stores the network plugin ID, not its URL short name. */
+  private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
     private readonly FormBuilderInterface $accountFormBuilder,
     private readonly \Drupal\aculta_portal\AccountCoursesManager $accountCourses,
+    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly UserDataInterface $userData,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -25,6 +34,18 @@ final class PortalController extends ControllerBase {
       $container->get('entity.form_builder'),
       $container->get('form_builder'),
       $container->get('aculta_portal.account_courses'),
+      $container->get('aculta_portal.domain_purpose'),
+      $container->get('user.data'),
+    );
+  }
+
+  /**
+   * Keeps Core's legacy user.page route compatible without exposing its UI.
+   */
+  public function legacyUserPageRedirect(): RedirectResponse {
+    $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
+    return new RedirectResponse(
+      $accountRoot?->toString() ?? Url::fromRoute('<front>')->toString(),
     );
   }
 
@@ -121,7 +142,7 @@ final class PortalController extends ControllerBase {
     if ($this->moduleHandler()->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
       $links = $this->entities->getStorage('social_auth')->loadByProperties([
         'user_id' => $account->id(),
-        'plugin_id' => 'google',
+        'plugin_id' => self::GOOGLE_SOCIAL_AUTH_PLUGIN_ID,
       ]);
     }
 
@@ -130,9 +151,25 @@ final class PortalController extends ControllerBase {
       'google_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => 'Google'],
     ];
     if ($links) {
-      $items['google_status'] = ['#plain_text' => $this->t('Conta conectada.')];
-      if ($account->getPassword()) {
-        $social_auth = reset($links);
+      $social_auth = reset($links);
+      $provider_email = $social_auth->getAdditionalData()['provider_email'] ?? NULL;
+      if (is_string($provider_email) && filter_var($provider_email, FILTER_VALIDATE_EMAIL)) {
+        $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
+        $items['google_account'] = [
+          '#plain_text' => $this->t('Conta Google: @email', ['@email' => $provider_email]),
+        ];
+      }
+      else {
+        $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
+        $items['google_account'] = ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')];
+        $items['google_reconnect'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Atualizar conexão Google'),
+          '#url' => Url::fromRoute('social_auth.network.redirect', ['network' => 'google']),
+          '#attributes' => ['class' => ['button', 'button--secondary']],
+        ];
+      }
+      if ($this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
           '#type' => 'link',
           '#title' => $this->t('Desconectar Google'),
@@ -197,8 +234,7 @@ final class PortalController extends ControllerBase {
       $content['email_section']['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
     }
 
-    $social_password_unset = (bool) \Drupal::service('user.data')->get('aculta_portal', $account->id(), 'social_auth_password_unset');
-    if ($account->getPassword() && !$social_password_unset) {
+    if ($this->hasUserChosenPassword($account)) {
       $content['password_section']['change_form'] = $this->buildPortalAccountForm($account);
     }
     else {
@@ -208,6 +244,14 @@ final class PortalController extends ControllerBase {
     return [
       'content' => $content,
     ];
+  }
+
+  /** Returns TRUE only when the account has a user-chosen local password. */
+  private function hasUserChosenPassword(UserInterface $account): bool {
+    $password = $account->getPassword();
+    return is_string($password)
+      && $password !== ''
+      && !(bool) $this->userData->get('aculta_portal', $account->id(), 'social_auth_password_unset');
   }
 
   private function transactionalMailReady(): bool {
@@ -227,7 +271,7 @@ final class PortalController extends ControllerBase {
     if (!$this->moduleHandler()->moduleExists('email_confirmer_user')) {
       return NULL;
     }
-    $pending = \Drupal::service('user.data')->get('email_confirmer_user', $uid, 'email_change_new_address');
+    $pending = $this->userData->get('email_confirmer_user', $uid, 'email_change_new_address');
     if (!is_string($pending) || $pending === '') {
       return NULL;
     }

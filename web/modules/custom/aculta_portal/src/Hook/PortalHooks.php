@@ -12,6 +12,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Path\CurrentPathStack;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -73,6 +74,33 @@ final class PortalHooks {
     }
 
     $this->accountShellBuilder->build($variables);
+
+    if (($variables['page']['content']['#theme'] ?? NULL) === 'aculta_portal_shell'
+      && isset($variables['page']['header'])
+      && is_array($variables['page']['header'])) {
+      $this->removeHeaderBlockByPlugin($variables['page']['header'], 'page_title_block');
+    }
+  }
+
+  /**
+   * Removes a header block owned by the Portal shell before theme preprocess.
+   */
+  private function removeHeaderBlockByPlugin(array &$header, string $pluginId): void {
+    foreach (Element::children($header) as $key) {
+      $block = $header[$key];
+      $candidate = (string) ($block['#plugin_id'] ?? '');
+      $lazyBuilder = $block['#lazy_builder'] ?? [];
+      if ($candidate === ''
+        && ($lazyBuilder[0] ?? '') === 'Drupal\\block\\BlockViewBuilder::lazyBuilder') {
+        $blockId = $lazyBuilder[1][0] ?? '';
+        if (is_string($blockId) && $blockId !== '') {
+          $candidate = (string) ($this->configFactory->get('block.block.' . $blockId)->get('plugin') ?? '');
+        }
+      }
+      if ($candidate === $pluginId) {
+        unset($header[$key]);
+      }
+    }
   }
 
   /**
@@ -97,7 +125,7 @@ final class PortalHooks {
     if (isset($variables['#cache']) && is_array($variables['#cache'])) {
       $variables['#cache']['contexts'] = array_values(array_unique(array_merge(
         $variables['#cache']['contexts'] ?? [],
-        ['domain'],
+        ['domain', 'url.path', 'url.query_args'],
       )));
     }
   }
@@ -133,6 +161,20 @@ final class PortalHooks {
         $target = NULL;
         if (in_array($route, ['user.login', 'user.register', 'user.pass', 'user.logout'], TRUE)) {
           $target = $resolver->routeUrl('account', $route, $url->getRouteParameters());
+          if ($route === 'user.login' && !$this->currentUser->isAuthenticated()
+            && $this->routeMatch->getRouteName() !== 'user.login') {
+            $purpose = $resolver->getCurrentPurpose();
+            $request = $this->requestStack->getCurrentRequest();
+            $path = $request?->getPathInfo() ?? $this->currentPath->getPath();
+            $destination = $request?->getRequestUri() ?? $path;
+            if ($purpose !== NULL && str_starts_with($path, '/') && !str_starts_with($path, '//')
+              && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $path)) {
+              $target?->setOption('query', [
+                'destination' => $destination,
+                'aculta_destination_purpose' => $purpose,
+              ]);
+            }
+          }
         }
         elseif ($route === 'aculta_portal.dashboard' || $route === 'user.page') {
           $target = $resolver->pathUrl('account', '/');

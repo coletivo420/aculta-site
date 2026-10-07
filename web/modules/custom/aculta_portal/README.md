@@ -51,9 +51,9 @@ fontes de verdade.
 
 Drupal `Language + Locale` continua sendo a fonte de verdade para traduções de
 Core/contrib. O módulo declara um catálogo local pt-BR pequeno em
-`translations/aculta_portal.pt-br.po` apenas para lacunas de interface
-confirmadas no Runtime. Não recriar formulários de User/CAPTCHA para traduzir
-strings e não ampliar esse catálogo sem evidência de lacuna upstream.
+`translations/aculta_portal.pt-br.po` apenas para lacunas confirmadas no
+Runtime. Não recriar formulários User/CAPTCHA apenas para traduzir strings e não
+ampliar esse catálogo sem evidência de lacuna upstream.
 
 ### Breadcrumb público
 

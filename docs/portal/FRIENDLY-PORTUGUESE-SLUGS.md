@@ -101,6 +101,12 @@ ou ao módulo upstream, salvo necessidade específica de UX:
 Essas rotas não devem aparecer como navegação principal do usuário quando uma
 rota pública amigável existir.
 
+Exceção específica ACULTA: o fluxo OAuth do Social Auth usa
+`/oauth/{provedor}` para iniciar e `/oauth/{provedor}/retorno` para callback.
+Para o Google, os caminhos são `/oauth/google` e `/oauth/google/retorno`. O
+callback continua sendo um endpoint técnico, não um link de navegação; o slug
+`retorno` identifica a conclusão do fluxo em português.
+
 ## ACCOUNT
 
 Inventário mínimo de URLs humanas a manter/padronizar:

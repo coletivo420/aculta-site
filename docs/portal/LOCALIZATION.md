@@ -85,20 +85,29 @@ Ao adicionar uma string:
 5. remover o override se upstream passar a fornecer tradução equivalente.
 
 
+## CAPTCHA
+
 `captcha.settings` contém texto local visível e fica versionado em pt-BR.
 
-Baseline:
+Baseline combinado com a política de autenticação:
 
+- `enable_globally: 1` para páginas públicas;
+- rotas administrativas continuam fora da regra global;
+- usuários autenticados usam a permissão oficial `skip CAPTCHA`;
 - título: `Verificação de segurança`;
 - descrição em português;
 - mensagem de erro em português;
 - CAPTCHA points de login, recuperação e cadastro com `langcode: pt-br`.
 
-A lógica do módulo CAPTCHA não é duplicada no Portal.
+OAuth Google não submete os formulários Drupal de login/cadastro e, portanto,
+não cria um caminho alternativo de CAPTCHA. Login tradicional anônimo continua
+protegido. A lógica do módulo CAPTCHA não é duplicada no Portal.
 
 ## Turnstile
 
-O widget usa explicitamente `widget.language: pt-br`.
+O widget usa explicitamente `widget.language: pt-br` e
+`widget.appearance: always`, preservando a decisão de tornar o desafio visível
+na página de login.
 
 Cloudflare Turnstile requer JavaScript para produzir o token de validação. O
 projeto **não** deve criar bypass automático ou selecionar um CAPTCHA mais fraco
@@ -108,6 +117,17 @@ Isso é diferente do fallback full-page da Minha Conta: a navegação da Conta d
 continuar funcional sem seu JavaScript próprio, mas uma sessão de teste pode ser
 preparada server-side para validar esse requisito sem contornar CAPTCHA em
 produção.
+
+### Baseline pós-PR #66
+
+A internacionalização não pode regredir as decisões de segurança já integradas:
+
+- CAPTCHA global para visitantes anônimos permanece ativo;
+- `authenticated` permanece com `skip CAPTCHA`;
+- Turnstile permanece com `appearance: always`;
+- endpoints JSON de autenticação removidos pelo Portal não devem ser reativados
+  como atalho sem Form API/Turnstile;
+- nenhum fallback sem JavaScript pode reduzir a proteção.
 
 ## Config Translation
 
@@ -166,7 +186,7 @@ Validar:
 - `/recuperar-senha`;
 - cadastro quando habilitado;
 - labels/botões/mensagens do User e Login Email or Username;
-- CAPTCHA fallback/textos locais em português;
+- CAPTCHA e textos locais em português;
 - Turnstile em pt-BR com JavaScript habilitado;
 - mensagem de erro pt-BR quando não existe token;
 - nenhum bypass de CAPTCHA sem JavaScript;
@@ -177,7 +197,8 @@ Validar:
 Não:
 
 - desabilitar `locale`;
-- voltar a atualização para manual sem justificativa;
+- habilitar atualização automática de traduções sem decisão explícita e revisão
+  do impacto em Configuration Sync;
 - usar `widget.language: auto` num site deliberadamente pt-BR sem decisão
   explícita;
 - hardcodar traduções de Core/contrib em controllers/templates;

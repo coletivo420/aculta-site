@@ -21,9 +21,9 @@ Uso:
 - `locale`: traduções oficiais de Core, módulos e temas;
 - `config_translation`: tradução de textos configuráveis.
 
-O projeto usa `pt-br` como idioma padrão e permite ao Locale obter catálogos
-oficiais compatíveis com as versões instaladas. Não manter cópias paralelas de
-traduções de Core/contrib dentro do Portal quando upstream já fornece o catálogo.
+O projeto usa `pt-br` como idioma padrão. Catálogos oficiais de Core/contrib
+são importados pelo Locale conforme as versões instaladas. O Portal mantém
+somente um catálogo local mínimo para lacunas confirmadas no Runtime.
 
 `content_translation` permanece fora de escopo até existir requisito editorial
 multilíngue.
