@@ -47,7 +47,6 @@ conjunto normativo:
 - development;
 - accessibility;
 - decisions;
-- migration;
 - roadmap;
 - versioning;
 - shell multidomínio planejado, com Institution Bar global e Domain Header por purpose;
@@ -82,11 +81,13 @@ conjunto normativo:
 - centraliza duração rápida/easing e sombra de hover em tokens;
 - remove hook de login duplicado no Portal;
 - remove exports web sem consumidor; preserva originais de branding e os assets efetivamente usados;
+- alinha defaults de fresh install de logo/favicon ao config sync;
 - hooks do tema usam OOP/DI em `src/Hook/ThemeHooks.php`; o arquivo procedural `.theme` deixa de existir.
 
 - remove caminho morto de `system_powered_by_block`/`aculta_site_credit`, sem placement configurado.
 
-- move CSS do carrossel editorial para a library contextual já anexada pela View VVJB.
+- move CSS do carrossel editorial para a library contextual já anexada pela View VVJB;
+- registra allowlist dos sete overrides Twig com delta comprovado.
 
 ### Gate da Foundation
 

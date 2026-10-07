@@ -67,6 +67,24 @@ Regras:
 - nada de listener global duplicado;
 - assets específicos carregam contextualmente quando possível.
 
+## Allowlist de overrides Twig
+
+A Foundation mantém somente overrides com delta comprovado em relação a
+Core/Bootstrap5/contrib:
+
+| Override | Motivo atual |
+| --- | --- |
+| `page.html.twig` | compor o shell público e regiões existentes |
+| `block--system-branding-block.html.twig` | wrapper visual ACULTA420 + fallback textual |
+| `navigation/breadcrumb.html.twig` | apresentar o título atual preparado pelo Portal |
+| `block--block-content--type--aculta-institution.html.twig` | view modes institucionais específicos |
+| `node--editorial-highlight.html.twig` | presenter do SDC `editorial-card` |
+| `node--project--teaser.html.twig` | teaser de projeto existente até o Card System v1 |
+| `views-view-vvjb.html.twig` | delta de integração/acessibilidade e library contextual do VVJB |
+
+Novo override exige comparação com o template upstream da versão instalada e
+uma justificativa documental. Override sem delta real deve ser removido.
+
 ## Twig
 
 Twig apresenta. Não decide regra de negócio.

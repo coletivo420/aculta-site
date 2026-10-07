@@ -36,6 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
+$assert(($info['version'] ?? NULL) === '0.1.0', 'Theme metadata remains on Foundation version 0.1.0.');
 
 $lock = json_decode(file_get_contents($root . '/composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $bootstrapPackage = array_values(array_filter(
@@ -88,6 +89,12 @@ $themeSettings = \Drupal::config('aculta420.settings');
 foreach (['institution_data_uuid', 'institution_home_nid', 'institution_transparency_nid'] as $functionalSetting) {
   $assert($themeSettings->get($functionalSetting) === NULL, 'Theme settings do not own functional institutional data: ' . $functionalSetting);
 }
+$installThemeSettings = Yaml::parseFile($themeRoot . '/config/install/aculta420.settings.yml');
+$syncThemeSettings = Yaml::parseFile($root . '/config/sync/aculta420.settings.yml');
+foreach (['logo', 'favicon'] as $assetSetting) {
+  $assert(($installThemeSettings[$assetSetting]['path'] ?? NULL) === ($syncThemeSettings[$assetSetting]['path'] ?? NULL), 'Fresh-install and sync agree on theme ' . $assetSetting . '.');
+}
+
 $portalSettings = \Drupal::config('aculta_portal.settings');
 $assert(trim((string) $portalSettings->get('institution_data_uuid')) !== '', 'Portal owns the institutional block UUID.');
 $assert((int) $portalSettings->get('institution_transparency_nid') > 0, 'Portal owns the institutional transparency page reference.');
@@ -105,6 +112,26 @@ foreach ($configStorage->listAll('block.block.aculta_') as $configName) {
     $assert($data['theme'] === 'aculta420', 'ACULTA block placement uses the current provider: ' . $configName);
   }
 }
+
+$expectedTemplates = [
+  'block--block-content--type--aculta-institution.html.twig',
+  'block--system-branding-block.html.twig',
+  'navigation/breadcrumb.html.twig',
+  'node--editorial-highlight.html.twig',
+  'node--project--teaser.html.twig',
+  'page.html.twig',
+  'views-view-vvjb.html.twig',
+];
+$actualTemplates = [];
+$templateRoot = $themeRoot . '/templates';
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($templateRoot, FilesystemIterator::SKIP_DOTS)) as $template) {
+  if ($template->isFile() && str_ends_with($template->getFilename(), '.html.twig')) {
+    $actualTemplates[] = str_replace($templateRoot . DIRECTORY_SEPARATOR, '', $template->getPathname());
+  }
+}
+sort($expectedTemplates);
+sort($actualTemplates);
+$assert($actualTemplates === $expectedTemplates, 'Twig override set matches the reviewed Foundation allowlist.');
 
 $sdc = \Drupal::service('plugin.manager.sdc');
 $assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers aculta420:editorial-card.');
