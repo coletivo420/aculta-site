@@ -86,6 +86,11 @@ Primeiros contratos a definir/usar:
 AJAX é uma dimensão separada do componente: a navegação parcial da Conta
 permanece enquanto o transporte é migrado gradualmente para APIs Core.
 
+A semântica comum de status/actions/empty/summary está em
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md). Esses contratos
+não devem ser convertidos automaticamente em SDC antes de aprovação no roadmap
+do tema.
+
 Usar render element SDC quando apropriado:
 
 ```php
@@ -99,6 +104,25 @@ Usar render element SDC quando apropriado:
 ```
 
 Não passar entidade inteira como prop.
+
+## S3.2B — Shared presentation semantics
+
+**Estado: concluída documentalmente.**
+
+Define status, action, empty state, summary e action list sem criar abstrações
+visuais prematuras.
+
+## S3.2C — Security and connections presenters
+
+Próxima extração do `PortalController`:
+
+- Social Auth/Google;
+- status conectado/desconectado/configuração pendente;
+- segurança;
+- transactional mail readiness;
+- pending e-mail.
+
+Não alterar OAuth redirect/callback nem Form API.
 
 ## S3.3 — Support access first
 

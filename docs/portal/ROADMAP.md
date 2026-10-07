@@ -116,6 +116,9 @@ Sem Runtime:
 
 ## S3.2 — Minha Conta -> SDC
 
+A evolução da Conta deve separar semântica Portal de implementação visual do
+tema. Contrato Portal não equivale a SDC aprovado.
+
 Executar em pequenos drafts, preferencialmente nesta ordem:
 
 1. status badge;
@@ -135,6 +138,49 @@ Cada conversão deve remover CSS/markup antigo somente depois de paridade.
 
 A matriz normativa está em
 [ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
+
+## S3.2B — Shared presentation semantics
+
+**Estado: concluída documentalmente.**
+
+Define os view-models semânticos compartilhados da Conta sem antecipar SDCs que
+o tema ainda não aprovou.
+
+Contratos:
+
+- status;
+- action;
+- empty state;
+- summary;
+- action list.
+
+A auditoria H3 do tema continua autoritativa sobre quais desses contratos
+realmente viram SDC.
+
+Documento:
+[ACCOUNT-PRESENTATION-MODEL.md](ACCOUNT-PRESENTATION-MODEL.md).
+
+## S3.2C — Segurança e Conexões
+
+**Estado: próxima.**
+
+Objetivo:
+
+extrair presenters para:
+
+- Social Auth/Google;
+- estados de conexão;
+- segurança;
+- disponibilidade de mudança de e-mail;
+- alteração de e-mail pendente.
+
+Preservar:
+
+- OAuth redirect/callback;
+- Form API;
+- Email Confirmer;
+- SMTP readiness;
+- progressive enhancement.
 
 ## S3.3 — Minha Conta AJAX boundary
 

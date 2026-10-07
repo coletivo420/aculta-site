@@ -10,6 +10,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 - S2 Static Portal Audit concluído sem alterar runtime.
 - S2.1 documenta a matriz Minha Conta: SDC, integrações, AJAX e fallback.
+- S3.2B define semântica compartilhada de status, ações, empty states e summaries sem antecipar SDCs não aprovados pelo tema.
 - Mapa de refatoração classifica KEEP, REFACTOR, UPSTREAM/CONFIG e RUNTIME-SENSITIVE.
 - Bootstrap Component Design System definido como destino da apresentação pública do Portal.
 
