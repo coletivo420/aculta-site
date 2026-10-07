@@ -95,6 +95,13 @@ Passa a consumir o presenter.
 O markup atual continua sendo o fallback funcional. O controller não referencia
 `aculta:course-card` nem qualquer outro SDC inexistente.
 
+Para manter a direção arquitetural da S3.1, o controller também deixa de herdar
+`ControllerBase` apenas para tradução. Ele implementa
+`ContainerInjectionInterface` e recebe explicitamente o presenter, o usuário
+atual e `string_translation`. O método estático `create()` é somente a factory
+de DI; a lógica da requisição não consulta o container nem usa helper lazy de
+`ControllerBase`.
+
 ## Cache e access
 
 A ordem permanece:
@@ -141,7 +148,8 @@ Confirmado por inspeção do diff contra a `main` e lint sintático local:
 
 - manager continua sendo a fronteira LMS/Group/access;
 - presenter não carrega Group/User/CourseStatus por storage;
-- controller não referencia SDC;
+- controller não referencia SDC e não depende de helpers lazy de `ControllerBase`;
+- presenter, current user e tradução entram por DI explícita;
 - tema não é alterado;
 - Composer/config sync não são alterados;
 - documentação aponta para uma única fonte semântica compartilhada;

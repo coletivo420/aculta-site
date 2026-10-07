@@ -5,22 +5,25 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Controller;
 
 use Drupal\aculta_portal\Presentation\AccountCoursePresenter;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Presents the current user's LMS memberships inside ACCOUNT. */
-final class AccountCoursesController extends ControllerBase {
+final class AccountCoursesController implements ContainerInjectionInterface {
 
   public function __construct(
     private readonly AccountCoursePresenter $presenter,
     private readonly AccountProxyInterface $currentAccount,
+    private readonly TranslationInterface $translation,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.presentation.account_course'),
       $container->get('current_user'),
+      $container->get('string_translation'),
     );
   }
 
@@ -65,7 +68,12 @@ final class AccountCoursesController extends ControllerBase {
       $card['meta'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-account-course__meta']],
-        'status' => ['#plain_text' => $this->t('Status: @status', ['@status' => $course['status']['label']])],
+        'status' => [
+          '#plain_text' => (string) $this->translation->translate(
+            'Status: @status',
+            ['@status' => $course['status']['label']],
+          ),
+        ],
       ];
       if ($course['score_label'] !== NULL) {
         $card['meta']['score'] = ['#plain_text' => $course['score_label']];

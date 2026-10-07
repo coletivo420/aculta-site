@@ -12,7 +12,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Refatoração preparada
 
-- S3.2A introduz `AccountCoursePresenter` como fronteira semântica entre LMS/Group e a apresentação da Conta, mantendo o render atual e o tema inalterado até Runtime PASS.
+- S3.2A introduz `AccountCoursePresenter` como fronteira semântica entre LMS/Group e a apresentação da Conta, mantendo o render atual e o tema inalterado até Runtime PASS; o controller de Cursos usa DI explícita e não depende dos helpers lazy de `ControllerBase`.
 - S3.5 separa resolução de purpose do enforcement HTTP e evita mutação de Domain em URLs locais.
 - S3.5 passou os gates Runtime em R1.2B; `pathUrl()` agora respeita o Domain purpose e o alias de ambiente.
 
