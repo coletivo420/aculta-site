@@ -10,6 +10,10 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 - Macrofase S encerrada no limite seguro sem Runtime; drafts funcionais continuam DEFERRED e a próxima execução começa em R0.
 
+### Roadmap
+
+- Portal 0.18.1 adiciona a padronização transversal de slugs públicos amigáveis em português para todos os Domains/purposes, com redirects/canonical/sitemap e preservação das rotas técnicas upstream.
+
 ### Documentação
 
 - S2 Static Portal Audit concluído sem alterar runtime.

@@ -370,6 +370,37 @@ Documento: [S4-0.18-DEDUPLICATION.md](S4-0.18-DEDUPLICATION.md).
 
 Nenhuma remoção sem substituto e teste de paridade.
 
+### Portal 0.18.1 — Friendly Portuguese Slugs
+
+**Requisito transversal adicionado ao roadmap.**
+
+Documento:
+[FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md).
+
+Objetivo:
+
+- inventariar todas as rotas públicas humanas;
+- padronizar slugs amigáveis em português em todos os purposes;
+- manter a mesma estrutura de path entre Homelab e produção;
+- preservar Core/contrib callbacks, AJAX, OAuth, webhooks e admin internals;
+- criar redirects para slugs públicos substituídos;
+- alinhar canonical, sitemap, menus, breadcrumbs e Search;
+- usar Pathauto/config antes de PHP custom quando possível.
+
+Purposes cobertos:
+
+- MAIN;
+- ACCOUNT;
+- SUPPORT;
+- MAGAZINE;
+- WIKI;
+- SHOP;
+- COURSES;
+- FORUM.
+
+Essa fase deve ocorrer depois que as principais features/rotas estiverem
+definidas e antes do hardening/release final.
+
 # Macrofase R — retorno ao Runtime/Codex
 
 ## R0 — Clean baseline
@@ -484,6 +515,8 @@ Gates finais:
 - Admin Hub;
 - Search API;
 - AJAX consolidado;
+- slugs públicos amigáveis em português em todos os purposes;
+- canonical/sitemap/redirects coerentes com os slugs públicos;
 - Component Design System aplicado às experiências públicas;
 - Domain isolation;
 - Apache Homelab;

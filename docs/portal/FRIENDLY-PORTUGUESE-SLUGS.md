@@ -1,0 +1,373 @@
+# Política de URLs e slugs amigáveis em português
+
+Status: **requisito transversal do Portal 1.0**
+
+## Objetivo
+
+Toda experiência humana e pública do ecossistema ACULTA deve apresentar URLs
+claras, estáveis e amigáveis em português, em todos os Domains/purposes.
+
+A regra vale para:
+
+- MAIN;
+- ACCOUNT;
+- SUPPORT;
+- MAGAZINE;
+- WIKI;
+- SHOP;
+- COURSES;
+- FORUM.
+
+O objetivo não é traduzir internamente todas as rotas Drupal. O objetivo é que
+a **URL canônica navegável apresentada ao usuário** use slugs em português
+quando a rota representa conteúdo ou uma ação humana.
+
+## Princípio
+
+```text
+rota técnica interna
+        ↓
+alias/rota pública amigável em português
+        ↓
+Domain purpose correto
+        ↓
+canonical/navegação consistente
+```
+
+Exemplo:
+
+```text
+rota interna Core/contrib
+/user/login
+        ↓
+ACCOUNT
+/entrar
+```
+
+A rota técnica pode continuar existindo para compatibilidade do Drupal, mas a
+experiência pública deve preferir o alias/rota amigável.
+
+## Padrão de slug
+
+Slugs humanos devem:
+
+- usar português;
+- usar minúsculas;
+- usar hífen entre palavras;
+- evitar IDs quando existe título/semântica estável;
+- usar transliteração ASCII no path quando necessário;
+- evitar abreviações internas;
+- evitar nomes de classes/plugins/modules;
+- evitar inglês quando existe termo natural em português;
+- permanecer estáveis depois de publicados.
+
+Exemplos:
+
+- `/minha-conta`;
+- `/meus-dados`;
+- `/recuperar-senha`;
+- `/minha-participacao`;
+- `/meus-cursos`;
+- `/meu-apoio`;
+- `/criar-topico`;
+- `/contribuicoes`;
+- `/categorias`.
+
+Não usar acentos no slug canônico:
+
+- preferir `/seguranca` a `/segurança`;
+- preferir `/participacao` a `/participação`.
+
+O texto visível continua usando português correto com acentos.
+
+## Rotas técnicas que não precisam ser traduzidas
+
+Não criar aliases artificiais para endpoints cuja estabilidade pertence ao Core
+ou ao módulo upstream, salvo necessidade específica de UX:
+
+- OAuth redirect/callback;
+- webhooks;
+- endpoints AJAX;
+- endpoints JSON/API;
+- rotas de autocomplete;
+- callbacks internos;
+- cron;
+- batch;
+- admin internals;
+- rotas temporárias de reset com parâmetros/tokens;
+- rotas técnicas de Media Library;
+- endpoints Commerce/payment.
+
+Essas rotas não devem aparecer como navegação principal do usuário quando uma
+rota pública amigável existir.
+
+## ACCOUNT
+
+Inventário mínimo de URLs humanas a manter/padronizar:
+
+- `/entrar`;
+- `/recuperar-senha`;
+- `/minha-conta`;
+- `/meus-dados`;
+- `/endereco`;
+- `/foto`;
+- `/seguranca`;
+- `/conexoes`;
+- `/meus-cursos`;
+- `/meu-apoio`;
+- `/minha-participacao`.
+
+O inventário real do módulo deve decidir quais já existem e quais precisam de
+migração. Não criar rota duplicada quando o path atual já atende ao padrão.
+
+## SUPPORT
+
+URLs humanas devem usar vocabulário de apoio/doação, por exemplo:
+
+- `/apoiar`;
+- `/como-apoiar`;
+- `/meu-apoio` quando semanticamente pertencente ao SUPPORT;
+- páginas de confirmação/status com nomes compreensíveis quando não forem
+  endpoints técnicos do Commerce.
+
+Checkout, payment callbacks e webhooks permanecem sob APIs upstream.
+
+## MAGAZINE
+
+Conteúdo editorial deve evitar aliases técnicos de entidade.
+
+Padrões candidatos:
+
+- artigos por título;
+- `/autores/<nome>`;
+- `/categorias/<termo>`;
+- `/arquivo` quando houver;
+- landing pages editoriais em português.
+
+Pathauto deve ser preferido quando adequado.
+
+## WIKI
+
+Padrões candidatos:
+
+- `/verbete/<titulo>`;
+- `/categoria/<termo>`;
+- `/contribuicoes`;
+- `/criar-verbete` para a ação humana pública, quando a rota Portal for
+  responsável pela navegação.
+
+Rotas técnicas de revisions/Diff podem manter paths internos se não forem
+expostas como canonical pública; links de UI podem receber aliases amigáveis
+quando houver benefício e compatibilidade.
+
+## SHOP
+
+Quando o storefront for implementado:
+
+- `/produtos`;
+- `/produto/<titulo>`;
+- `/categorias/<termo>`;
+- `/carrinho`;
+- `/pedidos` somente onde access/ownership forem apropriados.
+
+Não substituir rotas técnicas de checkout/payment de Commerce apenas para
+traduzir path.
+
+## COURSES
+
+Padrões humanos:
+
+- `/cursos`;
+- `/curso/<titulo>` quando a entidade permitir alias estável;
+- `/meus-cursos` na experiência de Conta;
+- ações de curso devem usar vocabulário em português quando forem rotas Portal.
+
+Rotas LMS técnicas podem permanecer internas.
+
+## FORUM
+
+Na implementação 0.11/0.12, definir desde o início aliases amigáveis:
+
+- `/forum` ou root do subdomínio como landing;
+- `/topico/<titulo>`;
+- `/criar-topico`;
+- `/categoria/<termo>` ou equivalente do Forum upstream;
+- `/minhas-respostas` e `/meus-topicos` na Conta quando aplicável.
+
+Não criar storage/roteamento paralelo ao Forum; aliases devem envolver APIs e
+entidades upstream.
+
+## MAIN
+
+Páginas institucionais e hubs devem preferir nomes humanos estáveis, por exemplo:
+
+- `/sobre`;
+- `/carta-de-principios`;
+- `/contato`;
+- `/participar`;
+- `/projetos`.
+
+O inventário final deve ser baseado nas páginas reais versionadas/configuradas,
+não apenas nesses exemplos.
+
+## Pathauto e aliases
+
+Quando Pathauto resolver o caso:
+
+- usar patterns por bundle/taxonomy;
+- transliterar;
+- gerar aliases estáveis;
+- não duplicar lógica em PHP.
+
+Para rotas custom do Portal:
+
+- definir path amigável diretamente na route quando isso não quebrar API;
+- ou manter rota interna + redirect/alias compatível.
+
+Não fabricar config sync final sem Runtime.
+
+## Mudança de slugs existentes
+
+Ao trocar uma URL pública já usada:
+
+1. inventariar path atual;
+2. definir novo path;
+3. preservar canonical;
+4. criar redirect permanente quando apropriado;
+5. atualizar menus;
+6. atualizar breadcrumbs;
+7. atualizar sitemap;
+8. atualizar links cross-domain;
+9. atualizar Search/Views;
+10. testar links salvos/deep links.
+
+Nunca quebrar silently um path público já indexado.
+
+## Canonical e SEO
+
+A URL canonical deve:
+
+- usar o Domain de produção;
+- usar o slug público aprovado;
+- evitar aliases Homelab;
+- evitar path técnico quando existe alias público;
+- ser consistente com sitemap e metadata.
+
+Homelab continua usando os aliases `*.toca.net.br` para navegação, com a mesma
+estrutura de path amigável.
+
+## Domain purpose
+
+O mesmo conceito deve manter o mesmo slug entre ambientes.
+
+Exemplo:
+
+```text
+Homelab:
+https://conta.aculta.toca.net.br/meus-cursos
+
+Produção:
+https://conta.aculta.org/meus-cursos
+```
+
+Somente hostname muda.
+
+Não criar paths diferentes por ambiente.
+
+## AJAX / HTMX
+
+Navegação parcial deve usar a mesma URL pública amigável da navegação full-page.
+
+History API deve registrar o slug público.
+
+Não expor path técnico apenas porque a requisição foi AJAX.
+
+## Forms
+
+Form action pode continuar apontando para rota técnica Core/contrib quando essa
+é a API correta.
+
+A página que apresenta o form deve usar slug humano.
+
+## Access
+
+Alias não altera access.
+
+A ordem continua:
+
+```text
+route/entity access
+      ↓
+Domain purpose
+      ↓
+URL pública
+```
+
+Um alias amigável nunca pode ser usado para contornar a policy wrong-host.
+
+## Inventário obrigatório
+
+Antes da implementação, gerar tabela de todas as rotas públicas do Portal:
+
+| Purpose | Route name | Path atual | Path amigável | Canonical | Migração |
+| --- | --- | --- | --- | --- | --- |
+
+Classificar cada rota como:
+
+- KEEP;
+- RENAME;
+- REDIRECT;
+- TECHNICAL;
+- ADMIN;
+- CALLBACK.
+
+Esse inventário inclui rotas fornecidas por Core/contrib que aparecem
+diretamente na UX ACULTA.
+
+## Testes
+
+Para cada mudança de slug:
+
+- host correto;
+- host incorreto;
+- anonymous/authenticated;
+- old path;
+- new path;
+- redirect;
+- canonical;
+- breadcrumb;
+- menu;
+- AJAX/history;
+- sitemap;
+- Search;
+- cache;
+- access.
+
+## Gate Portal 1.0
+
+Portal 1.0 exige:
+
+- inventário completo de rotas públicas;
+- nenhuma navegação principal expondo slug técnico/inglês sem justificativa;
+- ACCOUNT padronizado;
+- Wiki padronizada;
+- Courses padronizado;
+- Support padronizado;
+- Magazine padronizado;
+- Forum já nascer padronizado quando entrar no 1.0;
+- Shop seguir a política no escopo realmente implementado;
+- redirects para mudanças públicas;
+- canonical/sitemap consistentes;
+- Domain parity Homelab/produção.
+
+## Implementação no roadmap
+
+A implementação deve ocorrer como fase transversal antes do 1.0:
+
+**Portal 0.18.1 — Friendly Portuguese Slugs**
+
+Essa versão deve ser executada depois das principais rotas/features existirem e
+antes do hardening/release final, para evitar renomear rotas repetidamente
+durante a construção das features.
+
+Ela não substitui 0.18 Deduplication nem 0.19 Hardening.
