@@ -55,10 +55,13 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         && isset($destination['purpose'], $destination['path'])
         && is_string($destination['purpose'])
         && is_string($destination['path'])
-        && str_starts_with($destination['path'], '/')
-        && !str_starts_with($destination['path'], '//')) {
+        && $this->isSafeLoginDestinationPath($destination['path'])) {
         $url = $this->domainPurposeManager->pathUrl($destination['purpose'], $destination['path']);
         if ($url !== NULL) {
+          $query = $destination['query'] ?? [];
+          if (is_array($query) && $query !== []) {
+            $url->setOption('query', $query);
+          }
           $event->getResponse()->headers->set('Location', $url->toString());
           return;
         }
@@ -117,20 +120,16 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       && !$this->currentUser->isAuthenticated()
       && $request->hasSession()) {
       $session = $request->getSession();
-      $destinationPath = $request->query->get('destination');
+      $destination = $this->parseLoginDestination($request->query->get('destination'));
       $requestedPurpose = $request->query->get('aculta_destination_purpose');
-      $validDestination = is_string($destinationPath)
-        && str_starts_with($destinationPath, '/')
-        && !str_starts_with($destinationPath, '//')
-        && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $destinationPath);
 
       // A direct/fresh login must not inherit a destination abandoned earlier
       // in the same anonymous session.
-      if ($routeName === 'user.login' && !$validDestination) {
+      if ($routeName === 'user.login' && $destination === NULL) {
         $session->remove(self::LOGIN_DESTINATION_SESSION_KEY);
       }
 
-      if ($validDestination) {
+      if ($destination !== NULL) {
         $storedDestination = $session->get(self::LOGIN_DESTINATION_SESSION_KEY);
         $destinationPurpose = is_string($requestedPurpose)
           && $this->domainPurposeManager->getDomain($requestedPurpose)
@@ -139,11 +138,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
         // Social Auth forwards Drupal's standard destination but not the
         // ACULTA-specific purpose. Preserve the purpose captured on /entrar
-        // when the OAuth request refers to the same path.
+        // when the OAuth request refers to the same path and query.
         if ($destinationPurpose === NULL
           && $routeName === 'social_auth.network.redirect'
           && is_array($storedDestination)
-          && ($storedDestination['path'] ?? NULL) === $destinationPath
+          && ($storedDestination['path'] ?? NULL) === $destination['path']
+          && ($storedDestination['query'] ?? []) === $destination['query']
           && is_string($storedDestination['purpose'] ?? NULL)
           && $this->domainPurposeManager->getDomain($storedDestination['purpose']) !== NULL) {
           $destinationPurpose = $storedDestination['purpose'];
@@ -153,7 +153,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         if ($destinationPurpose !== NULL) {
           $session->set(self::LOGIN_DESTINATION_SESSION_KEY, [
             'purpose' => $destinationPurpose,
-            'path' => $destinationPath,
+            'path' => $destination['path'],
+            'query' => $destination['query'],
           ]);
         }
       }
@@ -191,6 +192,51 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if ($contentPurpose !== NULL && $currentPurpose !== $contentPurpose) {
       $this->notFound($event);
     }
+  }
+
+  /**
+   * Parses a Drupal-internal post-login destination into safe URL components.
+   *
+   * @return array{path: string, query: array}|null
+   *   The normalized destination, or NULL for external/unsafe destinations.
+   */
+  private function parseLoginDestination(mixed $destination): ?array {
+    if (!is_string($destination)
+      || $destination === ''
+      || !str_starts_with($destination, '/')
+      || str_starts_with($destination, '//')) {
+      return NULL;
+    }
+
+    $parts = parse_url($destination);
+    if ($parts === FALSE
+      || isset($parts['scheme'])
+      || isset($parts['host'])
+      || isset($parts['user'])
+      || isset($parts['pass'])
+      || isset($parts['port'])
+      || isset($parts['fragment'])) {
+      return NULL;
+    }
+
+    $path = $parts['path'] ?? '';
+    if (!$this->isSafeLoginDestinationPath($path)) {
+      return NULL;
+    }
+
+    $query = [];
+    if (isset($parts['query']) && $parts['query'] !== '') {
+      parse_str($parts['query'], $query);
+    }
+
+    return ['path' => $path, 'query' => $query];
+  }
+
+  /** Checks an already-parsed internal path for post-login reuse. */
+  private function isSafeLoginDestinationPath(string $path): bool {
+    return str_starts_with($path, '/')
+      && !str_starts_with($path, '//')
+      && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $path);
   }
 
   private function notFound(RequestEvent $event): void {

@@ -125,7 +125,7 @@ final class PortalHooks {
     if (isset($variables['#cache']) && is_array($variables['#cache'])) {
       $variables['#cache']['contexts'] = array_values(array_unique(array_merge(
         $variables['#cache']['contexts'] ?? [],
-        ['domain', 'url.path'],
+        ['domain', 'url.path', 'url.query_args'],
       )));
     }
   }
@@ -164,11 +164,13 @@ final class PortalHooks {
           if ($route === 'user.login' && !$this->currentUser->isAuthenticated()
             && $this->routeMatch->getRouteName() !== 'user.login') {
             $purpose = $resolver->getCurrentPurpose();
-            $path = $this->requestStack->getCurrentRequest()?->getPathInfo() ?? $this->currentPath->getPath();
+            $request = $this->requestStack->getCurrentRequest();
+            $path = $request?->getPathInfo() ?? $this->currentPath->getPath();
+            $destination = $request?->getRequestUri() ?? $path;
             if ($purpose !== NULL && str_starts_with($path, '/') && !str_starts_with($path, '//')
               && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $path)) {
               $target?->setOption('query', [
-                'destination' => $path,
+                'destination' => $destination,
                 'aculta_destination_purpose' => $purpose,
               ]);
             }

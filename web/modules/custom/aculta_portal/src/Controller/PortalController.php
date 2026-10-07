@@ -8,6 +8,8 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Url;
+use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -23,6 +25,7 @@ final class PortalController extends ControllerBase {
     private readonly FormBuilderInterface $accountFormBuilder,
     private readonly \Drupal\aculta_portal\AccountCoursesManager $accountCourses,
     private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly UserDataInterface $userData,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -32,6 +35,7 @@ final class PortalController extends ControllerBase {
       $container->get('form_builder'),
       $container->get('aculta_portal.account_courses'),
       $container->get('aculta_portal.domain_purpose'),
+      $container->get('user.data'),
     );
   }
 
@@ -165,7 +169,7 @@ final class PortalController extends ControllerBase {
           '#attributes' => ['class' => ['button', 'button--secondary']],
         ];
       }
-      if ($account->getPassword()) {
+      if ($this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
           '#type' => 'link',
           '#title' => $this->t('Desconectar Google'),
@@ -230,8 +234,7 @@ final class PortalController extends ControllerBase {
       $content['email_section']['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
     }
 
-    $social_password_unset = (bool) \Drupal::service('user.data')->get('aculta_portal', $account->id(), 'social_auth_password_unset');
-    if ($account->getPassword() && !$social_password_unset) {
+    if ($this->hasUserChosenPassword($account)) {
       $content['password_section']['change_form'] = $this->buildPortalAccountForm($account);
     }
     else {
@@ -241,6 +244,12 @@ final class PortalController extends ControllerBase {
     return [
       'content' => $content,
     ];
+  }
+
+  /** Returns TRUE only when the account has a user-chosen local password. */
+  private function hasUserChosenPassword(UserInterface $account): bool {
+    return $account->getPassword() !== ''
+      && !(bool) $this->userData->get('aculta_portal', $account->id(), 'social_auth_password_unset');
   }
 
   private function transactionalMailReady(): bool {
@@ -260,7 +269,7 @@ final class PortalController extends ControllerBase {
     if (!$this->moduleHandler()->moduleExists('email_confirmer_user')) {
       return NULL;
     }
-    $pending = \Drupal::service('user.data')->get('email_confirmer_user', $uid, 'email_change_new_address');
+    $pending = $this->userData->get('email_confirmer_user', $uid, 'email_change_new_address');
     if (!is_string($pending) || $pending === '') {
       return NULL;
     }

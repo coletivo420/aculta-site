@@ -30,11 +30,16 @@ final class SocialAuthProfileSubscriber implements EventSubscriberInterface {
       return;
     }
 
+    $providerId = (string) $event->getSocialAuthUser()->getId();
+    if ($providerId === '') {
+      return;
+    }
+
     $storage = $this->entityTypeManager->getStorage('social_auth');
     $records = $storage->loadByProperties([
       'user_id' => $event->getDrupalAccount()->id(),
       'plugin_id' => self::GOOGLE_PLUGIN_ID,
-      'provider_user_id' => $event->getSocialAuthUser()->getProviderId(),
+      'provider_user_id' => $providerId,
     ]);
 
     foreach ($records as $record) {
