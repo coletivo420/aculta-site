@@ -289,11 +289,17 @@ Documento: [S4-0.14-ADMIN-HUB.md](S4-0.14-ADMIN-HUB.md).
 
 ### Portal 0.15 — AJAX Consolidation
 
-- plano de migração de `account-navigation.js`;
+**Especificação concluída.**
+
+Documento: [S4-0.15-AJAX-CONSOLIDATION.md](S4-0.15-AJAX-CONSOLIDATION.md).
+
+- preservar UX assíncrona;
+- migrar `account-navigation.js` por fluxo, não em massa;
 - Views AJAX;
 - Form API AJAX;
 - Drupal Ajax;
-- Core HTMX quando apropriado.
+- Core HTMX quando apropriado;
+- CEP permanece AJAX específico.
 
 ### Portal 0.16 — Search
 
