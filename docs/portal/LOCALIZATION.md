@@ -183,6 +183,18 @@ atualização de traduções é uma operação de manutenção controlada:
 Não habilitar atualização semanal automática num ambiente governado por
 Configuration Sync.
 
+Na revisão de 2026-10-07, a `main` já versiona **80 arquivos** em
+`config/sync/language/pt-br/`. Assim, uma contagem alta em `config:status`
+depois de `locale:update` não autoriza exportação em massa. Comparar os paths
+um a um e separar:
+
+- mudança de tradução/configuração realmente pretendida;
+- tradução preexistente cuja active config divergiu;
+- drift funcional sem relação com i18n.
+
+Nunca usar `drush cex` diretamente sobre `config/sync` para “limpar” essa
+diferença sem revisão.
+
 ## Testes
 
 Validar:
