@@ -66,7 +66,9 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
     }
     elseif ($route === 'entity.user.canonical') {
       if ($target_id === $own_uid) {
-        $destination = 'aculta_portal.dashboard';
+        // Canonical self-profile is an upstream compatibility route. The
+        // public account landing page is the ACCOUNT Domain root.
+        $destination = '<front>';
       }
       else {
         $event->setResponse(new \Symfony\Component\HttpFoundation\Response('', 403));

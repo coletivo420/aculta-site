@@ -24,17 +24,14 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
   protected function alterRoutes(RouteCollection $collection): void {
     $pathChanges = [
       'user.login' => '/entrar',
-      'user.login.http' => '/entrar',
       'user.register' => '/criar-conta',
       'user.pass' => '/recuperar-senha',
-      'user.pass.http' => '/recuperar-senha',
       'user.reset' => '/recuperar-acesso/{uid}/{timestamp}/{hash}',
       'user.reset.form' => '/recuperar-acesso/{uid}',
       'user.reset.login' => '/recuperar-acesso/{uid}/{timestamp}/{hash}/entrar',
       'user.logout' => '/sair',
       'user.logout.confirm' => '/sair/confirmar',
       'user.logout.http' => '/sair',
-      'user.page' => '/identidade',
       'user.edit' => '/identidade/editar',
       'entity.user.canonical' => '/identidade/{user}',
       'entity.user.edit_form' => '/painel-administrativo/pessoas/{user}/editar',
@@ -49,6 +46,21 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     ];
     $accountRoutes = array_fill_keys(array_keys($pathChanges), TRUE);
     unset($accountRoutes['commerce_payment.notify']);
+
+    // Browser Form API is the supported password-authentication surface.
+    // Core's JSON login/password endpoints bypass Form API and therefore the
+    // Turnstile policy, so this site does not publish them.
+    foreach (['user.login.http', 'user.pass.http'] as $httpRoute) {
+      $collection->remove($httpRoute);
+    }
+
+    // Keep user.page because Core Navigation and other upstream flows still
+    // generate it. It is compatibility-only and never renders Core's generic
+    // profile UI. Do not bind it to a purpose: admin Navigation may generate
+    // the route while the current host is MAIN.
+    if ($route = $collection->get('user.page')) {
+      $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\PortalController::legacyUserPageRedirect');
+    }
 
     foreach ($pathChanges as $name => $path) {
       if ($route = $collection->get($name)) {
