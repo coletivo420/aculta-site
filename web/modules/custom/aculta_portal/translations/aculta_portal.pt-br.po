@@ -45,5 +45,5 @@ msgstr "As instruções para redefinir sua senha serão enviadas para %email. Vo
 msgid "Submit"
 msgstr "Enviar"
 
-msgid "Further instructions have been sent to your email address."
-msgstr "Enviamos instruções adicionais para o seu endereço de e-mail."
+msgid "If %identifier is a valid account, an email will be sent with instructions to reset your password."
+msgstr "Se %identifier corresponder a uma conta válida, enviaremos um e-mail com instruções para redefinir sua senha."

@@ -75,6 +75,11 @@ virar uma cópia de Core/contrib.
 Baseline atual cobre somente lacunas dos formulários Core de login e recuperação
 de senha observadas no Homelab, incluindo título, instruções, senha e submit.
 
+O catálogo também cobre a mensagem de privacidade pós-envio do Drupal 11:
+`If %identifier is a valid account, an email will be sent with instructions to reset your password.`
+Overrides de versões antigas devem ser removidos quando o `msgid` deixar de
+existir no Core atual.
+
 Ao adicionar uma string:
 
 1. confirmar a fonte exata em Core/contrib;
