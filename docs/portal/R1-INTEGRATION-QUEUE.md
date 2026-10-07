@@ -57,28 +57,26 @@ Gates principais:
 ### 2. PR #30 — S3.5 Domain policy
 
 **R1.2A concluída e blocker Wiki/Media Library resolvido no PR #60.**
+O PR #30 foi sincronizado e seus gates R1.2B passaram; a revisão/integração
+está em andamento. Ver
+[S3-5-DOMAIN-POLICY.md](S3-5-DOMAIN-POLICY.md).
 
 Ver [R1-2-WIKI-MEDIA-BLOCKER.md](R1-2-WIKI-MEDIA-BLOCKER.md).
 
-Próxima unidade: **R1.2B — sincronizar, retestar e concluir o PR #30**.
+Próxima unidade após o merge: **PR #24 — S3.2A Course presenter**.
 
-Obrigatório repetir os gates Wiki add/edit depois de atualizar #30 contra o
+Wiki add/edit e Media Library foram repetidos depois de atualizar #30 contra o
 `main` que contém a correção de `allowed_media_types`.
 
 Branch:
 
 `refactor/portal-s3.5-domain-policy`
 
-Hoje está empilhada sobre #23.
+R1.2B validou #30 após passarem Domain matrix, wrong-host, URL generation,
+não-mutação de Domain e regressões Wiki/Cursos. O PR deve ser integrado antes
+de começar a próxima unidade.
 
-Processo:
-
-1. integrar #23;
-2. atualizar #30 contra o novo main;
-3. validar Domain matrix;
-4. só então merge.
-
-Não tentar validar #30 isoladamente contra um main sem #23.
+O histórico do PR preserva a sincronização normal com o main que já contém #23.
 
 ### 3. PR #24 — S3.2A Course presenter
 

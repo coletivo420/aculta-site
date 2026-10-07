@@ -74,6 +74,7 @@ final class DomainPurposeManager {
       $request = $this->getCurrentRequest();
       if ($request) {
         $domain->set('scheme', $request->getScheme());
+        $domain->setPath();
       }
     }
     return Url::fromRoute($routeName, $parameters, [
@@ -125,13 +126,14 @@ final class DomainPurposeManager {
       $request = $this->getCurrentRequest();
       if ($request) {
         $domain->set('scheme', $request->getScheme());
+        $domain->setPath();
       }
     }
-    return Url::fromUserInput($path, [
-      'absolute' => TRUE,
-      'domain' => $domain,
-      'https' => $domain->isHttps(),
-    ]);
+    // fromUserInput() assembles an internal path against the active request
+    // host and does not apply Domain's outbound path processor. Build the
+    // absolute URI from the cloned purpose Domain so cross-domain paths keep
+    // the requested purpose and alias environment.
+    return Url::fromUri(rtrim($domain->getPath(), '/') . $path);
   }
 
 }

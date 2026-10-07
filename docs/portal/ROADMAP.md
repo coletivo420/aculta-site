@@ -125,7 +125,7 @@ Sem Runtime:
 
 ## S3.1 — Hooks + Dependency Injection
 
-**Estado: preparada em draft; Runtime deferred.**
+**Estado: Runtime PASS; PR #23 validado e integrado.**
 
 Entregas preparadas:
 
@@ -139,11 +139,11 @@ Entregas preparadas:
 Gates e escopo:
 [S3-1-HOOKS-DI.md](S3-1-HOOKS-DI.md).
 
-O código desta subfase não deve ser mergeado até passar no Homelab.
+O código desta subfase passou no Homelab antes do merge.
 
 ## S3.5 — Domain policy
 
-**Estado: preparada em draft; Runtime deferred.**
+**Estado: Runtime PASS; validação R1.2B concluída, integração do PR #30 em andamento.**
 
 Documento:
 [S3-5-DOMAIN-POLICY.md](S3-5-DOMAIN-POLICY.md).
