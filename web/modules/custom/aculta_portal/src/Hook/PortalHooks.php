@@ -3,7 +3,9 @@
 namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\AccountShellBuilder;
+use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -50,6 +52,8 @@ final class PortalHooks {
     private readonly DomainPurposeManager $domainPurposeManager,
     #[Autowire(service: 'aculta_portal.account_shell_builder')]
     private readonly AccountShellBuilder $accountShellBuilder,
+    #[Autowire(service: 'aculta_portal.breadcrumb_builder')]
+    private readonly AcultaBreadcrumbBuilder $breadcrumbBuilder,
   ) {}
 
 
@@ -101,6 +105,37 @@ final class PortalHooks {
         unset($header[$key]);
       }
     }
+  }
+
+  /**
+   * Supplies presentation-only data for the institutional content block.
+   */
+  #[Hook('preprocess_block')]
+  public function preprocessBlock(array &$variables): void {
+    $entity = $variables['elements']['content']['#block_content'] ?? NULL;
+    if (!$entity instanceof BlockContentInterface
+      || $entity->bundle() !== 'aculta_institution') {
+      return;
+    }
+
+    $variables['institution_entity'] = $entity;
+    $variables['view_mode'] = $variables['elements']['content']['#view_mode'] ?? 'full';
+
+    $nid = (int) $this->configFactory
+      ->get('aculta_portal.settings')
+      ->get('institution_transparency_nid');
+    $variables['institution_transparency_url'] = $nid > 0
+      ? $this->domainPurposeManager->routeUrl('main', 'entity.node.canonical', ['node' => $nid])
+      : NULL;
+  }
+
+  /**
+   * Supplies the current-page label consumed by the public breadcrumb template.
+   */
+  #[Hook('preprocess_breadcrumb')]
+  public function preprocessBreadcrumb(array &$variables): void {
+    $variables['aculta_current_breadcrumb'] = $this->breadcrumbBuilder
+      ->currentTitle($this->routeMatch);
   }
 
   /**

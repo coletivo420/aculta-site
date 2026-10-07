@@ -118,7 +118,7 @@ $contact->set('label', 'Contato')->set('recipients', [$data['email']])->save();
 foreach (['anonymous', 'authenticated'] as $role_id) {
   \Drupal\user\Entity\Role::load($role_id)->grantPermission('access site-wide contact form')->save();
 }
-\Drupal::configFactory()->getEditable('aculta420.settings')->set('institution_data_uuid', $block->uuid())->set('institution_transparency_nid', (int) $state['nodes']['transparency'])->save();
+\Drupal::configFactory()->getEditable('aculta_portal.settings')->set('institution_data_uuid', $block->uuid())->set('institution_transparency_nid', (int) $state['nodes']['transparency'])->save();
 
 // Create a private, editable document record. No download appears without its PDF.
 if (empty($state['nodes']['cnpj_document'])) {

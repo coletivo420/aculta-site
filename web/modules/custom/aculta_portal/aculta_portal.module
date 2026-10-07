@@ -38,13 +38,13 @@ function aculta_portal_token_info(): array {
 function aculta_portal_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $metadata): array {
   $result = [];
   if ($type === 'institution') {
-    $uuid = \Drupal::config('aculta420.settings')->get('institution_data_uuid');
+    $uuid = \Drupal::config('aculta_portal.settings')->get('institution_data_uuid');
     $blocks = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['uuid' => $uuid]);
     $block = $blocks ? reset($blocks) : NULL;
     if (!$block) {
       return [];
     }
-    $metadata->addCacheableDependency($block)->addCacheTags(['config:aculta420.settings']);
+    $metadata->addCacheableDependency($block)->addCacheTags(['config:aculta_portal.settings']);
     $fields = ['name' => 'field_org_name', 'alternate' => 'field_trade_name', 'tax-id' => 'field_cnpj', 'email' => 'field_email', 'phone' => 'field_schema_phone', 'description' => 'field_org_description', 'street' => 'field_street_address', 'city' => 'field_locality', 'region' => 'field_address_region', 'postal' => 'field_postal_code', 'country' => 'field_country'];
     foreach ($tokens as $name => $original) {
       if ($name === 'url') {

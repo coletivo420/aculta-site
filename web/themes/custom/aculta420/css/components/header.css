@@ -2,7 +2,6 @@
 .aculta-header { color: var(--aculta-white); background-color: var(--aculta-green); }
 .aculta-branding { min-width: 0; flex: 0 1 27%; }
 .aculta-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; }
-.aculta-brand-text { min-width: 0; }
 .aculta-header .site-title {
   display: block;
   max-width: 26ch;

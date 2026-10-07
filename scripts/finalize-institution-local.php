@@ -62,7 +62,7 @@ foreach ([
 }
 Block::load('aculta_data_registration')->setWeight(10)->save();
 Block::load('aculta_documents')->setWeight(30)->save();
-$uuid = \Drupal::config('aculta420.settings')->get('institution_data_uuid');
+$uuid = \Drupal::config('aculta_portal.settings')->get('institution_data_uuid');
 $officialBlocks = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['uuid' => $uuid]);
 $official = reset($officialBlocks);
 $official->set('field_org_description', 'Lutando por um futuro livre da proibição.')->setNewRevision(TRUE); $official->save();

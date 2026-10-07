@@ -1,4 +1,7 @@
-# Defaults inherited from Bootstrap5 and ACULTA420 presentation settings.
+# Portable ACULTA420 presentation defaults.
+logo:
+  path: themes/custom/aculta420/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-900x300.png
+  use_default: false
 b5_body_schema: 'none'
 b5_body_bg_schema: 'none'
 b5_theme_mode: 'light'

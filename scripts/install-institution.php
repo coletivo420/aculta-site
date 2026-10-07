@@ -375,7 +375,7 @@ if ($account) {
   $visibility['user_role'] = ['id' => 'user_role', 'negate' => FALSE, 'roles' => ['authenticated' => 'authenticated'], 'context_mapping' => ['user' => '@user.current_user_context:current_user']];
   $account->setVisibilityConfig('user_role', $visibility['user_role'])->save();
 }
-\Drupal::configFactory()->getEditable('aculta420.settings')->set('institution_home_nid', (int) $home->id())->set('institution_data_uuid', $institution_data->uuid())->save();
+\Drupal::configFactory()->getEditable('aculta_portal.settings')->set('institution_data_uuid', $institution_data->uuid())->save();
 $state['complete'] = TRUE;
 // Preserve section wrappers and their classes when editing via CKEditor 5.
 $editor = \Drupal\editor\Entity\Editor::load('full_html');
