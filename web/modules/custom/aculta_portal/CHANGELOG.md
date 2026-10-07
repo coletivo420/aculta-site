@@ -8,6 +8,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Autenticação
 
+- Consolida Cloudflare Turnstile como único challenge provider do CAPTCHA global: remove CAPTCHA points desativados que poderiam criar exceções, mantém todos os points ativos explicitamente em `turnstile/Turnstile` e documenta política fail-closed sem fallback/bypass.
 - Preserva query string no destination de login/OAuth e adiciona `url.query_args` ao cache do menu, mantendo buscas, filtros e paginação após autenticação.
 - Corrige o identificador do usuário externo no callback Google para `SocialAuthUserInterface::getId()`.
 - Impede desconexão Google quando a conta Social Auth ainda não possui senha local escolhida, reutilizando o marcador `social_auth_password_unset` via DI de `UserDataInterface`.

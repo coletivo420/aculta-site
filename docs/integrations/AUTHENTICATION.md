@@ -83,11 +83,23 @@ O Turnstile é o desafio ativo para visitantes anônimos nos formulários públi
 em rotas não administrativas. O CAPTCHA global cobre formulários sem uma regra
 específica; os pontos configurados também permanecem ativos. As chaves são
 mantidas na configuração de Key do runtime; seus valores não pertencem ao
-código nem à documentação. Após o
-responsável confirmar que o Turnstile estava funcionando, foi desativado o
-fallback de CAPTCHA solicitado. A aparência é `always`: visitantes anônimos protegidos pelo CAPTCHA sempre
+código nem à documentação. Turnstile é o único challenge provider configurado no projeto. Não existe
+fallback para Image CAPTCHA, reCAPTCHA, hCaptcha, Math CAPTCHA ou outro desafio. A aparência é `always`: visitantes anônimos protegidos pelo CAPTCHA sempre
 veem o widget Turnstile. Usuários autenticados não recebem o desafio nem o
 widget porque a role `authenticated` possui `skip CAPTCHA`.
+
+### Provider único e fail-closed
+
+O módulo CAPTCHA não fornece um segundo desafio no ACULTA: ele aplica o provider
+`turnstile/Turnstile`. O default global e todos os CAPTCHA points explícitos
+ativos usam esse mesmo provider. Points desativados antigos são removidos do
+Configuration Sync para que não funcionem como exceção involuntária ao
+`enable_globally`.
+
+Não instalar/configurar challenge alternativo como fallback. Se o Turnstile não
+carregar, não gerar token ou falhar na validação, o formulário anônimo protegido
+permanece bloqueado. `retry: auto` significa nova tentativa do próprio
+Turnstile, não mudança de CAPTCHA.
 
 CAPTCHA é uma barreira para visitantes anônimos: formulários públicos em rotas
 não administrativas exigem Turnstile, salvo quando o fluxo não submete um

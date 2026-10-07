@@ -114,6 +114,33 @@ protegido. A lógica do módulo CAPTCHA não é duplicada no Portal.
 
 ## Turnstile
 
+### Política única de challenge
+
+O módulo `captcha` é somente a camada de integração/orquestração dos formulários.
+O **único challenge provider do projeto é Cloudflare Turnstile**.
+
+Baseline obrigatório:
+
+- `captcha.settings.default_challenge: turnstile/Turnstile`;
+- `captcha.settings.enable_globally: 1` para visitantes anônimos em páginas
+  públicas;
+- CAPTCHA points explícitos ativos usam sempre
+  `captchaType: turnstile/Turnstile`;
+- points desativados antigos não permanecem em Configuration Sync, porque um
+  point listado como desativado pode criar uma exceção ao CAPTCHA global;
+- nenhum Image CAPTCHA, reCAPTCHA, hCaptcha, Math CAPTCHA ou outro challenge é
+  configurado como alternativa;
+- não existe fallback para outro CAPTCHA quando Turnstile falha;
+- não existe bypass quando o widget/token Turnstile falha;
+- `retry: auto` é somente retry do próprio Turnstile e não troca de provider;
+- usuários `authenticated` não recebem challenge porque possuem
+  `skip CAPTCHA`.
+
+Se Turnstile estiver indisponível ou não produzir token válido, o formulário
+anônimo protegido deve **falhar fechado**. Não introduzir fallback para desafio
+mais fraco.
+
+
 O widget usa explicitamente `widget.language: pt-br` e
 `widget.appearance: always`: visitantes anônimos protegidos pelo CAPTCHA sempre
 veem o widget Turnstile. Usuários autenticados não chegam a renderizar o widget
@@ -137,7 +164,7 @@ A internacionalização não pode regredir as decisões de segurança já integr
 - Turnstile permanece com `appearance: always` para anônimos;
 - endpoints JSON de autenticação removidos pelo Portal não devem ser reativados
   como atalho sem Form API/Turnstile;
-- nenhum fallback sem JavaScript pode reduzir a proteção.
+- nenhum fallback, challenge alternativo ou bypass pode reduzir a proteção.
 
 ## Config Translation
 
