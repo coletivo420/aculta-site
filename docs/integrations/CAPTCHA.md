@@ -20,8 +20,10 @@ administrativos e define `turnstile/Turnstile` como desafio padrão. CAPTCHA
 points explícitos também usam Turnstile; não devem selecionar outro desafio.
 
 As chaves do serviço continuam fornecidas pelo mecanismo de Key/environment do
-ambiente. Nunca versionar segredos ou habilitar um desafio alternativo como
-contingência.
+ambiente. `TURNSTILE_KEYS_JSON` contém JSON codificado em Base64 e o provider
+Key faz a decodificação. Nunca versionar segredos ou habilitar um desafio
+alternativo como contingência. Se as chaves estiverem ausentes, o desafio
+falha fechado e não troca para CAPTCHA matemático.
 
 ## Validação funcional
 
