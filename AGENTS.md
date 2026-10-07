@@ -313,20 +313,54 @@ O ambiente local pode utilizar configurações de desenvolvimento diferentes das
 - Não solicitar scopes OAuth que não correspondam a uma feature ativa e aprovada.
 - Produtos Google for Nonprofits pós-aprovação não devem ser tratados como disponíveis antes da ativação real.
 
+## Bootstrap Component Design System
+
+- O tema `aculta` já implementa o **ACULTA Bootstrap Component Design System**.
+- Bootstrap 5 é a infraestrutura estrutural/comportamental; SDC do Drupal Core é
+  o mecanismo preferencial para componentes reutilizáveis.
+- O `aculta_portal` prepara dados, access, cache, URLs e presenters; não move
+  regra de negócio para SDC/Twig.
+- Antes de criar markup/CSS custom do Portal, verificar Bootstrap + SDC já
+  existentes.
+- Não adotar `drupal/bootstrap_components`, UI Suite Bootstrap ou outra suíte
+  concorrente sem nova decisão arquitetural.
+- Não reiniciar a refatoração avançada do tema para adequá-la ao Portal.
+- Consultar `docs/portal/COMPONENT-DESIGN-SYSTEM.md` e
+  `web/themes/custom/aculta/docs/component-design-system.md`.
+
+## Regra de encerramento de fase
+
+Toda fase ou subfase concluída deve terminar em **PR próprio**.
+
+O PR deve:
+
+- representar uma unidade lógica clara;
+- listar entregas e limites;
+- registrar `RUNTIME STATUS: DEFERRED` quando houver código não testado no Homelab;
+- não misturar trabalho de outra fase;
+- apontar a próxima fase;
+- permanecer rastreável mesmo quando for integrado imediatamente.
+
+Não considerar uma fase encerrada apenas porque existe commit local/branch.
+
 ## Coordenação Portal, tema e documentação
 
 A evolução do Portal e a refatoração do tema são linhas separadas.
 
 Para tarefas do `aculta_portal`:
 
+- o modo atual é GitHub-first / Runtime-last; consultar `docs/portal/DELIVERY-MODE.md`;
+- `origin/main` é a base autoritativa; trabalho local antigo não publicado foi descartado;
+- mudanças executáveis sem Runtime ficam em draft com `RUNTIME STATUS: DEFERRED`;
 - não modificar `web/themes/custom/aculta/**` sem autorização explícita;
 - consultar `docs/portal/` antes de implementar;
 - manter as fontes de verdade definidas em `SOURCE-OF-TRUTH.md`;
 - não instalar dependência planejada antes da versão correspondente;
 - não reescrever roadmap/arquitetura por iniciativa própria;
 - atualizar CHANGELOG e evidência de testes junto do código implementado;
-- uma alteração lógica validada deve virar um commit atômico;
-- cada commit funcional precisa dos testes adequados antes de ser considerado concluído.
+- uma alteração lógica deve virar um commit atômico;
+- documentação/preparação pode ser commitada sem Runtime;
+- mudança funcional só é considerada concluída/mergeável/release após os testes adequados.
 
 A documentação arquitetural e o roadmap são definidos fora da execução de
 código. O Codex deve principalmente implementar, testar e registrar o resultado

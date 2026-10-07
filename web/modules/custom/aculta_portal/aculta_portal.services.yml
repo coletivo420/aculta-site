@@ -5,9 +5,18 @@ services:
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
     arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose']
+  aculta_portal.presentation.account_course:
+    class: Drupal\aculta_portal\Presentation\AccountCoursePresenter
+    arguments: ['@aculta_portal.account_courses', '@string_translation']
+  aculta_portal.content_purpose_resolver:
+    class: Drupal\aculta_portal\Domain\ContentPurposeResolver
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+  aculta_portal.account_shell_builder:
+    class: Drupal\aculta_portal\AccountShellBuilder
+    arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation']
   aculta_portal.breadcrumb_builder:
     class: Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@request_stack']
+    arguments: ['@aculta_portal.domain_purpose', '@request_stack', '@title_resolver', '@path.matcher']
     tags:
       - { name: breadcrumb_builder, priority: 100 }
   aculta_portal.domain_route_subscriber:
@@ -17,7 +26,7 @@ services:
       - { name: event_subscriber }
   aculta_portal.domain_purpose_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
-    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user']
+    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_purpose_resolver']
     tags:
       - { name: kernel.event_subscriber }
   # CEP Autocomplete 1.0.0 references this Drupal logger channel but does
@@ -50,5 +59,10 @@ services:
   aculta_portal.social_auth_user_created_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\SocialAuthUserCreatedSubscriber
     arguments: ['@user.data']
+    tags:
+      - { name: kernel.event_subscriber }
+  aculta_portal.social_auth_profile_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\SocialAuthProfileSubscriber
+    arguments: ['@entity_type.manager']
     tags:
       - { name: kernel.event_subscriber }

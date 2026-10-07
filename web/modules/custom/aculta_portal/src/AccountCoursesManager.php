@@ -26,13 +26,15 @@ final class AccountCoursesManager {
   ) {}
 
   /**
-   * Returns presentation data for the account's visible LMS memberships.
+   * Returns authorized LMS/Group data for the account's visible memberships.
    *
    * Membership alone never grants visibility. Group access remains authoritative
    * and is checked before course metadata or LMS progress is loaded.
    *
    * @return array<int, array<string, mixed>>
-   *   Course cards keyed sequentially for rendering.
+   *   Authorized LMS/Group source records keyed sequentially for presentation.
+   *   User-facing labels, tones, action semantics and empty states belong to the
+   *   presenter, not to this integration boundary.
    */
   public function getCourses(AccountInterface $account): array {
     $items = [];
@@ -65,7 +67,6 @@ final class AccountCoursesManager {
         'label' => (string) $group->label(),
         'description' => $description,
         'status' => $status?->getStatus() ?? '',
-        'status_label' => $this->statusLabel($status),
         'score' => $status?->getScore(),
         'finished' => $status?->isFinished() ?? FALSE,
         'url' => $this->courseUrl($group, $status),
@@ -90,27 +91,13 @@ final class AccountCoursesManager {
 
   private function courseUrl(Course $course, ?CourseStatusInterface $status): ?Url {
     // Drupal LMS blocks course navigation while manually graded work is
-    // awaiting evaluation. Do not generate a misleading start/continue CTA.
+    // awaiting evaluation. Do not generate a misleading start/continue action.
     if ($status?->getStatus() === CourseStatusInterface::STATUS_NEEDS_EVALUATION) {
       return NULL;
     }
 
     $route = $status?->isFinished() ? 'lms.group.self_results' : 'lms.course.start';
     return $this->domainPurposeManager->routeUrl('courses', $route, ['group' => $course->id()]);
-  }
-
-  private function statusLabel(?CourseStatusInterface $status): string {
-    if ($status === NULL) {
-      return 'Não iniciado';
-    }
-
-    return match ($status->getStatus()) {
-      CourseStatusInterface::STATUS_PROGRESS => 'Em andamento',
-      CourseStatusInterface::STATUS_PASSED => 'Concluído',
-      CourseStatusInterface::STATUS_FAILED => 'Não aprovado',
-      CourseStatusInterface::STATUS_NEEDS_EVALUATION => 'Aguardando avaliação',
-      default => 'Não iniciado',
-    };
   }
 
 }

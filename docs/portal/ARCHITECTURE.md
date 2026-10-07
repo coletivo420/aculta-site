@@ -119,6 +119,13 @@ implementada e validada.
 Rotas especializadas devem operar no purpose correto e, salvo decisão
 arquitetural explícita, retornar 404 no host incorreto.
 
+Toda rota humana exposta como navegação pública deve preferir slug amigável em
+português, mantendo a mesma estrutura de path entre Homelab e produção. Rotas
+técnicas de Core/contrib, callbacks, OAuth, AJAX, webhooks e admin podem manter
+paths internos quando isso fizer parte da API correta.
+
+Ver [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md).
+
 ## Tema
 
 O tema `web/themes/custom/aculta` é responsável por apresentação visual,
@@ -126,8 +133,14 @@ componentes, Twig, CSS, responsividade e identidade.
 
 O `aculta_portal` fornece render arrays, dados, forms e integração.
 
-A refatoração do tema ocorre em uma linha separada. Mudanças Portal não devem
-reescrever o tema como efeito colateral.
+A apresentação pública segue o **ACULTA Bootstrap Component Design System** já
+estabelecido pelo tema. O Portal prepara dados/estados e presenters; SDCs do
+tema aplicam contratos visuais sobre Bootstrap. Ver
+[COMPONENT-DESIGN-SYSTEM.md](COMPONENT-DESIGN-SYSTEM.md) e ADR-007.
+
+A refatoração do tema está em fase avançada e é preservada como baseline.
+Mudanças Portal não devem reiniciar, reestruturar em massa ou reescrever o tema
+como efeito colateral.
 
 ## Bancos
 

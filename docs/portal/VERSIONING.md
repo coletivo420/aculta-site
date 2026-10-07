@@ -56,13 +56,18 @@ Prefixos:
 
 Evitar commits WIP e mega-commits.
 
-## Regra de teste
+## Regra de validação
 
-Um passo funcional só vira commit depois dos testes definidos em
+No modo GitHub-first / Runtime-last, documentação e preparação podem ser
+commitadas antes do Homelab.
+
+Mudança funcional sem Runtime deve permanecer em **draft PR** com
+`RUNTIME STATUS: DEFERRED`.
+
+Nenhuma versão funcional recebe tag antes dos testes definidos em
 [TESTING.md](TESTING.md).
 
-Quando um teste não pode ser executado por limitação externa, isso deve ser
-registrado explicitamente; não converter "inconclusivo" em "PASS".
+Nunca converter "deferred" ou "inconclusivo" em "PASS".
 
 ## Documentação
 

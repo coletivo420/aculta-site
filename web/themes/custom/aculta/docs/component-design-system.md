@@ -230,7 +230,9 @@ Sempre:
 
 ## Auditoria H3
 
-A auditoria de primitives aprovou apenas `category-label` como novo SDC imediato. `button` permanece primitive CSS/Bootstrap; `section-heading` foi adiado para H5; `media` para H4; `icon` não possui caso de uso atual.
+A auditoria de primitives aprovou apenas `category-label` como novo SDC imediato.
+`button` permanece primitive CSS/Bootstrap; `section-heading` foi adiado para
+H5; `media` para H4; `icon` não possui caso de uso atual.
 
 Detalhes: [h3-primitives-audit.md](h3-primitives-audit.md).
 

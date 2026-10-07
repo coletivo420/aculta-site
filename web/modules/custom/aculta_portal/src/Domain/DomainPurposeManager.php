@@ -30,12 +30,12 @@ final class DomainPurposeManager {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainNegotiatorInterface $domainNegotiator,
     private readonly ConfigFactoryInterface $configFactory,
-    private readonly ?RequestStack $requestStack = NULL,
+    private readonly RequestStack $requestStack,
   ) {}
 
-  /** Returns the current request, including for an older compiled container. */
+  /** Returns the current request. */
   private function getCurrentRequest(): ?Request {
-    return $this->requestStack?->getCurrentRequest() ?? \Drupal::request();
+    return $this->requestStack->getCurrentRequest();
   }
 
   /** Returns the purpose associated with the active canonical Domain entity. */
@@ -67,14 +67,14 @@ final class DomainPurposeManager {
       return NULL;
     }
     $activeDomain = $this->domainNegotiator->getActiveDomain();
-    // Domain Alias rewrites the host for the active environment, but keeps the
-    // canonical scheme. Local aliases are intentionally HTTP on the current
-    // built-in server; production remains canonical HTTPS.
+    // Never mutate the loaded Domain entity when adapting a non-default alias URL.
+    $domain = clone $domain;
     if ($activeDomain && isset($activeDomain->alias)
-      && $activeDomain->alias->getEnvironment() === 'local') {
+      && $activeDomain->alias->getEnvironment() !== 'default') {
       $request = $this->getCurrentRequest();
       if ($request) {
         $domain->set('scheme', $request->getScheme());
+        $domain->setPath();
       }
     }
     return Url::fromRoute($routeName, $parameters, [
@@ -119,18 +119,21 @@ final class DomainPurposeManager {
       return NULL;
     }
     $activeDomain = $this->domainNegotiator->getActiveDomain();
+    // Never mutate the loaded Domain entity when adapting a non-default alias URL.
+    $domain = clone $domain;
     if ($activeDomain && isset($activeDomain->alias)
-      && $activeDomain->alias->getEnvironment() === 'local') {
+      && $activeDomain->alias->getEnvironment() !== 'default') {
       $request = $this->getCurrentRequest();
       if ($request) {
         $domain->set('scheme', $request->getScheme());
+        $domain->setPath();
       }
     }
-    return Url::fromUserInput($path, [
-      'absolute' => TRUE,
-      'domain' => $domain,
-      'https' => $domain->isHttps(),
-    ]);
+    // fromUserInput() assembles an internal path against the active request
+    // host and does not apply Domain's outbound path processor. Build the
+    // absolute URI from the cloned purpose Domain so cross-domain paths keep
+    // the requested purpose and alias environment.
+    return Url::fromUri(rtrim($domain->getPath(), '/') . $path);
   }
 
 }

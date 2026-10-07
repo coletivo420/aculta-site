@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,15 +16,18 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Routing\Route;
 
 /** Enforces route purpose after Drupal has resolved the active Domain alias. */
 final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
+
+  private const LOGIN_DESTINATION_SESSION_KEY = 'aculta_portal.login_destination';
 
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly RequestMatcherInterface $accessFreeMatcher,
     private readonly AccountProxyInterface $currentUser,
+    private readonly RouteProviderInterface $routeProvider,
+    private readonly \Drupal\aculta_portal\Domain\ContentPurposeResolver $contentPurposeResolver,
   ) {}
 
   public static function getSubscribedEvents(): array {
@@ -36,10 +40,43 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
   /** Sends completed logouts to the public account login page. */
   public function onResponse(ResponseEvent $event): void {
-    if (!$event->isMainRequest()
-      || $event->getRequest()->attributes->get('_route') !== 'user.logout'
-      || !$event->getResponse()->isRedirection()
-      || $this->currentUser->isAuthenticated()) {
+    if (!$event->isMainRequest() || !$event->getResponse()->isRedirection()) {
+      return;
+    }
+
+    $request = $event->getRequest();
+    $route = $request->attributes->get('_route');
+    if (in_array($route, ['user.login', 'social_auth.network.callback'], TRUE)
+      && $this->currentUser->isAuthenticated()
+      && $request->hasSession()) {
+      $destination = $request->getSession()->get(self::LOGIN_DESTINATION_SESSION_KEY);
+      $request->getSession()->remove(self::LOGIN_DESTINATION_SESSION_KEY);
+      if (is_array($destination)
+        && isset($destination['purpose'], $destination['path'])
+        && is_string($destination['purpose'])
+        && is_string($destination['path'])
+        && $this->isSafeLoginDestinationPath($destination['path'])) {
+        $url = $this->domainPurposeManager->pathUrl($destination['purpose'], $destination['path']);
+        if ($url !== NULL) {
+          $query = $destination['query'] ?? [];
+          if (is_array($query) && $query !== []) {
+            $url->setOption('query', $query);
+          }
+          $event->getResponse()->headers->set('Location', $url->toString());
+          return;
+        }
+      }
+
+      // ACCOUNT's Domain root is the public landing URL. Its domain-specific
+      // front page resolves /conta-interna internally.
+      $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
+      if ($accountRoot !== NULL) {
+        $event->getResponse()->headers->set('Location', $accountRoot->toString());
+        return;
+      }
+    }
+
+    if ($route !== 'user.logout' || $this->currentUser->isAuthenticated()) {
       return;
     }
 
@@ -61,8 +98,13 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     catch (ResourceNotFoundException | MethodNotAllowedException) {
       return;
     }
-    $route = \Drupal::service('router.route_provider')->getRouteByName($matched['_route']);
-    $requiredPurpose = $this->getRequiredPurpose($route, $matched['_route'], $event->getRequest(), $matched);
+    $route = $this->routeProvider->getRouteByName($matched['_route']);
+    $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
+      $route,
+      $matched['_route'],
+      $event->getRequest(),
+      $matched,
+    );
     if (is_string($requiredPurpose) && $this->domainPurposeManager->getCurrentPurpose() !== $requiredPurpose) {
       $event->setResponse($this->notFoundResponse());
     }
@@ -73,11 +115,60 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
     $request = $event->getRequest();
+    $routeName = (string) $request->attributes->get('_route');
+    if (in_array($routeName, ['user.login', 'social_auth.network.redirect'], TRUE)
+      && !$this->currentUser->isAuthenticated()
+      && $request->hasSession()) {
+      $session = $request->getSession();
+      $destination = $this->parseLoginDestination($request->query->get('destination'));
+      $requestedPurpose = $request->query->get('aculta_destination_purpose');
+
+      // A direct/fresh login must not inherit a destination abandoned earlier
+      // in the same anonymous session.
+      if ($routeName === 'user.login' && $destination === NULL) {
+        $session->remove(self::LOGIN_DESTINATION_SESSION_KEY);
+      }
+
+      if ($destination !== NULL) {
+        $storedDestination = $session->get(self::LOGIN_DESTINATION_SESSION_KEY);
+        $destinationPurpose = is_string($requestedPurpose)
+          && $this->domainPurposeManager->getDomain($requestedPurpose)
+            ? $requestedPurpose
+            : NULL;
+
+        // Social Auth forwards Drupal's standard destination but not the
+        // ACULTA-specific purpose. Preserve the purpose captured on /entrar
+        // when the OAuth request refers to the same path and query.
+        if ($destinationPurpose === NULL
+          && $routeName === 'social_auth.network.redirect'
+          && is_array($storedDestination)
+          && ($storedDestination['path'] ?? NULL) === $destination['path']
+          && ($storedDestination['query'] ?? []) === $destination['query']
+          && is_string($storedDestination['purpose'] ?? NULL)
+          && $this->domainPurposeManager->getDomain($storedDestination['purpose']) !== NULL) {
+          $destinationPurpose = $storedDestination['purpose'];
+        }
+
+        $destinationPurpose ??= $this->domainPurposeManager->getCurrentPurpose();
+        if ($destinationPurpose !== NULL) {
+          $session->set(self::LOGIN_DESTINATION_SESSION_KEY, [
+            'purpose' => $destinationPurpose,
+            'path' => $destination['path'],
+            'query' => $destination['query'],
+          ]);
+        }
+      }
+    }
+
     $route = $request->attributes->get('_route_object');
     if (!$route || !method_exists($route, 'getOption')) {
       return;
     }
-    $requiredPurpose = $this->getRequiredPurpose($route, (string) $request->attributes->get('_route'), $request);
+    $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
+      $route,
+      (string) $request->attributes->get('_route'),
+      $request,
+    );
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
 
     $resetEditException = FALSE;
@@ -89,7 +180,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         && \Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest(
           $request,
           (int) $uid,
-          (int) \Drupal::currentUser()->id(),
+          (int) $this->currentUser->id(),
         );
     }
     if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose && !$resetEditException) {
@@ -97,102 +188,59 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    // Domain Source controls canonical outbound URLs. Enforce the same source
-    // on direct node requests so a specialized page is not served on MAIN or a
-    // different application host as a duplicate.
-    if ($request->attributes->get('_route') === 'entity.node.canonical') {
-      $raw = $request->attributes->get('_raw_variables');
-      $nodeParameter = $request->attributes->get('node');
-      if ($nodeParameter === NULL && $raw instanceof \Symfony\Component\HttpFoundation\ParameterBag) {
-        $nodeParameter = $raw->get('node');
-      }
-      $node = is_numeric($nodeParameter)
-        ? \Drupal::entityTypeManager()->getStorage('node')->load((int) $nodeParameter)
-        : (is_object($nodeParameter) ? $nodeParameter : NULL);
-      if ($node && $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
-        $sourceDomainId = (string) $node->get('field_domain_source')->target_id;
-        $sourcePurpose = $this->domainPurposeManager->getPurposeForDomainId($sourceDomainId);
-        if ($sourcePurpose !== NULL && $this->domainPurposeManager->getCurrentPurpose() !== $sourcePurpose) {
-          $this->notFound($event);
-          return;
-        }
-      }
+    $contentPurpose = $this->contentPurposeResolver->canonicalContentPurpose($request);
+    if ($contentPurpose !== NULL && $currentPurpose !== $contentPurpose) {
+      $this->notFound($event);
+    }
+  }
+
+  /**
+   * Parses a Drupal-internal post-login destination into safe URL components.
+   *
+   * @return array{path: string, query: array}|null
+   *   The normalized destination, or NULL for external/unsafe destinations.
+   */
+  private function parseLoginDestination(mixed $destination): ?array {
+    if (!is_string($destination)
+      || $destination === ''
+      || !str_starts_with($destination, '/')
+      || str_starts_with($destination, '//')) {
+      return NULL;
     }
 
-    // Editorial taxonomy pages belong to MAGAZINE; account and other hosts do
-    // not become fallback public profiles for editorial authors/categories.
-    if ($request->attributes->get('_route') === 'entity.taxonomy_term.canonical') {
-      $raw = $request->attributes->get('_raw_variables');
-      $termParameter = $request->attributes->get('taxonomy_term');
-      if ($termParameter === NULL && $raw instanceof \Symfony\Component\HttpFoundation\ParameterBag) {
-        $termParameter = $raw->get('taxonomy_term');
-      }
-      $term = is_numeric($termParameter)
-        ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load((int) $termParameter)
-        : (is_object($termParameter) ? $termParameter : NULL);
-      $termPurpose = $term && $term->bundle() === 'wiki_category' ? 'wiki' : 'magazine';
-      if ($term && (in_array($term->bundle(), ['editorial_author', 'editorial_category', 'wiki_category'], TRUE))
-        && $this->domainPurposeManager->getCurrentPurpose() !== $termPurpose) {
-        $this->notFound($event);
-      }
+    $parts = parse_url($destination);
+    if ($parts === FALSE
+      || isset($parts['scheme'])
+      || isset($parts['host'])
+      || isset($parts['user'])
+      || isset($parts['pass'])
+      || isset($parts['port'])
+      || isset($parts['fragment'])) {
+      return NULL;
     }
+
+    $path = $parts['path'] ?? '';
+    if (!$this->isSafeLoginDestinationPath($path)) {
+      return NULL;
+    }
+
+    $query = [];
+    if (isset($parts['query']) && $parts['query'] !== '') {
+      parse_str($parts['query'], $query);
+    }
+
+    return ['path' => $path, 'query' => $query];
+  }
+
+  /** Checks an already-parsed internal path for post-login reuse. */
+  private function isSafeLoginDestinationPath(string $path): bool {
+    return str_starts_with($path, '/')
+      && !str_starts_with($path, '//')
+      && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $path);
   }
 
   private function notFound(RequestEvent $event): void {
     $event->setResponse($this->notFoundResponse());
-  }
-
-  /**
-   * Resolves editorial routes by bundle while keeping generic node routes on
-   * their normal host. Wiki entry creation, editing, history and Diff belong
-   * to Wiki420 even though Core marks some of them as administrative routes.
-   */
-  private function getRequiredPurpose(Route $route, string $routeName, Request $request, array $matched = []): ?string {
-    // Public LMS course routes follow the COURSES Domain. Routes marked as
-    // administrative by the central route subscriber remain on MAIN.
-    $groupParameter = $matched['group'] ?? $request->attributes->get('group');
-    $group = is_object($groupParameter) ? $groupParameter : NULL;
-    if (!$group && is_numeric($groupParameter)) {
-      $group = \Drupal::entityTypeManager()->getStorage('group')->load((int) $groupParameter);
-    }
-    if ($group && method_exists($group, 'bundle') && $group->bundle() === 'lms_course') {
-      if ($route->getOption('_admin_route') || $route->getOption('_aculta_domain_purpose') === 'main') {
-        return 'main';
-      }
-      return 'courses';
-    }
-
-    $nodeRoutes = [
-      'entity.node.edit_form',
-      'entity.node.version_history',
-      'entity.node.revision',
-      'node.revision_revert_confirm',
-      'node.revision_revert_translation_confirm',
-      'node.revision_delete_confirm',
-      'diff.revisions_diff',
-    ];
-    if ($routeName === 'node.add') {
-      $nodeType = $matched['node_type'] ?? $request->attributes->get('node_type');
-      if (is_object($nodeType) && method_exists($nodeType, 'id')) {
-        $nodeType = $nodeType->id();
-      }
-      if (is_string($nodeType) && $nodeType === 'wiki_entry') {
-        return 'wiki';
-      }
-    }
-    if (in_array($routeName, $nodeRoutes, TRUE)) {
-      $node = $request->attributes->get('node') ?? ($matched['node'] ?? NULL);
-      if (is_object($node) && method_exists($node, 'bundle')) {
-        return $node->bundle() === 'wiki_entry' ? 'wiki' : $route->getOption('_aculta_domain_purpose');
-      }
-      if (is_numeric($node)) {
-        $node = \Drupal::entityTypeManager()->getStorage('node')->load((int) $node);
-        if ($node) {
-          return $node->bundle() === 'wiki_entry' ? 'wiki' : $route->getOption('_aculta_domain_purpose');
-        }
-      }
-    }
-    return $route->getOption('_aculta_domain_purpose');
   }
 
   private function notFoundResponse(): Response {

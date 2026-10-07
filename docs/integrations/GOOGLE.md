@@ -27,6 +27,57 @@ O projeto já possui:
 - Config Override apontando Social Auth Google para essas keys;
 - configuração exportada sem client ID/secret reais.
 
+### Google Login — URIs do cliente Web
+
+O Social Auth Google usa um fluxo OAuth do lado do servidor. O fluxo começa em
+`/oauth/google` e retorna a `/oauth/google/retorno`. Cadastre os URIs de
+redirecionamento exatos abaixo no cliente OAuth Web:
+
+Após autenticação concluída, o Social Auth direciona a pessoa para a raiz do
+Domain ACCOUNT. Esse Domain usa `/conta-interna` apenas como front page interna
+para `aculta_portal.dashboard`; o caminho técnico não é o destino público
+normal. A rota `user.page` permanece somente para compatibilidade com redirects
+do Core e redireciona para a raiz da Conta, sem renderizar o perfil genérico;
+`/identidade` também não é um destino válido. O destino preferencial é a página visitada
+antes do login, transportada como `destination` e acompanhada pelo purpose do
+Domain durante a autenticação. Isso vale para senha e Google OAuth. Sem um
+destino anterior, o fallback é a rota do Portal “Minha conta”. O fluxo e seus
+limites estão documentados em [Autenticação](AUTHENTICATION.md).
+
+O Social API 4.0.2 emite uma depreciação PHP 8.4 ao instanciar o gerenciador
+OAuth. O projeto aplica por Composer o ajuste upstream proposto em
+[Drupal.org #3593752](https://www.drupal.org/project/social_api/issues/3593752)
+(MR !17), sem editar o módulo contrib diretamente. Esse aviso não identifica,
+por si só, uma falha de autenticação; a conclusão do callback Google ainda
+precisa de validação interativa após as alterações.
+
+### Acesso OAuth do administrador Drupal
+
+O perfil Google atualmente vinculado ao administrador Drupal (UID 1) só pode
+autenticá-lo quando `social_auth.settings:disable_admin_login` está desativado.
+Essa opção do Social Auth é global: ela permite autenticação OAuth para UID 1
+em qualquer provedor Social Auth habilitado, não apenas Google. No momento,
+Google é o provedor Social Auth ativo. Alterações futuras que habilitem outros
+provedores devem reavaliar essa exposição antes de ativá-los. O Drupal continua
+sendo responsável por validar o usuário e o vínculo OAuth existente.
+
+| Ambiente | URI de redirecionamento autorizado |
+| --- | --- |
+| Homelab | `https://conta.aculta.toca.net.br/oauth/google/retorno` |
+| Produção | `https://conta.aculta.org/oauth/google/retorno` |
+
+Se o cliente também usar APIs Google iniciadas diretamente por JavaScript,
+cadastre estas origens autorizadas (origem é somente esquema + host, sem
+caminho):
+
+- `https://conta.aculta.toca.net.br`
+- `https://conta.aculta.org`
+
+As origens JavaScript não substituem os URIs de callback. O ambiente de
+produção deve manter seu URI cadastrado antes de ativar o novo código; não
+inclua localhost ou hosts de desenvolvimento adicionais no cliente de
+produção sem necessidade.
+
 Esse padrão deve ser preservado.
 
 ## Princípio de credenciais
@@ -44,6 +95,39 @@ IDs públicos de tags/propriedades podem ser configuráveis, mas não devem ser
 hardcoded no tema.
 
 Segredos entram por ambiente/Key ou mecanismo equivalente revisado.
+
+### Homelab e importação de configuração
+
+O botão de login Google depende de valores efetivos para o client ID e o
+client secret. A configuração exportada mantém esses campos vazios e os
+resolve pelas Keys `google_oauth_client_id` e
+`google_oauth_client_secret`, vinculadas a `GOOGLE_OAUTH_CLIENT_ID` e
+`GOOGLE_OAUTH_CLIENT_SECRET`.
+
+No Homelab, essas variáveis precisam estar disponíveis ao PHP-FPM e aos
+processos Drupal/Drush que importam configuração. Não preencher os campos
+diretamente em `social_auth_google.settings` como solução persistente: uma
+importação posterior os substituirá pelos valores versionados, que são
+intencionalmente vazios. Nunca colocar os valores das variáveis no Git,
+documentação, URL ou histórico de shell.
+
+Depois de configurar o ambiente, limpar o cache e confirmar que o botão
+aparece em `/entrar` e que o início do OAuth responde com redirecionamento para
+o provedor. Se as variáveis não estiverem disponíveis, o botão deve permanecer
+oculto, sem expor erro ou credencial.
+
+### Segurança da desconexão
+
+A conexão Google só pode ser removida pela interface da Conta quando existir uma
+senha local **escolhida pela pessoa usuária**. Contas criadas via Social Auth
+recebem o marcador `aculta_portal/social_auth_password_unset`; um hash de senha
+gerado internamente não deve ser interpretado como senha conhecida. A área
+Conexões e a área Segurança usam a mesma regra.
+
+No callback, o identificador externo vem de
+`SocialAuthUserInterface::getId()`; o e-mail do provedor é metadado de
+apresentação e não substitui o ID persistido nem o Drupal User como fonte de
+verdade.
 
 ## Matriz
 

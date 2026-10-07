@@ -65,3 +65,6 @@ core/.phpstan-baseline.php text eol=lf whitespace=blank-at-eol,-blank-at-eof,-sp
 *.ttf     -text -diff
 *.woff    -text -diff
 *.woff2   -text -diff
+
+patches/social-api-php84-nullable-request.patch whitespace=-blank-at-eol
+patches/turnstile-no-math-fallback.patch whitespace=-blank-at-eol
