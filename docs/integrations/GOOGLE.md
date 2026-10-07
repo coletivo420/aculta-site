@@ -106,6 +106,19 @@ aparece em `/entrar` e que o início do OAuth responde com redirecionamento para
 o provedor. Se as variáveis não estiverem disponíveis, o botão deve permanecer
 oculto, sem expor erro ou credencial.
 
+### Segurança da desconexão
+
+A conexão Google só pode ser removida pela interface da Conta quando existir uma
+senha local **escolhida pela pessoa usuária**. Contas criadas via Social Auth
+recebem o marcador `aculta_portal/social_auth_password_unset`; um hash de senha
+gerado internamente não deve ser interpretado como senha conhecida. A área
+Conexões e a área Segurança usam a mesma regra.
+
+No callback, o identificador externo vem de
+`SocialAuthUserInterface::getId()`; o e-mail do provedor é metadado de
+apresentação e não substitui o ID persistido nem o Drupal User como fonte de
+verdade.
+
 ## Matriz
 
 | Integração | Lançamento | Pós-aprovação | Fonte/owner |

@@ -9,11 +9,18 @@ Portal reconstrói a URL no Domain correto. Rotas de login, logout, recuperaçã
 e OAuth não podem virar destinos de retorno.
 
 O parâmetro Drupal `destination`, quando já fornecido por uma rota protegida,
-tem precedência. Um acesso novo e direto a `/entrar` sem destino válido limpa
-qualquer destino abandonado da sessão. Social Auth preserva `destination`
-durante o redirecionamento ao provedor; quando o parâmetro ACULTA de purpose não
-é propagado pelo módulo upstream, o Portal conserva o purpose já capturado para
-o mesmo path em vez de sobrescrevê-lo com ACCOUNT. Quando não há página anterior ou destino explícito, o destino público padrão é
+tem precedência. O Portal preserva **path e query string** da página de origem:
+uma busca como `/wiki/busca?q=termo` deve retornar com `q=termo` depois do
+login. O menu varia por `url.path` e `url.query_args` para não reutilizar em
+cache um destino de outra busca/filtro. Um acesso novo e direto a `/entrar`
+sem destino válido limpa qualquer destino abandonado da sessão.
+
+O destino salvo é decomposto em path interno + query estruturada; URLs externas,
+protocol-relative, fragments e rotas de autenticação/recuperação não são
+aceitas como retorno. Social Auth preserva `destination` durante o
+redirecionamento ao provedor; quando o parâmetro ACULTA de purpose não é
+propagado pelo módulo upstream, o Portal conserva o purpose já capturado para o
+mesmo path **e query** em vez de sobrescrevê-lo com ACCOUNT. Quando não há página anterior ou destino explícito, o destino público padrão é
 a raiz do Domain ACCOUNT (`/` em `conta.aculta.org` ou no alias Homelab).
 A configuração Domain de ACCOUNT resolve essa raiz internamente para
 `/conta-interna`, rota `aculta_portal.dashboard`, sem expor esse caminho
@@ -128,3 +135,19 @@ A supressão do Page Title duplicado no shell privado pertence ao
 `aculta_portal`, que conhece o render array `aculta_portal_shell`. O tema não
 inspeciona nomes de rotas do Portal para decidir comportamento funcional. Essa
 separação evita afetar Wiki, Cursos, Apoio ou outros routes `aculta_portal.*`.
+
+
+### Gates anti-regressão de autenticação
+
+Antes de alterar login/OAuth/Conta, validar pelo menos:
+
+- `/wiki/busca?q=termo` -> login -> retorno mantém `q=termo`;
+- login vindo de MAIN/MAGAZINE/WIKI/COURSES retorna ao mesmo purpose;
+- acesso direto a `/entrar` não reutiliza destination antigo;
+- `user.page` continua registrado para Core Navigation, mas nunca renderiza o
+  perfil genérico;
+- `user.login.http` e `user.pass.http` permanecem indisponíveis;
+- conta criada por Social Auth sem senha escolhida não oferece
+  “Desconectar Google”;
+- callback Google usa `SocialAuthUserInterface::getId()` como identificador do
+  provedor.

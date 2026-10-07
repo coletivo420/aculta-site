@@ -8,6 +8,9 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Autenticação
 
+- Preserva query string no destination de login/OAuth e adiciona `url.query_args` ao cache do menu, mantendo buscas, filtros e paginação após autenticação.
+- Corrige o identificador do usuário externo no callback Google para `SocialAuthUserInterface::getId()`.
+- Impede desconexão Google quando a conta Social Auth ainda não possui senha local escolhida, reutilizando o marcador `social_auth_password_unset` via DI de `UserDataInterface`.
 - Desabilita os endpoints JSON de login/recuperação do Core neste site para impedir uma rota paralela que não passa pelo Form API/Turnstile; OAuth continua sendo o fluxo alternativo suportado.
 - Preserva `user.page` somente como redirect técnico compatível com Core Navigation/recuperação de senha, sempre apontando para a raiz ACCOUNT sem expor o perfil genérico.
 - Limpa destinos de login abandonados e preserva o Domain purpose original durante a transição login -> OAuth.
