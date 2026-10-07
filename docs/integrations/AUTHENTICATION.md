@@ -163,3 +163,10 @@ Antes de alterar login/OAuth/Conta, validar pelo menos:
   “Desconectar Google”;
 - callback Google usa `SocialAuthUserInterface::getId()` como identificador do
   provedor.
+
+
+## Referência da política CAPTCHA
+
+A política operacional de CAPTCHA/Turnstile é documentada em
+`docs/integrations/CAPTCHA.md`. Este documento de autenticação deve apenas
+referenciar essa política; não criar uma segunda matriz divergente.

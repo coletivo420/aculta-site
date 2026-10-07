@@ -7,6 +7,7 @@ dependencies:
     - filter.format.webform_default
   module:
     - aculta_portal
+    - captcha
     - commerce_checkout
     - commerce_order
     - commerce_payment
