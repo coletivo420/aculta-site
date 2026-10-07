@@ -12,6 +12,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Path\CurrentPathStack;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -73,6 +74,33 @@ final class PortalHooks {
     }
 
     $this->accountShellBuilder->build($variables);
+
+    if (($variables['page']['content']['#theme'] ?? NULL) === 'aculta_portal_shell'
+      && isset($variables['page']['header'])
+      && is_array($variables['page']['header'])) {
+      $this->removeHeaderBlockByPlugin($variables['page']['header'], 'page_title_block');
+    }
+  }
+
+  /**
+   * Removes a header block owned by the Portal shell before theme preprocess.
+   */
+  private function removeHeaderBlockByPlugin(array &$header, string $pluginId): void {
+    foreach (Element::children($header) as $key) {
+      $block = $header[$key];
+      $candidate = (string) ($block['#plugin_id'] ?? '');
+      $lazyBuilder = $block['#lazy_builder'] ?? [];
+      if ($candidate === ''
+        && ($lazyBuilder[0] ?? '') === 'Drupal\\block\\BlockViewBuilder::lazyBuilder') {
+        $blockId = $lazyBuilder[1][0] ?? '';
+        if (is_string($blockId) && $blockId !== '') {
+          $candidate = (string) ($this->configFactory->get('block.block.' . $blockId)->get('plugin') ?? '');
+        }
+      }
+      if ($candidate === $pluginId) {
+        unset($header[$key]);
+      }
+    }
   }
 
   /**

@@ -116,17 +116,42 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (in_array($routeName, ['user.login', 'social_auth.network.redirect'], TRUE)
       && !$this->currentUser->isAuthenticated()
       && $request->hasSession()) {
+      $session = $request->getSession();
       $destinationPath = $request->query->get('destination');
-      $destinationPurpose = $request->query->get('aculta_destination_purpose');
-      if (is_string($destinationPath)
+      $requestedPurpose = $request->query->get('aculta_destination_purpose');
+      $validDestination = is_string($destinationPath)
         && str_starts_with($destinationPath, '/')
         && !str_starts_with($destinationPath, '//')
-        && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $destinationPath)) {
-        $destinationPurpose = is_string($destinationPurpose) && $this->domainPurposeManager->getDomain($destinationPurpose)
-          ? $destinationPurpose
-          : $this->domainPurposeManager->getCurrentPurpose();
+        && !preg_match('#^/(?:entrar|oauth|sair|recuperar(?:-senha|-acesso)?)(?:/|$)#', $destinationPath);
+
+      // A direct/fresh login must not inherit a destination abandoned earlier
+      // in the same anonymous session.
+      if ($routeName === 'user.login' && !$validDestination) {
+        $session->remove(self::LOGIN_DESTINATION_SESSION_KEY);
+      }
+
+      if ($validDestination) {
+        $storedDestination = $session->get(self::LOGIN_DESTINATION_SESSION_KEY);
+        $destinationPurpose = is_string($requestedPurpose)
+          && $this->domainPurposeManager->getDomain($requestedPurpose)
+            ? $requestedPurpose
+            : NULL;
+
+        // Social Auth forwards Drupal's standard destination but not the
+        // ACULTA-specific purpose. Preserve the purpose captured on /entrar
+        // when the OAuth request refers to the same path.
+        if ($destinationPurpose === NULL
+          && $routeName === 'social_auth.network.redirect'
+          && is_array($storedDestination)
+          && ($storedDestination['path'] ?? NULL) === $destinationPath
+          && is_string($storedDestination['purpose'] ?? NULL)
+          && $this->domainPurposeManager->getDomain($storedDestination['purpose']) !== NULL) {
+          $destinationPurpose = $storedDestination['purpose'];
+        }
+
+        $destinationPurpose ??= $this->domainPurposeManager->getCurrentPurpose();
         if ($destinationPurpose !== NULL) {
-          $request->getSession()->set(self::LOGIN_DESTINATION_SESSION_KEY, [
+          $session->set(self::LOGIN_DESTINATION_SESSION_KEY, [
             'purpose' => $destinationPurpose,
             'path' => $destinationPath,
           ]);

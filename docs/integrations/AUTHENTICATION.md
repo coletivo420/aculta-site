@@ -9,18 +9,32 @@ Portal reconstrói a URL no Domain correto. Rotas de login, logout, recuperaçã
 e OAuth não podem virar destinos de retorno.
 
 O parâmetro Drupal `destination`, quando já fornecido por uma rota protegida,
-tem precedência. Social Auth preserva esse parâmetro durante o redirecionamento
-ao provedor. Quando não há página anterior ou destino explícito, o destino público padrão é
+tem precedência. Um acesso novo e direto a `/entrar` sem destino válido limpa
+qualquer destino abandonado da sessão. Social Auth preserva `destination`
+durante o redirecionamento ao provedor; quando o parâmetro ACULTA de purpose não
+é propagado pelo módulo upstream, o Portal conserva o purpose já capturado para
+o mesmo path em vez de sobrescrevê-lo com ACCOUNT. Quando não há página anterior ou destino explícito, o destino público padrão é
 a raiz do Domain ACCOUNT (`/` em `conta.aculta.org` ou no alias Homelab).
 A configuração Domain de ACCOUNT resolve essa raiz internamente para
 `/conta-interna`, rota `aculta_portal.dashboard`, sem expor esse caminho
 técnico como URL pós-login.
 
 A página genérica de perfil do Drupal não é publicada. A rota técnica
-`user.page` continua registrada porque fluxos Core, inclusive recuperação de
-senha, ainda geram redirects para ela; quando alcançada no Domain ACCOUNT, ela
-redireciona imediatamente para a raiz da Conta e nunca renderiza o perfil
-genérico. `/identidade` também não é destino de login.
+`user.page` continua registrada porque Core Navigation, recuperação de senha e
+outros fluxos upstream ainda geram URLs para ela. Em qualquer host onde seja
+alcançada por um usuário autorizado, ela redireciona para a raiz absoluta do
+Domain ACCOUNT e nunca renderiza o perfil genérico. `/identidade` também não é
+destino de login.
+
+## Endpoints HTTP de autenticação
+
+O projeto não publica `user.login.http` nem `user.pass.http`. Esses endpoints
+JSON do Core autenticam sem construir Form API e, portanto, não participam da
+política Turnstile aplicada aos formulários públicos. Mantê-los ao lado do login
+tradicional protegido criaria um caminho alternativo sem CAPTCHA.
+
+Se uma API de autenticação for necessária no futuro, ela deve ser desenhada e
+protegida explicitamente; não reativar esses endpoints como atalho.
 
 ## Google OAuth
 
@@ -106,3 +120,11 @@ interação de navegador nesta alteração.
   patch Composer. O retorno com consentimento real do Google não foi executado
   nesta revisão.
 - Nenhuma configuração ou deploy de produção foi alterado.
+
+
+## Ownership de apresentação
+
+A supressão do Page Title duplicado no shell privado pertence ao
+`aculta_portal`, que conhece o render array `aculta_portal_shell`. O tema não
+inspeciona nomes de rotas do Portal para decidir comportamento funcional. Essa
+separação evita afetar Wiki, Cursos, Apoio ou outros routes `aculta_portal.*`.

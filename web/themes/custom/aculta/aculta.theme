@@ -58,9 +58,6 @@ function aculta_preprocess_form_element_label(array &$variables): void {
  * Implements hook_preprocess_page().
  */
 function aculta_preprocess_page(array &$variables): void {
-  // Module preprocessors run before the active theme. Detect the actual
-  // account shell instead of matching Wiki, Courses and Support routes too.
-  $account_shell = ($variables['page']['content']['#theme'] ?? NULL) === 'aculta_portal_shell';
   $variables['institutional_home'] = \Drupal::service('path.matcher')->isFrontPage()
     && (int) (\Drupal::routeMatch()->getParameter('node')?->id() ?? 0) === (int) theme_get_setting('institution_home_nid');
   // Keep stored block placements intact; separate header responsibilities here.
@@ -88,11 +85,6 @@ function aculta_preprocess_page(array &$variables): void {
     }
     $destination = $destinations[$plugin_id] ?? NULL;
     if ($destination !== NULL) {
-      // The Portal shell renders its own single H1 and section heading.
-      if ($account_shell && $destination === 'aculta_page_title') {
-        unset($variables['page']['header'][$key]);
-        continue;
-      }
       // Preserve the complete render array, including access and cache metadata.
       $variables[$destination][$key] = $block;
       unset($variables['page']['header'][$key]);

@@ -2,6 +2,7 @@
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -21,6 +22,7 @@ final class PortalController extends ControllerBase {
     private readonly EntityFormBuilderInterface $forms,
     private readonly FormBuilderInterface $accountFormBuilder,
     private readonly \Drupal\aculta_portal\AccountCoursesManager $accountCourses,
+    private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -29,6 +31,7 @@ final class PortalController extends ControllerBase {
       $container->get('entity.form_builder'),
       $container->get('form_builder'),
       $container->get('aculta_portal.account_courses'),
+      $container->get('aculta_portal.domain_purpose'),
     );
   }
 
@@ -36,7 +39,10 @@ final class PortalController extends ControllerBase {
    * Keeps Core's legacy user.page route compatible without exposing its UI.
    */
   public function legacyUserPageRedirect(): RedirectResponse {
-    return new RedirectResponse(Url::fromRoute('<front>')->toString());
+    $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
+    return new RedirectResponse(
+      $accountRoot?->toString() ?? Url::fromRoute('<front>')->toString(),
+    );
   }
 
   public function dashboard(): array {

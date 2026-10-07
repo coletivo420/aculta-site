@@ -24,10 +24,8 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
   protected function alterRoutes(RouteCollection $collection): void {
     $pathChanges = [
       'user.login' => '/entrar',
-      'user.login.http' => '/entrar',
       'user.register' => '/criar-conta',
       'user.pass' => '/recuperar-senha',
-      'user.pass.http' => '/recuperar-senha',
       'user.reset' => '/recuperar-acesso/{uid}/{timestamp}/{hash}',
       'user.reset.form' => '/recuperar-acesso/{uid}',
       'user.reset.login' => '/recuperar-acesso/{uid}/{timestamp}/{hash}/entrar',
@@ -49,13 +47,19 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     $accountRoutes = array_fill_keys(array_keys($pathChanges), TRUE);
     unset($accountRoutes['commerce_payment.notify']);
 
-    // Keep Core's user.page route registered because password-reset and other
-    // upstream flows still redirect to it. The route never renders Core's
-    // generic profile page: it is ACCOUNT-only and redirects to the Domain
-    // front page handled by the ACULTA Portal.
+    // Browser Form API is the supported password-authentication surface.
+    // Core's JSON login/password endpoints bypass Form API and therefore the
+    // Turnstile policy, so this site does not publish them.
+    foreach (['user.login.http', 'user.pass.http'] as $httpRoute) {
+      $collection->remove($httpRoute);
+    }
+
+    // Keep user.page because Core Navigation and other upstream flows still
+    // generate it. It is compatibility-only and never renders Core's generic
+    // profile UI. Do not bind it to a purpose: admin Navigation may generate
+    // the route while the current host is MAIN.
     if ($route = $collection->get('user.page')) {
       $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\PortalController::legacyUserPageRedirect');
-      $route->setOption('_aculta_domain_purpose', 'account');
     }
 
     foreach ($pathChanges as $name => $path) {
