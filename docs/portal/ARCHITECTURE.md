@@ -119,6 +119,13 @@ implementada e validada.
 Rotas especializadas devem operar no purpose correto e, salvo decisão
 arquitetural explícita, retornar 404 no host incorreto.
 
+Toda rota humana exposta como navegação pública deve preferir slug amigável em
+português, mantendo a mesma estrutura de path entre Homelab e produção. Rotas
+técnicas de Core/contrib, callbacks, OAuth, AJAX, webhooks e admin podem manter
+paths internos quando isso fizer parte da API correta.
+
+Ver [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md).
+
 ## Tema
 
 O tema `web/themes/custom/aculta` é responsável por apresentação visual,

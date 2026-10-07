@@ -98,6 +98,20 @@ verdade clara, acesso/cache corretos, testes Runtime e operação documentada.
 - config/segredos conforme policy;
 - SQLite/MariaDB portability.
 
+## Gates de URLs e slugs
+
+- inventário completo das rotas humanas públicas;
+- slugs amigáveis em português para todos os purposes ativos;
+- mesma estrutura de path em Homelab e produção;
+- nenhuma navegação principal usando slug técnico/inglês sem justificativa;
+- redirects para paths públicos substituídos;
+- canonical, sitemap, menus e breadcrumbs coerentes;
+- Search/Views apontando para aliases públicos;
+- callbacks técnicos de Core/contrib preservados;
+- access e wrong-host policy inalterados.
+
+Ver [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md).
+
 ## Gates AJAX
 
 - UX assíncrona preservada onde definida;
