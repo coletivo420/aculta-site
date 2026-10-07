@@ -212,14 +212,17 @@ upgrade-path tests.
 
 ## S3.9 — Assets/avatar inventory
 
-**Estado: próxima.**
+**Estado: concluída documentalmente.**
 
-Objetivo:
+Documento:
+[S3-9-AVATAR-ASSETS.md](S3-9-AVATAR-ASSETS.md).
 
-- inventariar os assets de avatar;
-- localizar consumidores;
-- decidir ownership;
-- não remover arquivos sem evidência.
+Resultado:
+
+- 107 PNGs / ~107,7 MiB;
+- nenhum consumidor versionado encontrado por busca estática;
+- nenhuma remoção autorizada sem inventário Runtime;
+- ownership futuro definido como decisão separada.
 
 ## S3.3A — Minha Conta AJAX boundary
 
