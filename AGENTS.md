@@ -373,7 +373,7 @@ A documentação arquitetural e o roadmap são definidos fora da execução de
 código. O Codex deve principalmente implementar, testar e registrar o resultado
 da implementação.
 
-O Portal usa tags `portal-vX.Y.Z`. Ver `docs/portal/VERSIONING.md`.
+O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 
 ## Forma de trabalho esperada do Codex
 
