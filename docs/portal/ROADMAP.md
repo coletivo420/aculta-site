@@ -160,7 +160,7 @@ Entregas:
 **Estado: S3.2B semântica compartilhada concluída documentalmente; S3.2A Course presenter preparado em draft, Runtime deferred.**
 
 O primeiro consumidor executável da semântica compartilhada é Cursos. O
-`AccountCoursePresenter` prepara status, score, CTA e empty state sem mover
+`AccountCoursePresenter` prepara status, score, action e empty state sem mover
 LMS/Group/access/URLs/cache para o tema. O render atual permanece fallback até
 o tema aprovar e implementar `course-card`.
 

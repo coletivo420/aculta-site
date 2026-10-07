@@ -33,12 +33,12 @@ final class AccountCoursePresenter {
    *     description: array,
    *     status: array{code: string, label: string, tone: string},
    *     score_label: string|null,
-   *     cta: array{label: string, url: \Drupal\Core\Url, kind: string}|null,
+   *     action: array{label: string, url: \Drupal\Core\Url, kind: string}|null,
    *     cache_tags: string[]
    *   }>,
    *   empty: array{
    *     message: string,
-   *     cta: array{label: string, url: \Drupal\Core\Url, kind: string}|null
+   *     action: array{label: string, url: \Drupal\Core\Url, kind: string}|null
    *   }
    * }
    */

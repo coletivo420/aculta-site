@@ -33,7 +33,7 @@ final class AccountCoursesManager {
    *
    * @return array<int, array<string, mixed>>
    *   Authorized LMS/Group source records keyed sequentially for presentation.
-   *   User-facing labels, tones, CTA semantics and empty states belong to the
+   *   User-facing labels, tones, action semantics and empty states belong to the
    *   presenter, not to this integration boundary.
    */
   public function getCourses(AccountInterface $account): array {
@@ -91,7 +91,7 @@ final class AccountCoursesManager {
 
   private function courseUrl(Course $course, ?CourseStatusInterface $status): ?Url {
     // Drupal LMS blocks course navigation while manually graded work is
-    // awaiting evaluation. Do not generate a misleading start/continue CTA.
+    // awaiting evaluation. Do not generate a misleading start/continue action.
     if ($status?->getStatus() === CourseStatusInterface::STATUS_NEEDS_EVALUATION) {
       return NULL;
     }
