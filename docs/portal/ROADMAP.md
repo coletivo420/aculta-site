@@ -393,9 +393,12 @@ Executar matriz por feature/purpose/identidade:
 
 ## R3 — Hardening / Portal 0.19
 
-**Especificação concluída.**
+**Especificação e runbook concluídos.**
 
-Documento: [S4-0.19-HARDENING.md](S4-0.19-HARDENING.md).
+Documentos:
+
+- [S4-0.19-HARDENING.md](S4-0.19-HARDENING.md)
+- [R3-HARDENING-EXECUTION.md](R3-HARDENING-EXECUTION.md).
 
 Executar no Runtime:
 
