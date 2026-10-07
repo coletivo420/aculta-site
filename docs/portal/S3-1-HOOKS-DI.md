@@ -166,7 +166,7 @@ Limitações de cobertura registradas, sem classificar como PASS:
   teste foi preparada pela API de Agreement do Drupal e removida ao final.
 
 Não houve alteração de Composer dependencies, `config/sync`, tema, produção ou
-conteúdo funcional. O diff S3.1 em `web/themes/custom/aculta/` é vazio.
+conteúdo funcional. O diff S3.1 em `web/themes/custom/aculta420/` é vazio.
 
 ## Próximo item da fila
 

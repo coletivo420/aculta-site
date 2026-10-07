@@ -3,7 +3,7 @@
 Este roadmap organiza a evolução do `aculta_portal` no modo atual
 **GitHub-first / Runtime-last**.
 
-O tema `aculta` possui linha própria e já está em fase avançada do
+O tema `aculta420` possui linha própria e já está em fase avançada do
 **ACULTA Bootstrap Component Design System**. O Portal consome esse sistema; não
 reinicia a refatoração do tema.
 

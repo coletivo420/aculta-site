@@ -127,7 +127,7 @@ contexts existentes da página permanecem inalterados.
 
 ## Tema e AJAX
 
-Nenhum arquivo em `web/themes/custom/aculta/**` faz parte desta subfase.
+Nenhum arquivo em `web/themes/custom/aculta420/**` faz parte desta subfase.
 
 Nenhuma alteração de transporte AJAX faz parte desta subfase. A navegação da
 Conta continua com o comportamento atual e fallback full-page.

@@ -61,7 +61,7 @@ fontes de verdade funcionais dessas ferramentas.
 - sete purposes ativos: MAIN, ACCOUNT, SUPPORT, MAGAZINE, WIKI, SHOP e COURSES;
 - oitavo purpose planejado: FORUM;
 - `aculta_portal` continua sendo a camada de integração;
-- o tema `aculta` já está em fase avançada do ACULTA Bootstrap Component Design System;
+- o tema `aculta420` já está em fase avançada do ACULTA Bootstrap Component Design System;
 - o Portal opera temporariamente em modo GitHub-first / Runtime-last;
 - trabalho local antigo não publicado não é baseline; `origin/main` é autoritativo.
 

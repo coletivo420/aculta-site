@@ -25,7 +25,7 @@ fonte de verdade
 aculta_portal
 access + cache + presenter + URL/purpose
       ↓
-SDC do tema aculta
+SDC do tema ACULTA420
       ↓
 Bootstrap 5 + tokens ACULTA
       ↓

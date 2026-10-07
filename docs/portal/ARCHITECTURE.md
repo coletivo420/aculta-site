@@ -18,7 +18,7 @@ painel usuário  painel admin
       +-----+------+
             |
             v
-        tema aculta
+        tema ACULTA420
 ```
 
 O Portal pode combinar informações de diferentes subsistemas em uma mesma tela,
