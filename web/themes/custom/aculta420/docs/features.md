@@ -93,7 +93,7 @@ A Foundation não mantém `css/style.css` nem `css/responsive.css` catch-all.
 
 Contextual:
 
-- `editorial-carousel.js`;
+- `editorial-carousel.css` + `editorial-carousel.js`, anexados somente pela View VVJB correspondente;
 - assets SDC como `editorial-card.css`.
 
 ## Ainda não existe

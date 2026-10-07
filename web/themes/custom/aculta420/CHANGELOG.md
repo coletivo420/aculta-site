@@ -86,6 +86,8 @@ conjunto normativo:
 
 - remove caminho morto de `system_powered_by_block`/`aculta_site_credit`, sem placement configurado.
 
+- move CSS do carrossel editorial para a library contextual já anexada pela View VVJB.
+
 ### Gate da Foundation
 
 - cria `scripts/validate-aculta420-foundation.php` como gate runtime exclusivo do tema;
