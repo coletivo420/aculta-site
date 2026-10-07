@@ -56,6 +56,15 @@ Gates principais:
 
 ### 2. PR #30 — S3.5 Domain policy
 
+**R1.2A concluída e blocker Wiki/Media Library resolvido no PR #60.**
+
+Ver [R1-2-WIKI-MEDIA-BLOCKER.md](R1-2-WIKI-MEDIA-BLOCKER.md).
+
+Próxima unidade: **R1.2B — sincronizar, retestar e concluir o PR #30**.
+
+Obrigatório repetir os gates Wiki add/edit depois de atualizar #30 contra o
+`main` que contém a correção de `allowed_media_types`.
+
 Branch:
 
 `refactor/portal-s3.5-domain-policy`

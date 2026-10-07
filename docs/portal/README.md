@@ -42,6 +42,8 @@ fontes de verdade funcionais dessas ferramentas.
 - [R0 — PASS / fechamento](R0-PASS.md)
 - [R1 — Dependency/Config Integration Queue](R1-INTEGRATION-QUEUE.md)
 - [R1.1 — PR #23 PASS](R1-1-PR23-PASS.md)
+- [R1.2 — blocker Wiki/Media Library](R1-2-WIKI-MEDIA-BLOCKER.md)
+- R1.2A — corrigido no PR #60; próximo gate: R1.2B / PR #30
 - [R2 — Functional Validation Matrix](R2-FUNCTIONAL-VALIDATION.md)
 - [R3 — Hardening Execution Runbook](R3-HARDENING-EXECUTION.md)
 - [R4 — Release and Tagging Runbook](R4-RELEASE-TAGGING.md)
