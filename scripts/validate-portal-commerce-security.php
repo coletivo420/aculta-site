@@ -300,8 +300,71 @@ foreach (['turnstile', 'google_oauth_client_id', 'google_oauth_client_secret', '
   $key = $key_storage->load($key_id);
   $assert($key && $key->getKeyProvider()->getPluginId() === 'env', 'Secret/public integration reference is environment-backed: ' . $key_id);
 }
-$assert(\Drupal::config('social_auth_google.settings')->get('client_secret') === NULL || \Drupal::config('social_auth_google.settings')->get('client_secret') === '', 'Google client secret is not stored in ordinary configuration.');
-$assert(\Drupal::config('social_auth_google.settings')->get('client_id') === NULL || \Drupal::config('social_auth_google.settings')->get('client_id') === '', 'Google provider is not falsely reported configured.');
+
+// ConfigFactory returns effective values after Key Config Override. Inspect
+// active storage directly when asserting that credentials are not persisted.
+$oauth_storage = \Drupal::service('config.storage');
+$oauth_sync_storage = \Drupal::service('config.storage.sync');
+$oauth_raw = $oauth_storage->read('social_auth_google.settings') ?: [];
+$oauth_sync = $oauth_sync_storage->read('social_auth_google.settings') ?: [];
+$assert(trim((string) ($oauth_raw['client_id'] ?? '')) === '' && trim((string) ($oauth_raw['client_secret'] ?? '')) === '', 'Google OAuth credentials are absent from ordinary active configuration.');
+$assert(trim((string) ($oauth_sync['client_id'] ?? '')) === '' && trim((string) ($oauth_sync['client_secret'] ?? '')) === '', 'Google OAuth credentials are absent from synchronized configuration.');
+
+$oauth_key_environment = [
+  'google_oauth_client_id' => 'GOOGLE_OAUTH_CLIENT_ID',
+  'google_oauth_client_secret' => 'GOOGLE_OAUTH_CLIENT_SECRET',
+];
+$oauth_key_values = [];
+foreach ($oauth_key_environment as $key_id => $environment_variable) {
+  $key = $key_storage->load($key_id);
+  $provider = $key?->getKeyProvider();
+  $provider_configuration = $provider?->getConfiguration() ?? [];
+  $sync_key = $oauth_sync_storage->read('key.key.' . $key_id) ?: [];
+  $assert(
+    $key && $provider?->getPluginId() === 'env' && ($provider_configuration['env_variable'] ?? NULL) === $environment_variable,
+    'Google OAuth Key uses the expected environment provider: ' . $key_id,
+  );
+  $assert(
+    ($sync_key['key_provider'] ?? NULL) === 'env'
+      && ($sync_key['key_provider_settings']['env_variable'] ?? NULL) === $environment_variable
+      && !array_key_exists('key_value', $sync_key),
+    'Google OAuth Key sync contains only the environment contract: ' . $key_id,
+  );
+  try {
+    $oauth_key_values[$key_id] = $key ? (string) $key->getKeyValue(TRUE) : '';
+  }
+  catch (\Throwable) {
+    $oauth_key_values[$key_id] = '';
+  }
+  $assert($oauth_key_values[$key_id] !== '', 'Google OAuth Key resolves a runtime value: ' . $key_id);
+}
+
+$oauth_overrides = \Drupal::entityTypeManager()->getStorage('key_config_override');
+$expected_oauth_overrides = [
+  'google_client_id' => ['client_id', 'google_oauth_client_id'],
+  'google_client_secret' => ['client_secret', 'google_oauth_client_secret'],
+];
+foreach ($expected_oauth_overrides as $override_id => [$config_item, $key_id]) {
+  $override = $oauth_overrides->load($override_id);
+  $data = $override?->toArray() ?? [];
+  $sync_override = $oauth_sync_storage->read('key.config_override.' . $override_id) ?: [];
+  $matches = static function (array $config) use ($config_item, $key_id): bool {
+    return ($config['status'] ?? FALSE) === TRUE
+      && ($config['config_type'] ?? NULL) === 'system.simple'
+      && ($config['config_name'] ?? NULL) === 'social_auth_google.settings'
+      && ($config['config_item'] ?? NULL) === $config_item
+      && ($config['key_id'] ?? NULL) === $key_id;
+  };
+  $assert($override && $matches($data) && $matches($sync_override), 'Google OAuth Key Configuration Override is active and exact: ' . $override_id);
+}
+
+$oauth_effective = \Drupal::config('social_auth_google.settings');
+foreach ($oauth_key_environment as $key_id => $config_item) {
+  $key_value = $oauth_key_values[$key_id];
+  $effective_value = (string) ($oauth_effective->get($config_item) ?? '');
+  $assert($effective_value !== '', 'Google OAuth effective setting is available: ' . $config_item);
+  $assert($key_value !== '' && hash_equals($key_value, $effective_value), 'Google OAuth effective setting matches its Key value: ' . $config_item);
+}
 
 $support_settings = \Drupal::config('aculta_portal.support')->getRawData();
 foreach (['access_token', 'client_secret', 'webhook_secret', 'pix_key', 'pix_copy_paste'] as $forbidden) {

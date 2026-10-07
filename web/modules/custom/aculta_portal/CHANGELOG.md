@@ -20,6 +20,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Autenticação
 
+- Define a prova OAuth no gate pela separação entre storage bruto vazio, Keys Environment, Key Configuration Overrides ativos e configuração efetiva coincidente, sem exibir valores.
 - Preserva query string no destination de login/OAuth e adiciona `url.query_args` ao cache do menu, mantendo buscas, filtros e paginação após autenticação.
 - Corrige o identificador do usuário externo no callback Google para `SocialAuthUserInterface::getId()`.
 - Impede desconexão Google quando a conta Social Auth ainda não possui senha local escolhida, reutilizando o marcador `social_auth_password_unset` via DI de `UserDataInterface`.

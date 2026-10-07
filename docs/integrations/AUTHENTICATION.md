@@ -57,6 +57,17 @@ Client ID e segredo não são documentados nem impressos. O responsável
 configurou o cliente OAuth Google; nenhuma alteração foi feita na Hostinger ou
 no Drupal de produção neste trabalho.
 
+As configurações exportadas de Social Auth Google mantêm `client_id` e
+`client_secret` vazios. As Keys `google_oauth_client_id` e
+`google_oauth_client_secret` usam o provider Environment com
+`GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CLIENT_SECRET`; os objetos Key
+Configuration Override injetam esses valores no runtime. Por isso,
+`\Drupal::config('social_auth_google.settings')` representa a configuração
+**efetiva** e pode retornar valores resolvidos pelas Keys. Para verificar que
+nenhum segredo foi persistido, use o storage bruto (`config.storage`) ou a
+configuração exportada, nunca a leitura efetiva. Segredo efetivo em runtime é
+esperado; segredo persistido no storage comum ou exportado é proibido.
+
 ### Vínculos em Minha Conta
 
 A página `/conexoes` lê os vínculos da entidade Social Auth do usuário atual.
