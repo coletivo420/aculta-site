@@ -182,7 +182,32 @@ Preservar:
 - SMTP readiness;
 - progressive enhancement.
 
-## S3.3 — Minha Conta AJAX boundary
+## S3.3 — Apoio: access first
+
+**Estado: preparada em draft; Runtime deferred.**
+
+Documento:
+[S3-3-SUPPORT-ACCESS.md](S3-3-SUPPORT-ACCESS.md).
+
+Entregas:
+
+- order access antes de metadata;
+- SupportHistoryPresenter;
+- API Commerce de pagamentos por pedido;
+- sem ledger paralelo.
+
+## S3.4 — Wiki boundary
+
+**Estado: próxima.**
+
+Objetivo:
+
+- DI no WikiController;
+- separar item/list presentation;
+- preservar accessCheck/entity access;
+- manter busca LIKE como dívida transitória até Search API.
+
+## S3.3A — Minha Conta AJAX boundary
 
 Preservar como requisito:
 

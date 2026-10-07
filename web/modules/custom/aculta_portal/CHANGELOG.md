@@ -6,6 +6,11 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Refatoração preparada
+
+- S3.3 aplica access-first ao histórico de Apoio e prepara SupportHistoryPresenter.
+- Runtime status da S3.3 permanece DEFERRED.
+
 ### Documentação
 
 - S2 Static Portal Audit concluído sem alterar runtime.
