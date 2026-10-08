@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\aculta_portal\Plugin\metatag\Tag;
 
 use Drupal\Component\Render\PlainTextOutput;
