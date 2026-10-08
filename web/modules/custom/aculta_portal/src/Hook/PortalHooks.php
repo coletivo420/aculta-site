@@ -9,7 +9,6 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Block\BlockManagerInterface;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleExtensionList;
@@ -18,6 +17,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -61,6 +61,8 @@ final class PortalHooks {
     private readonly AcultaBreadcrumbBuilder $breadcrumbBuilder,
     #[Autowire(service: 'aculta_portal.presentation.domain')]
     private readonly DomainPresentationBuilder $domainPresentationBuilder,
+    #[Autowire(service: 'renderer')]
+    private readonly RendererInterface $renderer,
   ) {}
 
 
@@ -74,8 +76,7 @@ final class PortalHooks {
     if ($domainPresentation !== NULL
       && isset($variables['page'])
       && is_array($variables['page'])) {
-      CacheableMetadata::createFromObject($domainPresentation)
-        ->applyTo($variables['page']);
+      $this->renderer->addCacheableDependency($variables['page'], $domainPresentation);
     }
     $account = $this->currentUser;
     $path = $this->currentPath->getPath();
