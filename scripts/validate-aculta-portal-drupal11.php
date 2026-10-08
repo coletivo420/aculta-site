@@ -240,65 +240,6 @@ foreach ([
   );
 }
 
-$p4HookSources = [
-  'form_alter' => $formHooksSource ?? '',
-  'entity_access' => $entityHooksSource ?? '',
-  'entity_presave' => $entitySaveHooksSource,
-];
-foreach ($p4HookSources as $hookName => $source) {
-  $check(
-    substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === 1,
-    'P4-R migrated hook must remain exactly-once: ' . $hookName,
-  );
-  $check(
-    preg_match('/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', $source) === 1,
-    'P4-R migrated hook class must keep strict_types=1: ' . $hookName,
-  );
-  $check(
-    !str_contains($source, '\\Drupal::'),
-    'P4-R migrated hook class must remain free of Drupal static service locators: ' . $hookName,
-  );
-}
-foreach ([
-  'Drupal\\aculta_portal\\Hook\\FormHooks',
-  'Drupal\\aculta_portal\\Hook\\EntityHooks',
-  'Drupal\\aculta_portal\\Hook\\EntitySaveHooks',
-] as $hookClass) {
-  $check(
-    !str_contains($services, $hookClass),
-    'P4-R OOP hook classes must not receive redundant YAML service definitions: ' . $hookClass,
-  );
-}
-$check(
-  !str_contains($hookRuntimeSources, '#[FormAlter'),
-  'P4-R removed #[FormAlter] attribute must remain absent.',
-);
-$check(
-  substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:changeMailConfirmationMessage'") === 1
-    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordAfterBuild'") === 1
-    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordRedirect'") === 1
-    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:validateDonationAmount'") === 1,
-  'P4-R FormHooks must preserve the four P3 service callbacks exactly once.',
-);
-$check(
-  str_contains($entityHooksSource ?? '', "->addCacheContexts(['domain'])")
-    && str_contains($entityHooksSource ?? '', "->addCacheableDependency($entity)"),
-  'P4-R Wiki access must keep Domain variation and entity cache dependency.',
-);
-$check(
-  preg_match(
-    '/AccessResult::neutral\(\)[\s\S]{0,240}?cachePerPermissions\(\)[\s\S]{0,240}?addCacheContexts\(\[\'route\', \'user\'\]\)[\s\S]{0,240}?setCacheMaxAge\(0\)/',
-    $entityHooksSource ?? '',
-  ) === 1,
-  'P4-R password-reset neutral access must remain request-sensitive and uncacheable.',
-);
-$check(
-  str_contains($entitySaveHooksSource, "getenv('MERCADOPAGO_PUBLIC_KEY')")
-    && str_contains($entitySaveHooksSource, "getenv('MERCADOPAGO_ACCESS_TOKEN')")
-    && str_contains($entitySaveHooksSource, 'throw new \\LogicException'),
-  'P4-R Mercado Pago presave guard must remain fail-closed on missing runtime credentials.',
-);
-
 $entityHooks = $srcRoot . '/Hook/EntityHooks.php';
 $entityHooksSource = $read($entityHooks);
 $check(is_file($entityHooks), 'P4.2 EntityHooks class must exist.');
@@ -410,6 +351,65 @@ foreach ([
     'P4.1 form behavior invariant must remain present: ' . $invariant,
   );
 }
+
+$p4HookSources = [
+  'form_alter' => $formHooksSource ?? '',
+  'entity_access' => $entityHooksSource ?? '',
+  'entity_presave' => $entitySaveHooksSource,
+];
+foreach ($p4HookSources as $hookName => $source) {
+  $check(
+    substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === 1,
+    'P4-R migrated hook must remain exactly-once: ' . $hookName,
+  );
+  $check(
+    preg_match('/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', $source) === 1,
+    'P4-R migrated hook class must keep strict_types=1: ' . $hookName,
+  );
+  $check(
+    !str_contains($source, '\\Drupal::'),
+    'P4-R migrated hook class must remain free of Drupal static service locators: ' . $hookName,
+  );
+}
+foreach ([
+  'Drupal\\aculta_portal\\Hook\\FormHooks',
+  'Drupal\\aculta_portal\\Hook\\EntityHooks',
+  'Drupal\\aculta_portal\\Hook\\EntitySaveHooks',
+] as $hookClass) {
+  $check(
+    !str_contains($services, $hookClass),
+    'P4-R OOP hook classes must not receive redundant YAML service definitions: ' . $hookClass,
+  );
+}
+$check(
+  !str_contains($hookRuntimeSources, '#[FormAlter'),
+  'P4-R removed #[FormAlter] attribute must remain absent.',
+);
+$check(
+  substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:changeMailConfirmationMessage'") === 1
+    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordAfterBuild'") === 1
+    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordRedirect'") === 1
+    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:validateDonationAmount'") === 1,
+  'P4-R FormHooks must preserve the four P3 service callbacks exactly once.',
+);
+$check(
+  str_contains($entityHooksSource ?? '', "->addCacheContexts(['domain'])")
+    && str_contains($entityHooksSource ?? '', "->addCacheableDependency($entity)"),
+  'P4-R Wiki access must keep Domain variation and entity cache dependency.',
+);
+$check(
+  preg_match(
+    '/AccessResult::neutral\(\)[\s\S]{0,240}?cachePerPermissions\(\)[\s\S]{0,240}?addCacheContexts\(\[\'route\', \'user\'\]\)[\s\S]{0,240}?setCacheMaxAge\(0\)/',
+    $entityHooksSource ?? '',
+  ) === 1,
+  'P4-R password-reset neutral access must remain request-sensitive and uncacheable.',
+);
+$check(
+  str_contains($entitySaveHooksSource, "getenv('MERCADOPAGO_PUBLIC_KEY')")
+    && str_contains($entitySaveHooksSource, "getenv('MERCADOPAGO_ACCESS_TOKEN')")
+    && str_contains($entitySaveHooksSource, 'throw new \\LogicException'),
+  'P4-R Mercado Pago presave guard must remain fail-closed on missing runtime credentials.',
+);
 
 $formCallbacks = $srcRoot . '/Form/PortalFormCallbacks.php';
 $formCallbacksSource = $read($formCallbacks);
