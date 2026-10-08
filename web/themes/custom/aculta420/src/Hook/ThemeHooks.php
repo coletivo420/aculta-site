@@ -88,7 +88,7 @@ final class ThemeHooks {
     foreach ($destinations as $destination) {
       $variables[$destination] = [];
     }
-    $variables['aculta_header_has_content'] = FALSE;
+    $variables['aculta_has_system_branding'] = FALSE;
 
     if (!isset($variables['page']['header'])) {
       return;
@@ -105,16 +105,16 @@ final class ThemeHooks {
           ? (string) ($this->configFactory->get('block.block.' . $blockId)->get('plugin') ?? '')
           : '';
       }
+      if ($pluginId === 'system_branding_block') {
+        $variables['aculta_has_system_branding'] = TRUE;
+      }
+
       $destination = $destinations[$pluginId] ?? NULL;
       if ($destination !== NULL) {
         $variables[$destination][$key] = $block;
         unset($variables['page']['header'][$key]);
       }
     }
-
-    $variables['aculta_header_has_content'] = Element::children(
-      $variables['page']['header'],
-    ) !== [];
   }
 
   /**
