@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Controller;
 
 use Composer\Semver\Semver;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -16,12 +20,20 @@ final class PortalRequirementsController extends ControllerBase {
   public function __construct(
     private readonly ThemeHandlerInterface $themeHandler,
     private readonly string $appRoot,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly TranslationInterface $translation,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('theme_handler'),
       (string) $container->getParameter('app.root'),
+      $container->get('current_user'),
+      $container->get('module_handler'),
+      $container->get('config.factory'),
+      $container->get('string_translation'),
     );
   }
 
@@ -185,11 +197,11 @@ final class PortalRequirementsController extends ControllerBase {
   public function overview(): array {
     $rows = [];
     foreach ([
-      ['aculta_portal.requirements', $this->t('Status dos módulos e temas'), $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.')],
-      ['aculta_portal.support_settings', $this->t('Configurações do Apoio'), $this->t('Edite o texto institucional exibido na página pública Apoie.')],
+      ['aculta_portal.requirements', $this->translation->translate('Status dos módulos e temas'), $this->translation->translate('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.')],
+      ['aculta_portal.support_settings', $this->translation->translate('Configurações do Apoio'), $this->translation->translate('Edite o texto institucional exibido na página pública Apoie.')],
     ] as [$route, $title, $description]) {
       $url = Url::fromRoute($route);
-      if (!$url->access($this->currentUser())) {
+      if (!$url->access($this->currentUser)) {
         continue;
       }
       $rows[] = [
@@ -199,12 +211,12 @@ final class PortalRequirementsController extends ControllerBase {
     }
 
     return [
-      'intro' => ['#plain_text' => $this->t('Gerencie as opções administrativas e consulte os requisitos das integrações do módulo aculta_portal.')],
+      'intro' => ['#plain_text' => $this->translation->translate('Gerencie as opções administrativas e consulte os requisitos das integrações do módulo aculta_portal.')],
       'options' => [
         '#type' => 'table',
-        '#header' => [$this->t('Opção'), $this->t('Descrição')],
+        '#header' => [$this->translation->translate('Opção'), $this->translation->translate('Descrição')],
         '#rows' => $rows,
-        '#empty' => $this->t('Não há opções administrativas disponíveis para sua conta.') ,
+        '#empty' => $this->translation->translate('Não há opções administrativas disponíveis para sua conta.') ,
       ],
       '#cache' => ['contexts' => ['user.permissions'], 'max-age' => 0],
     ];
@@ -221,32 +233,32 @@ final class PortalRequirementsController extends ControllerBase {
 
     $build = [
       'intro' => [
-        '#plain_text' => $this->t('Este relatório compara os requisitos do aculta_portal com as extensões ativas e as versões disponíveis neste código local. Ele não exibe valores de configuração nem segredos.'),
+        '#plain_text' => $this->translation->translate('Este relatório compara os requisitos do aculta_portal com as extensões ativas e as versões disponíveis neste código local. Ele não exibe valores de configuração nem segredos.'),
       ],
       'legend' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-portal-requirements__legend'], 'aria-label' => $this->t('Legenda de status')],
-        'ok' => ['#plain_text' => $this->t('✔ OK: instalado, habilitado e compatível.')],
-        'attention' => ['#plain_text' => $this->t('⚠ Atenção: integração deliberadamente pendente ou risco conhecido.')],
-        'error' => ['#plain_text' => $this->t('✖ Erro: requisito ausente, desabilitado ou incompatível.')],
+        '#attributes' => ['class' => ['aculta-portal-requirements__legend'], 'aria-label' => $this->translation->translate('Legenda de status')],
+        'ok' => ['#plain_text' => $this->translation->translate('✔ OK: instalado, habilitado e compatível.')],
+        'attention' => ['#plain_text' => $this->translation->translate('⚠ Atenção: integração deliberadamente pendente ou risco conhecido.')],
+        'error' => ['#plain_text' => $this->translation->translate('✖ Erro: requisito ausente, desabilitado ou incompatível.')],
       ],
       'requirements' => [
         '#type' => 'table',
         '#header' => [
-          $this->t('Módulo / tema'),
-          $this->t('Função integrada'),
-          $this->t('Versão mínima'),
-          $this->t('Versão instalada'),
-          $this->t('Status'),
+          $this->translation->translate('Módulo / tema'),
+          $this->translation->translate('Função integrada'),
+          $this->translation->translate('Versão mínima'),
+          $this->translation->translate('Versão instalada'),
+          $this->translation->translate('Status'),
         ],
         '#rows' => $rows,
-        '#empty' => $this->t('Nenhum requisito foi encontrado.'),
+        '#empty' => $this->translation->translate('Nenhum requisito foi encontrado.'),
         '#attributes' => ['class' => ['aculta-portal-requirements']],
       ],
       'note' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['messages', 'messages--warning']],
-        'text' => ['#plain_text' => $this->t('Os avisos sobre SMTP2GO, Google, Turnstile e Mercado Pago refletem o estado pré-deploy intencional. O gateway Mercado Pago deve continuar desabilitado. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
+        'text' => ['#plain_text' => $this->translation->translate('Os avisos sobre SMTP2GO, Google, Turnstile e Mercado Pago refletem o estado pré-deploy intencional. O gateway Mercado Pago deve continuar desabilitado. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
       ],
       '#cache' => [
         'contexts' => ['user.permissions'],
@@ -264,7 +276,7 @@ final class PortalRequirementsController extends ControllerBase {
   private function buildModuleRow(array $requirement): array {
     $missing = [];
     foreach ($requirement['modules'] as $module) {
-      if (!$this->moduleHandler()->moduleExists($module)) {
+      if (!$this->moduleHandler->moduleExists($module)) {
         $missing[] = $module;
       }
     }
@@ -283,22 +295,22 @@ final class PortalRequirementsController extends ControllerBase {
 
     if ($missing || !$compatible) {
       $status = 'error';
-      $status_label = $missing ? $this->t('Erro — extensão desabilitada ou ausente: @modules', ['@modules' => implode(', ', $missing)]) : $this->t('Erro — versão ausente ou abaixo do requisito.');
+      $status_label = $missing ? $this->translation->translate('Erro — extensão desabilitada ou ausente: @modules', ['@modules' => implode(', ', $missing)]) : $this->translation->translate('Erro — versão ausente ou abaixo do requisito.');
     }
     elseif (!empty($requirement['warning'])) {
       $status = 'attention';
-      $status_label = $this->t('Atenção — @warning', ['@warning' => $requirement['warning']]);
+      $status_label = $this->translation->translate('Atenção — @warning', ['@warning' => $requirement['warning']]);
     }
     else {
       $status = 'ok';
-      $status_label = $this->t('OK — extensões habilitadas e compatíveis.');
+      $status_label = $this->translation->translate('OK — extensões habilitadas e compatíveis.');
     }
 
     return [
       'name' => ['data' => ['#plain_text' => $requirement['name'] . ' (' . implode(', ', $requirement['modules']) . ')']],
       'purpose' => ['data' => ['#plain_text' => $requirement['purpose']]],
       'minimum' => ['data' => ['#plain_text' => $minimum . ($related_minimum ? ' / ' . $related_minimum : '')]],
-      'installed' => ['data' => ['#plain_text' => $version ?: $this->t('Não encontrado')]],
+      'installed' => ['data' => ['#plain_text' => $version ?: $this->translation->translate('Não encontrado')]],
       'status' => [
         'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . $status_label],
         'class' => ['aculta-portal-requirements__status', 'aculta-portal-requirements__status--' . $status],
@@ -315,11 +327,11 @@ final class PortalRequirementsController extends ControllerBase {
     $status = $exists && $compatible ? 'ok' : 'error';
     return [
       'name' => ['data' => ['#plain_text' => 'Tema base Bootstrap 5 (bootstrap5)']],
-      'purpose' => ['data' => ['#plain_text' => $this->t('Tema base declarado pelo tema público ACULTA420.')]],
+      'purpose' => ['data' => ['#plain_text' => $this->translation->translate('Tema base declarado pelo tema público ACULTA420.')]],
       'minimum' => ['data' => ['#plain_text' => $minimum]],
-      'installed' => ['data' => ['#plain_text' => $version ?: $this->t('Não encontrado')]],
+      'installed' => ['data' => ['#plain_text' => $version ?: $this->translation->translate('Não encontrado')]],
       'status' => [
-        'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($status === 'ok' ? $this->t('OK — tema base disponível.') : $this->t('Erro — tema base ausente ou incompatível.'))],
+        'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($status === 'ok' ? $this->translation->translate('OK — tema base disponível.') : $this->translation->translate('Erro — tema base ausente ou incompatível.'))],
         'class' => ['aculta-portal-requirements__status', 'aculta-portal-requirements__status--' . $status],
       ],
     ];
@@ -328,16 +340,16 @@ final class PortalRequirementsController extends ControllerBase {
   /** Builds the enabled public theme row. */
   private function buildThemeRow(): array {
     $theme_exists = $this->themeHandler->themeExists('aculta420');
-    $default_theme = $this->config('system.theme')->get('default');
+    $default_theme = $this->configFactory->get('system.theme')->get('default');
     $enabled = $theme_exists && $default_theme === 'aculta420';
     $status = $enabled ? 'ok' : 'error';
     return [
       'name' => ['data' => ['#plain_text' => 'Tema ACULTA420 (aculta420)']],
-      'purpose' => ['data' => ['#plain_text' => $this->t('Identidade visual global, componentes, header e footer usados pelo Portal.')]],
+      'purpose' => ['data' => ['#plain_text' => $this->translation->translate('Identidade visual global, componentes, header e footer usados pelo Portal.')]],
       'minimum' => ['data' => ['#plain_text' => '^11 (core_version_requirement)']],
-      'installed' => ['data' => ['#plain_text' => $theme_exists ? $this->t('Tema custom do repositório; sem versão Composer') : $this->t('Não encontrado')]],
+      'installed' => ['data' => ['#plain_text' => $theme_exists ? $this->translation->translate('Tema custom do repositório; sem versão Composer') : $this->translation->translate('Não encontrado')]],
       'status' => [
-        'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($enabled ? $this->t('OK — tema padrão habilitado.') : $this->t('Erro — tema ausente ou não é o tema padrão.'))],
+        'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($enabled ? $this->translation->translate('OK — tema padrão habilitado.') : $this->translation->translate('Erro — tema ausente ou não é o tema padrão.'))],
         'class' => ['aculta-portal-requirements__status', 'aculta-portal-requirements__status--' . $status],
       ],
     ];
