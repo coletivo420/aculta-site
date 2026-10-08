@@ -31,7 +31,8 @@ $assert(
   'ThemeHooks adapts identity through a presentation-only normalizer.',
 );
 $assert(
-  str_contains($pageSource, 'aculta_domain_identity.home_url')
+  str_contains($pageSource, 'aculta_domain_identity.purpose')
+    && str_contains($pageSource, 'aculta_domain_identity.home_url')
     && str_contains($pageSource, 'aculta_domain_identity.short_title')
     && str_contains($pageSource, 'aculta_domain_identity.title'),
   'page.html.twig consumes prepared home/title identity only as shell presentation.',
@@ -154,13 +155,5 @@ $assert(
   !str_contains($portalSource, 'aculta420:'),
   'Portal presentation builder still has no ACULTA420 SDC dependency.',
 );
-
-$cssChanges = [];
-foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot . '/css', FilesystemIterator::SKIP_DOTS)) as $file) {
-  if ($file->isFile()) {
-    $cssChanges[] = $file->getPathname();
-  }
-}
-$assert($cssChanges !== [], 'Theme CSS exists but B.3 requires no CSS mutation; verify via Git diff in CI/review.');
 
 echo 'ACULTA420 B.3 SHELL CONTRACT: PASS (' . count($checks) . " checks)\n";
