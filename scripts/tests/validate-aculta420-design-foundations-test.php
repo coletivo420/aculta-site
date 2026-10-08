@@ -98,12 +98,15 @@ try {
     ['unrelated condition with mode-like output is accepted', 'js/unrelated-output.js', "if (isCompact(foo())) { label.textContent = 'dark'; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['multiline unrelated ternary result is accepted', 'js/multiline-unrelated-ternary.js', "const label = compact ?\n  'dark' :\n  'plain';", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['PHP switch consequent text is not a case label', 'src/SwitchConsequent.php', "<?php switch (\$theme) { case 'compact': echo 'dark'; break; }", 'DARK PHP BRANCHES: 0'],
+    ['PHP semicolon case terminator excludes consequent', 'src/SemicolonCase.php', "<?php switch (\$theme) { case 'compact'; echo 'dark'; break; }", 'DARK PHP BRANCHES: 0'],
     ['JavaScript switch consequent text is not a case label', 'js/switch-consequent.js', "switch (theme) { case 'compact': label.textContent = 'dark'; break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['JavaScript optional chaining case does not consume consequent', 'js/optional-case.js', "switch (theme) { case options?.compact: label.textContent = 'dark'; break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['Twig ternary on a non-mode value is accepted', 'templates/language-ternary.html.twig', "{% set label = locale == 'dark' ? 'a' : 'b' %}", 'DARK TWIG BRANCHES: 0'],
     ['Twig ternary result mentioning a mode is not a mode branch', 'templates/result-mode-ternary.html.twig', "{% set label = compact ? 'dark' : 'plain' %}", 'DARK TWIG BRANCHES: 0'],
     ['parenthesized Twig ternary result mentioning a mode is not a mode branch', 'templates/parenthesized-result-mode-ternary.html.twig', "{% set label = (compact ? theme : 'dark') %}", 'DARK TWIG BRANCHES: 0'],
     ['nested Twig ternary with mode-like results is accepted', 'templates/nested-result-ternary.html.twig', "{% set x = compact ? (label ? 'dark' : 'plain') : 'other' %}", 'DARK TWIG BRANCHES: 0'],
     ['JavaScript ternary result mentioning a mode is accepted', 'js/result-mode-ternary.js', "const label = compact ? theme : 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['JavaScript className compound unrelated assignment is accepted', 'js/class-name-unrelated.js', "element.className += ' card';", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['PHP match result mentioning a mode is not a mode branch', 'src/MatchResult.php', "<?php \$variant = match (\$density) { 'compact' => 'dark', default => 'plain' };", 'DARK PHP BRANCHES: 0'],
     ['brace switch ignores nested alternative switch labels', 'src/BraceWithAlternativeSwitch.php', "<?php switch (\$theme) { case 'compact': switch (\$locale): case 'dark': break; endswitch; break; }", 'DARK PHP BRANCHES: 0'],
     ['unrelated dataset assignment is accepted', 'js/dataset-status.js', "document.documentElement.dataset.status = 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
@@ -148,6 +151,10 @@ try {
     ['case-insensitive theme attribute selector layout rule', 'css/fixtures/dark-attribute-flag.css', '[data-bs-theme="dark" i] .card { display: none; }', 'Color mode is token-only'],
     ['theme attribute word-match selector layout rule', 'css/fixtures/dark-attribute-word-match.css', '[data-bs-theme~="dark"] .card { display: none; }', 'Color mode is token-only'],
     ['theme attribute prefix-match selector layout rule', 'css/fixtures/dark-attribute-prefix-match.css', '[data-bs-theme^="dark"] .card { display: none; }', 'Color mode is token-only'],
+    ['partial theme attribute prefix can select dark mode', 'css/fixtures/dark-attribute-prefix-partial.css', '[data-bs-theme^="d"] .card { display: none; }', 'Color mode is token-only'],
+    ['unquoted partial theme attribute prefix can select dark mode', 'css/fixtures/dark-attribute-prefix-unquoted.css', '[data-theme^=d] .card { display: none; }', 'Color mode is token-only'],
+    ['partial theme attribute suffix can select dark mode', 'css/fixtures/dark-attribute-suffix-partial.css', '[data-theme$="ark"] .card { display: none; }', 'Color mode is token-only'],
+    ['partial theme attribute substring can select dark mode', 'css/fixtures/dark-attribute-contains-partial.css', '[data-color-scheme*="ar"] .card { display: none; }', 'Color mode is token-only'],
     ['theme attribute language-match selector layout rule', 'css/fixtures/dark-attribute-language-match.css', '[data-bs-theme|="dark"] .card { display: none; }', 'Color mode is token-only'],
     ['data-bs-theme selector layout rule', 'css/fixtures/dark.css', '[data-bs-theme="dark"] .card { display: none; }', 'Color mode is token-only'],
     ['light selector layout rule', 'css/fixtures/light.css', '.light-theme .card { padding: 2rem; }', 'Color mode is token-only'],
@@ -158,21 +165,31 @@ try {
     ['PHP colorScheme branch', 'src/ColorScheme.php', "<?php if (\$colorScheme === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
     ['PHP color-mode match', 'src/MatchFixture.php', "<?php \$variant = match (\$theme) { 'dark' => 'compact', default => 'standard' };", 'PHP has no color-mode branch'],
     ['PHP switch case arm', 'src/SwitchFixture.php', "<?php switch (\$theme) { case 'dark': \$layout = 'compact'; break; default: \$layout = 'standard'; }", 'PHP has no color-mode branch'],
+    ['PHP semicolon case mode arm is detected', 'src/SemicolonModeCase.php', "<?php switch (\$theme) { case 'dark'; \$layout = 'compact'; break; }", 'PHP has no color-mode branch'],
     ['PHP alternative switch case arm', 'src/AlternativeSwitch.php', "<?php switch (\$theme): case 'dark': \$layout = 'compact'; break; endswitch;", 'PHP has no color-mode branch'],
     ['nested alternative PHP switch retains outer case labels', 'src/NestedAlternativeSwitch.php', "<?php switch (\$theme): case 'compact': switch (\$locale): case 'en': break; endswitch; case 'dark': break; endswitch;", 'PHP has no color-mode branch'],
     ['JavaScript color-mode layout branch', 'js/fixture.js', "if (theme === 'dark') { card.style.display = 'none'; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript colorScheme branch', 'js/color-scheme.js', "if (colorScheme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['PHP color-scheme getter branch', 'src/ColorSchemeGetter.php', "<?php if (getColorScheme() === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
+    ['JavaScript color-scheme getter branch', 'js/color-scheme-getter.js', "if (getColorScheme() === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['Twig color-scheme getter branch', 'templates/color-scheme-getter.html.twig', "{% if getColorScheme() == 'dark' %}different{% endif %}", 'Twig has no color-mode branch'],
+    ['Twig enclosing mode predicate around unrelated ternary', 'templates/twig-enclosing-ternary.html.twig', "{% if theme == 'dark' and (compact ? enabled : disabled) %}different{% endif %}", 'Twig has no color-mode branch'],
     ['JavaScript boolean mode branch', 'js/boolean-mode.js', "if (isDarkMode) { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['nested JavaScript ternary mode predicate', 'js/nested-mode-ternary.js', "const x = compact ? (theme === 'dark' ? 'a' : 'b') : 'c';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch case arm', 'js/switch.js', "switch (theme) { case 'dark': card.hidden = true; break; default: card.hidden = false; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch method discriminant', 'js/switch-method.js', "switch (theme.toLowerCase()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch getter discriminant', 'js/switch-getter.js', "switch (getTheme()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript ternary with object arms', 'js/object-arm-ternary.js', "const layout = theme === 'dark' ? { hidden: true } : {};", 'JavaScript has no color-mode layout behavior'],
     ['nested JavaScript if condition is scanned', 'js/nested-if.js', "if (getTheme(foo(bar())) === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['regex parentheses do not truncate JavaScript if condition', 'js/regex-condition.js', "if (/\\)/.test(value) && theme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['multiline JavaScript mode ternary is scanned', 'js/multiline-mode-ternary.js', "const layout = theme === 'dark'\n  ? 'compact'\n  : 'normal';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.theme assignment', 'js/dataset-theme.js', "document.documentElement.dataset.theme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.bsTheme assignment', 'js/dataset-bs-theme.js', "document.documentElement.dataset.bsTheme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dynamic dataset.theme assignment', 'js/dataset-dynamic.js', "document.documentElement.dataset.bsTheme = getTheme();", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset logical assignment', 'js/dataset-logical.js', "document.documentElement.dataset.bsTheme ??= getTheme();", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript compound className mode assignment', 'js/class-name-compound.js', "document.documentElement.className += ' theme-dark';", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript logical className mode assignment', 'js/class-name-logical.js', "document.documentElement.className ||= 'theme-dark';", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript classList uses every protected mode class', 'js/class-list-is-dark.js', "element.classList.add('is-dark');", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset fallback assignment', 'js/dataset-or.js', "document.documentElement.dataset.theme ||= nextMode;", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript bracket dataset assignment', 'js/dataset-bracket.js', "document.documentElement.dataset['theme'] = nextMode;", 'JavaScript has no color-mode layout behavior'],
     ['dynamic data-theme setAttribute is rejected', 'js/set-attribute-theme.js', "element.setAttribute('data-theme', getTheme());", 'JavaScript has no color-mode layout behavior'],
@@ -277,6 +294,15 @@ try {
     }
     $restore_tokens();
   }
+
+  $dark_only_token = $original_tokens . "\n[data-bs-theme=\"dark\"] {\n  --aculta-dark-only-fixture: #171513;\n}\n";
+  file_put_contents($tokens_path, $dark_only_token);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, 'Light token --aculta-dark-only-fixture resolves')) {
+    $failures[] = 'dark-only token was not required to resolve in light mode';
+  }
+  file_put_contents($tokens_path, $original_tokens);
 
   $replace_dark('--aculta-text-primary: #f4efe8;', '--aculta-text-primary: rgba(244, 239, 232, 1);');
   [$status, $output] = $run_validator();

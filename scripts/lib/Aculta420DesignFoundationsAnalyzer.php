@@ -16,6 +16,11 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   private const DARK_SELECTOR = '[data-bs-theme="dark"]';
 
+  private const MODE_CLASSES = [
+    'dark', 'light', 'dark-theme', 'light-theme', 'theme-dark', 'theme-light',
+    'dark-mode', 'light-mode', 'is-dark', 'is-light', 'color-mode-dark', 'color-mode-light',
+  ];
+
   private const REQUIRED_TOKENS = [
     '--aculta-surface-page', '--aculta-surface-raised', '--aculta-surface-muted',
     '--aculta-surface-header', '--aculta-surface-interactive',
@@ -210,8 +215,9 @@ final class Aculta420DesignFoundationsAnalyzer {
     $dark_effective = array_replace($light, $dark);
 
     $resolve = static fn (string $token, array $map): array => self::resolveToken($token, $map);
+    $token_names = array_values(array_unique(array_merge(array_keys($light), array_keys($dark))));
     foreach (['light' => $light_effective, 'dark' => $dark_effective] as $mode => $effective) {
-      foreach ($effective as $token => $_value) {
+      foreach ($token_names as $token) {
         if (preg_match('/^--(?:aculta|bs)-/', $token) !== 1) {
           continue;
         }
@@ -432,6 +438,10 @@ final class Aculta420DesignFoundationsAnalyzer {
       $is_branch = preg_match('/^(?:if|elseif)\b/i', $expression) === 1;
       $is_ternary = str_contains($expression, '?') && str_contains($expression, ':');
       $decisions = $is_ternary ? self::collectTernaryPredicates($expression) : [$expression];
+      if ($is_branch && $is_ternary) {
+        // Keep any mode-dependent predicate surrounding a nested ternary.
+        $decisions[] = self::firstTernaryPrefix($expression);
+      }
       $has_mode_decision = FALSE;
       foreach ($decisions as $decision) {
         if (self::hasModeDecision($decision)) {
@@ -493,7 +503,8 @@ final class Aculta420DesignFoundationsAnalyzer {
         $count++;
       }
     }
-    $statements = preg_split('/[;{}]/', $source) ?: [$source];
+    // Keep object-literal arms intact; their braces are expression syntax.
+    $statements = preg_split('/;/', $source) ?: [$source];
     foreach ($statements as $statement) {
       foreach (self::collectTernaryPredicates($statement) as $predicate) {
         if (self::hasModeDecision($predicate)) {
@@ -503,12 +514,12 @@ final class Aculta420DesignFoundationsAnalyzer {
     }
     if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))/i', $source) === 1
       || preg_match('/setAttribute\s*(?:\?\.)?\s*\(\s*["\']data-(?:(?:bs-)?theme|color-mode|color-scheme)["\']\s*,/i', $source) === 1
-      || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode)["\']/i', $source) === 1) {
+      || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode|is-dark|is-light|color-mode-dark|color-mode-light)["\']/i', $source) === 1) {
       $count++;
     }
-    preg_match_all('/\.className\s*=\s*(["\'])(.*?)\1/s', $source, $class_assignments);
+    preg_match_all('/\.className\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))\s*(["\'])(.*?)\1/s', $source, $class_assignments);
     foreach ($class_assignments[2] ?? [] as $class_value) {
-      if (preg_match('/(?:^|\s)(?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode)(?=$|\s)/i', $class_value) === 1) {
+      if (self::containsModeClass($class_value)) {
         $count++;
         break;
       }
@@ -678,9 +689,32 @@ final class Aculta420DesignFoundationsAnalyzer {
   }
 
   private static function containsModeSelector(string $selector): bool {
-    return preg_match('/prefers-color-scheme\s*:\s*(?:dark|light)/i', $selector) === 1
-      || preg_match('/\[\s*data-(?:(?:bs-)?theme|color-mode|color-scheme)\s*(?:[~|^$*]?=)\s*(["\']?)(?:dark|light)\1(?:\s+[is])?\s*\]/i', $selector) === 1
-      || preg_match('/\.(?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode|is-dark|is-light|color-mode-dark|color-mode-light)(?![a-zA-Z0-9_-])/i', $selector) === 1;
+    if (preg_match('/prefers-color-scheme\s*:\s*(?:dark|light)/i', $selector) === 1
+      || self::containsModeClass($selector)) {
+      return TRUE;
+    }
+    preg_match_all('/\[\s*data-(?:(?:bs-)?theme|color-mode|color-scheme)\s*(~=|\|=|\^=|\$=|\*=|=)\s*(?:(["\'])(.*?)\2|([^\]\s]+))(?:\s+([is]))?\s*\]/i', $selector, $matches, PREG_SET_ORDER);
+    foreach ($matches as $match) {
+      $operator = $match[1];
+      $value = ($match[3] ?? '') !== '' ? $match[3] : ($match[4] ?? '');
+      $insensitive = strtolower($match[5] ?? '') === 'i';
+      foreach (['dark', 'light'] as $mode) {
+        $candidate = $insensitive ? strtolower($value) : $value;
+        $target = $insensitive ? $mode : $mode;
+        $matches_mode = match ($operator) {
+          '=' , '~=' => $candidate === $target,
+          '|=' => $candidate === $target || str_starts_with($candidate, $target . '-'),
+          '^=' => str_starts_with($target, $candidate),
+          '$=' => str_ends_with($target, $candidate),
+          '*=' => $candidate !== '' && str_contains($target, $candidate),
+          default => FALSE,
+        };
+        if ($matches_mode) {
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
   }
 
   private static function resolveToken(string $name, array $effective, array $stack = []): array {
@@ -929,10 +963,42 @@ final class Aculta420DesignFoundationsAnalyzer {
   }
 
   private static function hasModeDecision(string $expression): bool {
-    $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode|colorScheme|color_scheme|color-scheme|getTheme|getColorMode)\b/i', $expression) === 1;
+    $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode|colorScheme|color_scheme|color-scheme|getTheme|getColorMode|getColorScheme)\b/i', $expression) === 1;
     $mode_literal = preg_match('/(?:["\'](?:dark|light)["\']|\b(?:dark|light)\b)/i', $expression) === 1;
     $boolean_mode = preg_match('/\$?\b(?:is[_-]?(?:dark|light)(?:[_-]?mode)?|(?:dark|light)[_-]?mode)\b/i', $expression) === 1;
     return ($mode_reference && $mode_literal) || $boolean_mode;
+  }
+
+  private static function firstTernaryPrefix(string $expression): string {
+    $predicates = self::collectTernaryPredicates($expression);
+    if ($predicates === []) {
+      return $expression;
+    }
+    $question = self::findFirstTernaryQuestion($expression);
+    return $question === NULL ? $expression : substr($expression, 0, $question);
+  }
+
+  private static function findFirstTernaryQuestion(string $expression): ?int {
+    $quote = NULL;
+    $length = strlen($expression);
+    for ($i = 0; $i < $length; $i++) {
+      $char = $expression[$i];
+      if ($quote !== NULL) {
+        if ($char === '\\') { $i++; }
+        elseif ($char === $quote) { $quote = NULL; }
+        continue;
+      }
+      if ($char === '"' || $char === "'") { $quote = $char; continue; }
+      if ($char === '?' && ($expression[$i + 1] ?? '') !== '?' && ($expression[$i + 1] ?? '') !== '.' && ($expression[$i - 1] ?? '') !== '?') {
+        return $i;
+      }
+    }
+    return NULL;
+  }
+
+  private static function containsModeClass(string $value): bool {
+    $classes = implode('|', array_map(static fn (string $class): string => preg_quote($class, '/'), self::MODE_CLASSES));
+    return preg_match('/(?:^|[\s.])(?:' . $classes . ')(?=$|[\s.#:\[\]),])/i', $value) === 1;
   }
 
   private static function readPhpParenthesized(array $tokens, int $index): array {
@@ -1109,13 +1175,20 @@ final class Aculta420DesignFoundationsAnalyzer {
         elseif ($label_part === ']') { $bracket--; }
         elseif ($label_part === '{') { $brace++; }
         elseif ($label_part === '}') { $brace--; }
-        elseif ($paren === 0 && $bracket === 0 && $brace === 0 && $label_part === '?') { $ternary++; }
+        elseif ($paren === 0 && $bracket === 0 && $brace === 0 && $label_part === '?'
+          && ($tokens[$label_index + 1] ?? '') !== '?'
+          && ($tokens[$label_index + 1] ?? '') !== '.'
+          && ($tokens[$label_index - 1] ?? '') !== '?') { $ternary++; }
         elseif ($paren === 0 && $bracket === 0 && $brace === 0 && $label_part === ':') {
           if ($ternary > 0) { $ternary--; }
           else {
             $i = $label_index;
             break;
           }
+        }
+        elseif ($paren === 0 && $bracket === 0 && $brace === 0 && $label_part === ';' && $ternary === 0) {
+          $i = $label_index;
+          break;
         }
         $case .= $label_part;
       }
@@ -1223,7 +1296,10 @@ final class Aculta420DesignFoundationsAnalyzer {
         elseif ($part === ']') { $expr_bracket--; }
         elseif ($part === '{') { $expr_brace++; }
         elseif ($part === '}') { $expr_brace--; }
-        elseif ($expr_paren === 0 && $expr_bracket === 0 && $expr_brace === 0 && $part === '?') { $ternary++; }
+        elseif ($expr_paren === 0 && $expr_bracket === 0 && $expr_brace === 0 && $part === '?'
+          && ($body[$j + 1] ?? '') !== '?'
+          && ($body[$j + 1] ?? '') !== '.'
+          && ($body[$j - 1] ?? '') !== '?') { $ternary++; }
         elseif ($expr_paren === 0 && $expr_bracket === 0 && $expr_brace === 0 && $part === ':') {
           if ($ternary > 0) { $ternary--; }
           else { $i = $j; break; }
@@ -1284,6 +1360,9 @@ final class Aculta420DesignFoundationsAnalyzer {
       elseif ($char === '"' || $char === "'" || $char === '`') {
         $quote = $char;
       }
+      elseif ($char === '/' && self::isJsRegexStart($source, $i)) {
+        $i = self::skipJsRegexLiteral($source, $i);
+      }
       elseif ($char === '(') {
         $depth++;
       }
@@ -1295,6 +1374,39 @@ final class Aculta420DesignFoundationsAnalyzer {
       }
     }
     return [substr($source, $open + 1), $length];
+  }
+
+  /** Identify a regex literal by its expression-start context. */
+  private static function isJsRegexStart(string $source, int $offset): bool {
+    $previous = $offset - 1;
+    while ($previous >= 0 && ctype_space($source[$previous])) {
+      $previous--;
+    }
+    return $previous < 0 || str_contains('([{=,:;!?&|+-*%^~>', $source[$previous]);
+  }
+
+  /** Skip a JavaScript regex literal, including escapes and character sets. */
+  private static function skipJsRegexLiteral(string $source, int $offset): int {
+    $length = strlen($source);
+    $in_character_class = FALSE;
+    for ($i = $offset + 1; $i < $length; $i++) {
+      if ($source[$i] === '\\') {
+        $i++;
+      }
+      elseif ($source[$i] === '[') {
+        $in_character_class = TRUE;
+      }
+      elseif ($source[$i] === ']') {
+        $in_character_class = FALSE;
+      }
+      elseif ($source[$i] === '/' && !$in_character_class) {
+        while (isset($source[$i + 1]) && ctype_alpha($source[$i + 1])) {
+          $i++;
+        }
+        return $i;
+      }
+    }
+    return $length - 1;
   }
 
 }

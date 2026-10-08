@@ -222,11 +222,14 @@ permitidos, e cada bloco pode conter apenas custom properties. Regras ou
 seletores estruturais por modo, inclusive dentro de `tokens.css`, falham.
 
 O scanner Twig verifica condições `if`/`elseif` e ternários em tags `{% ... %}`
-e `{{ ... }}`. Em ternários, somente o predicado antes de `?` determina se há
-uma ramificação por modo; parênteses ao redor do ternário não mudam a análise e
-palavras como `dark` apenas nos resultados não são consideradas. O scanner PHP
+e `{{ ... }}`. Em ternários, somente predicados são avaliados; quando há um
+ternário dentro de uma condição `if`, o prefixo externo da condição também é
+preservado para não perder uma decisão de modo que o envolva. Valores de
+resultado como `{% set label = compact ? theme : 'dark' %}` não são decisões
+por modo. O scanner PHP
 usa `token_get_all()` para condições `if`/`elseif`, `switch` com `case` nas
-formas com chaves e `endswitch` aninhado, e `match` usando apenas condições de
+formas com chaves e `endswitch` aninhado, incluindo labels encerrados por `:`
+ou `;`, e `match` usando apenas condições de
 arms antes de `=>`; textos nos resultados não são ramificações.
 comentários são removidos das expressões avaliadas. O scanner JavaScript
 reconhece `if` e discriminantes de `switch` com parênteses balanceados,
@@ -235,7 +238,13 @@ alternância de classes/atributos e escritas em `dataset.theme`,
 `dataset.bsTheme`, `dataset.colorMode` ou `dataset.colorScheme`, mesmo quando o
 valor vem de variável ou função. Seletores de classe também são inspecionados
 dentro de pseudo-classes funcionais como `:where()` e `:is()`.
-Decisões Twig/PHP/JavaScript reconhecem também `colorScheme`/`color_scheme`.
+Decisões Twig/PHP/JavaScript reconhecem também `colorScheme`/`color_scheme` e
+getters `getColorScheme()`. O scanner JavaScript preserva ternários com arms
+objeto, ignora `?.` e `??` ao contar níveis de ternário, e reconhece literais
+regex simples ao balancear condições `if`. Também protege todas as classes de
+modo conhecidas em `classList` e atribuições simples/compostas de `className`.
+Seletores de atributo com operadores de substring são considerados perigosos
+quando o valor parcial pode selecionar `dark` ou `light`.
 Em `switch`, a análise considera o discriminante e as expressões dos labels
 `case`, não texto arbitrário nos consequentes; PHP aceita a forma `endswitch`.
 Writes simples e compostos (`=`, `??=`, `||=`, `&&=`) em dataset de modo e
@@ -255,6 +264,12 @@ não substitui um parser completo.
 | P2-06 atribuição `dataset` | `JavaScript dataset.theme assignment`; `JavaScript dataset.bsTheme assignment` |
 | P2-07 raízes Windows | matriz de drive letter, UNC, caminho relativo e traversal |
 | P2-08 Bootstrap por modo | `dark-only Bootstrap body mapping regression` |
+| Revisão PR #83: object literal e predicate Twig externo | `JavaScript ternary with object arms`; `Twig enclosing mode predicate around unrelated ternary` |
+| Revisão PR #83: case `;` e `?.`/`??` | `PHP semicolon case terminator excludes consequent`; `JavaScript optional chaining case does not consume consequent` |
+| Revisão PR #83: classes compostas e classes protegidas | fixtures `className compound`, `className logical` e `classList is-dark` |
+| Revisão PR #83: getter de color scheme | fixtures do getter em Twig, PHP e JavaScript |
+| Revisão PR #83: regex literal e seletores parciais | `regex parentheses`; prefixo/sufixo/substr de atributo |
+| Revisão PR #83: união de tokens por modo | `dark-only token was not required to resolve in light mode` |
 
 Também há casos válidos para custom property, comentários, branches não
 relacionados ao modo, e casos inválidos para seletor `.dark`,
@@ -270,8 +285,9 @@ tokens; Twig e JavaScript usam scanners deliberadamente delimitados, não ASTs
 completas. Construções dinâmicas que ocultem o identificador de modo não são
 inferidas. Ampliações exigem fixture positiva e negativa para cada forma nova.
 
-Todos os tokens `--aculta-*` e `--bs-*` declarados nos blocos suportados são
-resolvidos por modo. O contrato enumera tokens de cor ACULTA/Bootstrap e tokens
+Todos os tokens `--aculta-*` e `--bs-*` declarados em qualquer bloco são
+unidos e resolvidos em ambos os modos; um token declarado somente em dark deve
+também ser resolvível em light. O contrato enumera tokens de cor ACULTA/Bootstrap e tokens
 RGB, exigindo que cada RGB Bootstrap corresponda à cor companheira; valores
 inválidos (incluindo alpha não numérico), duplicatas, ciclos e referências não
 resolvidas falham.
