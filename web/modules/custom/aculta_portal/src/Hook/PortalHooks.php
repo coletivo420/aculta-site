@@ -6,8 +6,10 @@ use Drupal\aculta_portal\AccountShellBuilder;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleExtensionList;
@@ -57,6 +59,8 @@ final class PortalHooks {
     private readonly AccountShellBuilder $accountShellBuilder,
     #[Autowire(service: 'aculta_portal.breadcrumb_builder')]
     private readonly AcultaBreadcrumbBuilder $breadcrumbBuilder,
+    #[Autowire(service: 'aculta_portal.presentation.domain')]
+    private readonly DomainPresentationBuilder $domainPresentationBuilder,
   ) {}
 
 
@@ -65,6 +69,14 @@ final class PortalHooks {
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
+    $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
+    $variables['domain_presentation'] = $domainPresentation?->toThemeArray();
+    if ($domainPresentation !== NULL
+      && isset($variables['page'])
+      && is_array($variables['page'])) {
+      CacheableMetadata::createFromObject($domainPresentation)
+        ->applyTo($variables['page']);
+    }
     $account = $this->currentUser;
     $path = $this->currentPath->getPath();
     $request = $this->requestStack->getCurrentRequest();
