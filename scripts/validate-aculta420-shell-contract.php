@@ -65,22 +65,25 @@ $assert(
 );
 
 $assert(
-  ($complete['aculta_header_has_content'] ?? NULL) === FALSE,
-  'Empty header render array is recognized as having no renderable branding content.',
+  ($complete['aculta_has_system_branding'] ?? NULL) === FALSE,
+  'Missing system branding block enables the neutral fallback path.',
 );
 
 $withHeader = [
   'domain_presentation' => $complete['domain_presentation'],
   'page' => [
     'header' => [
-      'branding' => ['#markup' => 'Existing branding'],
+      'branding' => [
+        '#plugin_id' => 'system_branding_block',
+        '#markup' => 'Existing branding',
+      ],
     ],
   ],
 ];
 $hooks->preprocessPage($withHeader);
 $assert(
-  ($withHeader['aculta_header_has_content'] ?? FALSE) === TRUE,
-  'Existing renderable header content remains the primary branding path.',
+  ($withHeader['aculta_has_system_branding'] ?? FALSE) === TRUE,
+  'Existing system branding block remains the primary branding path.',
 );
 
 $partial = [
