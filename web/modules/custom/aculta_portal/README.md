@@ -37,6 +37,8 @@ fontes de verdade.
 
 - trabalhar com Domain purpose, não hostname hardcoded;
 - preferir DI, Entity API, Views e serviços públicos;
+- hooks runtime novos/refatorados usam classes em `src/Hook/` com `#[Hook]` quando suportado pelo Core;
+- callbacks Form API novos/refatorados usam serviços serializáveis no formato `service.id:method`; `aculta_portal.form_callbacks` concentra callbacks migrados progressivamente;
 - em controllers novos/refatorados, dependências de runtime entram por DI explícita; não depender de helpers de `ControllerBase` que resolvam serviços de forma lazy;
 - `ContainerInjectionInterface::create()` pode montar as dependências do controller, mas a lógica funcional não consulta o container;
 - não consultar tabelas contrib diretamente quando houver API;
