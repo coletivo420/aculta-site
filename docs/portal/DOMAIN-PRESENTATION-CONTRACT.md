@@ -472,11 +472,12 @@ preexistente de Runtime; nenhum `cim`/`cex` foi executado.
 
 O ACULTA420 passa a consumir a identidade neutra entregue por `domain_presentation` sem alterar a arquitetura visual corrente:
 
-- `ThemeHooks::preprocessPage()` adapta somente `identity` para `aculta_domain_identity` com escalares conhecidos;
+- `ThemeHooks::preprocessPage()` deriva de `identity` apenas `aculta_domain_brand_fallback = {label, home_url}`;
 - identidade ausente ou incompleta resulta em `NULL`; o tema não consulta Domain/config/hostname para inventar fallback funcional;
-- `page.html.twig` mantém `page.header` como branding primário e usa a identidade apenas quando a região Drupal não entrega branding;
-- o fallback usa `home_url`, `short_title`/`title` e `logo_alt` preparados pelo Portal;
-- `purpose` aparece somente como metadata semântica `data-aculta-domain-purpose`; não escolhe CSS, cor, estrutura ou comportamento;
+- `page.html.twig` mantém `page.header` como branding primário e usa o fallback somente quando a região Drupal não entrega branding;
+- `label` usa `short_title` quando disponível e cai para `title`; `home_url` continua preparado pelo Portal;
+- `purpose` permanece no contrato Portal para contexto futuro, mas não é emitido no DOM nem usado por branch visual em B.3/B.4;
+- `logo_alt` permanece reservado para branding visual futuro; não é reutilizado como `aria-label` de fallback textual;
 - `regions.brand_media`, `regions.navigation` e `regions.actions` continuam sem consumidor e permanecem `NULL` nesta fase;
 - nenhuma alteração de CSS, tokens, layout, Institution Bar, Domain Header, sticky/mobile ou color-mode foi introduzida.
 
