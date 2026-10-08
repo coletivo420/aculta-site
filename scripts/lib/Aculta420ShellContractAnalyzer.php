@@ -31,7 +31,7 @@ final class Aculta420ShellContractAnalyzer {
     foreach ([
       "\$variables['domain_presentation']['identity']" => 'ThemeHooks must consume domain_presentation.identity.',
       'buildDomainBrandFallback' => 'ThemeHooks must derive a minimal domain branding fallback before Twig.',
-      'aculta_header_has_content' => 'ThemeHooks must expose explicit renderable-header presence.',
+      'aculta_has_system_branding' => 'ThemeHooks must expose explicit system branding presence.',
     ] as $needle => $message) {
       if (!str_contains($hookSource, $needle)) {
         $findings[] = $message;
@@ -47,9 +47,14 @@ final class Aculta420ShellContractAnalyzer {
       }
     }
 
-    if (!str_contains($pageSource, '{% if aculta_header_has_content %}')
-      || !str_contains($pageSource, '{% elseif aculta_domain_brand_fallback %}')) {
-      $findings[] = 'Existing Drupal header must remain primary and domain identity fallback-only.';
+    if (!str_contains($pageSource, '{{ page.header }}')) {
+      $findings[] = 'Existing Drupal header render array must always be preserved.';
+    }
+    if (!str_contains(
+      $pageSource,
+      '{% if not aculta_has_system_branding and aculta_domain_brand_fallback %}',
+    )) {
+      $findings[] = 'Fallback must be controlled by absence of the canonical system branding block.';
     }
 
     if (preg_match(
