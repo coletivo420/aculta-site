@@ -4,14 +4,37 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
-use Drupal\views\Views;
+use Drupal\views\ViewExecutableFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /** Public landing page and bounded title/summary/body search for the Wiki. */
 final class WikiController extends ControllerBase {
+
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entities,
+    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly Connection $database,
+    private readonly DateFormatterInterface $dateFormatter,
+    private readonly ViewExecutableFactory $viewExecutableFactory,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('aculta_portal.domain_purpose'),
+      $container->get('database'),
+      $container->get('date.formatter'),
+      $container->get('views.executable'),
+    );
+  }
 
   /** Builds the Wiki home from the editorial Views. */
   public function home(): array {
@@ -85,13 +108,13 @@ final class WikiController extends ControllerBase {
       return $build;
     }
     $term = mb_substr($term, 0, 100);
-    $wikiDomain = \Drupal::service('aculta_portal.domain_purpose')->getDomain('wiki');
+    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
     if (!$wikiDomain) {
       $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.')];
       return $build;
     }
-    $pattern = '%' . \Drupal::database()->escapeLike($term) . '%';
-    $query = \Drupal::entityQuery('node')
+    $pattern = '%' . $this->database->escapeLike($term) . '%';
+    $query = $this->entities->getStorage('node')->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'wiki_entry')
       ->condition('field_domain_source.target_id', $wikiDomain->id())
@@ -103,11 +126,11 @@ final class WikiController extends ControllerBase {
       ->condition('field_wiki_summary.value', $pattern, 'LIKE')
       ->condition('body.value', $pattern, 'LIKE');
     $ids = $query->condition($matches)->execute();
-    $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple($ids);
+    $nodes = $this->entities->getStorage('node')->loadMultiple($ids);
     $build['count'] = ['#type' => 'item', '#plain_text' => $this->formatPlural(count($nodes), '1 verbete encontrado.', '@count verbetes encontrados.')];
     foreach ($nodes as $node) {
       if ($node->access('view')) {
-        $build['results'][$node->id()] = $this->entityTypeManager()->getViewBuilder('node')->view($node, 'teaser');
+        $build['results'][$node->id()] = $this->entities->getViewBuilder('node')->view($node, 'teaser');
       }
     }
     if (!$nodes) {
@@ -126,11 +149,11 @@ final class WikiController extends ControllerBase {
         'tags' => ['node_list:wiki_entry'],
       ],
     ];
-    $wikiDomain = \Drupal::service('aculta_portal.domain_purpose')->getDomain('wiki');
+    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
     if (!$wikiDomain) {
       return $build;
     }
-    $ids = \Drupal::entityQuery('node')
+    $ids = $this->entities->getStorage('node')->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'wiki_entry')
       ->condition('field_domain_source.target_id', $wikiDomain->id())
@@ -138,9 +161,9 @@ final class WikiController extends ControllerBase {
       ->sort('changed', 'DESC')
       ->range(0, 5)
       ->execute();
-    $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple($ids);
+    $nodes = $this->entities->getStorage('node')->loadMultiple($ids);
     $cacheability = CacheableMetadata::createFromRenderArray($build);
-    $dateFormatter = \Drupal::service('date.formatter');
+    $dateFormatter = $this->dateFormatter;
     foreach ($nodes as $node) {
       if (!$node->access('view')) {
         continue;
@@ -175,8 +198,14 @@ final class WikiController extends ControllerBase {
 
   /** Embeds one permission-checked Wiki View block. */
   private function viewBlock(string $viewId, string $displayId): array {
-    $view = Views::getView($viewId);
-    return $view ? $view->buildRenderable($displayId) : ['#markup' => ''];
+    $viewEntity = $this->entities->getStorage('view')->load($viewId);
+    if ($viewEntity === NULL) {
+      return ['#markup' => ''];
+    }
+
+    return $this->viewExecutableFactory
+      ->get($viewEntity)
+      ->buildRenderable($displayId);
   }
 
 }
