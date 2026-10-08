@@ -6,7 +6,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
-### Administração multidomínio
+### Administração multidomínio e redirects cross-domain
 
 - Centraliza `/painel-administrativo/**` no purpose MAIN: GET/HEAD acessados por subdomínio são canonicalizados para o mesmo path/query no Domain MAIN via `DomainPurposeManager`.
 - Mantém requests administrativos mutáveis em host errado fail-closed para não repetir POST/CSRF entre Domains.
