@@ -109,8 +109,8 @@ snapshots de fases e runbooks históricos.
 - light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura;
 - color mode no ACULTA420 é uma variação de tokens, não uma variação de layout;
 - componentes não conhecem o color mode; seletores dark são permitidos somente em `aculta420/css/tokens.css`;
-- o gate reconhece seletores dark inclusive em pseudo-classes funcionais e dentro de `tokens.css`, PHP `switch/case` com chaves/`endswitch` e `match`, JavaScript `switch/case` com discriminantes balanceados e writes `dataset` dinâmicos, e ternários em statements Twig; comentários e texto não executável não devem gerar finding;
-- o gate valida os tokens de cor/RGB ACULTA e Bootstrap contratados, aliases, ciclos, duplicatas, valores, contraste com alpha composto e mappings por modo; uma declaração posterior não pode contornar WCAG;
+- o gate reconhece seletores dark inclusive em pseudo-classes funcionais e dentro de `tokens.css`, PHP `switch/case` com chaves/`endswitch` e `match`, JavaScript `switch/case` por labels com discriminantes balanceados, writes simples/compostos de `dataset`, ternários Twig e identificadores `colorScheme`; comentários e texto consequente não executável não devem gerar finding;
+- o gate valida os tokens de cor/RGB ACULTA e Bootstrap contratados, exige cada RGB Bootstrap igual à cor companheira, rejeita alpha inválido, aliases, ciclos, duplicatas e referências ausentes, e calcula contraste com alpha composto; uma declaração posterior não pode contornar WCAG;
 - testes do gate devem incluir regressões negativas e exemplos positivos para cada sintaxe suportada, sem tocar no Runtime; roots absolutos POSIX, Windows drive-letter e UNC são válidos, mas traversal `..` é rejeitado;
 - uma variante futura de asset de logo por modo preserva espaço, dimensões e layout;
 - novos componentes consomem semantic tokens quando a função já existe; palette primitives ficam centralizadas;

@@ -90,10 +90,13 @@ try {
     ['commented PHP switch is ignored', 'src/Comments.php', "<?php // switch (\$theme) { case 'dark': }\nreturn 1;", 'DARK PHP BRANCHES: 0'],
     ['PHP comment inside unrelated condition is ignored', 'src/InlineComment.php', "<?php if (\$enabled /* theme dark */) { return; }", 'DARK PHP BRANCHES: 0'],
     ['commented JavaScript switch is ignored', 'js/comments.js', "/* switch (theme) { case 'dark': card.hidden = true; } */\nconst label = 'normal';", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['inline JavaScript comment is ignored', 'js/inline-comment.js', "const enabled = true; // if (theme === 'dark') { localStorage.setItem('x', 'y'); }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['PHP switch on a non-mode value is accepted', 'src/LanguageSwitch.php', "<?php switch (\$locale) { case 'dark': echo 'label'; break; default: break; }", 'DARK PHP BRANCHES: 0'],
     ['PHP alternative switch on a non-mode value is accepted', 'src/AlternativeLanguageSwitch.php', "<?php switch (\$locale): case 'dark': echo 'label'; break; endswitch;", 'DARK PHP BRANCHES: 0'],
     ['JavaScript switch on a non-mode value is accepted', 'js/language-switch.js', "switch (locale) { case 'dark': label.textContent = 'dark'; break; default: break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['JavaScript function switch on a non-mode value is accepted', 'js/language-getter-switch.js', "switch (getLocale()) { case 'dark': label.textContent = 'dark'; break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['PHP switch consequent text is not a case label', 'src/SwitchConsequent.php', "<?php switch (\$theme) { case 'compact': echo 'dark'; break; }", 'DARK PHP BRANCHES: 0'],
+    ['JavaScript switch consequent text is not a case label', 'js/switch-consequent.js', "switch (theme) { case 'compact': label.textContent = 'dark'; break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['Twig ternary on a non-mode value is accepted', 'templates/language-ternary.html.twig', "{% set label = locale == 'dark' ? 'a' : 'b' %}", 'DARK TWIG BRANCHES: 0'],
     ['unrelated dataset assignment is accepted', 'js/dataset-status.js', "document.documentElement.dataset.status = 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
   ];
@@ -139,10 +142,12 @@ try {
     ['Twig color-mode branch', 'templates/fixture.html.twig', "{% if theme == 'dark' %}dark markup{% endif %}", 'Twig has no color-mode branch'],
     ['Twig color-mode ternary', 'templates/ternary.html.twig', "{{ theme == 'light' ? 'light' : 'dark' }}", 'Twig has no color-mode branch'],
     ['PHP color-mode branch', 'src/Fixture.php', "<?php if (\$theme === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
+    ['PHP colorScheme branch', 'src/ColorScheme.php', "<?php if (\$colorScheme === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
     ['PHP color-mode match', 'src/MatchFixture.php', "<?php \$variant = match (\$theme) { 'dark' => 'compact', default => 'standard' };", 'PHP has no color-mode branch'],
     ['PHP switch case arm', 'src/SwitchFixture.php', "<?php switch (\$theme) { case 'dark': \$layout = 'compact'; break; default: \$layout = 'standard'; }", 'PHP has no color-mode branch'],
     ['PHP alternative switch case arm', 'src/AlternativeSwitch.php', "<?php switch (\$theme): case 'dark': \$layout = 'compact'; break; endswitch;", 'PHP has no color-mode branch'],
     ['JavaScript color-mode layout branch', 'js/fixture.js', "if (theme === 'dark') { card.style.display = 'none'; }", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript colorScheme branch', 'js/color-scheme.js', "if (colorScheme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript boolean mode branch', 'js/boolean-mode.js', "if (isDarkMode) { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch case arm', 'js/switch.js', "switch (theme) { case 'dark': card.hidden = true; break; default: card.hidden = false; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch method discriminant', 'js/switch-method.js', "switch (theme.toLowerCase()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
@@ -150,8 +155,11 @@ try {
     ['JavaScript dataset.theme assignment', 'js/dataset-theme.js', "document.documentElement.dataset.theme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.bsTheme assignment', 'js/dataset-bs-theme.js', "document.documentElement.dataset.bsTheme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dynamic dataset.theme assignment', 'js/dataset-dynamic.js', "document.documentElement.dataset.bsTheme = getTheme();", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript dataset logical assignment', 'js/dataset-logical.js', "document.documentElement.dataset.bsTheme ??= getTheme();", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript dataset fallback assignment', 'js/dataset-or.js', "document.documentElement.dataset.theme ||= nextMode;", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript bracket dataset assignment', 'js/dataset-bracket.js', "document.documentElement.dataset['theme'] = nextMode;", 'JavaScript has no color-mode layout behavior'],
     ['Twig statement ternary', 'templates/set-ternary.html.twig', "{% set klass = theme == 'dark' ? 'compact' : 'standard' %}", 'Twig has no color-mode branch'],
+    ['Twig colorScheme branch', 'templates/color-scheme.html.twig', "{% if colorScheme == 'dark' %}different{% endif %}", 'Twig has no color-mode branch'],
     ['Dark selector in tokens stylesheet', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] .fixture { padding: 1rem; }\n", 'Color mode is token-only'],
     ['Structural declaration inside dark token block', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] {\n  display: none;\n}\n", 'custom properties only'],
   ];
@@ -216,6 +224,7 @@ try {
     ['missing required token rejected', '--aculta-shell-active-text: var(--aculta-interactive-active-text);', '', 'has a dark value'],
     ['new ACULTA token alias must resolve', '--aculta-surface-page: #171513;', "--aculta-surface-page: #171513;\n  --aculta-fixture-new: var(--aculta-does-not-exist);", 'resolves without missing references or cycles'],
     ['translucent text is composited before WCAG', '--aculta-text-primary: #f4efe8;', '--aculta-text-primary: rgba(244, 239, 232, 0.01);', 'meets WCAG AA'],
+    ['malformed rgba alpha is rejected', '--bs-border-color-translucent: rgba(216, 208, 200, 0.22);', '--bs-border-color-translucent: rgba(216, 208, 200, nope);', 'color token --bs-border-color-translucent'],
   ];
   foreach ($token_cases as [$name, $old, $new, $expected_message]) {
     $replace_dark($old, $new);
@@ -238,6 +247,7 @@ try {
   foreach ([
     ['physical ACULTA color token must parse', '--aculta-red: #d4452d;', '--aculta-red: nope;', 'color token --aculta-red'],
     ['Bootstrap color alias must parse', '--bs-danger: var(--aculta-red);', '--bs-danger: nope;', 'color token --bs-danger'],
+    ['Bootstrap RGB companion matches its base color', '--bs-primary-rgb: 104, 148, 39;', '--bs-primary-rgb: 0, 0, 0;', 'matches --bs-primary'],
   ] as [$name, $old, $new, $expected_message]) {
     $current_tokens = file_get_contents($tokens_path);
     if (!is_string($current_tokens) || !str_contains($current_tokens, $old)) {

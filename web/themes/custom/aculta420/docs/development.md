@@ -229,6 +229,11 @@ alternância de classes/atributos e qualquer escrita em `dataset.theme`,
 `dataset.bsTheme`, `dataset.colorMode` ou `dataset.colorScheme`, mesmo quando o
 valor vem de variável ou função. Seletores de classe também são inspecionados
 dentro de pseudo-classes funcionais como `:where()` e `:is()`.
+Decisões Twig/PHP/JavaScript reconhecem também `colorScheme`/`color_scheme`.
+Em `switch`, a análise considera o discriminante e as expressões dos labels
+`case`, não texto arbitrário nos consequentes; PHP aceita a forma `endswitch`.
+Writes simples e compostos (`=`, `??=`, `||=`, `&&=`) em dataset de modo são
+proibidos.
 
 | P2 da revisão da PR #80 | Fixture que prova a regressão |
 | --- | --- |
@@ -257,7 +262,9 @@ inferidas. Ampliações exigem fixture positiva e negativa para cada forma nova.
 
 Todos os tokens `--aculta-*` e `--bs-*` declarados nos blocos suportados são
 resolvidos por modo. O contrato enumera tokens de cor ACULTA/Bootstrap e tokens
-RGB: valores inválidos, duplicatas, ciclos e referências não resolvidas falham.
+RGB, exigindo que cada RGB Bootstrap corresponda à cor companheira; valores
+inválidos (incluindo alpha não numérico), duplicatas, ciclos e referências não
+resolvidas falham.
 Cores de primeiro plano translúcidas são compostas sobre a superfície opaca
 antes da medição WCAG; superfícies de contraste precisam ser opacas. Mappings
 Bootstrap e pares RGB são conferidos separadamente em light e dark. Contrastes

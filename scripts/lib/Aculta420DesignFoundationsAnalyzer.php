@@ -94,6 +94,14 @@ final class Aculta420DesignFoundationsAnalyzer {
   ];
 
   private const RGB_MAPPINGS = [
+    '--bs-primary-rgb' => '--bs-primary',
+    '--bs-secondary-rgb' => '--bs-secondary',
+    '--bs-success-rgb' => '--bs-success',
+    '--bs-info-rgb' => '--bs-info',
+    '--bs-warning-rgb' => '--bs-warning',
+    '--bs-danger-rgb' => '--bs-danger',
+    '--bs-black-rgb' => '--bs-black',
+    '--bs-white-rgb' => '--bs-white',
     '--bs-body-bg-rgb' => '--aculta-surface-page',
     '--bs-body-color-rgb' => '--aculta-text-primary',
     '--bs-secondary-bg-rgb' => '--aculta-surface-raised',
@@ -411,7 +419,7 @@ final class Aculta420DesignFoundationsAnalyzer {
       }
       $body_start = $brace + 1;
       $body = self::readBalancedJsBlock($source, $body_start);
-      if (self::hasModeDecision($discriminant . ' ' . $body)) {
+      if (self::hasModeDecision($discriminant . ' ' . self::readJsCaseExpressions($body))) {
         $count++;
       }
     }
@@ -421,7 +429,7 @@ final class Aculta420DesignFoundationsAnalyzer {
         $count++;
       }
     }
-    if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*=/i', $source) === 1
+    if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))/i', $source) === 1
       || preg_match('/(?:setAttribute)\s*\(\s*["\'](?:data-(?:bs-)?theme|data-color-(?:mode|scheme))["\']\s*,\s*["\'](?:dark|light)["\']/i', $source) === 1
       || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode)["\']/i', $source) === 1) {
       $count++;
@@ -649,7 +657,10 @@ final class Aculta420DesignFoundationsAnalyzer {
         }
         $rgb[] = (float) $channel;
       }
-      $alpha = isset($channels[3]) && is_numeric($channels[3]) ? (float) $channels[3] : 1.0;
+        if (isset($channels[3]) && !is_numeric($channels[3])) {
+          return NULL;
+        }
+        $alpha = isset($channels[3]) ? (float) $channels[3] : 1.0;
       if ($alpha < 0 || $alpha > 1) {
         return NULL;
       }
@@ -714,7 +725,7 @@ final class Aculta420DesignFoundationsAnalyzer {
   }
 
   private static function hasModeDecision(string $expression): bool {
-    $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode|getTheme|getColorMode)\b/i', $expression) === 1;
+    $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode|colorScheme|color_scheme|color-scheme|getTheme|getColorMode)\b/i', $expression) === 1;
     $mode_literal = preg_match('/(?:["\'](?:dark|light)["\']|\b(?:dark|light)\b)/i', $expression) === 1;
     $boolean_mode = preg_match('/\$?\b(?:is[_-]?(?:dark|light)(?:[_-]?mode)?|(?:dark|light)[_-]?mode)\b/i', $expression) === 1;
     return ($mode_reference && $mode_literal) || $boolean_mode;
@@ -751,6 +762,9 @@ final class Aculta420DesignFoundationsAnalyzer {
   }
 
   private static function readPhpDecisionArms(array $tokens, int $index, bool $switch = FALSE): string {
+    if ($switch) {
+      return self::readPhpSwitchCaseLabels($tokens, $index);
+    }
     $depth = 0;
     $started = FALSE;
     $body = '';
@@ -778,6 +792,71 @@ final class Aculta420DesignFoundationsAnalyzer {
       $body .= $part;
     }
     return $body;
+  }
+
+  /** Read only PHP switch case expressions, excluding consequent statements. */
+  private static function readPhpSwitchCaseLabels(array $tokens, int $index): string {
+    $alternative = FALSE;
+    $started = FALSE;
+    $brace_depth = 0;
+    $labels = '';
+    for ($i = $index; isset($tokens[$i]); $i++) {
+      if (is_array($tokens[$i]) && in_array($tokens[$i][0], [T_COMMENT, T_DOC_COMMENT], TRUE)) {
+        continue;
+      }
+      $part = is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
+      if (!$started) {
+        if ($part === '{') {
+          $started = TRUE;
+          $brace_depth = 1;
+        }
+        elseif ($part === ':') {
+          $started = TRUE;
+          $alternative = TRUE;
+        }
+        continue;
+      }
+      if ($alternative && is_array($tokens[$i]) && $tokens[$i][0] === T_ENDSWITCH) {
+        return $labels;
+      }
+      if (!$alternative && $part === '}') {
+        $brace_depth--;
+        if ($brace_depth === 0) {
+          return $labels;
+        }
+      }
+      elseif (!$alternative && $part === '{') {
+        $brace_depth++;
+      }
+      if (!is_array($tokens[$i]) || $tokens[$i][0] !== T_CASE || (!$alternative && $brace_depth !== 1)) {
+        continue;
+      }
+      $case = '';
+      $paren = $bracket = $brace = $ternary = 0;
+      for ($label_index = $i + 1; isset($tokens[$label_index]); $label_index++) {
+        if (is_array($tokens[$label_index]) && in_array($tokens[$label_index][0], [T_COMMENT, T_DOC_COMMENT], TRUE)) {
+          continue;
+        }
+        $label_part = is_array($tokens[$label_index]) ? $tokens[$label_index][1] : $tokens[$label_index];
+        if ($label_part === '(') { $paren++; }
+        elseif ($label_part === ')') { $paren--; }
+        elseif ($label_part === '[') { $bracket++; }
+        elseif ($label_part === ']') { $bracket--; }
+        elseif ($label_part === '{') { $brace++; }
+        elseif ($label_part === '}') { $brace--; }
+        elseif ($paren === 0 && $bracket === 0 && $brace === 0 && $label_part === '?') { $ternary++; }
+        elseif ($paren === 0 && $bracket === 0 && $brace === 0 && $label_part === ':') {
+          if ($ternary > 0) { $ternary--; }
+          else {
+            $i = $label_index;
+            break;
+          }
+        }
+        $case .= $label_part;
+      }
+      $labels .= ' ' . $case;
+    }
+    return $labels;
   }
 
   private static function readBalancedJsBlock(string $source, int $index): string {
@@ -811,6 +890,92 @@ final class Aculta420DesignFoundationsAnalyzer {
     return substr($source, $start);
   }
 
+  /** Extract top-level switch labels, excluding words in consequent bodies. */
+  private static function readJsCaseExpressions(string $body): string {
+    $labels = '';
+    $length = strlen($body);
+    $brace = $paren = $bracket = 0;
+    $quote = NULL;
+    for ($i = 0; $i < $length; $i++) {
+      $char = $body[$i];
+      if ($quote !== NULL) {
+        if ($char === '\\') { $i++; }
+        elseif ($char === $quote) { $quote = NULL; }
+        continue;
+      }
+      if ($char === '"' || $char === "'" || $char === '`') { $quote = $char; continue; }
+      if ($char === '{') { $brace++; continue; }
+      if ($char === '}') { $brace--; continue; }
+      if ($char === '(') { $paren++; continue; }
+      if ($char === ')') { $paren--; continue; }
+      if ($char === '[') { $bracket++; continue; }
+      if ($char === ']') { $bracket--; continue; }
+      if ($brace !== 0 || $paren !== 0 || $bracket !== 0 || substr($body, $i, 4) !== 'case'
+        || preg_match('/[a-zA-Z0-9_$]/', $body[$i - 1] ?? '') === 1
+        || preg_match('/[a-zA-Z0-9_$]/', $body[$i + 4] ?? '') === 1) {
+        continue;
+      }
+      $expression = '';
+      $ternary = $expr_paren = $expr_bracket = $expr_brace = 0;
+      $quote = NULL;
+      for ($j = $i + 4; $j < $length; $j++) {
+        $part = $body[$j];
+        if ($quote !== NULL) {
+          $expression .= $part;
+          if ($part === '\\') { $expression .= $body[++$j] ?? ''; }
+          elseif ($part === $quote) { $quote = NULL; }
+          continue;
+        }
+        if ($part === '"' || $part === "'" || $part === '`') { $quote = $part; $expression .= $part; continue; }
+        if ($part === '(') { $expr_paren++; }
+        elseif ($part === ')') { $expr_paren--; }
+        elseif ($part === '[') { $expr_bracket++; }
+        elseif ($part === ']') { $expr_bracket--; }
+        elseif ($part === '{') { $expr_brace++; }
+        elseif ($part === '}') { $expr_brace--; }
+        elseif ($expr_paren === 0 && $expr_bracket === 0 && $expr_brace === 0 && $part === '?') { $ternary++; }
+        elseif ($expr_paren === 0 && $expr_bracket === 0 && $expr_brace === 0 && $part === ':') {
+          if ($ternary > 0) { $ternary--; }
+          else { $i = $j; break; }
+        }
+        $expression .= $part;
+      }
+      $labels .= ' ' . $expression;
+    }
+    return $labels;
+  }
+
+  /** Remove JS comments without treating comment-like text in strings as code. */
+  private static function stripJsComments(string $source): string {
+    $output = '';
+    $length = strlen($source);
+    $quote = NULL;
+    for ($i = 0; $i < $length; $i++) {
+      $char = $source[$i];
+      if ($quote !== NULL) {
+        $output .= $char;
+        if ($char === '\\') { $output .= $source[++$i] ?? ''; }
+        elseif ($char === $quote) { $quote = NULL; }
+        continue;
+      }
+      if ($char === '"' || $char === "'" || $char === '`') { $quote = $char; $output .= $char; continue; }
+      if ($char === '/' && ($source[$i + 1] ?? '') === '/') {
+        while ($i < $length && $source[$i] !== "\n") { $i++; }
+        $output .= "\n";
+        continue;
+      }
+      if ($char === '/' && ($source[$i + 1] ?? '') === '*') {
+        $end = strpos($source, '*/', $i + 2);
+        if ($end === FALSE) { return $output; }
+        $output .= str_repeat(' ', $end + 2 - $i);
+        $i = $end + 1;
+        continue;
+      }
+      $output .= $char;
+    }
+    return $output;
+  }
+
   /** Return the contents and ending offset for a balanced JS parenthesis. */
   private static function readBalancedJsParentheses(string $source, int $open): array {
     $length = strlen($source);
@@ -840,11 +1005,6 @@ final class Aculta420DesignFoundationsAnalyzer {
       }
     }
     return [substr($source, $open + 1), $length];
-  }
-
-  private static function stripJsComments(string $source): string {
-    $source = preg_replace('~/\*.*?\*/~s', '', $source) ?? $source;
-    return preg_replace('/^[ \t]*\/\/.*$/m', '', $source) ?? $source;
   }
 
 }
