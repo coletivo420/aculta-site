@@ -33,10 +33,10 @@ de rotas centrais de carrinho/checkout/pagamento que pertencem a MAIN:
 
 A política é reutilizada por:
 
-- `DomainRouteSubscriber`, para classificar as rotas;
-- `ContentPurposeResolver`, para ownership funcional;
-- `DomainPurposeRequestSubscriber`, para canonicalização/fail-closed;
+- `DomainRouteSubscriber`, para classificar as rotas e anotar navegação browser-facing com `_aculta_cross_domain_canonical_purpose=main`;
 - `PortalHooks`, para reescrever links renderizados diretamente para MAIN.
+
+`ContentPurposeResolver` e `DomainPurposeRequestSubscriber` não reavaliam nomes `commerce_*`: eles consomem a metadata já gravada na rota. Isso mantém classificação e enforcement desacoplados e segue o padrão Drupal de alterar metadata de rotas em `RouteSubscriberBase`.
 
 Não duplicar listas de rotas em outros arquivos.
 
