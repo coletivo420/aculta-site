@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -137,7 +136,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       }
       if ($requiredPurpose === 'main'
         && ($this->isAdministrativeRoute($route)
-          || DomainRoutePolicy::isCentralPaymentRouteName((string) $matched['_route']))) {
+          || $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main')) {
         $event->setResponse($this->canonicalMainNavigationResponse($event->getRequest()));
         return;
       }
@@ -214,9 +213,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose && !$resetEditException) {
       if ($requiredPurpose === 'main'
         && ($this->isAdministrativeRoute($route)
-          || DomainRoutePolicy::isCentralPaymentRouteName(
-            (string) $request->attributes->get('_route')
-          ))) {
+          || $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main')) {
         $event->setResponse($this->canonicalMainNavigationResponse($request));
         return;
       }
@@ -249,7 +246,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
    * Canonicalizes safe MAIN-owned navigation and fails closed otherwise.
    */
   private function canonicalMainNavigationResponse(Request $request): Response {
-    // Never replay a state-changing admin request across Domain boundaries.
+    // Never replay a state-changing request across Domain boundaries.
     if (!in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
       return $this->notFoundResponse();
     }
