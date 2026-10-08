@@ -12,8 +12,9 @@ use Symfony\Component\Routing\Route;
 /**
  * Resolves route/content ownership without enforcing the HTTP response.
  *
- * DomainPurposeRequestSubscriber owns fail-closed enforcement. This service
- * only translates Drupal route/content state into a stable ACULTA purpose.
+ * DomainPurposeRequestSubscriber owns HTTP enforcement/canonicalization. This
+ * service only translates Drupal route/content state into a stable ACULTA
+ * purpose, with platform administration taking precedence over content purpose.
  */
 final class ContentPurposeResolver {
 
