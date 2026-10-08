@@ -67,6 +67,12 @@ fronteira com fixtures/gates antes da Institution Bar.
 Não passar entidade `Domain`, storage, services, hostname ou regra de negócio
 para Twig/SDC.
 
+Na 0.2-B.3 o shell atual mantém o `system_branding_block` como caminho primário.
+Se essa região não entregar branding, `page.html.twig` pode apresentar apenas a
+identidade escalar já preparada pelo Portal (`home_url`, `short_title`/`title`,
+`logo_alt`). `purpose` é metadata semântica neutra no header e não autoriza
+branch visual. Regiões renderizáveis do contrato continuam deferidas.
+
 ## Branding e fallback
 
 Branding próprio não é requisito para criar um purpose.
