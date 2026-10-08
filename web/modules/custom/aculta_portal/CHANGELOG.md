@@ -1,5 +1,14 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P2.2: hooks editoriais e Metatag em OOP
+
+- Migra `hook_metatag_tags_alter()`, `hook_node_presave()` e `hook_metatags_alter()` para `src/Hook/EditorialHooks.php` com `#[Hook]`.
+- Mantém Metatag/Schema Metatag como renderers oficiais e preserva o override de `PostalAddressTag`, publicação inicial, canonical de cursos/Wiki e localização estruturada de atividades.
+- `metatagsAlter()` segue a assinatura documentada do Metatag, incluindo o contexto por referência.
+- Remove o service locator de `DomainPurposeManager` dessa família e passa a usar DI explícita.
+- Reduz o allowlist procedural do gate em mais três funções e passa a exigir os três hooks editoriais OOP.
+- Form API, entity access/presave, Commerce, controllers e subscribers permanecem fora desta subfase.
+
 ## 2026-10-08 — P2.1: Token API hooks em OOP
 
 - Migra somente `hook_token_info()` e `hook_tokens()` de `aculta_portal.module` para `src/Hook/TokenHooks.php` com `#[Hook]`.

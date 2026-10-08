@@ -73,9 +73,6 @@ $check(
 );
 
 $legacyProceduralFunctions = [
-  'aculta_portal_metatag_tags_alter',
-  'aculta_portal_node_presave',
-  'aculta_portal_metatags_alter',
   'aculta_portal_form_node_form_alter',
   'aculta_portal_validate_activity',
   'aculta_portal_entity_access',
@@ -102,6 +99,16 @@ $check(
   substr_count($tokenHooksSource, "#[Hook('tokens')]") === 1,
   'P2 TokenHooks must implement tokens as an OOP hook.',
 );
+
+$editorialHooks = $srcRoot . '/Hook/EditorialHooks.php';
+$editorialHooksSource = $read($editorialHooks);
+$check(is_file($editorialHooks), 'P2.2 EditorialHooks class must exist.');
+foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter'] as $hookName) {
+  $check(
+    substr_count($editorialHooksSource, "#[Hook('" . $hookName . "')]") === 1,
+    'P2.2 EditorialHooks must implement ' . $hookName . ' as an OOP hook.',
+  );
+}
 
 $moduleFile = $moduleRoot . '/aculta_portal.module';
 if (is_file($moduleFile)) {
