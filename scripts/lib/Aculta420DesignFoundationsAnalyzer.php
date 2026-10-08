@@ -230,7 +230,7 @@ final class Aculta420DesignFoundationsAnalyzer {
 
     foreach (self::DARK_SURFACES as $token => $expected) {
       $result = $resolve($token, $dark_effective);
-      $assert($result['error'] === NULL && strtolower($result['value'] ?? '') === $expected, $token . ' resolves to approved neutral dark surface ' . $expected . '.');
+      $assert($result['error'] === NULL && self::sameColor($result['value'] ?? '', $expected), $token . ' resolves to approved neutral dark surface ' . $expected . '.');
     }
 
     $dark_pairs = [
@@ -486,14 +486,14 @@ final class Aculta420DesignFoundationsAnalyzer {
         $count++;
       }
     }
-    preg_match_all('/([^;{}\n?]+\?[^;{}\n:]+:[^;{}\n]+)/', $source, $ternaries);
+    preg_match_all('/([^;{}?]+\?[^;{}:]+:[^;{}]+)/s', $source, $ternaries);
     foreach ($ternaries[0] as $expression) {
       if (self::hasModeDecision($expression)) {
         $count++;
       }
     }
     if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))/i', $source) === 1
-      || preg_match('/setAttribute\s*\(\s*["\']data-(?:(?:bs-)?theme|color-mode|color-scheme)["\']\s*,/i', $source) === 1
+      || preg_match('/setAttribute\s*(?:\?\.)?\s*\(\s*["\']data-(?:(?:bs-)?theme|color-mode|color-scheme)["\']\s*,/i', $source) === 1
       || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode)["\']/i', $source) === 1) {
       $count++;
     }
@@ -709,7 +709,18 @@ final class Aculta420DesignFoundationsAnalyzer {
       return [0, 0, 0, 0.0];
     }
     if (preg_match('/^rgba?\(([^)]+)\)$/', $value, $match) === 1) {
-      $channels = preg_split('/\s*,\s*|\s+\/\s+/', trim($match[1])) ?: [];
+      $body = trim($match[1]);
+      $has_commas = str_contains($body, ',');
+      $has_slash = str_contains($body, '/');
+      if ($has_commas && $has_slash) {
+        return NULL;
+      }
+      $channels = preg_split(
+        $has_commas ? '/\s*,\s*/' : '/\s*\/\s*|\s+/',
+        $body,
+        -1,
+        PREG_SPLIT_NO_EMPTY,
+      ) ?: [];
       if (count($channels) < 3 || count($channels) > 4) {
         return NULL;
       }
@@ -932,7 +943,8 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   /** Read only PHP switch case expressions, excluding consequent statements. */
   private static function readPhpSwitchCaseLabels(array $tokens, int $index): string {
-    $alternative_depth = 0;
+    $outer_alternative = FALSE;
+    $nested_alternative_depth = 0;
     $started = FALSE;
     $brace_depth = 0;
     $labels = '';
@@ -948,24 +960,26 @@ final class Aculta420DesignFoundationsAnalyzer {
         }
         elseif ($part === ':') {
           $started = TRUE;
-          $alternative_depth = 1;
+          $outer_alternative = TRUE;
         }
         continue;
       }
-      if ($alternative_depth > 0 && is_array($tokens[$i])) {
+      if (is_array($tokens[$i])) {
         if ($tokens[$i][0] === T_SWITCH && self::phpSwitchUsesAlternativeSyntax($tokens, $i)) {
-          $alternative_depth++;
+          $nested_alternative_depth++;
         }
         elseif ($tokens[$i][0] === T_ENDSWITCH) {
-          $alternative_depth--;
-          if ($alternative_depth === 0) {
+          if ($nested_alternative_depth > 0) {
+            $nested_alternative_depth--;
+          }
+          elseif ($outer_alternative) {
             return $labels;
           }
         }
       }
       if ($part === '}') {
         $brace_depth--;
-        if ($alternative_depth === 0 && $brace_depth === 0) {
+        if (!$outer_alternative && $brace_depth === 0) {
           return $labels;
         }
       }
@@ -973,9 +987,9 @@ final class Aculta420DesignFoundationsAnalyzer {
         $brace_depth++;
       }
       if (!is_array($tokens[$i]) || $tokens[$i][0] !== T_CASE
-        || ($alternative_depth > 0 && $alternative_depth !== 1)
-        || ($alternative_depth === 1 && $brace_depth !== 0)
-        || ($alternative_depth === 0 && $brace_depth !== 1)) {
+        || $nested_alternative_depth > 0
+        || ($outer_alternative && $brace_depth !== 0)
+        || (!$outer_alternative && $brace_depth !== 1)) {
         continue;
       }
       $case = '';

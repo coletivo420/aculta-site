@@ -96,12 +96,14 @@ try {
     ['JavaScript switch on a non-mode value is accepted', 'js/language-switch.js', "switch (locale) { case 'dark': label.textContent = 'dark'; break; default: break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['JavaScript function switch on a non-mode value is accepted', 'js/language-getter-switch.js', "switch (getLocale()) { case 'dark': label.textContent = 'dark'; break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['unrelated condition with mode-like output is accepted', 'js/unrelated-output.js', "if (isCompact(foo())) { label.textContent = 'dark'; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['multiline unrelated ternary result is accepted', 'js/multiline-unrelated-ternary.js', "const label = compact ?\n  'dark' :\n  'plain';", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['PHP switch consequent text is not a case label', 'src/SwitchConsequent.php', "<?php switch (\$theme) { case 'compact': echo 'dark'; break; }", 'DARK PHP BRANCHES: 0'],
     ['JavaScript switch consequent text is not a case label', 'js/switch-consequent.js', "switch (theme) { case 'compact': label.textContent = 'dark'; break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['Twig ternary on a non-mode value is accepted', 'templates/language-ternary.html.twig', "{% set label = locale == 'dark' ? 'a' : 'b' %}", 'DARK TWIG BRANCHES: 0'],
     ['Twig ternary result mentioning a mode is not a mode branch', 'templates/result-mode-ternary.html.twig', "{% set label = compact ? 'dark' : 'plain' %}", 'DARK TWIG BRANCHES: 0'],
     ['parenthesized Twig ternary result mentioning a mode is not a mode branch', 'templates/parenthesized-result-mode-ternary.html.twig', "{% set label = (compact ? theme : 'dark') %}", 'DARK TWIG BRANCHES: 0'],
     ['PHP match result mentioning a mode is not a mode branch', 'src/MatchResult.php', "<?php \$variant = match (\$density) { 'compact' => 'dark', default => 'plain' };", 'DARK PHP BRANCHES: 0'],
+    ['brace switch ignores nested alternative switch labels', 'src/BraceWithAlternativeSwitch.php', "<?php switch (\$theme) { case 'compact': switch (\$locale): case 'dark': break; endswitch; break; }", 'DARK PHP BRANCHES: 0'],
     ['unrelated dataset assignment is accepted', 'js/dataset-status.js', "document.documentElement.dataset.status = 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
   ];
   foreach ($positive_cases as [$name, $relative, $contents, $expected_message]) {
@@ -162,6 +164,7 @@ try {
     ['JavaScript switch method discriminant', 'js/switch-method.js', "switch (theme.toLowerCase()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch getter discriminant', 'js/switch-getter.js', "switch (getTheme()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['nested JavaScript if condition is scanned', 'js/nested-if.js', "if (getTheme(foo(bar())) === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['multiline JavaScript mode ternary is scanned', 'js/multiline-mode-ternary.js', "const layout = theme === 'dark'\n  ? 'compact'\n  : 'normal';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.theme assignment', 'js/dataset-theme.js', "document.documentElement.dataset.theme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.bsTheme assignment', 'js/dataset-bs-theme.js', "document.documentElement.dataset.bsTheme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dynamic dataset.theme assignment', 'js/dataset-dynamic.js', "document.documentElement.dataset.bsTheme = getTheme();", 'JavaScript has no color-mode layout behavior'],
@@ -171,6 +174,7 @@ try {
     ['dynamic data-theme setAttribute is rejected', 'js/set-attribute-theme.js', "element.setAttribute('data-theme', getTheme());", 'JavaScript has no color-mode layout behavior'],
     ['dynamic data-color-mode setAttribute is rejected', 'js/set-attribute-color-mode.js', "element.setAttribute('data-color-mode', nextMode);", 'JavaScript has no color-mode layout behavior'],
     ['dynamic data-color-scheme setAttribute is rejected', 'js/set-attribute-color-scheme.js', "element.setAttribute('data-color-scheme', getScheme());", 'JavaScript has no color-mode layout behavior'],
+    ['optional dynamic setAttribute is rejected', 'js/optional-set-attribute.js', "element.setAttribute?.('data-theme', getTheme());", 'JavaScript has no color-mode layout behavior'],
     ['Twig statement ternary', 'templates/set-ternary.html.twig', "{% set klass = theme == 'dark' ? 'compact' : 'standard' %}", 'Twig has no color-mode branch'],
     ['Twig colorScheme branch', 'templates/color-scheme.html.twig', "{% if colorScheme == 'dark' %}different{% endif %}", 'Twig has no color-mode branch'],
     ['Dark selector in tokens stylesheet', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] .fixture { padding: 1rem; }\n", 'Color mode is token-only'],
@@ -257,6 +261,7 @@ try {
     ['translucent text is composited before WCAG', '--aculta-text-primary: #f4efe8;', '--aculta-text-primary: rgba(244, 239, 232, 0.01);', 'meets WCAG AA'],
     ['malformed rgba alpha is rejected', '--bs-border-color-translucent: rgba(216, 208, 200, 0.22);', '--bs-border-color-translucent: rgba(216, 208, 200, nope);', 'color token --bs-border-color-translucent'],
     ['dark translucent Bootstrap border remains on approved value', '--bs-border-color-translucent: rgba(216, 208, 200, 0.22);', '--bs-border-color-translucent: #000000;', 'Dark --bs-border-color-translucent effectively maps'],
+    ['mixed legacy commas and modern slash alpha are invalid', '--aculta-text-primary: #f4efe8;', '--aculta-text-primary: rgb(244, 239, 232 / 1);', 'color token --aculta-text-primary'],
   ];
   foreach ($token_cases as [$name, $old, $new, $expected_message]) {
     $replace_dark($old, $new);
@@ -273,6 +278,14 @@ try {
   $fixtures++;
   if ($status !== 0) {
     $failures[] = 'fully opaque rgba foreground should retain its valid contrast';
+  }
+  $restore_tokens();
+
+  $replace_dark('--aculta-surface-page: #171513;', '--aculta-surface-page: rgb(23, 21, 19);');
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status !== 0) {
+    $failures[] = 'numerically equivalent rgb() dark surface should remain approved';
   }
   $restore_tokens();
 
