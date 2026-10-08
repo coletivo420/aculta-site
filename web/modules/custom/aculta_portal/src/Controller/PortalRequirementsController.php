@@ -4,10 +4,24 @@ namespace Drupal\aculta_portal\Controller;
 
 use Composer\Semver\Semver;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Administrative status report for the Portal's runtime integrations. */
 final class PortalRequirementsController extends ControllerBase {
+
+  public function __construct(
+    private readonly ThemeHandlerInterface $themeHandler,
+    private readonly string $appRoot,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('theme_handler'),
+      (string) $container->getParameter('app.root'),
+    );
+  }
 
   /** @var array<string, string>|null */
   private ?array $composerRequirements = NULL;
@@ -292,7 +306,7 @@ final class PortalRequirementsController extends ControllerBase {
 
   /** Builds the enabled public theme row. */
   private function buildBaseThemeRow(): array {
-    $exists = \Drupal::service('theme_handler')->themeExists('bootstrap5');
+    $exists = $this->themeHandler->themeExists('bootstrap5');
     $version = $this->packageVersion('drupal/bootstrap5');
     $minimum = $this->minimumConstraint('drupal/bootstrap5', '4.0.8');
     $compatible = $version !== NULL && $this->versionSatisfies($version, $minimum);
@@ -311,7 +325,7 @@ final class PortalRequirementsController extends ControllerBase {
 
   /** Builds the enabled public theme row. */
   private function buildThemeRow(): array {
-    $theme_exists = \Drupal::service('theme_handler')->themeExists('aculta420');
+    $theme_exists = $this->themeHandler->themeExists('aculta420');
     $default_theme = $this->config('system.theme')->get('default');
     $enabled = $theme_exists && $default_theme === 'aculta420';
     $status = $enabled ? 'ok' : 'error';
@@ -339,7 +353,7 @@ final class PortalRequirementsController extends ControllerBase {
   /** Reads the actual project requirement, falling back to the audited map. */
   private function minimumConstraint(string $package, string $fallback): string {
     if ($this->composerRequirements === NULL) {
-      $file = dirname(\Drupal::root()) . '/composer.json';
+      $file = dirname($this->appRoot) . '/composer.json';
       $decoded = is_readable($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
       $this->composerRequirements = is_array($decoded['require'] ?? NULL) ? $decoded['require'] : [];
     }
