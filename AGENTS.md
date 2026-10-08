@@ -336,9 +336,9 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - Por decisão explícita do projeto, Estados integrais podem ser versionados neste repositório público. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
 - Produção continua usando MariaDB. Nunca implantar `estados/*.sqlite` nem apontar produção para o Runtime.
 - Não editar um Estado imutável. Mudanças operacionais depois do restore pertencem somente ao Runtime.
-- Código custom deve usar APIs Drupal e permanecer compatível com SQLite e MariaDB. SQL específico exige justificativa.
+- Código custom deve utilizar APIs Drupal para acesso a dados. A portabilidade/migração entre SQLite e MariaDB não é responsabilidade de `aculta_portal`; pertence ao projeto independente **DBTNG-2**.
 - `web/sites/default/settings.local.php` e configurações locais permanecem fora do Git. Credenciais MariaDB de produção nunca entram em settings versionados.
-- Existe intenção futura de migrar o Runtime do Homelab para MariaDB quando o BDTGN estiver maduro para a integração. Até essa decisão ser executada, SQLite continua sendo a fonte operacional do Homelab e os Estados continuam snapshots SQLite.
+- Alterações futuras de mecanismo de banco e procedimentos de migração devem ser acompanhados exclusivamente no projeto **DBTNG-2**; não fazem parte das fases de modernização do Portal.
 
 ## Integrações Google e serviços externos
 

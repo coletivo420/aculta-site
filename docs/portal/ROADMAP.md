@@ -28,6 +28,10 @@ Core Drupal 11.3+ com verificação de APIs no Core instalado; preferir prática
 
 Na P1 havia 18 funções runtime procedurais no `.module`; após P4, zero e arquivo removido. Lifecycle procedural exigido pelo Core é exceção legítima. Testes completos em runtime ainda NÃO foram executados.
 
+## P5-extra-1 — remoção de escopo de portabilidade (CONCLUÍDA)
+
+Portabilidade, conversão, migração e compatibilidade entre motores SQLite/MariaDB **não pertencem** ao módulo `aculta_portal` nem à iniciativa **Modernização Drupal 11+ Aculta Portal**. Essa responsabilidade é exclusiva do projeto independente **DBTNG-2**. Não incluir testes de migração/portabilidade entre bancos, adaptadores de banco ou conversores nas fases P5, P9 ou P10 deste roadmap. É permitido documentar qual SGBD cada ambiente utiliza, sem atribuir ao Portal responsabilidade de migração ou compatibilidade entre motores. As consultas do Portal continuam obrigadas a usar APIs públicas do Drupal.
+
 ## P5 — EntityQuery, Views, Storage, DI e Access
 
 ### P5.1 — concluída
@@ -43,7 +47,7 @@ Na P1 havia 18 funções runtime procedurais no `.module`; após P4, zero e arqu
 Comparação pré/pós para cada display, critérios de access/cache, output vazio e registro de testes pendentes; teto do gate zerado somente para wrappers eliminados.
 
 ### P5.3 — EntityQuery/access
-Inventariar `getQuery()`, `entityQuery()`, `loadByProperties()`; impor `accessCheck(TRUE/FALSE)` explícito e justificado onde aplicável; validar filtros de UID, bundle, status, idioma, Domain, ownership e diferenças SQLite/MariaDB. `accessCheck(TRUE)` não substitui verificações individuais de entity access.
+Inventariar `getQuery()`, `entityQuery()`, `loadByProperties()`; impor `accessCheck(TRUE/FALSE)` explícito e justificado onde aplicável; validar filtros de UID, bundle, status, idioma, Domain, ownership. `accessCheck(TRUE)` não substitui verificações individuais de entity access.
 
 ### P5.4 — Controllers/DI
 - P5.4-A: `PortalController`, BlockManager e Social Auth.
@@ -72,7 +76,7 @@ P7.1 inventário listeners; P7.2 tags legadas e API atual; P7.3 isMainRequest e 
 P8.1 inventário; P8.2 substituições seguras; P8.3 Upgrade Status/Rector conforme pertinência; P8.4 matriz contrib; P8.5 PHP/Symfony/Composer; P8.6 matriz CURRENTLY RECOMMENDED IN D11 / DEPRECATED IN D11 / REMOVED/CHANGED IN D12 / ANNOUNCED FOR D13; P8-R revisão. Nunca declarar compatibilidade major sem validar Core e contrib.
 
 ## P9 — Hardening final
-P9.1 segredos/segurança; P9.2 erros/failure modes; P9.3 SQLite/MariaDB; P9.4 performance; P9.5 gates; P9.6 código órfão; P9.7 documentação/IA; P9.8 rollback/release readiness; P9-R revisão acumulada.
+P9.1 segredos/segurança; P9.2 erros/failure modes; P9.3 segurança operacional e confiabilidade; P9.4 performance; P9.5 gates; P9.6 código órfão; P9.7 documentação/IA; P9.8 rollback/release readiness; P9-R revisão acumulada.
 
 ## P10 — Codex/Homelab
 Verificar branch, HEAD e main; lint PHP integral e gate; Composer validate/audit; `drush cr`; `updatedb:status` e `config:status`; smoke Conta/Wiki/Cursos/Social Auth/Commerce/Domain e isolamento A/B; correções finas e revisão final. Não executar updb/cim/cex automaticamente. Merge só após validação e autorização.
@@ -158,7 +162,6 @@ Avaliar/implementar somente com necessidade e Runtime:
 - revisar service locator residual;
 - access/cache;
 - cron/queues/logs/headers;
-- portabilidade SQLite/MariaDB;
 - dependency audit;
 - auditar cacheability dos tokens de URL/imagem derivados de `DomainPurposeManager`, incluindo entidade Domain/alias e variação de host/scheme (`domain` / `url.site`) antes de considerar a P6 de cache concluída;
 - failure modes/rollback.

@@ -1,5 +1,12 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P5-extra-1: expurgo de portabilidade SQLite/MariaDB
+
+- Remove a responsabilidade de portabilidade de bancos do roadmap P5.3, P9.3 e hardening geral do `aculta_portal`.
+- Define **DBTNG-2** como projeto independente e único responsável por conversão/migração/portabilidade entre SQLite e MariaDB.
+- Atualiza as regras para agentes, o handoff e o padrão normativo; preserva menções a SQLite/MariaDB que apenas descrevem ambientes.
+- Não altera código runtime, dados, configuração do banco nem testes.
+
 ## 2026-10-08 — Modernização Drupal 11+ Aculta Portal: documentação
 
 - Roadmap detalhado P0–P10 e P5.x consolidado com próximos passos.

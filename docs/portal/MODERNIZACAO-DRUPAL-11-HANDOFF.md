@@ -20,6 +20,10 @@ P0–P4 com revisões estáticas concluídas. Hooks runtime procedurais foram su
 ## Próxima execução P5.2-A
 Auditar CoursesController.php, views_embed_view('courses_catalog', 'block_1') e definição real da View. Confirmar API Core instalada e, se equivalente, preferir render element Views nativo. Preservar display, argumentos, access, cache, pager, filtros, attachments e empty state. Atualizar gate, docs, changelog e PR; parar após esta subfase.
 
+## P5-extra-1 — separação DBTNG-2
+
+Portabilidade, migração e conversão SQLite/MariaDB pertencem exclusivamente ao projeto separado **DBTNG-2**, e não ao `aculta_portal`. Não adicionar essa responsabilidade a P5, P9, P10, gates ou testes do Portal. Menções aos SGBDs para descrever ambientes são permitidas.
+
 ## Política de execução
 Mesma PR #90 e branch. Não mergear, rebasiar ou usar force-push. Commits pequenos, padrão Drupal Core 11.3+ e preferir APIs modernas. Diferenciar deprecações oficiais de dívida normativa ACULTA. Nunca modificar Core/contrib, armazenar credenciais, criar estado paralelo ou enfraquecer segurança. MAIN mantém administração, carrinho, checkout e pagamentos.
 
