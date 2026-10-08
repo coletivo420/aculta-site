@@ -5,6 +5,16 @@ Documentação canônica da camada de integração `aculta_portal`.
 O Portal integra Drupal Core/contrib, Domain, Conta, Commerce, LMS e conteúdo.
 Ele não substitui as fontes de verdade desses subsistemas.
 
+## Padrão de desenvolvimento
+
+Toda manutenção do `aculta_portal` segue o
+[Padrão Drupal 11+](DRUPAL-11-STANDARDS.md): hooks runtime OOP, DI, callbacks
+Form API por serviço, Render API/cacheability explícita, Entity/Views APIs
+injetadas, `strict_types` e ausência de service locator em `src/`.
+
+O gate `scripts/validate-aculta-portal-drupal11.php` é obrigatório após
+mudanças estruturais.
+
 ## Ler primeiro
 
 - [Arquitetura](ARCHITECTURE.md)
