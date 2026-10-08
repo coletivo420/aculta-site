@@ -121,35 +121,59 @@ Não pode ser consumido diretamente por Twig/SDC.
 
 É a única estrutura específica de purpose autorizada a atravessar a fronteira.
 
-Contrato alvo inicial:
+A pesquisa de Drupal Core reforça duas regras:
+
+1. **dados tipados e renderables são coisas diferentes** — SDC usa props para
+   dados estruturados e slots para conteúdo renderizável;
+2. **cacheability pertence ao render tree**, não a um campo arbitrário do
+   view-model.
+
+Por isso, o contrato alvo passa a separar identidade escalar de regiões
+renderizáveis:
 
 ```text
 domain_presentation
-├── purpose              string estável
-├── title                string
-├── short_title          string|null
-├── home_url             Url|string seguro
-├── branding
-│   ├── logo             renderable|string|null
+├── identity
+│   ├── purpose          string estável
+│   ├── title            string
+│   ├── short_title      string|null
+│   ├── home_url         string seguro
 │   └── logo_alt         string|null
-├── navigation           render array|null
-├── actions              render array|null
-└── cacheability         metadata preservada no render array/contexto
+└── regions
+    ├── brand_media      render array|null
+    ├── navigation       render array|null
+    └── actions          render array|null
 ```
+
+`identity` é **props-ready**: somente escalares/arrays simples que podem ser
+validados por schema quando o shell virar SDC.
+
+`regions` é **slots-ready**: render arrays construídos por APIs Drupal, sem
+pré-renderizar HTML em strings.
+
+Cache contexts, tags e max-age **não fazem parte de
+`domain_presentation`**. Eles são acumulados no Portal e aplicados ao render
+array da página com `CacheableMetadata`, para que a Render API faça o bubbling
+normal.
 
 Esse formato é deliberadamente pequeno. Campos só entram quando existe
 consumidor real.
 
-O view-model:
+O view-model que chega ao tema:
 
 - não contém entidade `Domain`;
 - não contém hostname;
 - não contém service IDs;
 - não contém objetos de storage;
-- não contém regra de access;
+- não contém objetos de acesso ou decisão de permissão;
+- não contém `CacheableMetadata` ou outro objeto interno do Portal;
 - não contém cores literais ou classes CSS específicas de purpose;
 - não contém decisão light/dark;
 - não contém markup estrutural do header.
+
+O Portal pode usar internamente um value object imutável para montar esse
+resultado e carregar cacheability, mas esse objeto **não atravessa para Twig**.
+A travessia final é sempre array neutro + render arrays.
 
 ### 3. Shell presentation — ACULTA420 only
 
@@ -228,39 +252,158 @@ como render array em `domain_presentation.navigation`.
 
 ## Cache e access
 
-O contrato não pode transformar dados privados/variáveis em strings sem
-cacheability.
+O contrato não pode transformar dados privados/variáveis em strings e depois
+tentar reconstruir cacheability no tema.
+
+O padrão de Core é acumular `CacheableMetadata` durante as decisões e aplicá-la
+ao render array final. `MenuLinkTree::build()`, por exemplo, agrega a
+cacheability dos access results e links antes de produzir o menu renderizável.
 
 Regras:
 
 - access é resolvido antes da apresentação;
 - render arrays mantêm `#cache`;
+- o builder acumula dependências com `CacheableMetadata`;
+- a ponte de `preprocess_page` mescla essa metadata com a árvore existente,
+  sem sobrescrever contexts/tags/max-age já presentes;
 - no mínimo revisar contextos `domain`, `route`, `url.path`,
-  `user`/`user.permissions` quando aplicável;
-- entidades usadas pelo Portal entram como cacheable dependencies no Portal;
-- o tema não compensa metadata perdida.
+  `user`/`user.permissions` quando realmente afetarem a saída;
+- entidades/configs usados pelo Portal entram como cacheable dependencies no
+  Portal;
+- menu deve preferir Menu API/MenuLinkTree em vez de arrays manuais, preservando
+  access e o cache tag `config:system.menu.*`;
+- vazio por access continua carregando a cacheability que explica por que está
+  vazio;
+- o tema não compensa metadata perdida e não adiciona contexts funcionais por
+  adivinhação.
 
 ## Pontos de integração alvo
 
-A implementação 0.2-B.2 deve preferir um serviço dedicado no Portal, por
-exemplo conceitualmente:
+Drupal executa preprocess de módulos antes do preprocess do tema. Isso cria uma
+ponte natural: o Portal prepara a variável; o ACULTA420 a consome depois.
+
+A implementação 0.2-B.2 deve usar um serviço dedicado no Portal:
 
 ```text
-aculta_portal.presentation.domain
+DomainPurposeManager + Menu API + config/entidades autorizadas
         ↓
 DomainPresentationBuilder
         ↓
-preprocess_page
+DomainPresentation (objeto interno do Portal + cacheability)
         ↓
-$variables['domain_presentation']
+PortalHooks::preprocessPage()
+        ├── $variables['domain_presentation'] = array neutro
+        └── merge CacheableMetadata na render tree da página
         ↓
-ACULTA420 page.html.twig / futuros SDCs
+ThemeHooks::preprocessPage()
+        ↓
+page.html.twig / futuros SDCs ACULTA420
 ```
+
+O objeto interno pode implementar `CacheableDependencyInterface` ou expor
+`CacheableMetadata`, mas **nunca é passado para Twig**.
 
 O nome concreto será decidido na implementação, mas deve existir **um único
 builder/presenter autoritativo** para o shell.
 
+### Regra de dependência
+
+O Portal **não deve criar** `#type: component` / `#component:
+aculta420:...`. Embora Core permita renderizar SDCs via render arrays, fazer
+isso aqui inverteria a dependência e acoplaria o módulo funcional ao provider do
+tema.
+
+A divisão correta é:
+
+```text
+Portal:
+  dados + URLs + access + cache + renderables neutros
+
+Tema:
+  escolhe SDC/Bootstrap + mapeia identity → props + regions → slots
+```
+
+Assim o Portal continua semanticamente independente do mecanismo visual atual.
+
 Não espalhar `match ($purpose)` por hooks, controllers e templates.
+
+## Modelos Drupal usados como referência
+
+### Theme API / preprocess
+
+Drupal permite que módulos adicionem/altere variáveis de templates por
+`hook_preprocess_HOOK`; em Drupal 11.2 esses preprocess hooks suportam
+implementação OOP com `#[Hook('preprocess_HOOK')]`. Em Drupal 11.3 temas também
+suportam hooks OOP. Isso valida a direção já adotada por
+`PortalHooks::preprocessPage()` e `ThemeHooks::preprocessPage()`.
+
+Para compatibilidade futura, não introduzir novas funções mágicas
+`template_preprocess_*`: Core 11.2/11.3 move preprocess inicial para callbacks
+registrados no theme hook e remove caminhos legados rumo ao Drupal 12.
+
+### Core Navigation / Toolbar
+
+O módulo Navigation do Core separa construção funcional da apresentação:
+renderer/services montam render arrays, acumulam cacheability e templates
+recebem regiões renderizáveis simples. A top bar recebe `tools`, `context` e
+`actions`, em vez de entidades/serviços.
+
+Esse é o modelo mais próximo do nosso shell:
+
+```text
+Core Navigation                 ACULTA
+renderer/service                DomainPresentationBuilder
+      ↓                                ↓
+render arrays + cacheability     identity + regions + cacheability
+      ↓                                ↓
+theme variables                 domain_presentation
+      ↓                                ↓
+template                        ACULTA420
+```
+
+Não copiar a implementação administrativa do Navigation; copiar a **separação de
+responsabilidades**.
+
+### MenuLinkTree
+
+`MenuLinkTree::build()` agrega cacheability de access e links e produz um
+render array com o cache tag da configuração do menu. Portanto a navegação do
+shell não deve ser reduzida a uma lista de URLs/títulos manualmente construída
+quando a Menu API já consegue preservar access/cache.
+
+### SDC / UI Patterns
+
+Core SDC recomenda:
+
+- props para dados estritamente estruturados;
+- slots para renderables;
+- render array `#type: component` quando PHP é o consumidor do componente;
+- `#cache` e `#attached` continuam disponíveis.
+
+UI Patterns reforça usar renderables em slots em vez de decompor conteúdo
+Drupal em strings/URLs quando isso faria perder capacidades do Render API.
+
+No ACULTA, quem consome o SDC do shell será **o tema**, não o Portal. O Portal
+entrega a matéria-prima neutra.
+
+### Domain integrations
+
+Integrações modernas com Domain tendem a manter Domain como contexto da camada
+funcional e filtrar/decidir antes da apresentação. Isso reforça nossa regra de
+que Domain Negotiator/entidade/hostname não chegam ao tema.
+
+## Compatibilidade Drupal 11+
+
+Baseline recomendado para esta fronteira:
+
+- módulos: OOP preprocess com `#[Hook]` (Drupal 11.2+);
+- temas: OOP hooks com `#[Hook]` (Drupal 11.3+);
+- não criar novas dependências em módulos auxiliares de preprocess;
+- Render API + `CacheableMetadata` como contrato de cache;
+- Menu API para menus;
+- SDC Core para componentes estáveis;
+- evitar APIs legadas `template_preprocess_*` que seguem rumo à remoção no
+  Drupal 12.
 
 ## O que não deve entrar em 0.2-B
 
@@ -287,10 +430,14 @@ A fase estará pronta para avançar à 0.2-C quando:
 4. nenhuma entidade Domain chegar a Twig/SDC;
 5. nenhum arquivo do tema consultar hostname, Domain ou serviços do Portal;
 6. URLs cross-domain forem construídas pelo Portal;
-7. cache/access forem preservados;
-8. fixtures cobrirem purpose conhecido, purpose sem branding e fallback;
-9. documentação e gate anti-regressão refletirem o contrato;
-10. nenhuma mudança visual estrutural tiver sido introduzida na 0.2-B.
+7. cache/access forem preservados por `CacheableMetadata` e render arrays,
+   sem campo fake `cacheability` no view-model;
+8. menu/actions permanecerem renderables e não HTML pré-renderizado;
+9. o Portal não referenciar provider SDC `aculta420:*`;
+10. fixtures cobrirem purpose conhecido, purpose sem branding, fallback,
+    cache contexts/tags e saída vazia por access;
+11. documentação e gate anti-regressão refletirem o contrato;
+12. nenhuma mudança visual estrutural tiver sido introduzida na 0.2-B.
 
 ## Próximas etapas
 
