@@ -169,12 +169,27 @@ try {
 
   file_put_contents(
     $pagePath,
-    str_replace('{% if aculta_header_has_content %}', '{% if page.header %}', $originalPage),
+    str_replace(
+      '{% if not aculta_has_system_branding and aculta_domain_brand_fallback %}',
+      '{% if aculta_domain_brand_fallback %}',
+      $originalPage,
+    ),
   );
   $expectFinding(
-    'fallback bypasses explicit renderable-content signal',
+    'fallback ignores canonical system branding block',
     $run($tempTheme),
-    'Existing Drupal header must remain primary',
+    'Fallback must be controlled by absence of the canonical system branding block.',
+  );
+  file_put_contents($pagePath, $originalPage);
+
+  file_put_contents(
+    $pagePath,
+    str_replace('{{ page.header }}', '', $originalPage),
+  );
+  $expectFinding(
+    'existing header render array is dropped',
+    $run($tempTheme),
+    'Existing Drupal header render array must always be preserved.',
   );
   file_put_contents($pagePath, $originalPage);
 
