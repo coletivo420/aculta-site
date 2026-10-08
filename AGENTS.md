@@ -338,7 +338,8 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - não depender de empate de prioridade entre response subscribers quando a ordem afeta redirect safety;
 - sessão compartilhada entre purposes deve ser validada via `session.storage.options.cookie_domain` do ambiente; baseline `cookie_samesite: Lax`;
 - AJAX/fetch do Portal é same-origin; não habilitar CORS para transportar estado/formulários entre purposes;
-- checkout/pagamento Drupal Commerce pertence sempre ao purpose `main`, independentemente de origem SHOP/COURSES/SUPPORT; usar `DomainRoutePolicy`, nunca listas paralelas de rotas ou checkout por subdomínio;
+- carrinho/checkout/pagamento Drupal Commerce pertencem sempre ao purpose `main`, independentemente de origem SHOP/COURSES/SUPPORT; usar `DomainRoutePolicy`, nunca listas paralelas de rotas ou zona transacional por subdomínio;
+- futura UI de carrinho na barra multidomínio consome contrato neutro preparado pelo Portal (URL MAIN e, quando aprovado, contagem/estado); ACULTA420 não consulta Commerce nem resolve hostname;
 - links de entrada no checkout devem apontar diretamente a MAIN quando o Portal puder resolvê-los; POST/PUT/PATCH/DELETE de payment/checkout em host errado não são redirecionados;
 - referências canônicas: `docs/portal/ADMIN-DOMAIN-POLICY.md`, `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md` e `docs/portal/PAYMENT-DOMAIN-POLICY.md`.
 
