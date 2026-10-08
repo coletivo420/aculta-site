@@ -3,6 +3,7 @@
 namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\AccountShellBuilder;
+use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\block_content\BlockContentInterface;
@@ -50,6 +51,8 @@ final class PortalHooks {
     private readonly ModuleExtensionList $moduleList,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.auth_integration')]
+    private readonly AuthIntegrationManager $authIntegrationManager,
     #[Autowire(service: 'aculta_portal.account_shell_builder')]
     private readonly AccountShellBuilder $accountShellBuilder,
     #[Autowire(service: 'aculta_portal.breadcrumb_builder')]
@@ -295,7 +298,7 @@ final class PortalHooks {
       && $this->routeMatch->getRouteName() === 'user.login'
       && $this->currentPath->getPath() === '/entrar'
       && $this->moduleHandler->moduleExists('social_auth')
-      && $this->googleLoginConfigured()) {
+      && $this->authIntegrationManager->isGoogleConfigured()) {
       $form['social_auth_divider'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-login__divider']],
@@ -304,10 +307,14 @@ final class PortalHooks {
         'line_after' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['aria-hidden' => 'true']],
         '#weight' => 20,
       ];
-      $form['social_auth'] = $this->blockManager
-        ->createInstance('social_auth_login', [])
-        ->build();
-      $form['social_auth']['#weight'] = 21;
+      $form['social_auth'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-auth-provider']],
+        'provider' => $this->blockManager
+          ->createInstance('social_auth_login', [])
+          ->build(),
+        '#weight' => 21,
+      ];
     }
 
     $form_object = $form_state->getFormObject();
@@ -450,11 +457,6 @@ final class PortalHooks {
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
     ];
-  }
-
-  private function googleLoginConfigured(): bool {
-    $config = $this->configFactory->get('social_auth_google.settings');
-    return !empty($config->get('client_id')) && !empty($config->get('client_secret'));
   }
 
   /**

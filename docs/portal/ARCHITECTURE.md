@@ -45,6 +45,28 @@ funcional já possui a informação.
 - manter comportamento AJAX com APIs do Drupal;
 - adicionar cache contexts/tags/max-age apropriados.
 
+### Authentication integration
+
+Social Auth e CAPTCHA/Turnstile são integrações e políticas do `aculta_portal`.
+O Portal decide quando apresentar um provider, aplica a política de formulários
+protegidos e integra destinos, Domain purpose e a experiência de Conexões sem
+copiar a implementação dos módulos upstream.
+
+O tema não pode conhecer nomes de providers, secrets, engine CAPTCHA ou rotas
+OAuth. Ele recebe estruturas/classes neutras de apresentação do Portal. Core e
+contrib mantêm a implementação de protocolo/provider; a infraestrutura fornece
+credenciais por Key/environment.
+
+```text
+Social Auth / CAPTCHA / Turnstile
+          ↓
+      aculta_portal
+          ↓
+neutral render contract
+          ↓
+       ACULTA420
+```
+
 ### O Portal não pode
 
 - criar autenticação própria;

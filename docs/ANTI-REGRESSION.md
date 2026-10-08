@@ -47,6 +47,11 @@ snapshots de fases e runbooks históricos.
 - não criar fallback para Math CAPTCHA/reCAPTCHA/outro challenge;
 - usuário `authenticated` usa `skip CAPTCHA`; anônimo protegido vê Turnstile;
 - segredos OAuth/Turnstile/SMTP não entram no Git.
+- ACULTA420 só apresenta formulários e estruturas de autenticação com classes semânticas neutras;
+- Social Auth, disponibilidade de providers, destinos/callbacks OAuth, account linking e política CAPTCHA pertencem ao `aculta_portal`;
+- Core/contrib implementa protocolos e providers; credenciais pertencem à infraestrutura e chegam por Key/environment;
+- é proibido consultar Social Auth config, construir rotas OAuth, escolher CAPTCHA ou implementar Turnstile no tema/Twig;
+- uma integração nova segue: Core/contrib → Portal → contrato neutro de apresentação → ACULTA420.
 
 ## E-mail e verificação de conta
 
@@ -110,6 +115,7 @@ snapshots de fases e runbooks históricos.
 - regra antiga só sai após paridade visual, mobile, teclado/foco, AJAX
   reattachment e fallback;
 - CSS de admin/diagnóstico pode permanecer no módulo.
+- CSS de autenticação pode estilizar formulários Core e classes neutras do Portal, como `.aculta-login__divider` e `.aculta-auth-provider`; não pode depender de seletores internos de Social Auth, Google ou CAPTCHA/Turnstile.
 
 ## Configuração e segredos
 

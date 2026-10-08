@@ -53,6 +53,25 @@ Não deve empurrar storage ou regra de negócio para o tema.
 Não é dono de autenticação, pagamento, matrícula, progresso, Domain access,
 persistência ou autorização.
 
+### Authentication and anti-bot boundary
+
+ACULTA420 owns presentation only: layout, typography, spacing, focus, responsive
+behavior, reduced motion, generic form controls, and neutral classes such as
+`aculta-login__divider` and `aculta-auth-provider`. `css/components/auth.css`
+styles Drupal account forms and neutral Portal markup; it does not know which
+provider or anti-bot mechanism is active.
+
+`aculta_portal` owns authentication integration and policy: provider
+availability, login render structures, destinations, Domain purpose, account
+linking/connections, disconnect policy, and anonymous/authenticated CAPTCHA
+policy. It supplies neutral render markup for ACULTA420 to style.
+
+Drupal Core and contrib own protocol and provider implementations, including
+Social Auth, CAPTCHA, and Turnstile. Infrastructure owns credentials, exposed
+to Drupal through Key and the environment contract. ACULTA420 must not depend on
+those modules, inspect their configuration, construct OAuth routes, or decide
+which CAPTCHA engine is enabled.
+
 ### Hooks e configuração
 
 Hooks do tema vivem em `src/Hook/ThemeHooks.php`, usam `#[Hook]` e DI/autowiring.

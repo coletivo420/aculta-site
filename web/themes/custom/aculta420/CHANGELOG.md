@@ -2,6 +2,12 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## [Unreleased]
+
+- Formaliza autenticação/anti-bot como fronteira de apresentação: ACULTA420 estiliza formulários e markup neutro do Portal sem depender de Social Auth, OAuth, CAPTCHA ou Turnstile.
+- CSS de botões usa o contrato semântico `.aculta-auth-provider`, fornecido pelo Portal, em vez de classes específicas de provider.
+- Gate da Foundation impede referências técnicas de autenticação e anti-bot no runtime do tema e dependências correspondentes em info/libraries.
+
 ## 0.1.0 — Foundation — 2026-10-07
 
 ### Identidade técnica

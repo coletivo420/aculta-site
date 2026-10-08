@@ -2,6 +2,7 @@
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
@@ -26,6 +27,7 @@ final class PortalController extends ControllerBase {
     private readonly \Drupal\aculta_portal\AccountCoursesManager $accountCourses,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly UserDataInterface $userData,
+    private readonly AuthIntegrationManager $authIntegrationManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -36,6 +38,7 @@ final class PortalController extends ControllerBase {
       $container->get('aculta_portal.account_courses'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('user.data'),
+      $container->get('aculta_portal.auth_integration'),
     );
   }
 
@@ -136,8 +139,7 @@ final class PortalController extends ControllerBase {
 
   public function connections(): array {
     $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
-    $config = $this->config('social_auth_google.settings');
-    $google_ready = !empty($config->get('client_id')) && !empty($config->get('client_secret'));
+    $google_ready = $this->authIntegrationManager->isGoogleConfigured();
     $links = [];
     if ($this->moduleHandler()->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
       $links = $this->entities->getStorage('social_auth')->loadByProperties([
@@ -185,9 +187,13 @@ final class PortalController extends ControllerBase {
     }
     elseif ($google_ready) {
       $items['google_status'] = ['#plain_text' => $this->t('Nenhuma conta Google está conectada.')];
-      $items['google_login'] = \Drupal::service('plugin.manager.block')
-        ->createInstance('social_auth_login', [])
-        ->build();
+      $items['google_login'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-auth-provider']],
+        'provider' => \Drupal::service('plugin.manager.block')
+          ->createInstance('social_auth_login', [])
+          ->build(),
+      ];
     }
     else {
       $items['google_status'] = ['#plain_text' => $this->t('A conexão com o Google estará disponível quando a configuração institucional estiver concluída.')];

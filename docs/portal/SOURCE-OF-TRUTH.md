@@ -3,15 +3,32 @@
 O Portal agrega experiências; ele não deve se tornar dono acidental dos dados
 dos módulos que integra.
 
+## Ownership de autenticação
+
+| Concern | Owner |
+| --- | --- |
+| Authentication account | Drupal User |
+| OAuth provider | Social Auth contrib |
+| OAuth integration/policy | `aculta_portal` |
+| CAPTCHA engine | CAPTCHA/Turnstile contrib |
+| CAPTCHA policy | `aculta_portal` |
+| Secrets | Drupal Key + environment/infrastructure |
+| Auth visual presentation | ACULTA420 |
+
 | Capacidade | Fonte de verdade | Implementação | Papel do Portal | Purpose | Storage próprio do Portal |
 | --- | --- | --- | --- | --- | --- |
-| Login/conta | Drupal User | Core User | UX, rotas e shell | ACCOUNT | Não |
+| Authentication account | Drupal User | Core User | UX, rotas, sessão, senha e status | ACCOUNT | Não |
 | Dados pessoais | Profile | Profile | formulário integrado | ACCOUNT | Não |
 | Endereço | Profile customer + Address | Profile + Address | central de dados e UX | ACCOUNT | Não |
 | CEP | Address preenchido via ViaCEP | CEP Autocomplete | acessibilidade e integração | ACCOUNT | Não |
 | Foto | User/file/image/crop | Core + Crop/Image Widget Crop | editor integrado | ACCOUNT | Não |
 | E-mail | Drupal User | Change Mail + Email Confirmer | fluxo integrado | ACCOUNT | Não |
-| OAuth | contas Social Auth | Social Auth | conexões no painel | ACCOUNT | Não |
+| OAuth provider | vínculos/contas OAuth | Social Auth contrib | API upstream | ACCOUNT | Não |
+| OAuth integration/policy | configuração/provider upstream | aculta_portal + Social Auth APIs | disponibilidade, destinos, Domain, conexões e desconexão | ACCOUNT | Não |
+| CAPTCHA engine | challenge e validação | CAPTCHA/Turnstile contrib | implementação upstream | formulários públicos | Não |
+| CAPTCHA policy | formulários e grupos protegidos | aculta_portal + configuração Drupal | política anônimo/autenticado, exclusões e failure behavior | públicos | Não |
+| Secrets | credenciais externas | Drupal Key + environment | fornece referências e Config Overrides | integrações | Não |
+| Auth visual presentation | markup/layout neutro | ACULTA420 | aparência de formulários e providers | ACCOUNT | Não |
 | Apoio | Commerce Order/Item | Commerce + Donation Flow | resumo e entrada do fluxo | SUPPORT/ACCOUNT | Não |
 | Pagamento | Commerce Payment | Commerce + gateway | status/segurança | SUPPORT/ACCOUNT | Não |
 | Cursos | Group LMS Course | Drupal LMS | catálogo/resumo | COURSES/ACCOUNT | Não |

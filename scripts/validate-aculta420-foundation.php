@@ -37,6 +37,40 @@ $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
 $assert(($info['version'] ?? NULL) === '0.1.0', 'Theme metadata remains on Foundation version 0.1.0.');
+$forbiddenIntegrationModules = ['social_auth', 'social_auth_google', 'captcha', 'turnstile', 'key'];
+$themeInfoDependencies = array_map(
+  static fn(string $dependency): string => str_contains($dependency, ':')
+    ? substr($dependency, strrpos($dependency, ':') + 1)
+    : $dependency,
+  $info['dependencies'] ?? [],
+);
+$assert(
+  array_intersect($forbiddenIntegrationModules, $themeInfoDependencies) === [],
+  'Theme info has no Social Auth, CAPTCHA, Turnstile, or Key dependencies.',
+);
+
+$themeBoundaryPatterns = [
+  'social_auth' => '/social[-_]auth(?:[-_.][a-z0-9]+)*/i',
+  'captcha' => '/captcha/i',
+  'turnstile' => '/turnstile/i',
+  'oauth_config' => '/GOOGLE_OAUTH_CLIENT_(?:ID|SECRET)|social_auth_google\.settings|social_auth\.network\.(?:redirect|callback)|\/oauth\/google/i',
+];
+$themeBoundaryCounts = array_fill_keys(array_keys($themeBoundaryPatterns), 0);
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {
+  if (!$file->isFile() || !in_array(strtolower($file->getExtension()), ['php', 'twig', 'yml', 'yaml', 'js', 'css'], TRUE)) {
+    continue;
+  }
+  $source = file_get_contents($file->getPathname());
+  foreach ($themeBoundaryPatterns as $boundary => $pattern) {
+    if (preg_match($pattern, $source)) {
+      $themeBoundaryCounts[$boundary]++;
+    }
+  }
+}
+$assert($themeBoundaryCounts['social_auth'] === 0, 'THEME SOCIAL AUTH REFERENCES: 0');
+$assert($themeBoundaryCounts['captcha'] === 0, 'THEME CAPTCHA REFERENCES: 0');
+$assert($themeBoundaryCounts['turnstile'] === 0, 'THEME TURNSTILE REFERENCES: 0');
+$assert($themeBoundaryCounts['oauth_config'] === 0, 'THEME OAUTH CONFIG REFERENCES: 0');
 
 $lock = json_decode(file_get_contents($root . '/composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $bootstrapPackage = array_values(array_filter(
@@ -53,6 +87,7 @@ $assert(!str_contains($hookSource, '\\Drupal::'), 'Theme hook class uses DI inst
 $assert(!str_contains($hookSource, 'aculta_portal'), 'Theme hook class has no direct dependency on aculta_portal.');
 
 $libraries = Yaml::parseFile($themeRoot . '/aculta420.libraries.yml');
+$libraryIntegrationDependencies = [];
 foreach ($libraries as $libraryName => $definition) {
   foreach (($definition['css'] ?? []) as $group => $assets) {
     foreach (array_keys($assets ?? []) as $asset) {
@@ -68,7 +103,17 @@ foreach ($libraries as $libraryName => $definition) {
     }
     $assert(is_file($themeRoot . '/' . $asset), 'Library asset exists: ' . $libraryName . ' -> ' . $asset);
   }
+  foreach ($definition['dependencies'] ?? [] as $dependency) {
+    $extension = explode('/', (string) $dependency, 2)[0];
+    if (in_array($extension, $forbiddenIntegrationModules, TRUE)) {
+      $libraryIntegrationDependencies[] = $dependency;
+    }
+  }
 }
+$assert(
+  $libraryIntegrationDependencies === [],
+  'Theme libraries do not depend on Social Auth, CAPTCHA, Turnstile, or Key libraries.',
+);
 
 $expectedWebAssets = [
   'aculta420-favicon.ico',
