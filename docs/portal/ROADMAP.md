@@ -28,6 +28,10 @@ Core Drupal 11.3+ com verificação de APIs no Core instalado; preferir prática
 
 Na P1 havia 18 funções runtime procedurais no `.module`; após P4, zero e arquivo removido. Lifecycle procedural exigido pelo Core é exceção legítima. Testes completos em runtime ainda NÃO foram executados.
 
+## P5-extra-2 — economia de tokens e roteamento de modelos (CONCLUÍDA)
+
+Política para agentes: pesquisa, inventário e edição simples usam modelo econômico; implementação moderada usa capacidade proporcional; revisão final e atividades sensíveis (access, cache privado, Domain, Auth e Commerce) exigem modelo de maior capacidade. Utilitário somente leitura em `scripts/portal-agent-budget.py`, política em [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md). Não há mudança automática de modelo nem preços presumidos. A próxima execução continua P5.2-A.
+
 ## P5-extra-1 — remoção de escopo de portabilidade (CONCLUÍDA)
 
 Portabilidade, conversão, migração e compatibilidade entre motores SQLite/MariaDB **não pertencem** ao módulo `aculta_portal` nem à iniciativa **Modernização Drupal 11+ Aculta Portal**. Essa responsabilidade é exclusiva do projeto independente **DBTNG-2**. Não incluir testes de migração/portabilidade entre bancos, adaptadores de banco ou conversores nas fases P5, P9 ou P10 deste roadmap. É permitido documentar qual SGBD cada ambiente utiliza, sem atribuir ao Portal responsabilidade de migração ou compatibilidade entre motores. As consultas do Portal continuam obrigadas a usar APIs públicas do Drupal.
