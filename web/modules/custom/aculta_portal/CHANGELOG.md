@@ -6,6 +6,24 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Modernização Drupal 11+
+
+- Define Drupal Core 11.3+ como baseline arquitetural do `aculta_portal`.
+- Migra hooks runtime procedurais para classes OOP `#[Hook]` e remove
+  `aculta_portal.module`.
+- Move callbacks de Form API para serviço DI resolvido por
+  `service.id:method`.
+- Remove service locator explícito de `src/` e injeta dependências em
+  controllers/forms/hooks.
+- Substitui wrappers estáticos/convenientes de Views/Entity nos pontos
+  modernizados por storage/services injetados.
+- Padroniza subscribers com tag Drupal `event_subscriber`.
+- Padroniza `strict_types=1` nas classes runtime.
+- Adiciona `docs/portal/DRUPAL-11-STANDARDS.md` e o gate
+  `scripts/validate-aculta-portal-drupal11.php`.
+- Mantém lifecycle/update hooks procedurais em `.install` conforme a API Core.
+
+
 ### Administração multidomínio e redirects cross-domain
 
 - Centraliza `/painel-administrativo/**` no purpose MAIN: GET/HEAD acessados por subdomínio são canonicalizados para o mesmo path/query no Domain MAIN via `DomainPurposeManager`.
