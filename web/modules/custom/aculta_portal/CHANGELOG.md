@@ -1,5 +1,13 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P2.1: Token API hooks em OOP
+
+- Migra somente `hook_token_info()` e `hook_tokens()` de `aculta_portal.module` para `src/Hook/TokenHooks.php` com `#[Hook]`.
+- Substitui service locators dessa família por DI explícita para config, entity storage, Domain purpose/negotiator, request stack, file URL e tradução.
+- Preserva os tokens institucionais/editoriais, URL canônica por Domain Source, aliases locais, imagem, autoria e BubbleableMetadata.
+- Reduz o allowlist procedural do gate em duas funções e passa a exigir explicitamente os dois hooks OOP.
+- Nenhuma outra família de hooks, Form API callback, controller, subscriber ou regra multidomínio é alterada nesta subfase.
+
 ## 2026-10-08 — P1: padrão Drupal 11+ e gate progressivo
 
 - Drupal Core 11.3+ passa a ser o baseline arquitetural explícito do módulo.

@@ -74,8 +74,6 @@ $check(
 
 $legacyProceduralFunctions = [
   'aculta_portal_metatag_tags_alter',
-  'aculta_portal_token_info',
-  'aculta_portal_tokens',
   'aculta_portal_node_presave',
   'aculta_portal_metatags_alter',
   'aculta_portal_form_node_form_alter',
@@ -92,6 +90,18 @@ $legacyProceduralFunctions = [
   'aculta_portal_library_info_alter',
   'aculta_portal_validate_donation_amount',
 ];
+
+$tokenHooks = $srcRoot . '/Hook/TokenHooks.php';
+$tokenHooksSource = $read($tokenHooks);
+$check(is_file($tokenHooks), 'P2 TokenHooks class must exist.');
+$check(
+  substr_count($tokenHooksSource, "#[Hook('token_info')]") === 1,
+  'P2 TokenHooks must implement token_info as an OOP hook.',
+);
+$check(
+  substr_count($tokenHooksSource, "#[Hook('tokens')]") === 1,
+  'P2 TokenHooks must implement tokens as an OOP hook.',
+);
 
 $moduleFile = $moduleRoot . '/aculta_portal.module';
 if (is_file($moduleFile)) {

@@ -5,7 +5,6 @@
  * Drupal editorial integrations; Metatag remains the metadata renderer.
  */
 
-use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
@@ -19,116 +18,6 @@ function aculta_portal_metatag_tags_alter(array &$definitions): void {
       $definitions[$id]['class'] = \Drupal\aculta_portal\Plugin\metatag\Tag\PostalAddressTag::class;
     }
   }
-}
-
-/** Implements hook_token_info(). */
-function aculta_portal_token_info(): array {
-  $tokens = [];
-  foreach (['editorial-summary', 'canonical', 'image', 'published', 'modified', 'author-type', 'author-name', 'start', 'end', 'event-status', 'attendance', 'organizer', 'free'] as $key) {
-    $tokens[$key] = ['name' => t('Editorial: @field', ['@field' => $key]), 'description' => t('Derived from structured editorial fields; never from the Drupal account name.')];
-  }
-  $institution = [];
-  foreach (['name', 'alternate', 'tax-id', 'email', 'phone', 'url', 'description', 'street', 'city', 'region', 'postal', 'country'] as $key) {
-    $institution[$key] = ['name' => t('Institutional: @field', ['@field' => $key]), 'description' => t('Verified public institutional data.')];
-  }
-  return ['types' => ['institution' => ['name' => t('Institutional data'), 'description' => t('Public official data from the institutional block.')]], 'tokens' => ['node' => $tokens, 'institution' => $institution]];
-}
-
-/** Implements hook_tokens(). */
-function aculta_portal_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $metadata): array {
-  $result = [];
-  if ($type === 'institution') {
-    $uuid = trim((string) \Drupal::config('aculta_portal.settings')->get('institution_data_uuid'));
-    if ($uuid === '') {
-      return [];
-    }
-    $blocks = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['uuid' => $uuid]);
-    $block = $blocks ? reset($blocks) : NULL;
-    if (!$block) {
-      return [];
-    }
-    $metadata->addCacheableDependency($block)->addCacheTags(['config:aculta_portal.settings']);
-    $fields = ['name' => 'field_org_name', 'alternate' => 'field_trade_name', 'tax-id' => 'field_cnpj', 'email' => 'field_email', 'phone' => 'field_schema_phone', 'description' => 'field_org_description', 'street' => 'field_street_address', 'city' => 'field_locality', 'region' => 'field_address_region', 'postal' => 'field_postal_code', 'country' => 'field_country'];
-    foreach ($tokens as $name => $original) {
-      if ($name === 'url') {
-        $result[$original] = (string) ($block->get('field_site')->uri ?? '');
-      }
-      elseif (isset($fields[$name]) && $block->hasField($fields[$name])) {
-        $result[$original] = (string) ($block->get($fields[$name])->value ?? '');
-      }
-    }
-  }
-  if ($type === 'node' && ($data['node'] ?? NULL) instanceof NodeInterface) {
-    $node = $data['node'];
-    $metadata->addCacheableDependency($node);
-    $domain_purpose = 'main';
-    if ($node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
-      $domain_purpose = \Drupal::service('aculta_portal.domain_purpose')
-        ->getPurposeForDomainId((string) $node->get('field_domain_source')->target_id) ?? 'main';
-    }
-    $get = static fn(string $field): string => $node->hasField($field) ? (string) ($node->get($field)->value ?? '') : '';
-    $date = static fn(string $field): string => $get($field) !== '' ? (new \DateTimeImmutable($get($field), new \DateTimeZone('UTC')))->format(DATE_ATOM) : '';
-    foreach ($tokens as $name => $original) {
-      $value = NULL;
-      switch ($name) {
-        case 'editorial-summary': $value = $get('field_summary') ?: (string) ($node->get('body')->summary ?? ''); break;
-        case 'canonical':
-          // Follow Domain Source's canonical URL behavior, preserving aliases
-          // while adapting only the scheme for an active local alias.
-          $canonical_url = $node->toUrl('canonical');
-          $source_domain = $node->hasField('field_domain_source') ? $node->get('field_domain_source')->entity : NULL;
-          if ($source_domain instanceof \Drupal\domain\DomainInterface) {
-            $canonical_url->setOption('domain', $source_domain);
-            $metadata->addCacheableDependency($source_domain);
-          }
-          $active_domain = \Drupal::service('domain.negotiator')->getActiveDomain();
-          $request = \Drupal::request();
-          if ($active_domain && isset($active_domain->alias) && $active_domain->alias->getEnvironment() === 'local') {
-            $canonical_url->setOption('https', $request->isSecure());
-          }
-          $generated = $canonical_url->setAbsolute()->toString(TRUE);
-          $metadata->addCacheableDependency($generated);
-          $value = $generated->getGeneratedUrl();
-          break;
-        case 'published': $value = $date('field_published_at'); break;
-        case 'modified': $value = gmdate(DATE_ATOM, $node->getChangedTime()); break;
-        case 'start': $value = $date('field_event_start'); break;
-        case 'end': $value = $date('field_event_end'); break;
-        case 'event-status':
-          $value = ['agendado' => 'https://schema.org/EventScheduled', 'reagendado' => 'https://schema.org/EventRescheduled', 'adiado' => 'https://schema.org/EventPostponed', 'cancelado' => 'https://schema.org/EventCancelled', 'concluido' => 'https://schema.org/EventScheduled'][$get('field_event_status')] ?? '';
-          break;
-        case 'attendance':
-          $value = ['presencial' => 'https://schema.org/OfflineEventAttendanceMode', 'online' => 'https://schema.org/OnlineEventAttendanceMode', 'hibrido' => 'https://schema.org/MixedEventAttendanceMode'][$get('field_modality')] ?? '';
-          break;
-        case 'organizer': $value = $get('field_organizer'); break;
-        case 'free': $value = $node->hasField('field_free') ? ($get('field_free') === '1' ? 'True' : 'False') : ''; break;
-        case 'author-type':
-        case 'author-name':
-          $author = $node->hasField('field_editorial_author') ? $node->get('field_editorial_author')->entity : NULL;
-          if ($author) {
-            $metadata->addCacheableDependency($author);
-            $value = $name === 'author-name' ? $author->label() : ($author->get('field_author_kind')->value === 'person' ? 'Person' : 'Organization');
-          }
-          else { $value = ''; }
-          break;
-        case 'image':
-          $media = $node->hasField('field_media_image') ? $node->get('field_media_image')->entity : NULL;
-          $file = $media && $media->hasField('field_media_image') ? $media->get('field_media_image')->entity : NULL;
-          $value = '';
-          if ($file && $media->isPublished()) {
-            $metadata->addCacheableDependency($media)->addCacheableDependency($file);
-            $relative = \Drupal::service('file_url_generator')->generateString($file->getFileUri());
-            $image_url = str_starts_with($relative, '/')
-              ? \Drupal::service('aculta_portal.domain_purpose')->pathUrl($domain_purpose, $relative)
-              : NULL;
-            $value = $image_url ? $image_url->toString() : $relative;
-          }
-          break;
-      }
-      if ($value !== NULL) { $result[$original] = $value; }
-    }
-  }
-  return $result;
 }
 
 /** Implements hook_node_presave(). Records actual first publication time. */
