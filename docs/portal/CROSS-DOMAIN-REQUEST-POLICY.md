@@ -60,7 +60,8 @@ Como a rota genérica é MAIN e Segurança é ACCOUNT:
 - GET/HEAD pode navegar MAIN → ACCOUNT;
 - o target é gerado por `DomainPurposeManager`;
 - usa `TrustedRedirectResponse`;
-- POST/PUT/PATCH/DELETE não atravessam o Domain: falham fechado;
+- POST/PUT/PATCH/DELETE não atravessam o Domain: falham fechado com 404,
+  inclusive quando o Router reconhece o path, mas não aceita aquele método;
 - reset one-time válido do Core permanece no fluxo técnico ACCOUNT já
   autorizado.
 

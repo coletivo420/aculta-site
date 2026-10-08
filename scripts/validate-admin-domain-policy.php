@@ -86,6 +86,12 @@ $assert(
   'Only safe admin navigation redirects cross-domain; mutating methods fail closed.',
 );
 $assert(
+  str_contains($subscriberSource, 'catch (MethodNotAllowedException)')
+    && str_contains($subscriberSource, "\$this->domainPurposeManager->getCurrentPurpose() !== 'main'")
+    && str_contains($subscriberSource, "\$event->setResponse(\$this->notFoundResponse())"),
+  'Wrong-method requests to existing admin routes also fail closed on secondary purposes.',
+);
+$assert(
   str_contains($subscriberSource, '$request->query->all()')
     && str_contains($subscriberSource, "setOption('query', \$query)"),
   'Admin canonicalization preserves query parameters.',
@@ -117,8 +123,8 @@ $assert(
     && str_contains($routeSource, "\$route->setOption('_aculta_domain_purpose', 'main')"),
   'User edit is excluded from generic ACCOUNT classification and classified as MAIN.',
 );
-$adminPrecedence = strpos($resolverSource, "getOption('_admin_route')");
-$wikiResolution = strpos($resolverSource, "WIKI_NODE_ROUTES");
+$adminPrecedence = strpos($resolverSource, "if (\$route->getOption('_admin_route')");
+$wikiResolution = strpos($resolverSource, "in_array(\$routeName, self::WIKI_NODE_ROUTES");
 $assert(
   $adminPrecedence !== FALSE
     && $wikiResolution !== FALSE

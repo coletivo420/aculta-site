@@ -98,7 +98,23 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     try {
       $matched = $this->accessFreeMatcher->matchRequest($event->getRequest());
     }
-    catch (ResourceNotFoundException | MethodNotAllowedException) {
+    catch (ResourceNotFoundException) {
+      return;
+    }
+    catch (MethodNotAllowedException) {
+      // If an admin route exists but does not accept this mutating method,
+      // keep the fail-closed response consistent on secondary purposes.
+      // Otherwise the router would expose a method-dependent 405 before the
+      // canonical admin policy gets a chance to return its non-replay 404.
+      $request = $event->getRequest();
+      $path = $request->getPathInfo();
+      $isAdminPath = $path === '/painel-administrativo'
+        || str_starts_with($path, '/painel-administrativo/');
+      if ($isAdminPath
+        && $this->domainPurposeManager->getCurrentPurpose() !== 'main'
+        && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
+        $event->setResponse($this->notFoundResponse());
+      }
       return;
     }
     $route = $this->routeProvider->getRouteByName($matched['_route']);

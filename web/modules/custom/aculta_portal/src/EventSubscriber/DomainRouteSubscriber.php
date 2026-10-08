@@ -73,6 +73,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         }
         elseif ($name === 'commerce_payment.notify') {
           $route->setOption('_aculta_domain_purpose', 'main');
+          // Provider notifications are machine-to-machine POST requests.
+          // Do not expose a GET variant through Commerce's generic route.
+          $route->setMethods(['POST']);
         }
         elseif ($name === 'entity.user.edit_form') {
           // Core's one-time password reset uses this same route. The request

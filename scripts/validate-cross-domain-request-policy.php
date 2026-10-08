@@ -43,6 +43,12 @@ $assert(
     && str_contains($accountSubscriber, "getCurrentPurpose() !== 'account'"),
   'Account guard blocks mutating cross-domain replay.',
 );
+$paymentNotification = \Drupal::service('router.route_provider')->getRouteByName('commerce_payment.notify');
+$assert(
+  $paymentNotification->getMethods() === ['POST']
+    && $paymentNotification->getOption('_aculta_domain_purpose') === 'main',
+  'Commerce payment notification remains POST-only and belongs to MAIN.',
+);
 $assert(
   str_contains($portalController, 'TrustedRedirectResponse')
     && str_contains($portalController, "pathUrl('account', '/')"),
