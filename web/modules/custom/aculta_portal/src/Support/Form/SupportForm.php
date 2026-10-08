@@ -5,17 +5,27 @@ namespace Drupal\aculta_portal\Support\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\commerce_payment\Entity\PaymentGateway;
+use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Url;
 
 /** Institutional support page, integrated with Commerce Donation Flow. */
 final class SupportForm extends FormBase {
 
-  public function __construct(private readonly ConfigFactoryInterface $configs) {}
+  public function __construct(
+    private readonly ConfigFactoryInterface $configs,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly BlockManagerInterface $blockManager,
+  ) {}
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('config.factory'));
+    return new static(
+      $container->get('config.factory'),
+      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.block'),
+    );
   }
 
   public function getFormId(): string {
@@ -32,7 +42,7 @@ final class SupportForm extends FormBase {
       '#value' => Html::escape((string) ($this->configs->get('aculta_portal.support')->get('intro') ?: $this->t('Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.'))),
       '#attributes' => ['class' => ['aculta-support-intro']],
     ];
-    $gateway = PaymentGateway::load('mercado_pago');
+    $gateway = $this->entityTypeManager->getStorage('commerce_payment_gateway')->load('mercado_pago');
     $gateway_configuration = $gateway ? $gateway->getPluginConfiguration() : [];
     $gateway_ready = $gateway && $gateway->status()
       && !empty($gateway_configuration['public_key_test'])
@@ -40,7 +50,7 @@ final class SupportForm extends FormBase {
     if ($gateway_ready) {
       // Donation Flow owns the route and order creation; the portal only
       // presents its native link when the reviewed gateway is enabled.
-      $donation_link = \Drupal::service('plugin.manager.block')->createInstance(
+      $donation_link = $this->blockManager->createInstance(
         'commerce_donation_flow_link',
         ['return_path' => FALSE]
       )->build();
@@ -63,7 +73,7 @@ final class SupportForm extends FormBase {
       '#attributes' => ['class' => ['aculta-support-other']],
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Outras formas de apoio')],
       'text' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.')],
-      'contact' => ['#type' => 'link', '#title' => $this->t('Fale com a Associação'), '#url' => \Drupal\Core\Url::fromUri('internal:/contato'), '#attributes' => ['class' => ['aculta-button', 'aculta-button--outline']]],
+      'contact' => ['#type' => 'link', '#title' => $this->t('Fale com a Associação'), '#url' => Url::fromUri('internal:/contato'), '#attributes' => ['class' => ['aculta-button', 'aculta-button--outline']]],
     ];
     return $form;
   }
