@@ -103,6 +103,7 @@ try {
     ['JavaScript optional chaining case does not consume consequent', 'js/optional-case.js', "switch (theme) { case options?.compact: label.textContent = 'dark'; break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['Twig ternary on a non-mode value is accepted', 'templates/language-ternary.html.twig', "{% set label = locale == 'dark' ? 'a' : 'b' %}", 'DARK TWIG BRANCHES: 0'],
     ['Twig ternary result mentioning a mode is not a mode branch', 'templates/result-mode-ternary.html.twig', "{% set label = compact ? 'dark' : 'plain' %}", 'DARK TWIG BRANCHES: 0'],
+    ['Twig conditional ternary result modes are not predicates', 'templates/if-result-ternary.html.twig', "{% if compact ? theme : 'dark' %}visible{% endif %}", 'DARK TWIG BRANCHES: 0'],
     ['parenthesized Twig ternary result mentioning a mode is not a mode branch', 'templates/parenthesized-result-mode-ternary.html.twig', "{% set label = (compact ? theme : 'dark') %}", 'DARK TWIG BRANCHES: 0'],
     ['nested Twig ternary with mode-like results is accepted', 'templates/nested-result-ternary.html.twig', "{% set x = compact ? (label ? 'dark' : 'plain') : 'other' %}", 'DARK TWIG BRANCHES: 0'],
     ['JavaScript ternary result mentioning a mode is accepted', 'js/result-mode-ternary.js', "const label = compact ? theme : 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
@@ -174,11 +175,13 @@ try {
     ['JavaScript color-scheme getter branch', 'js/color-scheme-getter.js', "if (getColorScheme() === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['Twig color-scheme getter branch', 'templates/color-scheme-getter.html.twig', "{% if getColorScheme() == 'dark' %}different{% endif %}", 'Twig has no color-mode branch'],
     ['Twig enclosing mode predicate around unrelated ternary', 'templates/twig-enclosing-ternary.html.twig', "{% if theme == 'dark' and (compact ? enabled : disabled) %}different{% endif %}", 'Twig has no color-mode branch'],
+    ['Twig suffix mode predicate after unrelated ternary', 'templates/twig-suffix-ternary.html.twig', "{% if (compact ? enabled : disabled) and theme == 'dark' %}different{% endif %}", 'Twig has no color-mode branch'],
     ['JavaScript boolean mode branch', 'js/boolean-mode.js', "if (isDarkMode) { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['nested JavaScript ternary mode predicate', 'js/nested-mode-ternary.js', "const x = compact ? (theme === 'dark' ? 'a' : 'b') : 'c';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch case arm', 'js/switch.js', "switch (theme) { case 'dark': card.hidden = true; break; default: card.hidden = false; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch method discriminant', 'js/switch-method.js', "switch (theme.toLowerCase()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch getter discriminant', 'js/switch-getter.js', "switch (getTheme()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript switch scans mode case after regex brace', 'js/switch-regex.js', "switch (theme) { case 'compact': const closeBrace = /\\}/; break; case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript ternary with object arms', 'js/object-arm-ternary.js', "const layout = theme === 'dark' ? { hidden: true } : {};", 'JavaScript has no color-mode layout behavior'],
     ['nested JavaScript if condition is scanned', 'js/nested-if.js', "if (getTheme(foo(bar())) === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['regex parentheses do not truncate JavaScript if condition', 'js/regex-condition.js', "if (/\\)/.test(value) && theme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
@@ -201,6 +204,8 @@ try {
     ['Twig colorScheme branch', 'templates/color-scheme.html.twig', "{% if colorScheme == 'dark' %}different{% endif %}", 'Twig has no color-mode branch'],
     ['Dark selector in tokens stylesheet', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] .fixture { padding: 1rem; }\n", 'Color mode is token-only'],
     ['Structural declaration inside dark token block', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] {\n  display: none;\n}\n", 'custom properties only'],
+    ['ordinary structural CSS rule in tokens stylesheet', 'css/tokens.css', "\n.card { color: #ffffff; display: none; }\n", 'Mode selectors and ACULTA/Bootstrap tokens occur only'],
+    ['Twig inline script cannot branch on color mode', 'templates/inline-script.html.twig', "<script>if (theme === 'dark') { document.body.hidden = true; }</script>", 'JavaScript has no color-mode layout behavior'],
   ];
   foreach ($cases as [$name, $relative, $contents, $expected_message]) {
     $fixture_path = $temporary_theme . '/' . $relative;
@@ -304,6 +309,19 @@ try {
   }
   file_put_contents($tokens_path, $original_tokens);
 
+  $uppercase_missing_alias = str_replace(
+    ['--aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);', '--aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);'],
+    ['--aculta-shadow-hover: VAR(--aculta-missing-shadow);', '--aculta-shadow-hover: VAR(--aculta-missing-shadow);'],
+    $original_tokens,
+  );
+  file_put_contents($tokens_path, $uppercase_missing_alias);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, 'token --aculta-shadow-hover resolves without missing references')) {
+    $failures[] = 'case-insensitive VAR() with missing alias was not rejected';
+  }
+  file_put_contents($tokens_path, $original_tokens);
+
   $replace_dark('--aculta-text-primary: #f4efe8;', '--aculta-text-primary: rgba(244, 239, 232, 1);');
   [$status, $output] = $run_validator();
   $fixtures++;
@@ -337,6 +355,19 @@ try {
     }
     file_put_contents($tokens_path, $original_tokens);
   }
+
+  $surface_rgb_mismatch = str_replace(
+    ['--aculta-surface-page-rgb: 242, 247, 240;', '--aculta-surface-page-rgb: 23, 21, 19;'],
+    ['--aculta-surface-page-rgb: 0, 0, 0;', '--aculta-surface-page-rgb: 0, 0, 0;'],
+    $original_tokens,
+  );
+  file_put_contents($tokens_path, $surface_rgb_mismatch);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, '--aculta-surface-page-rgb matches --aculta-surface-page')) {
+    $failures[] = 'ACULTA surface RGB companion mismatch was not rejected';
+  }
+  file_put_contents($tokens_path, $original_tokens);
 
   $invalid_rgb_slash = str_replace(
     '--bs-primary: var(--aculta-green);',

@@ -118,6 +118,7 @@ final class Aculta420DesignFoundationsAnalyzer {
     '--bs-emphasis-color-rgb' => '--aculta-text-primary',
     '--bs-link-color-rgb' => '--aculta-text-primary',
     '--bs-link-hover-color-rgb' => '--aculta-text-primary',
+    '--aculta-surface-page-rgb' => '--aculta-surface-page',
   ];
 
   /** Check absolute paths using the selected platform's root syntax. */
@@ -163,12 +164,7 @@ final class Aculta420DesignFoundationsAnalyzer {
           $dark_rules[] = $node;
         }
         else {
-          foreach (self::parseDeclarations($node['body']) as $declaration) {
-            if (preg_match('/^--(?:aculta|bs)-/i', $declaration['name']) === 1) {
-              $unsupported_token_rules[] = $node['selector'];
-              break;
-            }
-          }
+          $unsupported_token_rules[] = $node['selector'];
         }
         if (self::containsModeSelector($node['selector'])) {
           $is_supported_root = $top_level && ($selector === self::normalizeSelector(self::LIGHT_SELECTOR)
@@ -440,7 +436,7 @@ final class Aculta420DesignFoundationsAnalyzer {
       $decisions = $is_ternary ? self::collectTernaryPredicates($expression) : [$expression];
       if ($is_branch && $is_ternary) {
         // Keep any mode-dependent predicate surrounding a nested ternary.
-        $decisions[] = self::firstTernaryPrefix($expression);
+        $decisions[] = self::stripTernaryResultArms($expression);
       }
       $has_mode_decision = FALSE;
       foreach ($decisions as $decision) {
@@ -452,6 +448,15 @@ final class Aculta420DesignFoundationsAnalyzer {
       if (($is_branch || $is_ternary) && $has_mode_decision) {
         $count++;
       }
+    }
+    return $count;
+  }
+
+  public static function countTwigEmbeddedJsModeBranches(string $source): int {
+    preg_match_all('/<script\b[^>]*>(.*?)<\/script\s*>/is', $source, $scripts);
+    $count = 0;
+    foreach ($scripts[1] ?? [] as $script) {
+      $count += self::countJsModeBranches($script);
     }
     return $count;
   }
@@ -726,7 +731,7 @@ final class Aculta420DesignFoundationsAnalyzer {
     }
     $stack[] = $name;
     $error = NULL;
-    $resolved = preg_replace_callback('/var\(\s*(--[a-zA-Z0-9_-]+)\s*\)/', static function (array $match) use (&$error, $effective, $stack): string {
+    $resolved = preg_replace_callback('/var\(\s*(--[a-zA-Z0-9_-]+)\s*\)/i', static function (array $match) use (&$error, $effective, $stack): string {
       $result = self::resolveToken($match[1], $effective, $stack);
       if ($result['error'] !== NULL) {
         $error = $result['error'];
@@ -734,7 +739,7 @@ final class Aculta420DesignFoundationsAnalyzer {
       }
       return (string) $result['value'];
     }, trim($effective[$name]));
-    if ($error !== NULL || str_contains((string) $resolved, 'var(')) {
+    if ($error !== NULL || preg_match('/var\s*\(/i', (string) $resolved) === 1) {
       return ['value' => NULL, 'error' => $error ?? 'unsupported or unresolved var() syntax'];
     }
     return ['value' => trim((string) $resolved), 'error' => NULL];
@@ -970,12 +975,95 @@ final class Aculta420DesignFoundationsAnalyzer {
   }
 
   private static function firstTernaryPrefix(string $expression): string {
-    $predicates = self::collectTernaryPredicates($expression);
-    if ($predicates === []) {
-      return $expression;
+    return self::stripTernaryResultArms($expression);
+  }
+
+  /** Remove ternary result arms while retaining surrounding predicates. */
+  private static function stripTernaryResultArms(string $expression): string {
+    for ($attempt = 0; $attempt < 32; $attempt++) {
+      $question = self::findFirstTernaryQuestion($expression);
+      if ($question === NULL) { break; }
+      $quote = NULL;
+      $paren = $bracket = $brace = 0;
+      $length = strlen($expression);
+      for ($i = 0; $i < $question; $i++) {
+        $char = $expression[$i];
+        if ($quote !== NULL) {
+          if ($char === '\\') { $i++; }
+          elseif ($char === $quote) { $quote = NULL; }
+          continue;
+        }
+        if ($char === '"' || $char === "'") { $quote = $char; continue; }
+        if ($char === '(') { $paren++; }
+        elseif ($char === '[') { $bracket++; }
+        elseif ($char === '{') { $brace++; }
+        elseif ($char === ')') { $paren--; }
+        elseif ($char === ']') { $bracket--; }
+        elseif ($char === '}') { $brace--; }
+      }
+      $target = [$paren, $bracket, $brace];
+      $nested_questions = 0;
+      $colon = NULL;
+      $quote = NULL;
+      for ($i = $question + 1; $i < $length; $i++) {
+        $char = $expression[$i];
+        if ($quote !== NULL) {
+          if ($char === '\\') { $i++; }
+          elseif ($char === $quote) { $quote = NULL; }
+          continue;
+        }
+        if ($char === '"' || $char === "'") { $quote = $char; continue; }
+        if ($char === '(') { $paren++; continue; }
+        if ($char === '[') { $bracket++; continue; }
+        if ($char === '{') { $brace++; continue; }
+        if ($char === ')' || $char === ']' || $char === '}') {
+          if ([$paren, $bracket, $brace] === $target) { break; }
+          if ($char === ')') { $paren--; }
+          elseif ($char === ']') { $bracket--; }
+          else { $brace--; }
+          continue;
+        }
+        if ([$paren, $bracket, $brace] !== $target) { continue; }
+        if ($char === '?' && ($expression[$i + 1] ?? '') !== '?' && ($expression[$i + 1] ?? '') !== '.' && ($expression[$i - 1] ?? '') !== '?') {
+          $nested_questions++;
+        }
+        elseif ($char === ':') {
+          if ($nested_questions > 0) { $nested_questions--; }
+          else { $colon = $i; break; }
+        }
+      }
+      if ($colon === NULL) { break; }
+      $false_end = $length;
+      $paren = $target[0];
+      $bracket = $target[1];
+      $brace = $target[2];
+      $quote = NULL;
+      for ($i = $colon + 1; $i < $length; $i++) {
+        $char = $expression[$i];
+        if ($quote !== NULL) {
+          if ($char === '\\') { $i++; }
+          elseif ($char === $quote) { $quote = NULL; }
+          continue;
+        }
+        if ($char === '"' || $char === "'") { $quote = $char; continue; }
+        if ($char === '(') { $paren++; continue; }
+        if ($char === '[') { $bracket++; continue; }
+        if ($char === '{') { $brace++; continue; }
+        if ($char === ')' || $char === ']' || $char === '}') {
+          if ([$paren, $bracket, $brace] === $target) { $false_end = $i; break; }
+          if ($char === ')') { $paren--; }
+          elseif ($char === ']') { $bracket--; }
+          else { $brace--; }
+          continue;
+        }
+        if ([$paren, $bracket, $brace] === $target && ($char === ',' || $char === ';')) {
+          $false_end = $i;
+          break;
+        }
+      }
+      $expression = substr($expression, 0, $question) . substr($expression, $false_end);
     }
-    $question = self::findFirstTernaryQuestion($expression);
-    return $question === NULL ? $expression : substr($expression, 0, $question);
+    return $expression;
   }
 
   private static function findFirstTernaryQuestion(string $expression): ?int {
@@ -1240,6 +1328,9 @@ final class Aculta420DesignFoundationsAnalyzer {
       elseif ($char === '"' || $char === "'" || $char === '`') {
         $quote = $char;
       }
+      elseif ($char === '/' && self::isJsRegexStart($source, $i)) {
+        $i = self::skipJsRegexLiteral($source, $i);
+      }
       elseif ($char === '{') {
         $depth++;
       }
@@ -1267,6 +1358,7 @@ final class Aculta420DesignFoundationsAnalyzer {
         continue;
       }
       if ($char === '"' || $char === "'" || $char === '`') { $quote = $char; continue; }
+      if ($char === '/' && self::isJsRegexStart($body, $i)) { $i = self::skipJsRegexLiteral($body, $i); continue; }
       if ($char === '{') { $brace++; continue; }
       if ($char === '}') { $brace--; continue; }
       if ($char === '(') { $paren++; continue; }

@@ -60,6 +60,7 @@ $auth_pattern = '/social_auth(?:_google)?|social_auth_login|captcha(?:\.settings
 $domain_pattern = '/DomainInterface|DomainPurposeManager|domain\.negotiator|aculta_portal|HTTP_HOST|SERVER_NAME|\bhostname\b|\bgetHost\s*\(|\bgetHostname\s*\(|(?:getStorage|storage)\s*\(\s*[\'"]domain|\\Drupal\s*::/i';
 $structural_dark_overrides = 0;
 $dark_twig_branches = 0;
+$dark_twig_inline_js_branches = 0;
 $dark_php_branches = 0;
 $dark_js_layout_behavior = 0;
 $theme_info = file_get_contents($theme . '/aculta420.info.yml') ?: '';
@@ -95,6 +96,7 @@ foreach ($runtime_files as $path) {
   }
   elseif ($extension === 'twig') {
     $dark_twig_branches += Aculta420DesignFoundationsAnalyzer::countTwigModeBranches($source);
+    $dark_twig_inline_js_branches += Aculta420DesignFoundationsAnalyzer::countTwigEmbeddedJsModeBranches($source);
   }
   elseif (in_array($extension, ['php', 'module', 'inc', 'theme'], TRUE)) {
     $dark_php_branches += Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source);
@@ -106,7 +108,8 @@ foreach ($runtime_files as $path) {
 $check($structural_dark_overrides === 0, 'Color mode is token-only: no dark selector or mode query exists outside tokens.css.');
 $check($dark_twig_branches === 0, 'Twig has no color-mode branch.');
 $check($dark_php_branches === 0, 'PHP has no color-mode branch.');
-$check($dark_js_layout_behavior === 0, 'JavaScript has no color-mode layout behavior.');
+$dark_js_layout_behavior += $dark_twig_inline_js_branches;
+$check($dark_js_layout_behavior === 0, 'JavaScript has no color-mode layout behavior, including inline Twig scripts.');
 
 $css_files = array_filter($runtime_files, static fn (string $path): bool => strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'css' && $path !== $tokens_path);
 foreach ($css_files as $path) {
