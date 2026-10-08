@@ -93,7 +93,7 @@ foreach ($runtime_files as $path) {
     continue;
   }
   if ($extension === 'css') {
-    $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countModeSelectors($source, $path === $tokens_path);
+    $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countModeSelectors($source, Aculta420DesignFoundationsAnalyzer::pathsEquivalent($path, $tokens_path));
   }
   elseif ($extension === 'twig') {
     $dark_twig_branches += Aculta420DesignFoundationsAnalyzer::countTwigModeBranches($source);
