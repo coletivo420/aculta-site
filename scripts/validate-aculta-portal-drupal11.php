@@ -597,13 +597,33 @@ $check(
   'P5.2-A courses catalog must not use views_embed_view() or literal unicode escapes.',
 );
 
+// P5.2-B/P5.3/P5.4-E: Wiki uses injected Views factory, node storage queries
+// with explicit access checks, and keeps the WIKI Domain/status filters.
+$wikiSource = $read($srcRoot . '/Controller/WikiController.php');
+$check(
+  !str_contains($wikiSource, 'Views::')
+    && !str_contains($wikiSource, '\\Drupal::')
+    && !str_contains($wikiSource, 'entityTypeManager()')
+    && str_contains($wikiSource, "#[Autowire(service: 'views.executable')]")
+    && str_contains($wikiSource, '->buildRenderable($displayId)'),
+  'P5.2-B Wiki Views must use the injected executable factory and buildRenderable().',
+);
+$check(
+  substr_count($wikiSource, "getStorage('node')") === 2
+    && substr_count($wikiSource, '->getQuery()') === 2
+    && substr_count($wikiSource, '->accessCheck(TRUE)') === 2
+    && substr_count($wikiSource, "->condition('field_domain_source.target_id', \$wikiDomain->id())") === 2
+    && substr_count($wikiSource, "->condition('status', 1)") === 2
+    && substr_count($wikiSource, "->access('view')") === 3
+    && str_contains($wikiSource, '$this->database->escapeLike($term)'),
+  'P5.3 Wiki queries must keep explicit access checks, WIKI Domain/status filters and per-entity access.',
+);
+
 $serviceLocatorCeilings = [
   'src/Controller/PortalController.php' => 3,
   'src/Controller/PortalRequirementsController.php' => 2,
-  'src/Controller/WikiController.php' => 6,
 ];
 $viewsWrapperCeilings = [
-  'src/Controller/WikiController.php' => 1,
 ];
 $staticLoadCeilings = [
 ];
