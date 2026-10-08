@@ -86,14 +86,14 @@ try {
     $pagePath,
     str_replace(
       '<header class="aculta-header"',
-      "{% if aculta_domain_identity.purpose == 'wiki' %}<div>Wiki</div>{% endif %}\n<header class=\"aculta-header\"",
+      "{% if domain_presentation.identity.purpose == 'wiki' %}<div>Wiki</div>{% endif %}\n<header class=\"aculta-header\"",
       $originalPage,
     ),
   );
   $expectFinding(
     'Twig purpose-specific branch',
     $run($tempTheme),
-    'Twig must not branch on a concrete Domain purpose.',
+    'Concrete purpose branching is forbidden',
   );
   file_put_contents($pagePath, $originalPage);
 
@@ -111,12 +111,23 @@ try {
   file_put_contents(
     $hookPath,
     str_replace(
-      'namespace Drupal\\aculta420\\Hook;',
-      "namespace Drupal\\aculta420\\Hook;\n\n// Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
+      'use Drupal\\Core\\Config\\ConfigFactoryInterface;',
+      "use Drupal\\aculta_portal\\Domain\\DomainPurposeManager;\nuse Drupal\\Core\\Config\\ConfigFactoryInterface;",
       $originalHook,
     ),
   );
   $expectFinding('Portal/DomainPurposeManager dependency', $run($tempTheme), 'DomainPurposeManager is forbidden');
+  file_put_contents($hookPath, $originalHook);
+
+  file_put_contents(
+    $hookPath,
+    str_replace(
+      'namespace Drupal\\aculta420\\Hook;',
+      "namespace Drupal\\aculta420\\Hook;\n\n// Documentation note: DomainPurposeManager stays outside the theme.",
+      $originalHook,
+    ),
+  );
+  $expectClean('PHP comment mentioning DomainPurposeManager is ignored', $run($tempTheme));
   file_put_contents($hookPath, $originalHook);
 
   file_put_contents(
