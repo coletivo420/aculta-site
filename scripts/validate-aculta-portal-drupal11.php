@@ -645,8 +645,17 @@ $check(
   'P5.6 support history route must require an authenticated user.',
 );
 
+// P5.4-D: requirements report injects theme handler and app root.
+$requirementsSource = $read($srcRoot . '/Controller/PortalRequirementsController.php');
+$check(
+  str_contains($requirementsSource, "#[Autowire(service: 'theme_handler')]")
+    && str_contains($requirementsSource, "#[Autowire(param: 'app.root')]")
+    && str_contains($requirementsSource, 'dirname($this->appRoot) . \'/composer.json\'')
+    && !preg_match('/\\$this->(?:currentUser|moduleHandler|config)\(/', $requirementsSource),
+  'P5.4-D requirements controller must use injected theme handler, app root and services.',
+);
+
 $serviceLocatorCeilings = [
-  'src/Controller/PortalRequirementsController.php' => 2,
 ];
 $viewsWrapperCeilings = [
 ];
@@ -655,7 +664,6 @@ $staticLoadCeilings = [
 $strictTypesDebt = [
   'src/AccountShellBuilder.php',
   'src/Auth/AuthIntegrationManager.php',
-  'src/Controller/PortalRequirementsController.php',
   'src/Hook/PortalHooks.php',
   'src/Support/Form/SettingsForm.php',
   'src/Plugin/metatag/Tag/OrganizationAlternateName.php',
