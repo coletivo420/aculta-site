@@ -99,6 +99,8 @@ foreach ($runtime_files as $path) {
     $dark_twig_branches += Aculta420DesignFoundationsAnalyzer::countTwigModeBranches($source);
     $dark_twig_inline_js_branches += Aculta420DesignFoundationsAnalyzer::countTwigEmbeddedJsModeBranches($source);
     $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countTwigInlineCssModeSelectors($source);
+    $relative = substr($path, strlen($theme) + 1);
+    $check(!Aculta420DesignFoundationsAnalyzer::hasTwigInlineRawColorLiteral($source), 'CSS literals in Twig style blocks need semantic tokens: ' . $relative . '.');
     $twig_inline_premature_scripts += Aculta420DesignFoundationsAnalyzer::hasTwigEmbeddedPrematureColorModeScript($source) ? 1 : 0;
   }
   elseif (in_array($extension, ['php', 'module', 'inc', 'theme'], TRUE)) {
