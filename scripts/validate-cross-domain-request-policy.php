@@ -83,4 +83,9 @@ $assert(
   'Portal AJAX explicitly uses same-origin credentials.',
 );
 
+$assert(
+  substr_count($accountJs, 'target.origin !== window.location.origin') >= 2,
+  'Portal AJAX rejects cross-origin fetch interception and leaves cross-purpose links to normal navigation.',
+);
+
 echo 'CROSS-DOMAIN REQUEST POLICY: PASS (' . count($checks) . " checks)\n";
