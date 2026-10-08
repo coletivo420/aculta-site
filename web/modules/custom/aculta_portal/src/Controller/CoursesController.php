@@ -43,9 +43,7 @@ final class CoursesController implements ContainerInjectionInterface {
         '#tag' => 'h2',
         '#value' => $this->translation->translate('Cursos disponíveis'),
       ],
-      'catalog' => views_embed_view('courses_catalog', 'block_1') ?: [
-        '#markup' => $this->translation->translate('Nenhum curso está dispon\u00edvel no momento.'),
-      ],
+      'catalog' => $this->catalogView(),
       'collaboration' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
