@@ -113,13 +113,23 @@ Webhook não é navegação de usuário e não participa da canonicalização GE
 
 ## Carrinho e catálogo
 
-Esta política não obriga catálogo ou carrinho a MAIN.
+O carrinho é centralizado em MAIN junto com checkout e pagamento.
 
-SHOP e COURSES podem manter experiência de descoberta/seleção em seus próprios
-purposes. O boundary obrigatório começa na entrada do checkout/pagamento.
+SHOP e COURSES mantêm descoberta, catálogo e página de produto/curso nos seus
+purposes, mas ações de ver/editar o carrinho navegam para MAIN.
 
-Se no futuro houver decisão de centralizar também o carrinho, isso deve ser uma
-mudança arquitetural explícita e separada.
+A entidade/order continua sendo do Drupal Commerce; não existe storage paralelo
+por purpose. A centralização é de ownership de rota/experiência, não duplicação
+de dados.
+
+No futuro, a barra multidomínio poderá exibir um ícone de carrinho em qualquer
+purpose. Esse ícone deve consumir um contrato neutro preparado pelo Portal com,
+no mínimo, URL MAIN do carrinho e estado/contagem autorizada quando houver um
+consumidor real. O tema não consulta Commerce diretamente, não calcula contagem,
+não resolve hostname e não cria URL do carrinho por conta própria.
+
+Essa futura UI pertence à evolução do shell multidomínio; não é implementada
+nesta correção.
 
 ## Donation Flow
 
