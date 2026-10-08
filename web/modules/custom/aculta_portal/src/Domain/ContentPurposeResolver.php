@@ -38,15 +38,20 @@ final class ContentPurposeResolver {
     Request $request,
     array $matched = [],
   ): ?string {
+    // Administration is a platform-level concern and always belongs to MAIN.
+    // This must precede content-specific ownership (Wiki, Courses, etc.).
+    if ($route->getOption('_admin_route')
+      || $route->getOption('_aculta_domain_purpose') === 'main') {
+      return 'main';
+    }
+
     $groupParameter = $matched['group'] ?? $request->attributes->get('group');
     $group = is_object($groupParameter) ? $groupParameter : NULL;
     if (!$group && is_numeric($groupParameter)) {
       $group = $this->entities->getStorage('group')->load((int) $groupParameter);
     }
     if ($group && method_exists($group, 'bundle') && $group->bundle() === 'lms_course') {
-      return ($route->getOption('_admin_route') || $route->getOption('_aculta_domain_purpose') === 'main')
-        ? 'main'
-        : 'courses';
+      return 'courses';
     }
 
     if ($routeName === 'node.add') {
