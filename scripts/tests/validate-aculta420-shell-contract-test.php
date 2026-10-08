@@ -122,6 +122,17 @@ try {
   file_put_contents(
     $hookPath,
     str_replace(
+      'use Drupal\\Core\\Config\\ConfigFactoryInterface;',
+      "use Drupal\\aculta_portal\\Presentation\\DomainPresentation;\nuse Drupal\\Core\\Config\\ConfigFactoryInterface;",
+      $originalHook,
+    ),
+  );
+  $expectFinding('generic Portal namespace dependency', $run($tempTheme), 'Portal dependency is forbidden');
+  file_put_contents($hookPath, $originalHook);
+
+  file_put_contents(
+    $hookPath,
+    str_replace(
       'namespace Drupal\\aculta420\\Hook;',
       "namespace Drupal\\aculta420\\Hook;\n\n// Documentation note: DomainPurposeManager stays outside the theme.",
       $originalHook,
@@ -139,7 +150,7 @@ try {
     ),
   );
   $findings = $run($tempTheme);
-  $expectFinding('Portal service lookup', $findings, 'Portal service is forbidden');
+  $expectFinding('Portal service lookup', $findings, 'Portal dependency is forbidden');
   $expectFinding('Portal service locator', $findings, 'service locator is forbidden');
   file_put_contents($hookPath, $originalHook);
 
@@ -154,6 +165,17 @@ try {
   $findings = $run($tempTheme);
   $expectFinding('hostname lookup', $findings, 'hostname decision is forbidden');
   $expectFinding('service locator lookup', $findings, 'service locator is forbidden');
+  file_put_contents($hookPath, $originalHook);
+
+  file_put_contents(
+    $hookPath,
+    str_replace(
+      '$variables[\'institutional_home\'] = $this->pathMatcher->isFrontPage();',
+      "\$canonical = 'https://aculta.org/';\n    \$variables['institutional_home'] = \$this->pathMatcher->isFrontPage();",
+      $originalHook,
+    ),
+  );
+  $expectFinding('hardcoded MAIN hostname', $run($tempTheme), 'hostname decision is forbidden');
   file_put_contents($hookPath, $originalHook);
 
   file_put_contents(
@@ -222,6 +244,33 @@ try {
     'Concrete purpose branching is forbidden',
   );
   file_put_contents($hookPath, $originalHook);
+
+  file_put_contents(
+    $hookPath,
+    str_replace(
+      '$variables[\'institutional_home\'] = $this->pathMatcher->isFrontPage();',
+      "if ('shop' === (\$variables['domain_presentation']['identity']['purpose'] ?? '')) { \$variables['x'] = TRUE; }\n    \$variables['institutional_home'] = \$this->pathMatcher->isFrontPage();",
+      $originalHook,
+    ),
+  );
+  $expectFinding(
+    'PHP reverse concrete purpose branch',
+    $run($tempTheme),
+    'Concrete purpose branching is forbidden',
+  );
+  file_put_contents($hookPath, $originalHook);
+
+  $jsPath = $tempTheme . '/js/b4-purpose-fixture.js';
+  if (!is_dir(dirname($jsPath)) && !mkdir(dirname($jsPath), 0700, TRUE) && !is_dir(dirname($jsPath))) {
+    throw new RuntimeException('Could not create JavaScript fixture directory.');
+  }
+  file_put_contents($jsPath, "if (context.purpose === 'wiki') { shell.hidden = true; }\n");
+  $expectFinding(
+    'JavaScript concrete purpose branch',
+    $run($tempTheme),
+    'Concrete purpose branching is forbidden',
+  );
+  unlink($jsPath);
 
   $expectClean('restored clean fixture', $run($tempTheme));
 }
