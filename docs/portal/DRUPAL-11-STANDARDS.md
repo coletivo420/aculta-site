@@ -72,6 +72,9 @@ Regras:
 
 Referência: https://www.drupal.org/node/3548821
 
+- callbacks migrados devem aparecer **exatamente uma vez** no pipeline apropriado; duplicar `#submit`, `#validate` ou `#after_build` pode repetir efeitos colaterais;
+- o gate deve verificar tanto a existência do método quanto o registro único `service.id:method` e as dependências explícitas do serviço;
+
 ## Event subscribers
 
 - implementar `EventSubscriberInterface`;

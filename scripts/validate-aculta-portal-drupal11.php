@@ -124,9 +124,12 @@ $check(
   'P3.1 PortalFormCallbacks must provide validateActivity().',
 );
 
-$moduleCallbacksSource = $read($moduleRoot . '/aculta_portal.module');
+$moduleCallbacksPath = $moduleRoot . '/aculta_portal.module';
+$moduleCallbacksSource = is_file($moduleCallbacksPath) ? $read($moduleCallbacksPath) : '';
 $portalHooksSource = $read($srcRoot . '/Hook/PortalHooks.php');
+
 $legacyFormCallbackNames = [
+  'aculta_portal_validate_activity',
   'aculta_portal_change_mail_confirmation_message',
   'aculta_portal_security_password_redirect',
   'aculta_portal_security_password_after_build',
@@ -135,33 +138,87 @@ $legacyFormCallbackNames = [
   'aculta_portal_sync_customer_address_names',
   'aculta_portal_validate_donation_amount',
 ];
-foreach ($legacyFormCallbackNames as $legacyCallback) {
-  $check(
-    !str_contains($moduleCallbacksSource, $legacyCallback)
-      && !str_contains($portalHooksSource, $legacyCallback),
-    'P3.2 legacy form callback must not remain registered: ' . $legacyCallback,
-  );
-}
-$serviceCallbacks = [
-  'changeMailConfirmationMessage',
-  'securityPasswordRedirect',
-  'securityPasswordAfterBuild',
-  'accountPhotoRedirect',
-  'addressRedirect',
-  'syncCustomerAddressNames',
-  'validateDonationAmount',
+$p3RuntimeSources = [
+  $moduleCallbacksSource,
+  $portalHooksSource,
+  $editorialHooksSource,
+  $formCallbacksSource,
+  $services,
 ];
-foreach ($serviceCallbacks as $methodName) {
+foreach ($legacyFormCallbackNames as $legacyCallback) {
+  $remaining = 0;
+  foreach ($p3RuntimeSources as $source) {
+    $remaining += substr_count($source, "'" . $legacyCallback . "'");
+  }
   $check(
-    str_contains($formCallbacksSource, 'function ' . $methodName . '('),
-    'P3.2 PortalFormCallbacks must provide ' . $methodName . '().',
-  );
-  $check(
-    str_contains($moduleCallbacksSource, 'aculta_portal.form_callbacks:' . $methodName)
-      || str_contains($portalHooksSource, 'aculta_portal.form_callbacks:' . $methodName),
-    'P3.2 service callback must be registered in form hooks: ' . $methodName,
+    $remaining === 0,
+    'P3.3 legacy form callback must not return: ' . $legacyCallback,
   );
 }
+
+$check(
+  substr_count($services, '  aculta_portal.form_callbacks:') === 1,
+  'P3.3 aculta_portal.form_callbacks must be defined exactly once.',
+);
+$formCallbackServiceBlock = '';
+if (preg_match(
+  '/^  aculta_portal\.form_callbacks:\R(?:(?:    ).*(?:\R|$))+/m',
+  $services,
+  $serviceMatches,
+) === 1) {
+  $formCallbackServiceBlock = $serviceMatches[0];
+}
+$check(
+  str_contains($formCallbackServiceBlock, 'class: Drupal\\aculta_portal\\Form\\PortalFormCallbacks'),
+  'P3.3 form callback service must resolve to PortalFormCallbacks.',
+);
+foreach ([
+  '@messenger',
+  '@current_user',
+  '@user.data',
+  '@entity_type.manager',
+  '@string_translation',
+] as $dependency) {
+  $check(
+    str_contains($formCallbackServiceBlock, "'" . $dependency . "'"),
+    'P3.3 form callback service must inject ' . $dependency . '.',
+  );
+}
+
+$formCallbackRegistrations = [
+  'validateActivity' => [$editorialHooksSource],
+  'changeMailConfirmationMessage' => [$moduleCallbacksSource],
+  'securityPasswordRedirect' => [$moduleCallbacksSource],
+  'securityPasswordAfterBuild' => [$moduleCallbacksSource],
+  'accountPhotoRedirect' => [$portalHooksSource],
+  'addressRedirect' => [$portalHooksSource],
+  'syncCustomerAddressNames' => [$portalHooksSource],
+  'validateDonationAmount' => [$moduleCallbacksSource],
+];
+foreach ($formCallbackRegistrations as $methodName => $sources) {
+  $check(
+    substr_count($formCallbacksSource, 'function ' . $methodName . '(') === 1,
+    'P3.3 PortalFormCallbacks must define ' . $methodName . '() exactly once.',
+  );
+
+  $registration = "'aculta_portal.form_callbacks:" . $methodName . "'";
+  $registrationCount = 0;
+  foreach ($sources as $source) {
+    $registrationCount += substr_count($source, $registration);
+  }
+  $check(
+    $registrationCount === 1,
+    'P3.3 service callback must be registered exactly once: ' . $methodName,
+  );
+}
+
+$check(
+  preg_match(
+    '/function\s+formNodeFormAlter\s*\(array\s*&\$form,\s*FormStateInterface\s+\$formState,\s*string\s+\$formId\s*\)/',
+    $editorialHooksSource,
+  ) === 1,
+  'P3.3 form_node_form_alter must preserve the Drupal 11 base-form hook signature.',
+);
 
 $moduleFile = $moduleRoot . '/aculta_portal.module';
 if (is_file($moduleFile)) {
