@@ -133,7 +133,7 @@ final class WikiController implements ContainerInjectionInterface {
       ->condition('body.value', $pattern, 'LIKE');
     $ids = $query->condition($matches)->execute();
     $nodes = $this->entities->getStorage('node')->loadMultiple($ids);
-    $build['count'] = ['#type' => 'item', '#plain_text' => $this->formatPlural(count($nodes), '1 verbete encontrado.', '@count verbetes encontrados.')];
+    $build['count'] = ['#type' => 'item', '#plain_text' => $this->translation->formatPlural(count($nodes), '1 verbete encontrado.', '@count verbetes encontrados.')];
     foreach ($nodes as $node) {
       if ($node->access('view')) {
         $build['results'][$node->id()] = $this->entities->getViewBuilder('node')->view($node, 'teaser');
