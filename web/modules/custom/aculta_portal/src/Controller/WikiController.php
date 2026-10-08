@@ -6,7 +6,7 @@ namespace Drupal\aculta_portal\Controller;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /** Public landing page and bounded title/summary/body search for the Wiki. */
-final class WikiController extends ControllerBase {
+final class WikiController implements ContainerInjectionInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
