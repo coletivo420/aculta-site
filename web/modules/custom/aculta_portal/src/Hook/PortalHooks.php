@@ -395,7 +395,7 @@ final class PortalHooks {
         }
       }
       if ($path === '/dados' && isset($form['actions']['submit'])) {
-        $form['actions']['submit']['#submit'][] = 'aculta_portal_sync_customer_address_names';
+        $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:syncCustomerAddressNames';
       }
       return;
     }
@@ -441,7 +441,7 @@ final class PortalHooks {
       }
       if (isset($form['actions']['submit'])) {
         $form['actions']['submit']['#value'] = $this->translation->translate('Salvar endereço');
-        $form['actions']['submit']['#submit'][] = 'aculta_portal_address_redirect';
+        $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:addressRedirect';
       }
       return;
     }
@@ -456,7 +456,7 @@ final class PortalHooks {
       }
       if (isset($form['actions']['submit'])) {
         $form['actions']['submit']['#value'] = $this->translation->translate('Salvar foto do perfil');
-        $form['actions']['submit']['#submit'][] = 'aculta_portal_account_photo_redirect';
+        $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:accountPhotoRedirect';
       }
     }
   }
