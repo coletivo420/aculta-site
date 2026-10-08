@@ -468,11 +468,31 @@ Design Foundations, fixtures e Institution passaram; Composer audit passou e
 updatedb reportou nenhuma atualização. `config:status` ainda mostra drift
 preexistente de Runtime; nenhum `cim`/`cex` foi executado.
 
+## Implementação 0.2-B.3
+
+O ACULTA420 passa a consumir a identidade neutra entregue por `domain_presentation` sem alterar a arquitetura visual corrente:
+
+- `ThemeHooks::preprocessPage()` adapta somente `identity` para `aculta_domain_identity` com escalares conhecidos;
+- identidade ausente ou incompleta resulta em `NULL`; o tema não consulta Domain/config/hostname para inventar fallback funcional;
+- `page.html.twig` mantém `page.header` como branding primário e usa a identidade apenas quando a região Drupal não entrega branding;
+- o fallback usa `home_url`, `short_title`/`title` e `logo_alt` preparados pelo Portal;
+- `purpose` aparece somente como metadata semântica `data-aculta-domain-purpose`; não escolhe CSS, cor, estrutura ou comportamento;
+- `regions.brand_media`, `regions.navigation` e `regions.actions` continuam sem consumidor e permanecem `NULL` nesta fase;
+- nenhuma alteração de CSS, tokens, layout, Institution Bar, Domain Header, sticky/mobile ou color-mode foi introduzida.
+
+Gate Runtime read-only:
+
+```sh
+php vendor/drush/drush/drush.php php:script validate-aculta420-shell-contract --script-path=../scripts
+```
+
+O gate cobre contrato completo, parcial e ausente, rejeita forwarding de campos/objetos desconhecidos e verifica ausência de Domain/hostname/serviços Portal no runtime source do tema.
+
 ## Próximas etapas
 
 - **0.2-B.1** — inventário e fronteira normativa: concluída;
 - **0.2-B.2** — builder/presenter do contrato: implementado e validado no Runtime Homelab;
-- **0.2-B.3** — integrar/consumir o contrato no shell atual sem redesign;
+- **0.2-B.3** — consumo de identity no shell atual sem redesign: implementado; Runtime pendente;
 - **0.2-B.4** — gate/fixtures e fechamento da fronteira;
 - **0.2-C** — Institution Bar;
 - **0.2-D** — Domain Header.
