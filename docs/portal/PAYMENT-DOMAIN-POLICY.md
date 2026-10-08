@@ -1,6 +1,6 @@
 # Política do domínio de checkout e pagamentos
 
-Status: **implementada no hardening pré-ACULTA420 0.2-B.3; validação Runtime pendente**.
+Status: **política implementada e gates estruturais PASS; fluxo funcional Commerce bloqueado pela configuração atual do Homelab**.
 
 ## Regra canônica
 
@@ -181,3 +181,31 @@ Antes da B.3, validar:
 10. checkout normal em MAIN continua funcional;
 11. return/cancel externo continua funcional;
 12. nenhuma mudança de tema é necessária.
+
+## Resultado operacional do Homelab — 2026-10-08
+
+No Homelab Apache/PHP-FPM, os gates de política, domínio, Foundation,
+apresentação e instituição passaram. A matriz HTTP confirmou que GET/HEAD de
+`/cart` em SHOP redirecionam para MAIN, preservando query string; POST/PUT/PATCH/
+DELETE no host errado falham com `404` e `Cache-Control: private, no-store`.
+As rotas Commerce inventariadas têm metadata MAIN; `commerce_payment.notify` é
+POST-only e não recebe canonicalização browser-facing.
+
+A validação funcional de compra permanece bloqueada pelo estado do Runtime
+observado nesta data:
+
+- `commerce_product` está desabilitado; não há entidades de produto/variação nem
+  orders para testar Add to cart, identidade do carrinho ou checkout;
+- Commerce Donation Flow está configurado em modo `donate`, que desabilita as
+  rotas genéricas `/cart` e `/checkout`; ambas respondem `403` em MAIN;
+- a rota `/donate` redireciona de SUPPORT para MAIN, mas o acesso anônimo é
+  negado pela permissão `make donation`; `/donate` responde `403` em MAIN;
+- SHOP ainda não apresenta catálogo público e sua raiz responde `404`.
+
+Por isso Add to cart, persistência/continuidade da mesma order, checkout
+funcional, pagamento e retorno/cancelamento de gateway não foram comprovados no
+Runtime. Esses resultados não são apresentados como PASS. A configuração
+comercial não foi alterada nesta validação; antes de declarar o fluxo operacional,
+é necessário disponibilizar o catálogo/configuração de compra e aprovar o acesso
+público ao fluxo de doação, então repetir os testes de ponta a ponta. Produção
+permaneceu intocada.
