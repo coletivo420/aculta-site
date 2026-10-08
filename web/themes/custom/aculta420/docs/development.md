@@ -192,7 +192,11 @@ Para tokens e fronteiras visuais da linha 0.2:
 ```sh
 php scripts/validate-aculta420-design-foundations.php
 php scripts/tests/validate-aculta420-design-foundations-test.php
+php scripts/tests/validate-aculta420-shell-contract-test.php
+vendor/bin/drush php:script validate-aculta420-shell-contract --script-path=../scripts
 ```
+
+O analyzer B.4 em `scripts/lib/Aculta420ShellContractAnalyzer.php` é compartilhado entre fixtures e Runtime; não duplicar regras de Domain/hostname/purpose branching em um segundo scanner.
 
 O validator e seus fixtures são PHP independente do Drupal e não alteram Runtime.
 Execute em Linux:
