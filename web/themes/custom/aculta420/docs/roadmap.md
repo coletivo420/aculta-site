@@ -54,7 +54,7 @@ resolução de purpose por hostname.
 
 - **0.2-B.1 — inventário e fronteira normativa:** concluído documentalmente; ver `docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`;
 - **0.2-B.2 — builder/presenter:** implementado e validado no Runtime Homelab; ver `docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`;
-- **0.2-B.3 — integração de shell:** entregar o view-model ao tema sem redesign estrutural;
+- **0.2-B.3 — integração de shell:** implementada; identity é consumida como metadata/fallback no shell atual, sem redesign estrutural; Runtime pendente;
 - **0.2-B.4 — gate/fixtures:** provar ausência de Domain/hostname/service no tema e validar fallbacks/cache;
 - fallback de branding: purpose → ACULTA → texto;
 - nenhum acesso a entidade Domain, storage ou serviço pelo Twig/SDC.
