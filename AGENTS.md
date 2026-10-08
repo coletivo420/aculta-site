@@ -54,6 +54,12 @@ Configuração exportável do Drupal:
 
 config/sync/
 
+## P5-extra-2 — economia de tokens e roteamento de agentes
+
+Para pesquisa, inventário e tarefas básicas verificáveis, usar preferencialmente o modelo mais econômico disponível; para DI/Views/Entity API, escalar conforme risco; para revisão formal, autenticação, segurança, acesso/cache privado, Domain, Commerce, segredos e merge, reservar modelo de maior capacidade. A seleção é manual: o utilitário não muda o modelo por conta própria.
+
+Consultar `docs/portal/AGENT-TOKEN-ECONOMY.md`. Usar `python3 scripts/portal-agent-budget.py route research` para recomendação de tier e `python3 scripts/portal-agent-budget.py context P5.2-A 3000` para contexto curto. Economizar tokens lendo arquivos e linhas relevantes, evitando dumps/roadmaps repetidos e mantendo relatório conciso; nunca dispensar revisão, documentação, gates ou evidências.
+
 ## Padrão Drupal 11+ do ACULTA Portal
 
 O módulo `web/modules/custom/aculta_portal` adota **Drupal Core 11.3+ como baseline arquitetural**.
