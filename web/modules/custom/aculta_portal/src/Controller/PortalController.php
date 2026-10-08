@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\aculta_portal\Controller;
 
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
