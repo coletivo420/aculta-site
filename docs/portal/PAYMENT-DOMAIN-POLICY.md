@@ -116,7 +116,7 @@ Webhook não é navegação de usuário e não participa da canonicalização GE
 O carrinho é centralizado em MAIN junto com checkout e pagamento.
 
 SHOP e COURSES mantêm descoberta, catálogo e página de produto/curso nos seus
-purposes, mas ações de ver/editar o carrinho navegam para MAIN.
+purposes. O formulário nativo `Add to cart` continua podendo ser submetido na página do produto/curso, pois no Drupal Commerce ele é um formulário do order item que cria/atualiza a mesma `commerce_order` de carrinho. Depois disso, ver/editar o carrinho navega para MAIN.
 
 A entidade/order continua sendo do Drupal Commerce; não existe storage paralelo
 por purpose. A centralização é de ownership de rota/experiência, não duplicação
