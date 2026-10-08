@@ -84,7 +84,6 @@ $legacyProceduralFunctions = [
   'aculta_portal_account_photo_redirect',
   'aculta_portal_address_redirect',
   'aculta_portal_sync_customer_address_names',
-  'aculta_portal_library_info_alter',
   'aculta_portal_validate_donation_amount',
 ];
 
@@ -103,10 +102,10 @@ $check(
 $editorialHooks = $srcRoot . '/Hook/EditorialHooks.php';
 $editorialHooksSource = $read($editorialHooks);
 $check(is_file($editorialHooks), 'P2.2 EditorialHooks class must exist.');
-foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter'] as $hookName) {
+foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter', 'library_info_alter'] as $hookName) {
   $check(
     substr_count($editorialHooksSource, "#[Hook('" . $hookName . "')]") === 1,
-    'P2.2 EditorialHooks must implement ' . $hookName . ' as an OOP hook.',
+    'P2 EditorialHooks must implement ' . $hookName . ' as an OOP hook.',
   );
 }
 

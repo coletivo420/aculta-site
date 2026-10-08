@@ -1,5 +1,13 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P2.3: library_info_alter em OOP
+
+- Migra `hook_library_info_alter()` para `EditorialHooks::libraryInfoAlter()` com `#[Hook]`.
+- Preserva literalmente a extensão da biblioteca `cep_autocomplete/viacep`: o Portal continua adicionando apenas `aculta_portal/cep-address` como dependência.
+- Mantém endpoint, client e cache do contrib intactos; nenhum JavaScript ou comportamento CEP é reimplementado nesta subfase.
+- Reduz o allowlist procedural do gate em mais uma função e passa a exigir `library_info_alter` em `EditorialHooks`.
+- Form API, entity access/presave, Commerce, controllers e subscribers permanecem fora desta subfase.
+
 ## 2026-10-08 — P2.2: hooks editoriais e Metatag em OOP
 
 - Migra `hook_metatag_tags_alter()`, `hook_node_presave()` e `hook_metatags_alter()` para `src/Hook/EditorialHooks.php` com `#[Hook]`.

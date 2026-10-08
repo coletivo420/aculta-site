@@ -265,15 +265,6 @@ function aculta_portal_sync_customer_address_names(array &$form, FormStateInterf
   }
 }
 
-/** Replaces the contrib CEP behavior with the accessible Portal integration. */
-function aculta_portal_library_info_alter(array &$libraries, string $extension): void {
-  if ($extension === 'cep_autocomplete' && isset($libraries['viacep'])) {
-    // Keep the contrib endpoint/client/cache, while using the local behavior
-    // for accessible status, stale-response protection, and post-fill focus.
-    $libraries['viacep']['dependencies'][] = 'aculta_portal/cep-address';
-  }
-}
-
 /** Rejects empty/non-positive custom donation amounts before entity building. */
 function aculta_portal_validate_donation_amount(array &$form, FormStateInterface $form_state): void {
   $gift_type = $form_state->getValue(['commerce_donation_pane', 'field_gift_type']);

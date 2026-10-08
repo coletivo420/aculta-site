@@ -13,7 +13,7 @@ use Drupal\schema_metatag\SchemaMetatagManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Editorial and metadata hook implementations.
+ * Editorial, metadata, and library hook implementations.
  */
 final class EditorialHooks {
 
@@ -128,6 +128,17 @@ final class EditorialHooks {
       $tags['schema_event_location'] = SchemaMetatagManager::serialize(
         count($locations) === 1 ? $locations[0] : $locations,
       );
+    }
+  }
+
+
+  /** Extends CEP Autocomplete with the accessible Portal behavior. */
+  #[Hook('library_info_alter')]
+  public function libraryInfoAlter(array &$libraries, string $extension): void {
+    if ($extension === 'cep_autocomplete' && isset($libraries['viacep'])) {
+      // Keep the contrib endpoint/client/cache, while using the local behavior
+      // for accessible status, stale-response protection, and post-fill focus.
+      $libraries['viacep']['dependencies'][] = 'aculta_portal/cep-address';
     }
   }
 
