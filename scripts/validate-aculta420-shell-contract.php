@@ -23,7 +23,7 @@ $hookSource = file_get_contents($hookPath);
 $pageSource = file_get_contents($pagePath);
 
 $assert(
-  str_contains($hookSource, "$variables['domain_presentation']['identity']"),
+  str_contains($hookSource, "\$variables['domain_presentation']['identity']"),
   'ThemeHooks consumes the neutral domain_presentation identity contract.',
 );
 $assert(
