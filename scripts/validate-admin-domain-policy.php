@@ -70,6 +70,9 @@ $subscriberSource = file_get_contents(
 $routeSource = file_get_contents(
   $portalRoot . '/src/EventSubscriber/DomainRouteSubscriber.php'
 );
+$resolverSource = file_get_contents(
+  $portalRoot . '/src/Domain/ContentPurposeResolver.php'
+);
 $themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420';
 
 $assert(
@@ -110,9 +113,17 @@ $assert(
   'Admin policy contains no hardcoded Homelab hostname.',
 );
 $assert(
-  str_contains($routeSource, "$accountRoutes['entity.user.edit_form']")
-    && str_contains($routeSource, "$route->setOption('_aculta_domain_purpose', 'main')"),
+  str_contains($routeSource, "\$accountRoutes['entity.user.edit_form']")
+    && str_contains($routeSource, "\$route->setOption('_aculta_domain_purpose', 'main')"),
   'User edit is excluded from generic ACCOUNT classification and classified as MAIN.',
+);
+$adminPrecedence = strpos($resolverSource, "getOption('_admin_route')");
+$wikiResolution = strpos($resolverSource, "WIKI_NODE_ROUTES");
+$assert(
+  $adminPrecedence !== FALSE
+    && $wikiResolution !== FALSE
+    && $adminPrecedence < $wikiResolution,
+  'Content purpose resolution gives MAIN admin ownership precedence over Wiki/content ownership.',
 );
 
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {
