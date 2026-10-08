@@ -1,5 +1,11 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P5-extra-2: economia de tokens para agentes
+
+- Política de roteamento proporcional ao risco: modelo econômico para pesquisa e tarefas simples, maior capacidade para revisão final e sistemas sensíveis.
+- CLI Python somente leitura para sugerir tier e gerar contexto curto limitado em caracteres; seleção manual, sem APIs externas.
+- Atualizados AGENTS, roadmap e handoff. Nenhuma alteração de runtime Drupal nem alteração de escopo DBTNG-2.
+
 ## 2026-10-08 — P5-extra-1: expurgo de portabilidade SQLite/MariaDB
 
 - Remove a responsabilidade de portabilidade de bancos do roadmap P5.3, P9.3 e hardening geral do `aculta_portal`.
