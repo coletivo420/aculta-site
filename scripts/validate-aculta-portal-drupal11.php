@@ -580,13 +580,29 @@ $check(
   'P5.1 SupportForm must not use static entity loads or Drupal service locators.',
 );
 
+// P5.2-A: courses catalog uses the native Views render element with an
+// injected executable factory; views_embed_view() is deprecated in 11.4.0.
+$coursesSource = $read($srcRoot . '/Controller/CoursesController.php');
+$check(
+  str_contains($coursesSource, "'#type' => 'view'")
+    && str_contains($coursesSource, "#[Autowire(service: 'views.executable')]")
+    && str_contains($coursesSource, "->access(self::CATALOG_DISPLAY)")
+    && str_contains($coursesSource, "CATALOG_VIEW = 'courses_catalog'")
+    && str_contains($coursesSource, "CATALOG_DISPLAY = 'block_1'")
+    && str_contains($coursesSource, "'config:views.view.' . self::CATALOG_VIEW"),
+  'P5.2-A courses catalog must keep View/display, access-before-render and fallback cacheability.',
+);
+$check(
+  !str_contains($coursesSource, 'views_embed_view(') && !str_contains($coursesSource, '\\u00'),
+  'P5.2-A courses catalog must not use views_embed_view() or literal unicode escapes.',
+);
+
 $serviceLocatorCeilings = [
   'src/Controller/PortalController.php' => 3,
   'src/Controller/PortalRequirementsController.php' => 2,
   'src/Controller/WikiController.php' => 6,
 ];
 $viewsWrapperCeilings = [
-  'src/Controller/CoursesController.php' => 1,
   'src/Controller/WikiController.php' => 1,
 ];
 $staticLoadCeilings = [
