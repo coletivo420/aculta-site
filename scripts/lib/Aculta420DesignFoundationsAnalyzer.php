@@ -167,7 +167,7 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   /** Compare paths after normalizing platform separators and case rules. */
   public static function pathsEquivalent(string $first, string $second, ?string $platform = NULL): bool {
-    $normalize = static fn (string $path): string => str_replace('\\\\', '/', $path);
+    $normalize = static fn (string $path): string => str_replace('\\', '/', $path);
     $first = $normalize($first);
     $second = $normalize($second);
     $platform ??= PHP_OS_FAMILY;
