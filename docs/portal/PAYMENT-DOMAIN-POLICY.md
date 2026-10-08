@@ -124,10 +124,7 @@ por purpose. A centralização é de ownership de rota/experiência, não duplic
 de dados.
 
 No futuro, a barra multidomínio poderá exibir um ícone de carrinho em qualquer
-purpose. Esse ícone deve consumir um contrato neutro preparado pelo Portal com,
-no mínimo, URL MAIN do carrinho e estado/contagem autorizada quando houver um
-consumidor real. O tema não consulta Commerce diretamente, não calcula contagem,
-não resolve hostname e não cria URL do carrinho por conta própria.
+purpose. Preferir reutilizar o `commerce_cart` Cart Block/lazy builder do Commerce ou um presenter do Portal baseado em `CartProviderInterface`, preservando o cache context `cart` e as dependências das orders. O Portal entrega um contrato neutro com URL MAIN e estado/contagem autorizada; o tema não consulta Commerce diretamente, não calcula contagem, não resolve hostname e não cria URL do carrinho por conta própria.
 
 Essa futura UI pertence à evolução do shell multidomínio; não é implementada
 nesta correção.
