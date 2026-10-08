@@ -123,6 +123,19 @@ try {
     $hookPath,
     str_replace(
       '$variables[\'institutional_home\'] = $this->pathMatcher->isFrontPage();',
+      "\\Drupal::service('aculta_portal.domain_purpose');\n    \$variables['institutional_home'] = \$this->pathMatcher->isFrontPage();",
+      $originalHook,
+    ),
+  );
+  $findings = $run($tempTheme);
+  $expectFinding('Portal service lookup', $findings, 'Portal service is forbidden');
+  $expectFinding('Portal service locator', $findings, 'service locator is forbidden');
+  file_put_contents($hookPath, $originalHook);
+
+  file_put_contents(
+    $hookPath,
+    str_replace(
+      '$variables[\'institutional_home\'] = $this->pathMatcher->isFrontPage();',
       "$host = \\Drupal::request()->getHost();\n    $variables['institutional_home'] = $this->pathMatcher->isFrontPage();",
       $originalHook,
     ),
@@ -166,6 +179,21 @@ try {
     'identity contract key regression',
     $run($tempTheme),
     'ThemeHooks must consume domain_presentation.identity.',
+  );
+  file_put_contents($hookPath, $originalHook);
+
+  file_put_contents(
+    $hookPath,
+    str_replace(
+      '$variables[\'institutional_home\'] = $this->pathMatcher->isFrontPage();',
+      "if ((\$variables['domain_presentation']['identity']['purpose'] ?? '') === 'shop') { \$variables['x'] = TRUE; }\n    \$variables['institutional_home'] = \$this->pathMatcher->isFrontPage();",
+      $originalHook,
+    ),
+  );
+  $expectFinding(
+    'PHP concrete purpose branch',
+    $run($tempTheme),
+    'Concrete purpose branching is forbidden',
   );
   file_put_contents($hookPath, $originalHook);
 
