@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -134,8 +135,10 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       )) {
         return;
       }
-      if ($requiredPurpose === 'main' && $this->isAdministrativeRoute($route)) {
-        $event->setResponse($this->canonicalAdminResponse($event->getRequest()));
+      if ($requiredPurpose === 'main'
+        && ($this->isAdministrativeRoute($route)
+          || DomainRoutePolicy::isCentralPaymentRouteName((string) $matched['_route']))) {
+        $event->setResponse($this->canonicalMainNavigationResponse($event->getRequest()));
         return;
       }
       $event->setResponse($this->notFoundResponse());
@@ -209,8 +212,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $currentPurpose,
     );
     if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose && !$resetEditException) {
-      if ($requiredPurpose === 'main' && $this->isAdministrativeRoute($route)) {
-        $event->setResponse($this->canonicalAdminResponse($request));
+      if ($requiredPurpose === 'main'
+        && ($this->isAdministrativeRoute($route)
+          || DomainRoutePolicy::isCentralPaymentRouteName(
+            (string) $request->attributes->get('_route')
+          ))) {
+        $event->setResponse($this->canonicalMainNavigationResponse($request));
         return;
       }
       $this->notFound($event);
@@ -239,9 +246,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Canonicalizes safe admin navigation to MAIN and fails closed otherwise.
+   * Canonicalizes safe MAIN-owned navigation and fails closed otherwise.
    */
-  private function canonicalAdminResponse(Request $request): Response {
+  private function canonicalMainNavigationResponse(Request $request): Response {
     // Never replay a state-changing admin request across Domain boundaries.
     if (!in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
       return $this->notFoundResponse();
