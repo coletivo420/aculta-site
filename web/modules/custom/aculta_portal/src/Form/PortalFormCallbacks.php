@@ -1,0 +1,169 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_portal\Form;
+
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\profile\ProfileInterface;
+use Drupal\user\UserDataInterface;
+
+/**
+ * Dependency-injected callbacks used by altered Core/contrib forms.
+ *
+ * Drupal 11.3+ resolves service callables through CallableResolver, so form
+ * callbacks stay serializable without procedural wrapper functions.
+ */
+final class PortalFormCallbacks {
+
+  public function __construct(
+    private readonly MessengerInterface $messenger,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly UserDataInterface $userData,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly TranslationInterface $translation,
+  ) {}
+
+  /** Validates conditional Activity fields. */
+  public function validateActivity(array &$form, FormStateInterface $formState): void {
+    $node = $formState->getFormObject()->buildEntity($form, $formState);
+    $mode = $node->get('field_modality')->value;
+
+    if (in_array($mode, ['presencial', 'hibrido'], TRUE)
+      && $node->get('field_place_name')->isEmpty()) {
+      $formState->setErrorByName(
+        'field_place_name',
+        $this->translation->translate('Informe o local da atividade presencial.'),
+      );
+    }
+
+    if (in_array($mode, ['online', 'hibrido'], TRUE)
+      && $node->get('field_online_url')->isEmpty()) {
+      $formState->setErrorByName(
+        'field_online_url',
+        $this->translation->translate('Informe o endereço online da atividade.'),
+      );
+    }
+
+    if (!$node->get('field_event_end')->isEmpty()
+      && $node->get('field_event_end')->value < $node->get('field_event_start')->value) {
+      $formState->setErrorByName(
+        'field_event_end',
+        $this->translation->translate('O término deve ocorrer após o início.'),
+      );
+    }
+  }
+
+  /** Replaces Change Mail Page's premature success claim. */
+  public function changeMailConfirmationMessage(array &$form, FormStateInterface $formState): void {
+    $this->messenger->deleteByType('status');
+    $this->messenger->addStatus($this->translation->translate(
+      'A solicitação foi registrada. Seu e-mail atual permanece ativo até a confirmação do novo endereço.',
+    ));
+    $formState->setRedirect('aculta_portal.security');
+  }
+
+  /** Returns the password form to Portal and records a local password. */
+  public function securityPasswordRedirect(array &$form, FormStateInterface $formState): void {
+    $uid = (int) $this->currentUser->id();
+    if ($uid > 0) {
+      $this->userData->delete('aculta_portal', $uid, 'social_auth_password_unset');
+    }
+    $formState->setRedirect('aculta_portal.security');
+  }
+
+  /** Applies accessible labels/autocomplete to Core's password widget. */
+  public function securityPasswordAfterBuild(array $form, FormStateInterface $formState): array {
+    if (isset($form['account']['pass']['pass1'])) {
+      $form['account']['pass']['pass1']['#title'] = $this->translation->translate('Nova senha');
+      $form['account']['pass']['pass1']['#attributes']['autocomplete'] = 'new-password';
+    }
+    if (isset($form['account']['pass']['pass2'])) {
+      $form['account']['pass']['pass2']['#title'] = $this->translation->translate('Confirmar nova senha');
+      $form['account']['pass']['pass2']['#attributes']['autocomplete'] = 'new-password';
+    }
+    return $form;
+  }
+
+  /** Returns the profile-photo form to the account overview. */
+  public function accountPhotoRedirect(array &$form, FormStateInterface $formState): void {
+    $formState->setRedirect('aculta_portal.dashboard');
+  }
+
+  /** Returns an Address submission to the nested Portal route. */
+  public function addressRedirect(array &$form, FormStateInterface $formState): void {
+    $formState->setRedirect('aculta_portal.my_data_address');
+  }
+
+  /** Synchronizes Commerce address names with the participant profile. */
+  public function syncCustomerAddressNames(array &$form, FormStateInterface $formState): void {
+    $participant = $formState->getFormObject()->getEntity();
+    if (!$participant instanceof ProfileInterface || $participant->bundle() !== 'participante') {
+      return;
+    }
+
+    $user = $participant->getOwner();
+    if ($user === NULL) {
+      return;
+    }
+
+    $storage = $this->entityTypeManager->getStorage('profile');
+    $customer = $storage->loadByUser($user, 'customer');
+    if ($customer === NULL || $customer->get('address')->isEmpty()) {
+      return;
+    }
+
+    $address = $customer->get('address')->first();
+    $changed = FALSE;
+    foreach ([
+      'given_name' => 'field_first_name',
+      'family_name' => 'field_last_name',
+    ] as $addressKey => $profileField) {
+      $value = (string) ($participant->get($profileField)->value ?? '');
+      if ($address->get($addressKey) !== $value) {
+        $address->set($addressKey, $value);
+        $changed = TRUE;
+      }
+    }
+
+    if ($changed) {
+      $customer->save();
+    }
+  }
+
+  /** Rejects empty/non-positive custom donation amounts. */
+  public function validateDonationAmount(array &$form, FormStateInterface $formState): void {
+    $giftType = $formState->getValue(['commerce_donation_pane', 'field_gift_type']);
+    $giftType = is_array($giftType)
+      ? ($giftType[0]['value'] ?? $giftType['value'] ?? reset($giftType))
+      : $giftType;
+
+    if ($giftType !== 'single') {
+      $formState->setErrorByName(
+        'commerce_donation_pane][field_gift_type',
+        $this->translation->translate('Selecione apoio único.'),
+      );
+      return;
+    }
+
+    $amountValues = $formState->getValue(['commerce_donation_pane', 'field_donation_amount']);
+    $amountItem = is_array($amountValues) ? ($amountValues[0] ?? []) : [];
+    $donationLevel = $amountItem['donation_level'] ?? [];
+    if (($donationLevel['value'] ?? NULL) !== 'custom_amount') {
+      return;
+    }
+
+    $amount = $donationLevel['amount'] ?? NULL;
+    if (!is_numeric($amount) || (float) $amount <= 0) {
+      $formState->setErrorByName(
+        'commerce_donation_pane][field_donation_amount][0][donation_level][amount',
+        $this->translation->translate('Informe um valor de apoio maior que zero.'),
+      );
+    }
+  }
+
+}
