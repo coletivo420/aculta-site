@@ -493,6 +493,6 @@ O gate cobre contrato completo, parcial e ausente, rejeita forwarding de campos/
 - **0.2-B.1** — inventário e fronteira normativa: concluída;
 - **0.2-B.2** — builder/presenter do contrato: implementado e validado no Runtime Homelab;
 - **0.2-B.3** — consumo de identity no shell atual sem redesign: implementado; Runtime pendente;
-- **0.2-B.4** — gate/fixtures e fechamento da fronteira;
+- **0.2-B.4** — analyzer compartilhado + fixtures positivas/negativas + fechamento da fronteira: implementado; Runtime final pendente;
 - **0.2-C** — Institution Bar;
 - **0.2-D** — Domain Header.
