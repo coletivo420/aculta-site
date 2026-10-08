@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\EventSubscriber;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Url;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -17,7 +17,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /** Keeps ordinary users in the Portal for account management. */
 final class AccountRouteSubscriber implements EventSubscriberInterface {
 
-  public function __construct(private readonly AccountProxyInterface $currentUser) {}
+  public function __construct(
+    private readonly AccountProxyInterface $currentUser,
+    private readonly DomainPurposeManager $domainPurposeManager,
+  ) {}
 
   public static function getSubscribedEvents(): array {
     // RouterListener resolves _route at priority 32. This runs after routing,
@@ -81,7 +84,26 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
     }
 
     if ($destination !== NULL) {
-      $event->setResponse(new RedirectResponse(Url::fromRoute($destination)->toString()));
+      $target = $destination === '<front>'
+        ? $this->domainPurposeManager->pathUrl('account', '/')
+        : $this->domainPurposeManager->routeUrl('account', $destination);
+      if ($target === NULL) {
+        $event->setResponse(new Response('', Response::HTTP_NOT_FOUND));
+        return;
+      }
+
+      // The generic user edit route is canonical on MAIN. Never turn a
+      // state-changing request there into a cross-domain replay on ACCOUNT.
+      if ($this->domainPurposeManager->getCurrentPurpose() !== 'account'
+        && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
+        $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, [
+          'Cache-Control' => 'private, no-store',
+          'X-Robots-Tag' => 'noindex, nofollow',
+        ]));
+        return;
+      }
+
+      $event->setResponse(new TrustedRedirectResponse($target->toString()));
     }
   }
 
