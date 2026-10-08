@@ -60,13 +60,6 @@ final class Aculta420ShellContractAnalyzer {
     )) {
       $findings[] = 'Twig must not branch on a concrete Domain purpose.';
     }
-    if (preg_match(
-      '/(?:purpose|aculta_domain_identity\.purpose)[^\n]{0,80}\b(?:wiki|courses|shop|support|account|magazine|main)\b/i',
-      preg_replace('/data-aculta-domain-purpose\s*=\s*["\'][^"\']*["\']/', '', $pageSource) ?? $pageSource,
-    )) {
-      $findings[] = 'Twig purpose may be metadata only, never a visual decision.';
-    }
-
     foreach ([
       'regions.brand_media',
       'regions.navigation',
@@ -99,6 +92,12 @@ final class Aculta420ShellContractAnalyzer {
         if (preg_match($pattern, $source)) {
           $findings[] = $label . ' is forbidden in theme runtime source: ' . $relative;
         }
+      }
+      if (preg_match(
+        '/(?:purpose|aculta_domain_identity\.purpose)[^\n;]{0,80}(?:==|!=|===|!==|match\s*\(|case\s+)[^\n;]{0,80}[\'"](?:wiki|courses|shop|support|account|magazine|main)[\'"]/i',
+        $source,
+      )) {
+        $findings[] = 'Concrete purpose branching is forbidden in theme runtime source: ' . $relative;
       }
     }
 
