@@ -10,15 +10,13 @@ use Drupal\Core\Controller\TitleResolverInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /** Builds concise, domain-aware breadcrumbs for public ACULTA experiences. */
 final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
-
-  use StringTranslationTrait;
 
   /** Purposes with a real public experience in this phase. */
   private const PUBLIC_PURPOSES = ['main', 'account', 'support', 'magazine'];
@@ -43,6 +41,7 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     private readonly RequestStack $requestStack,
     private readonly TitleResolverInterface $titleResolver,
     private readonly PathMatcherInterface $pathMatcher,
+    private readonly TranslationInterface $translation,
   ) {}
 
   /** {@inheritdoc} */
@@ -79,13 +78,13 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     if ($purpose === 'account' && $route_match->getRouteName() === 'aculta_portal.my_data_address') {
       $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.my_data');
       if ($parent_url) {
-        $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Meus dados'), $parent_url));
+        $breadcrumb->addLink(Link::fromTextAndUrl($this->translation->translate('Meus dados'), $parent_url));
       }
     }
     elseif ($purpose === 'account' && $route_match->getRouteName() === 'change_mail_page.change_mail') {
       $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.security');
       if ($parent_url) {
-        $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Segurança'), $parent_url));
+        $breadcrumb->addLink(Link::fromTextAndUrl($this->translation->translate('Segurança'), $parent_url));
       }
     }
     elseif ($purpose === 'magazine') {
@@ -154,10 +153,10 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   /** Supplies each public domain's own root label. */
   private function root(string $purpose): string {
     return match ($purpose) {
-      'account' => (string) $this->t('Minha conta'),
-      'support' => (string) $this->t('Apoio'),
-      'magazine' => (string) $this->t('Observatório da Maconha Coletivo 420'),
-      default => (string) $this->t('Início'),
+      'account' => (string) $this->translation->translate('Minha conta'),
+      'support' => (string) $this->translation->translate('Apoio'),
+      'magazine' => (string) $this->translation->translate('Observatório da Maconha Coletivo 420'),
+      default => (string) $this->translation->translate('Início'),
     };
   }
 
