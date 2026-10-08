@@ -662,17 +662,7 @@ $viewsWrapperCeilings = [
 $staticLoadCeilings = [
 ];
 $strictTypesDebt = [
-  'src/AccountShellBuilder.php',
-  'src/Auth/AuthIntegrationManager.php',
   'src/Hook/PortalHooks.php',
-  'src/Support/Form/SettingsForm.php',
-  'src/Plugin/metatag/Tag/OrganizationAlternateName.php',
-  'src/Plugin/metatag/Tag/OrganizationEmail.php',
-  'src/Plugin/metatag/Tag/OrganizationLegalName.php',
-  'src/Plugin/metatag/Tag/OrganizationTaxId.php',
-  'src/Plugin/metatag/Tag/PostalAddressTag.php',
-  'src/Plugin/metatag/Tag/SchemaWebPageName.php',
-  'src/Plugin/metatag/Tag/SchemaWebPageUrl.php',
 ];
 
 $phpFiles = [];
