@@ -124,6 +124,14 @@ markup, hierarquia, componentes, tipografia, espaçamento, dimensões, grid,
 breakpoints, posicionamento, shell, navegação e comportamento. Somente valores
 visuais tokenizados podem variar.
 
+O gate `validate-aculta420-design-foundations.php` aceita seletores de modo
+somente na foundation de tokens. Ele verifica as formas comuns de seletor dark,
+branches explícitos em Twig/PHP/JavaScript, os valores efetivos dos aliases e a
+ausência de declarações duplicadas, ciclos e referências não resolvidas. O
+subconjunto reconhecido e seus limites estão descritos em
+[`development.md`](development.md); mudanças na sintaxe do contrato devem vir
+com fixtures negativas correspondentes.
+
 Estado e sequência:
 
 1. 0.2-A/0.2-A.1 define valores semânticos light/dark por `data-bs-theme`;

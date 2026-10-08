@@ -189,7 +189,31 @@ Para tokens e fronteiras visuais da linha 0.2:
 
 ```sh
 php scripts/validate-aculta420-design-foundations.php
+php scripts/tests/validate-aculta420-design-foundations-test.php
 ```
+
+O validator protege o color mode como token-only. Fora de `css/tokens.css`, ele
+reconhece seletores CSS com `[data-theme="dark|light"]`,
+`[data-bs-theme="dark|light"]`, atributos equivalentes de color-mode/scheme,
+classes `.dark`/`.light` e variantes explícitas como `.dark-theme`,
+`.theme-dark`, `.dark-mode`, `.is-dark` e suas formas light. Também verifica
+condições Twig `if`/`elseif` e ternárias, condições PHP
+`if`/`elseif`/`switch`/`match` e condições JavaScript `if`/`switch`/ternárias
+que comparam uma variável de modo a `dark`/`light` ou usam um sinalizador
+`isDark`/`darkMode` equivalente.
+O gate também bloqueia scripts que alternem classes ou atributos de color mode.
+
+O parser CSS cobre as regras planas e os blocos de tokens usados pela foundation;
+não é um parser CSS completo. `var()` com fallback, seletores aninhados não
+convencionais e formas dinâmicas de decisão que não exponham um identificador de
+modo reconhecido ficam fora do subconjunto. Tokens `--aculta-*`/`--bs-*` fora
+dos blocos root/light e dark são rejeitados. Antes de ampliar a sintaxe aceita,
+adicione fixtures positivas e negativas ao teste do validator.
+
+Para tokens dark, o gate resolve aliases recursivamente, usa a última declaração
+na cascata suportada e falha com duplicatas, referências ausentes ou ciclos.
+As superfícies charcoal/graphite são valores explícitos aprovados no teste;
+não dependem de uma heurística subjetiva RGB.
 
 ## Testes mínimos
 

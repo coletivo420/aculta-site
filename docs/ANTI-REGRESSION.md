@@ -109,6 +109,8 @@ snapshots de fases e runbooks históricos.
 - light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura;
 - color mode no ACULTA420 é uma variação de tokens, não uma variação de layout;
 - componentes não conhecem o color mode; seletores dark são permitidos somente em `aculta420/css/tokens.css`;
+- o gate deve reconhecer classes/atributos dark alternativos e branches por modo em Twig, PHP e JavaScript, sem tratar texto comum como seletor;
+- o gate resolve aliases dos tokens dark, rejeita superfícies fora do contrato carvão/grafite, duplicatas, ciclos e referências ausentes; a última declaração não pode contornar WCAG;
 - uma variante futura de asset de logo por modo preserva espaço, dimensões e layout;
 - novos componentes consomem semantic tokens quando a função já existe; palette primitives ficam centralizadas;
 - purpose não define cor no tema e nunca é inferido por hostname;
