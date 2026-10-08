@@ -496,7 +496,7 @@ A fronteira passa a ter um analyzer estático reutilizado pelo gate Runtime e po
 - `scripts/lib/Aculta420ShellContractAnalyzer.php` concentra invariantes da fronteira;
 - `scripts/tests/validate-aculta420-shell-contract-test.php` injeta regressões positivas/negativas em cópia temporária do tema;
 - o gate Runtime `validate-aculta420-shell-contract.php` reutiliza o mesmo analyzer para evitar divergência entre teste sintético e Homelab;
-- fixtures rejeitam branch concreta por purpose, `DomainInterface`, `DomainPurposeManager`, hostname/service locator, consumo prematuro de `regions.*`, bypass do sinal `aculta_header_has_content` e quebra da chave `domain_presentation.identity`;
+- fixtures rejeitam branch concreta por purpose, `DomainInterface`, `DomainPurposeManager`, hostname/service locator, consumo prematuro de `regions.*`, fallback que ignore a presença do `system_branding_block`, remoção de `page.header` e quebra da chave `domain_presentation.identity`;
 - baseline restaurado precisa voltar a PASS ao final das fixtures;
 - o fechamento da B.4 depende também do gate Portal `validate-domain-presentation-contract.php`, que continua responsável por shape, sete purposes, cache contexts/tags e ausência de objetos no contrato exportado.
 
