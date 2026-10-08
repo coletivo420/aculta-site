@@ -5,9 +5,24 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\views\ViewExecutableFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Presents the course catalog on the COURSES Domain. */
 final class CoursesController extends ControllerBase {
+
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entities,
+    private readonly ViewExecutableFactory $viewExecutableFactory,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('views.executable'),
+    );
+  }
 
   /** Builds the public course landing page from the configured catalog View. */
   public function home(): array {
@@ -35,6 +50,18 @@ final class CoursesController extends ControllerBase {
         '#attributes' => ['class' => ['courses-home__collaboration']],
       ],
     ];
+  }
+
+  /** Builds the configured catalog View without static service wrappers. */
+  private function catalogView(): array {
+    $viewEntity = $this->entities->getStorage('view')->load('courses_catalog');
+    if ($viewEntity === NULL) {
+      return ['#plain_text' => $this->t('Nenhum curso está disponível no momento.')];
+    }
+
+    return $this->viewExecutableFactory
+      ->get($viewEntity)
+      ->buildRenderable('block_1');
   }
 
 }
