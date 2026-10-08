@@ -474,7 +474,7 @@ O ACULTA420 passa a consumir a identidade neutra entregue por `domain_presentati
 
 - `ThemeHooks::preprocessPage()` deriva de `identity` apenas `aculta_domain_brand_fallback = {label, home_url}`;
 - identidade ausente ou incompleta resulta em `NULL`; o tema não consulta Domain/config/hostname para inventar fallback funcional;
-- `page.html.twig` mantém `page.header` como branding primário e usa o fallback somente quando a região Drupal não entrega branding;
+- `page.html.twig` sempre preserva `page.header`; o fallback textual só é acrescentado quando `ThemeHooks` não encontra o plugin canônico `system_branding_block` na região;
 - `label` usa `short_title` quando disponível e cai para `title`; `home_url` continua preparado pelo Portal;
 - `purpose` permanece no contrato Portal para contexto futuro, mas não é emitido no DOM nem usado por branch visual em B.3/B.4;
 - `logo_alt` permanece reservado para branding visual futuro; não é reutilizado como `aria-label` de fallback textual;
