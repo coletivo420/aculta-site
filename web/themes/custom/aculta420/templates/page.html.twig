@@ -1,16 +1,15 @@
 {# Semantic layout; Bootstrap5 remains the sole provider of Bootstrap assets. #}
-<header class="aculta-header"{% if aculta_domain_identity %} data-aculta-domain-purpose="{{ aculta_domain_identity.purpose }}"{% endif %}>
+<header class="aculta-header">
   <div class="navbar aculta-navbar">
     <div class="container aculta-container">
       <div class="aculta-branding">
         {% if aculta_header_has_content %}
           {{ page.header }}
-        {% elseif aculta_domain_identity %}
-          <a href="{{ aculta_domain_identity.home_url }}"
+        {% elseif aculta_domain_brand_fallback %}
+          <a href="{{ aculta_domain_brand_fallback.home_url }}"
              rel="home"
-             class="site-title"
-             {% if aculta_domain_identity.logo_alt %}aria-label="{{ aculta_domain_identity.logo_alt }}"{% endif %}>
-            {{ aculta_domain_identity.short_title ?: aculta_domain_identity.title }}
+             class="site-title">
+            {{ aculta_domain_brand_fallback.label }}
           </a>
         {% endif %}
       </div>
