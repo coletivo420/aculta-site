@@ -165,6 +165,17 @@ final class Aculta420DesignFoundationsAnalyzer {
     return !in_array('..', $segments, TRUE);
   }
 
+  /** Compare paths after normalizing platform separators and case rules. */
+  public static function pathsEquivalent(string $first, string $second, ?string $platform = NULL): bool {
+    $normalize = static fn (string $path): string => str_replace('\\\\', '/', $path);
+    $first = $normalize($first);
+    $second = $normalize($second);
+    $platform ??= PHP_OS_FAMILY;
+    return strtolower($platform) === 'windows'
+      ? strcasecmp($first, $second) === 0
+      : $first === $second;
+  }
+
   /** Analyze the two supported token blocks and their effective values. */
   public static function analyzeTokens(string $css): array {
     $assertions = [];
@@ -607,8 +618,8 @@ final class Aculta420DesignFoundationsAnalyzer {
     }
     if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))/i', $source) === 1
       || preg_match('/setAttribute\s*(?:\?\.)?\s*\(\s*["\']data-(?:(?:bs-)?theme|color-mode|color-scheme)["\']\s*,/i', $source) === 1
-      || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode|is-dark|is-light|color-mode-dark|color-mode-light)["\']/i', $source) === 1
-      || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*(?:getTheme|getColorMode|getColorScheme|\btheme\b|\bcolor(?:Mode|Scheme|_mode|_scheme)\b)/i', $source) === 1) {
+      || preg_match('/classList\s*\.\s*(?:add|toggle|remove|replace)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode|is-dark|is-light|color-mode-dark|color-mode-light)["\']/i', $source) === 1
+      || preg_match('/classList\s*\.\s*(?:add|toggle|remove|replace)\s*\([^)]*(?:getTheme|getColorMode|getColorScheme|\btheme\b|\bcolor(?:Mode|Scheme|_mode|_scheme)\b)/i', $source) === 1) {
       $count++;
     }
     preg_match_all('/\.className\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))\s*(["\'])(.*?)\1/s', $source, $class_assignments);
@@ -671,6 +682,12 @@ final class Aculta420DesignFoundationsAnalyzer {
         return TRUE;
       }
     }
+    if (preg_match('/\b(?:localStorage|sessionStorage)(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme|color-mode|color-scheme)["\']\s*\])/i', $source) === 1) {
+      return TRUE;
+    }
+    if (preg_match('/\b(?:apply|set|init(?:ialize)?)(?:Theme|ColorMode|ColorScheme)\s*\(/i', $source) === 1) {
+      return TRUE;
+    }
     return FALSE;
   }
 
@@ -679,9 +696,45 @@ final class Aculta420DesignFoundationsAnalyzer {
   }
 
   private static function stripCssComments(string $source): string {
-    return preg_replace_callback('~/\*.*?\*/~s', static function (array $match): string {
-      return preg_replace('/[^\r\n]/', ' ', $match[0]) ?? '';
-    }, $source) ?? $source;
+    $output = '';
+    $quote = NULL;
+    $length = strlen($source);
+    for ($i = 0; $i < $length; $i++) {
+      $char = $source[$i];
+      if ($quote !== NULL) {
+        $output .= $char;
+        if ($char === '\\') {
+          if (isset($source[$i + 1])) {
+            $output .= $source[++$i];
+          }
+        }
+        elseif ($char === $quote) {
+          $quote = NULL;
+        }
+        continue;
+      }
+      if ($char === '"' || $char === "'") {
+        $quote = $char;
+        $output .= $char;
+        continue;
+      }
+      if ($char === '/' && ($source[$i + 1] ?? '') === '*') {
+        $output .= '  ';
+        $i += 2;
+        while ($i < $length) {
+          if ($source[$i] === '*' && ($source[$i + 1] ?? '') === '/') {
+            $output .= '  ';
+            $i++;
+            break;
+          }
+          $output .= ($source[$i] === "\r" || $source[$i] === "\n") ? $source[$i] : ' ';
+          $i++;
+        }
+        continue;
+      }
+      $output .= $char;
+    }
+    return $output;
   }
 
   /** Parse nested CSS blocks while respecting strings, comments and parens. */
@@ -1666,7 +1719,11 @@ final class Aculta420DesignFoundationsAnalyzer {
     while ($previous >= 0 && ctype_space($source[$previous])) {
       $previous--;
     }
-    return $previous < 0 || str_contains('([{=,:;!?&|+-*%^~>', $source[$previous]);
+    if ($previous < 0 || str_contains('([{=,:;!?&|+-*%^~>', $source[$previous])) {
+      return TRUE;
+    }
+    $prefix = substr($source, 0, $previous + 1);
+    return preg_match('/\b(?:return|throw|case|yield|await|typeof|void|delete)\s*$/', $prefix) === 1;
   }
 
   /** Skip a JavaScript regex literal, including escapes and character sets. */
