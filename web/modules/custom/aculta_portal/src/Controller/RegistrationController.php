@@ -4,11 +4,21 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Provides the public registration status while account creation is closed. */
-final class RegistrationController extends ControllerBase {
+final class RegistrationController implements ContainerInjectionInterface {
+
+  public function __construct(
+    private readonly TranslationInterface $translation,
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static($container->get('string_translation'));
+  }
 
   /** Returns an informational page without exposing account creation. */
   public function closed(): array {
@@ -18,11 +28,11 @@ final class RegistrationController extends ControllerBase {
       'message' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
-        '#value' => $this->t('O cadastro de novas contas está temporariamente fechado. Ele será disponibilizado quando a confirmação de e-mail estiver pronta.'),
+        '#value' => $this->translation->translate('O cadastro de novas contas está temporariamente fechado. Ele será disponibilizado quando a confirmação de e-mail estiver pronta.'),
       ],
       'login' => [
         '#type' => 'link',
-        '#title' => $this->t('Já tenho uma conta — entrar'),
+        '#title' => $this->translation->translate('Já tenho uma conta — entrar'),
         '#url' => Url::fromRoute('user.login'),
         '#attributes' => ['class' => ['aculta-button', 'aculta-button--primary']],
       ],
