@@ -1,4 +1,7 @@
 services:
+  aculta_portal.auth_integration:
+    class: Drupal\aculta_portal\Auth\AuthIntegrationManager
+    arguments: ['@config.factory']
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']

@@ -325,6 +325,15 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - Não solicitar scopes OAuth que não correspondam a uma feature ativa e aprovada.
 - Produtos Google for Nonprofits pós-aprovação não devem ser tratados como disponíveis antes da ativação real.
 
+## Fronteira de autenticação e anti-bot
+
+- ACULTA420 é dono somente da apresentação de login/formulários e de classes semânticas neutras;
+- autenticação, Social Auth, disponibilidade de provider, destinos OAuth, callbacks complementares, account linking e política de CAPTCHA pertencem ao `aculta_portal`;
+- Drupal Core/contrib mantém a implementação de protocolo, Social Auth, CAPTCHA e Turnstile;
+- infraestrutura fornece credenciais via Drupal Key e environment; o tema não lê configuração de integração nem contém secrets;
+- é proibido mover lógica OAuth para o tema, consultar configuração Social Auth em Twig/CSS/JS/PHP do tema, implementar CAPTCHA em Twig, adicionar dependências desses módulos ao tema ou colocar secrets nas settings do tema;
+- integração nova segue: contrib/Core → Portal → contrato neutro de apresentação → ACULTA420.
+
 ## Bootstrap Component Design System
 
 - O tema `aculta420` implementa o **ACULTA420 Bootstrap Component Design System**.

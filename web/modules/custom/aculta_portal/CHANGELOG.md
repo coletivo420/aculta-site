@@ -6,6 +6,11 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Fronteira de autenticação e tema
+
+- Centraliza a leitura de disponibilidade da configuração Google em `AuthIntegrationManager`, compartilhada pelo login e por Conexões.
+- Fornece o wrapper semântico `aculta-auth-provider` ao redor do bloco Social Auth; ACULTA420 estiliza o contrato sem selecionar markup interno do contrib.
+
 ### Correções da fundação ACULTA420
 
 - Portal passa a preparar breadcrumb e URL de transparência institucional sem criar dependência reversa no tema.
