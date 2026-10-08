@@ -38,6 +38,7 @@ Ele não substitui as fontes de verdade desses subsistemas.
 
 - [Política do domínio administrativo](ADMIN-DOMAIN-POLICY.md)
 - [Requests e redirects cross-domain](CROSS-DOMAIN-REQUEST-POLICY.md)
+- [Checkout e pagamentos em MAIN](PAYMENT-DOMAIN-POLICY.md)
 - [Domain Presentation Contract](DOMAIN-PRESENTATION-CONTRACT.md)
 
 ## Operação
