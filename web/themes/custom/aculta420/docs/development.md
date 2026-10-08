@@ -114,6 +114,10 @@ ela provavelmente está no lugar errado.
 
 ## Shell multidomínio
 
+> Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
+
+> Color mode no ACULTA420 é uma variação de tokens, não uma variação de layout.
+
 Ao evoluir o shell:
 
 - usar Domain purpose como chave funcional; nunca hostname hardcoded;
@@ -127,6 +131,13 @@ Ao evoluir o shell:
 - color modes trocam tokens, nunca markup; não adicionar seletor/persistência antes da fase prevista;
 - purpose não escolhe cores e branding por hostname no tema;
 - color modes alteram tokens, não markup/geometria;
+- modos compartilham tipografia, espaçamento, dimensões, grid, breakpoints,
+  posicionamento, shell, navegação e comportamento;
+- componentes não consultam modo de cor ou `prefers-color-scheme`; a escolha
+  visual é resolvida em `css/tokens.css`;
+- seletores dark fora de `css/tokens.css` são proibidos pelo gate;
+- asset de logo light/dark só pode variar se necessário à legibilidade, mantendo
+  espaço, dimensão e layout iguais;
 - preferir `position: sticky` a `fixed` como ponto de partida;
 - reutilizar Bootstrap Collapse/Offcanvas em vez de criar engine JS própria.
 
@@ -178,7 +189,31 @@ Para tokens e fronteiras visuais da linha 0.2:
 
 ```sh
 php scripts/validate-aculta420-design-foundations.php
+php scripts/tests/validate-aculta420-design-foundations-test.php
 ```
+
+O validator protege o color mode como token-only. Fora de `css/tokens.css`, ele
+reconhece seletores CSS com `[data-theme="dark|light"]`,
+`[data-bs-theme="dark|light"]`, atributos equivalentes de color-mode/scheme,
+classes `.dark`/`.light` e variantes explícitas como `.dark-theme`,
+`.theme-dark`, `.dark-mode`, `.is-dark` e suas formas light. Também verifica
+condições Twig `if`/`elseif` e ternárias, condições PHP
+`if`/`elseif`/`switch`/`match` e condições JavaScript `if`/`switch`/ternárias
+que comparam uma variável de modo a `dark`/`light` ou usam um sinalizador
+`isDark`/`darkMode` equivalente.
+O gate também bloqueia scripts que alternem classes ou atributos de color mode.
+
+O parser CSS cobre as regras planas e os blocos de tokens usados pela foundation;
+não é um parser CSS completo. `var()` com fallback, seletores aninhados não
+convencionais e formas dinâmicas de decisão que não exponham um identificador de
+modo reconhecido ficam fora do subconjunto. Tokens `--aculta-*`/`--bs-*` fora
+dos blocos root/light e dark são rejeitados. Antes de ampliar a sintaxe aceita,
+adicione fixtures positivas e negativas ao teste do validator.
+
+Para tokens dark, o gate resolve aliases recursivamente, usa a última declaração
+na cascata suportada e falha com duplicatas, referências ausentes ou ciclos.
+As superfícies charcoal/graphite são valores explícitos aprovados no teste;
+não dependem de uma heurística subjetiva RGB.
 
 ## Testes mínimos
 

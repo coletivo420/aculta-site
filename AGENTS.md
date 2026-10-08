@@ -337,7 +337,14 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 ## Tokens semânticos ACULTA420
 
 - novos componentes usam semantic token existente para a função visual; não espalhar palette primitives para representar contexto;
-- color mode troca tokens, não markup; não criar seletor, persistência ou JavaScript de modo antes da fase prevista;
+- Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
+- Color mode no ACULTA420 é uma variação de tokens, não uma variação de layout.
+- modos compartilham DOM, markup, hierarquia, componentes, tipografia, espaçamento, dimensões, grid, breakpoints, posicionamento, shell, navegação e comportamento;
+- somente semantic visual tokens variam; não criar seletores dark fora de `css/tokens.css`;
+- validadores do tema devem reconhecer seletores dark alternativos (`.dark`, `.dark-theme`, `[data-theme="dark"]` e equivalentes) e branches por modo em Twig/PHP/JavaScript; mudanças no parser exigem fixtures negativas;
+- o contrato de superfície dark charcoal/graphite é explícito; resolver aliases e cascata, rejeitar tokens duplicados, ciclos e referências ausentes, e avaliar contraste sobre o valor efetivo;
+- componente não conhece light, dark ou `prefers-color-scheme`; uma futura variante de asset de logo mantém espaço, dimensões e layout;
+- não criar seletor, persistência ou JavaScript de modo antes da fase prevista;
 - o tema nunca escolhe cores/branding por Domain purpose ou hostname; apresentação por purpose chega preparada pelo Portal;
 - não criar SDC apenas para substituir uma classe/utilitário Bootstrap simples sem contrato reutilizável.
 

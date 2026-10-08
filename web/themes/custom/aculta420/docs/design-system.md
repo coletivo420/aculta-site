@@ -102,9 +102,39 @@ tokens e não altera `page.html.twig` ou markup do shell.
 Bootstrap 5.3 usa `data-bs-theme` para color modes. ACULTA420 seguirá o mesmo
 contrato.
 
+> Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
+
+> Color mode no ACULTA420 é uma variação de tokens, não uma variação de layout.
+
+Light mantém a superfície geral verde muito suave, superfícies elevadas claras e
+identidade estrutural verde. Dark usa página carvão quente, superfícies grafite
+quentes, texto creme/branco quente e bordas escuras neutras. Verde permanece
+marca/acento/interação; amarelo indica ação/estado ativo; vermelho é ênfase
+editorial. Dark não é uma versão verde-escura do ACULTA420.
+
+O gate calcula WCAG contrast para os pares de texto/ação/shell e para o anel de
+foco em cada superfície dark. O menor par de texto normal é muted text sobre
+raised surface, **7.59:1**; o menor contraste do foco é **8.85:1** sobre a
+superfície interativa. O gate exige 4.5:1 para texto normal e 3:1 para foco.
+
+Componentes consomem `--aculta-surface-*`, `--aculta-text-*` e
+`--aculta-border-*`; eles não conhecem light, dark ou `prefers-color-scheme`.
+Essa decisão pertence à camada de tokens. Os dois modos compartilham DOM,
+markup, hierarquia, componentes, tipografia, espaçamento, dimensões, grid,
+breakpoints, posicionamento, shell, navegação e comportamento. Somente valores
+visuais tokenizados podem variar.
+
+O gate `validate-aculta420-design-foundations.php` aceita seletores de modo
+somente na foundation de tokens. Ele verifica as formas comuns de seletor dark,
+branches explícitos em Twig/PHP/JavaScript, os valores efetivos dos aliases e a
+ausência de declarações duplicadas, ciclos e referências não resolvidas. O
+subconjunto reconhecido e seus limites estão descritos em
+[`development.md`](development.md); mudanças na sintaxe do contrato devem vir
+com fixtures negativas correspondentes.
+
 Estado e sequência:
 
-1. 0.2-A define valores semânticos light/dark por `data-bs-theme`;
+1. 0.2-A/0.2-A.1 define valores semânticos light/dark por `data-bs-theme`;
 2. 0.2-E/0.2-F valida visualmente o shell nos dois modos;
 3. uma fase posterior adicionará `auto` via `prefers-color-scheme`, seletor e
    persistência;
@@ -114,9 +144,10 @@ Esta foundation não declara Dark Mode como feature completa e não ativa um mod
 por padrão. Ela prepara tokens para que uma fase posterior possa testar o shell
 e componentes sem mudar markup.
 
-Modo de cor troca tokens, não geometria nem markup do shell. Logos específicos de
-purpose podem futuramente ter variantes light/dark, mas o contrato inicial não
-as torna obrigatórias.
+Modo de cor troca tokens, não geometria nem markup do shell. Um logo poderá ter
+asset light e asset dark no futuro somente se a legibilidade exigir; seu espaço,
+dimensões e layout permanecem iguais e isso não autoriza DOM ou navegação
+diferentes.
 
 Referência:
 https://getbootstrap.com/docs/5.3/customize/color-modes/
