@@ -22,8 +22,8 @@ MAIN do ambiente via `DomainPurposeManager`. Nenhum hostname é hardcoded.
 
 ## Rotas centrais
 
-`DomainRoutePolicy::isCentralPaymentRouteName()` é a fonte única para famílias
-de rotas que pertencem a MAIN:
+`DomainRoutePolicy::isCentralTransactionRouteName()` é a fonte única para famílias
+de rotas centrais de carrinho/checkout/pagamento que pertencem a MAIN:
 
 - `commerce_cart.*`;
 - `commerce_checkout.*`;
