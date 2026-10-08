@@ -30,7 +30,7 @@ final class Aculta420ShellContractAnalyzer {
 
     foreach ([
       "\$variables['domain_presentation']['identity']" => 'ThemeHooks must consume domain_presentation.identity.',
-      'normalizeDomainIdentity' => 'ThemeHooks must normalize domain identity before Twig.',
+      'buildDomainBrandFallback' => 'ThemeHooks must derive a minimal domain branding fallback before Twig.',
       'aculta_header_has_content' => 'ThemeHooks must expose explicit renderable-header presence.',
     ] as $needle => $message) {
       if (!str_contains($hookSource, $needle)) {
@@ -39,10 +39,8 @@ final class Aculta420ShellContractAnalyzer {
     }
 
     foreach ([
-      'aculta_domain_identity.purpose',
-      'aculta_domain_identity.home_url',
-      'aculta_domain_identity.short_title',
-      'aculta_domain_identity.title',
+      'aculta_domain_brand_fallback.home_url',
+      'aculta_domain_brand_fallback.label',
     ] as $needle) {
       if (!str_contains($pageSource, $needle)) {
         $findings[] = 'page.html.twig is missing identity consumer: ' . $needle;
@@ -50,7 +48,7 @@ final class Aculta420ShellContractAnalyzer {
     }
 
     if (!str_contains($pageSource, '{% if aculta_header_has_content %}')
-      || !str_contains($pageSource, '{% elseif aculta_domain_identity %}')) {
+      || !str_contains($pageSource, '{% elseif aculta_domain_brand_fallback %}')) {
       $findings[] = 'Existing Drupal header must remain primary and domain identity fallback-only.';
     }
 
@@ -88,13 +86,31 @@ final class Aculta420ShellContractAnalyzer {
       }
       $source = (string) file_get_contents($file->getPathname());
       $relative = str_replace($themeRoot . DIRECTORY_SEPARATOR, '', $file->getPathname());
+      if (strtolower($file->getExtension()) === 'php') {
+        $tokens = token_get_all($source);
+        $source = '';
+        foreach ($tokens as $token) {
+          if (is_array($token)) {
+            if (in_array($token[0], [T_COMMENT, T_DOC_COMMENT], TRUE)) {
+              continue;
+            }
+            $source .= $token[1];
+          }
+          else {
+            $source .= $token;
+          }
+        }
+      }
+      elseif (strtolower($file->getExtension()) === 'twig') {
+        $source = preg_replace('/\{#.*?#\}/s', '', $source) ?? $source;
+      }
       foreach ($forbiddenPatterns as $label => $pattern) {
         if (preg_match($pattern, $source)) {
           $findings[] = $label . ' is forbidden in theme runtime source: ' . $relative;
         }
       }
       if (preg_match(
-        '/(?:purpose|aculta_domain_identity\.purpose)[^\n;]{0,80}(?:==|!=|===|!==|match\s*\(|case\s+)[^\n;]{0,80}[\'"](?:wiki|courses|shop|support|account|magazine|main)[\'"]/i',
+        '/purpose[^\n;]{0,80}(?:==|!=|===|!==|match\s*\(|case\s+)[^\n;]{0,80}[\'"](?:wiki|courses|shop|support|account|magazine|main)[\'"]/i',
         $source,
       )) {
         $findings[] = 'Concrete purpose branching is forbidden in theme runtime source: ' . $relative;
