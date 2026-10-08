@@ -25,6 +25,7 @@ MAIN do ambiente via `DomainPurposeManager`. Nenhum hostname é hardcoded.
 `DomainRoutePolicy::isCentralPaymentRouteName()` é a fonte única para famílias
 de rotas que pertencem a MAIN:
 
+- `commerce_cart.*`;
 - `commerce_checkout.*`;
 - `commerce_payment.checkout.*`;
 - `commerce_payment.notify`;
