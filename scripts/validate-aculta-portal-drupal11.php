@@ -538,18 +538,38 @@ $check(
   'P4-R aculta_portal.module must remain absent after all runtime hooks migrated to OOP.',
 );
 
+$supportFormSource = $read($srcRoot . '/Support/Form/SupportForm.php');
+$check(
+  preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $supportFormSource) === 1,
+  'P5.1 SupportForm must declare strict_types=1.',
+);
+foreach (["get('config.factory')", "get('entity_type.manager')", "get('plugin.manager.block')"] as $dependency) {
+  $check(
+    str_contains($supportFormSource, $dependency),
+    'P5.1 SupportForm must inject ' . $dependency . '.',
+  );
+}
+$check(
+  str_contains($supportFormSource, "getStorage('commerce_payment_gateway')->load('mercado_pago')")
+    && str_contains($supportFormSource, "\$this->blockManager->createInstance("),
+  'P5.1 SupportForm must use injected storage and BlockManager.',
+);
+$check(
+  !str_contains($supportFormSource, 'PaymentGateway::load(')
+    && !str_contains($supportFormSource, '\\Drupal::'),
+  'P5.1 SupportForm must not use static entity loads or Drupal service locators.',
+);
+
 $serviceLocatorCeilings = [
   'src/Controller/PortalController.php' => 3,
   'src/Controller/PortalRequirementsController.php' => 2,
   'src/Controller/WikiController.php' => 6,
-  'src/Support/Form/SupportForm.php' => 1,
 ];
 $viewsWrapperCeilings = [
   'src/Controller/CoursesController.php' => 1,
   'src/Controller/WikiController.php' => 1,
 ];
 $staticLoadCeilings = [
-  'src/Support/Form/SupportForm.php' => 1,
 ];
 $strictTypesDebt = [
   'src/AccountShellBuilder.php',
@@ -559,7 +579,6 @@ $strictTypesDebt = [
   'src/Hook/PortalHooks.php',
   'src/Support/Controller/SupportController.php',
   'src/Support/Form/SettingsForm.php',
-  'src/Support/Form/SupportForm.php',
   'src/Plugin/metatag/Tag/OrganizationAlternateName.php',
   'src/Plugin/metatag/Tag/OrganizationEmail.php',
   'src/Plugin/metatag/Tag/OrganizationLegalName.php',

@@ -118,7 +118,7 @@ A escolha precisa refletir a finalidade da query; `FALSE` não é atalho de perf
 
 Em `hook_entity_access()`, retornar `AccessResultInterface` e manter metadata proporcional às condições usadas. Resultado condicionado por Domain deve variar por `domain`; resultado condicionado por rota/usuário/request/session deve carregar contexts correspondentes e, quando depender de token one-time ou estado efêmero da request, usar `max-age: 0`. Não adicionar `cachePerPermissions()` quando a decisão não depende de permissões.
 
-Evitar static entity loads em runtime custom quando storage injetado estiver disponível e não consultar tabelas internas de contrib quando houver API pública.
+Em Forms que consultam gateways ou outros config entities, injetar `EntityTypeManagerInterface` e recuperar o storage adequado; block plugins usam `BlockManagerInterface` injetado. Preservar o acesso a APIs contrib e o resultado fail-closed de pagamentos. Evitar static entity loads em runtime custom quando storage injetado estiver disponível e não consultar tabelas internas de contrib quando houver API pública.
 
 Referência: https://www.drupal.org/node/3201242
 
