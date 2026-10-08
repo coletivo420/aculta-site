@@ -105,9 +105,12 @@ $assert(
   'Route classification reuses the shared central commerce route policy.',
 );
 $assert(
-  str_contains($requestSubscriberSource, 'DomainRoutePolicy::isCentralTransactionRouteName')
+  str_contains($requestSubscriberSource, 'getRouteCollectionForRequest')
+    && str_contains($requestSubscriberSource, "getOption('_aculta_cross_domain_canonical_purpose')")
+    && str_contains($requestSubscriberSource, "getOption('_admin_route')")
+    && str_contains($requestSubscriberSource, "getOption('_aculta_domain_purpose')")
     && str_contains($requestSubscriberSource, "['GET', 'HEAD']"),
-  'Wrong-host checkout navigation canonicalizes only safe methods.',
+  'Wrong-host transaction routing uses route metadata, canonicalizes safe navigation, and fails mutations closed.',
 );
 $assert(
   str_contains($hooksSource, 'DomainRoutePolicy::isCentralTransactionRouteName')
@@ -115,11 +118,23 @@ $assert(
           'main'"),
   'Portal rewrites routed checkout/payment links directly to MAIN.',
 );
-
 $assert(
-  str_contains($hooksSource, "str_starts_with((string) \$route, 'commerce_cart.')"),
-  'Central cart pages are noindex/nofollow with the transaction flow.',
+  str_contains($hooksSource, 'DomainRoutePolicy::isTransactionalSeoRouteName')
+    && str_contains($hooksSource, 'DomainRoutePolicy::isDonationFlowRouteName'),
+  'Transactional noindex metadata uses the centralized route policy.',
 );
+foreach ([
+  'commerce_cart.',
+  'commerce_checkout.',
+  'commerce_payment.checkout.',
+  'commerce_payment.notify',
+  'commerce_donation_flow.',
+] as $family) {
+  $assert(
+    !str_contains($hooksSource, $family),
+    'PortalHooks does not duplicate Commerce route family: ' . $family,
+  );
+}
 
 foreach ([$routePolicySource, $routeSubscriberSource, $requestSubscriberSource, $hooksSource] as $source) {
   $assert(

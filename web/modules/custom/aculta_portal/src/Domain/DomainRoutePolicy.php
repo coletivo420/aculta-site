@@ -17,7 +17,19 @@ final class DomainRoutePolicy {
       || str_starts_with($routeName, 'commerce_checkout.')
       || str_starts_with($routeName, 'commerce_payment.checkout.')
       || $routeName === 'commerce_payment.notify'
-      || str_starts_with($routeName, 'commerce_donation_flow.');
+      || self::isDonationFlowRouteName($routeName);
+  }
+
+  /** Returns TRUE for Commerce Donation Flow routes. */
+  public static function isDonationFlowRouteName(string $routeName): bool {
+    return str_starts_with($routeName, 'commerce_donation_flow.');
+  }
+
+  /** Returns TRUE for private transaction routes that must not be indexed. */
+  public static function isTransactionalSeoRouteName(string $routeName): bool {
+    return self::isCentralTransactionRouteName($routeName)
+      || str_starts_with($routeName, 'commerce_payment.')
+      || str_starts_with($routeName, 'entity.commerce_order.');
   }
 
 }

@@ -36,6 +36,11 @@ A política é reutilizada por:
 - `DomainRouteSubscriber`, para classificar as rotas e anotar navegação browser-facing com `_aculta_cross_domain_canonical_purpose=main`;
 - `PortalHooks`, para reescrever links renderizados diretamente para MAIN.
 
+`DomainRoutePolicy` também classifica as rotas transacionais como `noindex,
+nofollow` e remove canonical/OG URL dessas páginas. `commerce_payment.*` e as
+rotas de entidade de order são classificadas para SEO privado sem repetir
+prefixos Commerce no hook de metatags.
+
 `ContentPurposeResolver` e `DomainPurposeRequestSubscriber` não reavaliam nomes `commerce_*`: eles consomem a metadata já gravada na rota. Isso mantém classificação e enforcement desacoplados e segue o padrão Drupal de alterar metadata de rotas em `RouteSubscriberBase`.
 
 Não duplicar listas de rotas em outros arquivos.
@@ -80,6 +85,11 @@ O checkout e a UI de gerenciamento do carrinho devem começar em MAIN antes de s
 Isso não proíbe o `Add to cart` nativo na página de produto/curso em SHOP/COURSES: essa mutação faz parte da seleção comercial e usa a API/Form API do Commerce para atualizar a mesma order de carrinho.
 
 Se um `POST`, `PUT`, `PATCH` ou `DELETE` de uma rota central `commerce_cart.*`, `commerce_checkout.*` ou payment chegar em outro purpose, ele **não é redirecionado**. O request falha fechado.
+
+Isso também vale quando o método não é aceito pela própria rota. O Portal consulta
+os candidatos de path do Route Provider e usa a metadata de ownership já aplicada
+à rota; em purpose incorreto, responde `404` com `Cache-Control: private,
+no-store`. Não mantém uma segunda lista de famílias Commerce no request subscriber.
 
 Não usar 307/308 para transferir corpo/método entre hosts.
 
@@ -164,7 +174,8 @@ Antes da B.3, validar:
 4. Donation Flow instalado expõe somente rotas centrais marcadas MAIN;
 5. notify é MAIN e POST-only;
 6. GET/HEAD de checkout em purpose secundário canonicaliza para MAIN;
-7. POST de checkout em purpose secundário falha fechado;
+7. POST, PUT, PATCH e DELETE em rota central/purpose secundário falham fechado,
+   inclusive quando o método seria rejeitado pelo Router;
 8. links Portal para checkout apontam diretamente a MAIN;
 9. query/route parameters são preservados;
 10. checkout normal em MAIN continua funcional;

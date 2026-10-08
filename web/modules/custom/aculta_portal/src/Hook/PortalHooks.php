@@ -530,14 +530,10 @@ final class PortalHooks {
     elseif (str_starts_with((string) $route, 'aculta_portal.') && $route !== 'aculta_portal.support_form') {
       $tags['robots'] = 'noindex, nofollow';
     }
-    elseif (str_starts_with((string) $route, 'commerce_cart.')
-      || str_starts_with((string) $route, 'commerce_donation_flow.')
-      || str_starts_with((string) $route, 'commerce_checkout.')
-      || str_starts_with((string) $route, 'commerce_payment.')
-      || str_starts_with((string) $route, 'entity.commerce_order.')) {
+    elseif (DomainRoutePolicy::isTransactionalSeoRouteName((string) $route)) {
       $tags['robots'] = 'noindex, nofollow';
       unset($tags['canonical_url'], $tags['og_url'], $tags['schema_web_page_url']);
-      if (str_starts_with((string) $route, 'commerce_donation_flow.')) {
+      if (DomainRoutePolicy::isDonationFlowRouteName((string) $route)) {
         $tags['title'] = 'Apoio | Associação Cultural Antiproibicionista';
       }
     }

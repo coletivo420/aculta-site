@@ -76,7 +76,7 @@ $resolverSource = file_get_contents(
 $themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420';
 
 $assert(
-  str_contains($subscriberSource, 'canonicalAdminResponse')
+  str_contains($subscriberSource, 'canonicalMainNavigationResponse')
     && str_contains($subscriberSource, "pathUrl('main', \$request->getPathInfo())"),
   'Admin canonicalization uses DomainPurposeManager instead of a hardcoded host.',
 );

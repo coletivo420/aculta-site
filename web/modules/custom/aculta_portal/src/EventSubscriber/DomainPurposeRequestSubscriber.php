@@ -102,18 +102,20 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
     catch (MethodNotAllowedException) {
-      // If an admin route exists but does not accept this mutating method,
-      // keep the fail-closed response consistent on secondary purposes.
-      // Otherwise the router would expose a method-dependent 405 before the
-      // canonical admin policy gets a chance to return its non-replay 404.
+      // The path may still resolve to a route whose method requirements reject
+      // this request. Inspect Drupal's path candidates and their metadata so
+      // wrong-purpose mutations fail closed without duplicating route families.
       $request = $event->getRequest();
-      $path = $request->getPathInfo();
-      $isAdminPath = $path === '/painel-administrativo'
-        || str_starts_with($path, '/painel-administrativo/');
-      if ($isAdminPath
-        && $this->domainPurposeManager->getCurrentPurpose() !== 'main'
+      if ($this->domainPurposeManager->getCurrentPurpose() !== 'main'
         && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
-        $event->setResponse($this->notFoundResponse());
+        foreach ($this->routeProvider->getRouteCollectionForRequest($request) as $candidate) {
+          if ($candidate->getOption('_admin_route')
+            || $candidate->getOption('_aculta_domain_purpose') === 'main'
+            || $candidate->getOption('_aculta_cross_domain_canonical_purpose') === 'main') {
+            $event->setResponse($this->notFoundResponse());
+            return;
+          }
+        }
       }
       return;
     }
