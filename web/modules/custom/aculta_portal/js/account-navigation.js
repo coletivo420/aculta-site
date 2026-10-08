@@ -17,7 +17,11 @@
   };
 
   const requestDocument = async (url) => {
-    const response = await fetch(url, {
+    const target = new URL(url, window.location.href);
+    if (target.origin !== window.location.origin) {
+      throw new Error('Cross-origin account AJAX is not allowed.');
+    }
+    const response = await fetch(target.href, {
       credentials: 'same-origin',
       headers: { Accept: 'text/html', 'X-Requested-With': 'XMLHttpRequest' },
     });
@@ -131,7 +135,10 @@
           const portalLink = event.target.closest('a[data-aculta-portal-link]');
           const link = nestedLink || portalLink;
           if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target === '_blank') return;
-          if (new URL(link.href).pathname === window.location.pathname) {
+          const target = new URL(link.href, window.location.href);
+          // Cross-purpose links are normal browser navigation, never AJAX.
+          if (target.origin !== window.location.origin) return;
+          if (target.pathname === window.location.pathname) {
             event.preventDefault();
             return;
           }
