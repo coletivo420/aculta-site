@@ -39,9 +39,10 @@ final class ContentPurposeResolver {
     Request $request,
     array $matched = [],
   ): ?string {
-    // Administration is a platform-level concern and always belongs to MAIN.
-    // This must precede content-specific ownership (Wiki, Courses, etc.).
+    // Administration and payment are platform-level concerns and always
+    // belong to MAIN. This precedes content ownership (Wiki, Courses, etc.).
     if ($route->getOption('_admin_route')
+      || DomainRoutePolicy::isCentralPaymentRouteName($routeName)
       || $route->getOption('_aculta_domain_purpose') === 'main') {
       return 'main';
     }
