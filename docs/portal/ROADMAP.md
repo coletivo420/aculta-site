@@ -94,6 +94,7 @@ Avaliar/implementar somente com necessidade e Runtime:
 - cron/queues/logs/headers;
 - portabilidade SQLite/MariaDB;
 - dependency audit;
+- auditar cacheability dos tokens de URL/imagem derivados de `DomainPurposeManager`, incluindo entidade Domain/alias e variação de host/scheme (`domain` / `url.site`) antes de considerar a P6 de cache concluída;
 - failure modes/rollback.
 
 Ver [../operations/HARDENING.md](../operations/HARDENING.md).

@@ -127,6 +127,84 @@ foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter', 'library_info_
   );
 }
 
+$hookRuntimeSources = '';
+foreach (glob($srcRoot . '/Hook/*.php') ?: [] as $hookFile) {
+  $hookRuntimeSources .= $read($hookFile);
+}
+$p2MigratedHooks = [
+  'token_info',
+  'tokens',
+  'metatag_tags_alter',
+  'node_presave',
+  'metatags_alter',
+  'library_info_alter',
+];
+foreach ($p2MigratedHooks as $hookName) {
+  $check(
+    substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === 1,
+    'P2-R migrated hook must be implemented exactly once: ' . $hookName,
+  );
+}
+$check(
+  preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $tokenHooksSource) === 1
+    && preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $editorialHooksSource) === 1,
+  'P2-R TokenHooks and EditorialHooks must keep strict_types=1.',
+);
+$check(
+  !str_contains($tokenHooksSource, '\\Drupal::')
+    && !str_contains($editorialHooksSource, '\\Drupal::'),
+  'P2-R migrated hook classes must not use Drupal static service locators.',
+);
+$check(
+  preg_match('/function\\s+tokenInfo\\s*\\(\\s*\\)\\s*:\\s*array/', $tokenHooksSource) === 1,
+  'P2-R token_info signature must return array.',
+);
+$check(
+  preg_match('/function\\s+tokens\\s*\\([\\s\\S]*?BubbleableMetadata\\s+\\$metadata,?\\s*\\)\\s*:\\s*array/', $tokenHooksSource) === 1,
+  'P2-R tokens signature must preserve BubbleableMetadata and array return.',
+);
+$check(
+  preg_match('/function\\s+metatagTagsAlter\\s*\\(array\\s*&\\$definitions\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
+  'P2-R metatag_tags_alter signature must preserve definitions by reference.',
+);
+$check(
+  preg_match('/function\\s+nodePresave\\s*\\(NodeInterface\\s+\\$node\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
+  'P2-R node_presave signature must preserve NodeInterface.',
+);
+$check(
+  preg_match('/function\\s+metatagsAlter\\s*\\(array\\s*&\\$tags,\\s*array\\s*&\\$context\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
+  'P2-R metatags_alter must preserve both tags and context references.',
+);
+$check(
+  preg_match('/function\\s+libraryInfoAlter\\s*\\(array\\s*&\\$libraries,\\s*string\\s+\\$extension\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
+  'P2-R library_info_alter signature must match Drupal 11.',
+);
+foreach ([
+  'config.factory',
+  'entity_type.manager',
+  'aculta_portal.domain_purpose',
+  'domain.negotiator',
+  'request_stack',
+  'file_url_generator',
+  'string_translation',
+] as $serviceId) {
+  $check(
+    str_contains($tokenHooksSource, "service: '" . $serviceId . "'"),
+    'P2-R TokenHooks must keep explicit DI for service ' . $serviceId . '.',
+  );
+}
+$check(
+  str_contains($tokenHooksSource, '$metadata->addCacheableDependency($settings)')
+    && str_contains($tokenHooksSource, '$metadata->addCacheableDependency($node)'),
+  'P2-R TokenHooks must keep config and node cacheability.',
+);
+$check(
+  str_contains($editorialHooksSource, "'aculta_portal/cep-address'")
+    && str_contains($editorialHooksSource, 'SchemaMetatagManager::serialize')
+    && str_contains($editorialHooksSource, "'courses'")
+    && str_contains($editorialHooksSource, "'wiki'"),
+  'P2-R editorial/CEP/Domain behavior invariants must remain present.',
+);
 $formCallbacks = $srcRoot . '/Form/PortalFormCallbacks.php';
 $formCallbacksSource = $read($formCallbacks);
 $check(is_file($formCallbacks), 'P3.1 PortalFormCallbacks service class must exist.');

@@ -1,5 +1,14 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P2-R: revisão e hardening dos hooks OOP
+
+- Revisa P2.1–P2.3 contra o sistema OOP de hooks do Drupal 11.4.x, Token API, Metatag e Library API.
+- Confirma descoberta/autowiring automático de classes em `Drupal\\aculta_portal\\Hook` pelo Core 11.1+.
+- Confirma paridade da migração: Token/Metatag/Node/Library mantêm os comportamentos anteriores; `metatags_alter` usa o contexto por referência conforme o contrato do Metatag.
+- Endurece o gate para exigir os seis hooks migrados exatamente uma vez, `strict_types`, zero `\\Drupal::`, assinaturas-chave, DI explícita e invariantes de Token/Schema/CEP/Domain.
+- Confirma `addCacheableDependency($settings)` como substituição correta da cache tag manual da configuração institucional.
+- Registra para a fase de cache a dívida preexistente de URLs de token derivadas de Domain/alias/request: revisar dependência da entidade Domain e contexts `domain`/`url.site`; não é regressão introduzida pela P2.
+- Nenhum comportamento runtime é alterado nesta revisão.
 ## 2026-10-08 — P1-R: revisão e hardening do baseline Drupal 11+
 
 - Revisa o padrão P1 contra a API/documentação atual do Drupal 11.4.x.

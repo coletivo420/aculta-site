@@ -41,6 +41,8 @@ Continuam procedurais quando o Core assim exige: `hook_install()`, `hook_schema(
 
 Em Drupal 11.3+, `hook_requirements()` legado está deprecado. Para código novo/refatorado, usar `InstallRequirementsInterface` no install e `hook_runtime_requirements()` / `hook_update_requirements()` para runtime/update; não introduzir novo `aculta_portal_requirements()`.
 
+Classes em `Drupal\\<module>\\Hook` com `#[Hook]` são descobertas pelo Core 11.1+ e registradas automaticamente como serviços autowired; não criar definição YAML redundante só para registrar a classe de hook. Quando interfaces/IDs não forem resolvíveis por tipo, usar DI/autowiring explícito e verificável.
+
 Referência Core: https://www.drupal.org/node/3442349 e https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21Attribute%21Hook.php/class/Hook/11.x
 
 ## Dependency Injection
@@ -129,6 +131,8 @@ Quando apropriado, preferir storage da entidade `view` e `ViewExecutableFactory`
 - preferir `CacheableMetadata`, `BubbleableMetadata` e contratos cacheáveis;
 - `max-age: 0` é válido quando o conteúdo é realmente não-cacheável, mas não deve ser usado automaticamente no lugar de contexts/tags corretos;
 - access e cacheability são parte do mesmo contrato funcional.
+
+- Token API também deve propagar `BubbleableMetadata` para qualquer configuração, entidade relacionada, Domain/alias ou outra fonte usada fora de `$data`; URLs dependentes de host/scheme exigem revisão explícita de contexts/dependencies.
 
 Referência: https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays
 
