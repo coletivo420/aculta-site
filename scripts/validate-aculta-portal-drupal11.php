@@ -35,6 +35,33 @@ $read = static function (string $path) use (&$failures): string {
 $check(is_dir($moduleRoot), 'aculta_portal module directory must exist.');
 $check(is_dir($srcRoot), 'aculta_portal src directory must exist.');
 
+$composerLock = $read($root . '/composer.lock');
+$coreVersion = NULL;
+$composerData = json_decode($composerLock, TRUE);
+if (is_array($composerData)) {
+  foreach (array_merge($composerData['packages'] ?? [], $composerData['packages-dev'] ?? []) as $package) {
+    if (($package['name'] ?? '') === 'drupal/core-recommended') {
+      $coreVersion = ltrim((string) ($package['version'] ?? ''), 'v');
+      break;
+    }
+    if ($coreVersion === NULL && ($package['name'] ?? '') === 'drupal/core') {
+      $coreVersion = ltrim((string) ($package['version'] ?? ''), 'v');
+    }
+  }
+}
+$check(
+  is_string($coreVersion)
+    && $coreVersion !== ''
+    && version_compare($coreVersion, '11.3.0', '>=')
+    && version_compare($coreVersion, '12.0.0', '<'),
+  'composer.lock must pin Drupal Core within the supported 11.3+ major line.',
+);
+
+$installSource = $read($moduleRoot . '/aculta_portal.install');
+$check(
+  preg_match('/^function\\s+aculta_portal_requirements\\s*\\(/m', $installSource) !== 1,
+  'Do not reintroduce deprecated hook_requirements(); use Drupal 11.2+ install/runtime/update requirements APIs.',
+);
 $info = $read($moduleRoot . '/aculta_portal.info.yml');
 $check(
   preg_match('/^core_version_requirement:\s*\^11\.3\s*$/m', $info) === 1,
@@ -322,4 +349,4 @@ if ($failures !== []) {
   exit(1);
 }
 
-echo 'ACULTA PORTAL DRUPAL 11+ GATE: PASS (' . $checks . " checks; progressive P1 baseline)\n";
+echo 'ACULTA PORTAL DRUPAL 11+ GATE: PASS (' . $checks . " checks; progressive Drupal 11+ baseline)\n";

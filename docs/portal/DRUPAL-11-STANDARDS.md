@@ -39,6 +39,8 @@ Drupal Core introduziu hooks OOP com `#[Hook]` em 11.1. Para código runtime nov
 
 Continuam procedurais quando o Core assim exige: `hook_install()`, `hook_schema()`, `hook_update_N()`, `hook_post_update_NAME()`, uninstall e lifecycle equivalentes. Não criar wrapper OOP artificial para lifecycle.
 
+Em Drupal 11.3+, `hook_requirements()` legado está deprecado. Para código novo/refatorado, usar `InstallRequirementsInterface` no install e `hook_runtime_requirements()` / `hook_update_requirements()` para runtime/update; não introduzir novo `aculta_portal_requirements()`.
+
 Referência Core: https://www.drupal.org/node/3442349 e https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21Attribute%21Hook.php/class/Hook/11.x
 
 ## Dependency Injection
@@ -169,6 +171,8 @@ Executar:
 ```sh
 php scripts/validate-aculta-portal-drupal11.php
 ```
+
+O gate também valida que o `composer.lock` realmente mantém Drupal Core na linha suportada `>=11.3 <12`; o `.info.yml` sozinho não é evidência suficiente do runtime travado.
 
 O gate da P1 não finge que a modernização terminou. Ele registra e congela dívidas observadas na `main` de origem:
 

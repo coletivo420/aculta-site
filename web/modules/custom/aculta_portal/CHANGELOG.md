@@ -1,5 +1,14 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P1-R: revisão e hardening do baseline Drupal 11+
+
+- Revisa o padrão P1 contra a API/documentação atual do Drupal 11.4.x.
+- Confirma `#[Hook]` como abordagem preferencial para hooks de módulo e `event_subscriber` como tag canônica.
+- Confirma que as classes `Drupal\\<module>\\Hook` são descobertas como serviços autowired pelo Core 11.1+.
+- Endurece o gate para validar a versão realmente travada no `composer.lock`: Drupal Core deve permanecer em `>=11.3 <12`.
+- Registra a depreciação de `hook_requirements()` em Drupal 11.3+ e impede sua reintrodução no `aculta_portal.install`; install/runtime/update requirements devem usar as APIs atuais.
+- Mantém lifecycle hooks que o Core ainda exige como procedurais.
+- Nenhum comportamento runtime do Portal é alterado nesta revisão.
 ## 2026-10-08 — P3.3: revisão e hardening da Form API
 
 - Revisa P3.1/P3.2 contra o Form API e CallableResolver do Drupal 11.4.x, sem iniciar P4.
