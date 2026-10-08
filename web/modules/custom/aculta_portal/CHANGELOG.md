@@ -6,6 +6,13 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ## [Unreleased]
 
+### Administração multidomínio
+
+- Centraliza `/painel-administrativo/**` no purpose MAIN: GET/HEAD acessados por subdomínio são canonicalizados para o mesmo path/query no Domain MAIN via `DomainPurposeManager`.
+- Mantém requests administrativos mutáveis em host errado fail-closed para não repetir POST/CSRF entre Domains.
+- Preserva a exceção one-time do Core para `entity.user.edit_form` no fluxo de reset em ACCOUNT, agora aplicada de forma consistente antes e depois do RouterListener.
+- Wrong-purpose público/funcional continua retornando 404; a regra administrativa não vira redirect genérico.
+
 ### Domain Presentation Contract
 
 - 0.2-B.2 adiciona `DomainPresentationBuilder` e `DomainPresentation` como fronteira única e cache-aware entre Domain/Portal e ACULTA420.
