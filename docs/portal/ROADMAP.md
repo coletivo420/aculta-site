@@ -19,7 +19,7 @@ Core Drupal 11.3+ com verificação de APIs no Core instalado; preferir prática
 | P3.1–P3.3 | Form API/CallableResolver/callbacks exactly-once | Revisada estaticamente |
 | P4.1–P4.3 + P4-R | form_alter, entity_access, entity_presave OOP; .module vazio removido | Revisada estaticamente |
 | P5.1 | SupportForm: storage e BlockManager injetados | Concluída estaticamente |
-| P5.2–P5.7 e P5-R | Views, EntityQuery, controllers, storage e access | Próximas |
+| P5.2–P5.7 e P5-R | Views, EntityQuery, controllers, storage e access | Revisada estaticamente; Homelab parcial (sessão de usuário comum pendente) |
 | P6 | Render API, cache, privacidade, Domain | Planejada |
 | P7 | Subscribers, serviços, multidomínio | Planejada |
 | P8 | Deprecações e prontidão D12/D13 | Planejada |

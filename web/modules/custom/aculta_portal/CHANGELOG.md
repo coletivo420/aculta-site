@@ -6,6 +6,31 @@
 - Homelab (admin uid 1): `/painel-administrativo/configuracoes/aculta/portal` e `/requisitos` com região `<main>` idêntica antes/depois (22 linhas de tabela, 16 OK).
 - Gate: teto de locator e dívida de `strict_types` zerados para o controller; invariantes de injeção.
 
+## 2026-10-08 — P5.7 / P5-R: revisão formal da fase P5
+
+**Escopo revisado:** Views, EntityQuery/accessCheck, DI, storage, access e gates de P5.1–P5.6.
+
+**Estático (executado):**
+- Lint PHP de todo `src/` e dos arquivos alterados: 0 falhas.
+- `\Drupal::` em `src/`: 0. Views wrappers ativos: 0 (a única ocorrência é texto de docblock). Cargas estáticas de entidade: 0. `getQuery()` sem `accessCheck` explícito: 0.
+- `strict_types` ausente: 1 (`PortalHooks.php`, dívida carregada para P6, pois o arquivo é reescrito pelos hooks de cache/Domain).
+- Subscribers `kernel.event_subscriber` legados: 6 (teto P1 mantido; redução é escopo de P7). Tag canônica `event_subscriber` presente: 1.
+- Tetos do gate de locator, Views wrapper e carga estática: todos zerados.
+- Gate `validate-aculta-portal-drupal11.php`: PASS, 355 checks.
+
+**Validadores (executados, comparados com `main`):**
+- PASS no branch: admin-domain-policy, payment-domain-policy, domain-presentation-contract, aculta420-foundation (corrigido nesta fase), aculta420-shell-contract, institution, aculta420-design-foundations, secrets-contract, gate Drupal 11+.
+- FAIL também em `main` (sem regressão introduzida por P5): portal-commerce-security (apenas deriva de configuração no Runtime — 5 checks de `config/sync`), cross-domain-request-policy (host do Runtime fora do cookie compartilhado), admin-cleanup (Views retidas), final-drupal, final-contact, final-sitemap, home-carousel (exigem ambiente "local only").
+
+**Runtime Homelab (executado):** HTTP de Conta (8 páginas), Wiki, Cursos e painel administrativo idênticos antes/depois de cada subfase, com normalização de IDs aleatórios; matriz de acesso e isolamento conforme P5.6.
+
+**Pendências declaradas (não é PASS de homologação completa):**
+- Sessão HTTP real de usuário comum: sem conta não administradora no Runtime (ver P5.6).
+- Drift de Configuration Sync no Runtime: exige decisão de sincronização, fora do escopo autorizado (`cim`/`cex` não executados).
+- `PortalHooks.php` sem `strict_types`: carregado para P6.
+
+**Veredito P5:** concluída estaticamente e validada no Homelab nas superfícies tocadas; pronta para seguir para P6.
+
 ## 2026-10-08 — P5.5 / P5.6: storage contracts e matriz de acesso
 
 **P5.5 — storage**
