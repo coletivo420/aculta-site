@@ -20,6 +20,8 @@ Snapshots de PR/fase, SHAs e logs pertencem ao Git/GitHub.
 | ACULTA Portal | [portal/README.md](portal/README.md) |
 | roadmap do Portal | [portal/ROADMAP.md](portal/ROADMAP.md) |
 | operação/testes/releases | [operations/README.md](operations/README.md) |
+| deployment | [operations/DEPLOYMENT.md](operations/DEPLOYMENT.md) |
+| scripts institucionais | [../scripts/institution/README.md](../scripts/institution/README.md) |
 | decisões arquiteturais | [decisions/](decisions/) |
 | ACULTA420 | [../web/themes/custom/aculta420/README.md](../web/themes/custom/aculta420/README.md) |
 | roadmap ACULTA420 | [../web/themes/custom/aculta420/docs/roadmap.md](../web/themes/custom/aculta420/docs/roadmap.md) |
@@ -79,6 +81,7 @@ ACULTA420/      apresentação e Component Design System
 - [Testes](operations/TESTING.md)
 - [Hardening](operations/HARDENING.md)
 - [Releases](operations/RELEASES.md)
+- [Deployment](operations/DEPLOYMENT.md)
 - [Homelab](../scripts/homelab/README.md)
 
 ## Decisões

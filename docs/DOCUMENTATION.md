@@ -78,3 +78,19 @@ Agentes devem:
 - não converter histórico em requisito atual;
 - atualizar documentação junto do código;
 - preservar links relativos e evitar duplicação de fonte de verdade.
+
+
+## Documentação junto de scripts
+
+Diretórios em `scripts/` podem manter um `README.md` curto para explicar:
+
+- objetivo;
+- como executar;
+- pré-condições;
+- riscos;
+- referência para a documentação canônica.
+
+Não armazenar ali novos relatórios de fase, snapshots de revisão, logs ou
+“final reports”. Evidência de execução pertence ao PR/issue/release.
+
+Runbook durável deve viver em `docs/operations/`.
