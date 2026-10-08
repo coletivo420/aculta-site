@@ -100,6 +100,9 @@ depois para título textual, sem impedir a criação de um novo purpose.
 A arquitetura visual planejada está em
 `web/themes/custom/aculta420/docs/shell.md`.
 
+O inventário autoritativo da fronteira e o contrato alvo da linha 0.2-B estão
+em [DOMAIN-PRESENTATION-CONTRACT.md](DOMAIN-PRESENTATION-CONTRACT.md).
+
 ## Bootstrap primeiro
 
 Antes de criar markup custom, verificar se Bootstrap já fornece o primitive ou
