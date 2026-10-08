@@ -1,12 +1,12 @@
 /* 6. Navigation: header and menu share the exact institutional green. */
 .aculta-navbar {
   background-color: var(--aculta-green);
-  --bs-navbar-color: var(--aculta-white);
-  --bs-navbar-hover-color: var(--aculta-white);
-  --bs-navbar-active-color: var(--aculta-white);
-  --bs-navbar-brand-color: var(--aculta-white);
-  --bs-navbar-brand-hover-color: var(--aculta-white);
-  --bs-navbar-toggler-border-color: var(--aculta-white);
+  --bs-navbar-color: var(--aculta-text-inverse);
+  --bs-navbar-hover-color: var(--aculta-text-inverse);
+  --bs-navbar-active-color: var(--aculta-text-inverse);
+  --bs-navbar-brand-color: var(--aculta-text-inverse);
+  --bs-navbar-brand-hover-color: var(--aculta-text-inverse);
+  --bs-navbar-toggler-border-color: var(--aculta-text-inverse);
   --bs-navbar-padding-y: clamp(1rem, 2vw, 1.5rem);
   font-family: var(--aculta-font-display);
   font-size: 1.1875rem;
@@ -15,48 +15,48 @@
 .aculta-navbar > .container { gap: 1rem 2rem; }
 .aculta-navbar .region-primary-menu { width: 100%; }
 .aculta-navbar .navbar-nav { gap: clamp(0.75rem, 1.45vw, 1.25rem); padding-inline: 0; background-color: var(--aculta-green); }
-.aculta-navbar .nav.navbar-nav { --bs-nav-link-color: var(--aculta-white); --bs-nav-link-hover-color: var(--aculta-white); }
+.aculta-navbar .nav.navbar-nav { --bs-nav-link-color: var(--aculta-text-inverse); --bs-nav-link-hover-color: var(--aculta-text-inverse); }
 .aculta-navbar .navbar-nav .nav-link { padding: 0.5rem 0.4rem; white-space: nowrap; border-radius: 0.1875rem; text-decoration-thickness: 1px; text-underline-offset: 0.28em; transition: color var(--aculta-motion-fast) var(--aculta-ease-standard), background-color var(--aculta-motion-fast) var(--aculta-ease-standard), text-decoration-color var(--aculta-motion-fast) var(--aculta-ease-standard); }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link {
-  color: var(--aculta-white);
+  color: var(--aculta-text-inverse);
   background-color: transparent;
   text-decoration: none;
 }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link.is-active,
 .aculta-navbar .navbar-nav > .nav-item > .nav-link[aria-current="page"] {
-  color: var(--aculta-nav-current-text);
-  background-color: var(--aculta-nav-current-bg);
+  color: var(--aculta-interactive-active-text);
+  background-color: var(--aculta-interactive-active-bg);
   text-decoration: underline;
-  text-decoration-color: var(--aculta-nav-current-underline);
+  text-decoration-color: var(--aculta-interactive-active-text);
 }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link:not(.is-active):not([aria-current="page"]):is(:hover, :focus-visible) {
-  color: var(--aculta-nav-hover-text);
-  background-color: var(--aculta-nav-hover-bg);
+  color: var(--aculta-interactive-hover-text);
+  background-color: var(--aculta-interactive-hover-bg);
   text-decoration: underline;
-  text-decoration-color: var(--aculta-nav-hover-underline);
+  text-decoration-color: var(--aculta-interactive-hover-text);
 }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link.is-active:is(:hover, :focus-visible),
 .aculta-navbar .navbar-nav > .nav-item > .nav-link[aria-current="page"]:is(:hover, :focus-visible) {
-  color: var(--aculta-nav-current-text);
-  background-color: var(--aculta-nav-current-bg);
+  color: var(--aculta-interactive-active-text);
+  background-color: var(--aculta-interactive-active-bg);
   text-decoration: underline;
-  text-decoration-color: var(--aculta-nav-current-underline);
+  text-decoration-color: var(--aculta-interactive-active-text);
 }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link:focus-visible {
-  outline: 3px solid var(--aculta-white);
+  outline: 3px solid var(--aculta-text-inverse);
   outline-offset: 3px;
 }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link.is-active:focus-visible,
 .aculta-navbar .navbar-nav > .nav-item > .nav-link[aria-current="page"]:focus-visible {
-  outline-color: var(--aculta-green-dark);
+  outline-color: var(--aculta-interactive-active-text);
 }
-.aculta-menu-toggle { align-items: center; gap: 0.5rem; padding: 0.625rem; color: var(--aculta-white); background-color: var(--aculta-green-dark); font: inherit; }
+.aculta-menu-toggle { align-items: center; gap: 0.5rem; padding: 0.625rem; color: var(--aculta-text-inverse); background-color: var(--aculta-green-dark); font: inherit; }
 .aculta-navbar .navbar-toggler-icon {
   width: 1.25rem;
   height: 1.25rem;
-  background-image: linear-gradient(var(--aculta-white), var(--aculta-white)),
-    linear-gradient(var(--aculta-white), var(--aculta-white)),
-    linear-gradient(var(--aculta-white), var(--aculta-white));
+  background-image: linear-gradient(var(--aculta-text-inverse), var(--aculta-text-inverse)),
+    linear-gradient(var(--aculta-text-inverse), var(--aculta-text-inverse)),
+    linear-gradient(var(--aculta-text-inverse), var(--aculta-text-inverse));
   background-size: 100% 2px;
   background-position: center 20%, center 50%, center 80%;
   background-repeat: no-repeat;
@@ -64,7 +64,7 @@
 /* Navigation is visible without JavaScript; collapse is progressive enhancement. */
 .aculta-navbar:not(.aculta-navigation-ready) .collapse { display: block; }
 .aculta-navbar:not(.aculta-navigation-ready) .aculta-menu-toggle { display: none; }
-.aculta-utility { background: var(--aculta-white); border-bottom: 1px solid var(--aculta-border); }
+.aculta-utility { color: var(--aculta-text-primary); background: var(--aculta-surface-raised); border-bottom: 1px solid var(--aculta-shell-border); }
 .aculta-utility .navbar-nav { flex-direction: row; justify-content: flex-end; flex-wrap: wrap; gap: 0.25rem 1rem; }
 .aculta-utility .nav-link { padding-block: 0.5rem; font: 500 0.875rem/1.6 var(--aculta-font-body); }
 

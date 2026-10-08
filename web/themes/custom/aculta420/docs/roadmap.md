@@ -2,7 +2,7 @@
 
 ## 0.1.0 — Foundation
 
-Status: **em implementação**.
+Status: **concluído em 2026-10-07**.
 
 Objetivo: estabelecer o novo provider `aculta420` sobre a base madura do antigo
 tema `aculta`.
@@ -36,20 +36,50 @@ Gate de release:
 - `validate-aculta420-foundation` passa no Runtime;
 - documentação corrente não instrui compatibilidade com provider legado.
 
-## 0.2.0 — Foundations 2.0
+## 0.2.0 — Multidomain Shell Foundations
 
-- semantic tokens de surface/text/interactive;
-- semantic tokens do shell (`surface`, `text`, `border`, Institution Bar e Domain Header);
-- preparar contrato `domain_presentation` no Portal sem expor entidade Domain ao tema;
-- fallback de branding purpose → ACULTA → texto, sem exigir logo próprio;
-- motion tokens;
-- remoção de durations hardcoded equivalentes;
-- foundation para light/dark sem ativar UI incompleta;
-- `category-label` experimental;
-- avaliar SDC Devel como dev-only;
-- validar component schemas continuamente.
+Esta linha prepara e implementa o shell Design B em etapas revisáveis. O tema
+recebe somente contexto de apresentação do Portal; nenhuma etapa autoriza
+resolução de purpose por hostname.
 
-Não criar button SDC.
+### 0.2-A — Semantic Foundations
+
+- tokens semânticos de superfície, texto, borda, interação e shell;
+- valores light/dark preparados via `data-bs-theme`, sem seletor ou persistência;
+- superfície geral verde suave para a direção Design B;
+- Bootstrap mapeado aos tokens semânticos;
+- motion e reduced-motion preservados.
+
+### 0.2-B — Domain Presentation Contract
+
+- contrato de apresentação fornecido pelo `aculta_portal`;
+- fallback de branding: purpose → ACULTA → texto;
+- nenhum acesso a entidade Domain, storage ou serviço pelo Twig/SDC.
+
+### 0.2-C — Institution Bar
+
+- faixa institucional global, compacta e discreta;
+- marca ACULTA e ações globais preparadas pelo Portal.
+
+### 0.2-D — Domain Header
+
+- cabeçalho visual principal com marca, título e navegação preparados pelo Portal;
+- tokens estruturais sem identidade codificada por purpose.
+
+### 0.2-E — Mobile/Sticky Shell
+
+- adaptação mobile e comportamento sticky;
+- revisão de navegação, account dropdown e search trigger;
+- reutilizar Bootstrap Collapse/Offcanvas conforme o contrato validado.
+
+### 0.2-F — Design B QA
+
+- validar shell e estados em desktop/mobile, teclado/foco, reduced-motion e
+  modos light/dark;
+- corrigir contraste e regressões antes de fechar a linha 0.2.0.
+
+Não criar button SDC. `category-label` permanece candidato experimental e fica
+deferido até existir consumidor comprovado.
 
 ## 0.3.0 — Card System v1
 
@@ -75,23 +105,13 @@ conforme o contexto.
 
 Gate: editorial e cursos compartilham linguagem de carousel sem JS duplicado.
 
-## 0.5.0 — Shell + Icons + Color mode UI
+## 0.5.0 — Icons + Color mode UI
 
-- implementar o shell multidomínio em duas camadas: Institution Bar + Domain Header;
-- direção visual próxima ao “Design B”: superfícies claras, verde estrutural e item
-  atual de alto contraste, sempre via semantic tokens;
-- Institution Bar discreta (~28–34 px desktop) e Domain Header dominante
-  (~56–68 px desktop), sem tornar essas medidas contrato rígido;
-- logo principal/título/navegação variáveis por purpose a partir do contexto do Portal;
-- começar com `position: sticky`; `fixed` exige necessidade comprovada;
+- adicionar UI de seleção light/dark/auto somente após a validação visual do shell;
+- persistência de preferência usando `data-bs-theme`;
 - Core Icon API;
 - UI Icons 2.x;
 - Bootstrap Icons por API, não markup espalhado;
-- navbar revisada;
-- Bootstrap Offcanvas mobile;
-- account dropdown;
-- search trigger;
-- auto/light/dark com persistência usando `data-bs-theme`;
 - mega menu somente após shell básico estável.
 
 ## 0.6.0 — Search + Feedback

@@ -334,6 +334,13 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - é proibido mover lógica OAuth para o tema, consultar configuração Social Auth em Twig/CSS/JS/PHP do tema, implementar CAPTCHA em Twig, adicionar dependências desses módulos ao tema ou colocar secrets nas settings do tema;
 - integração nova segue: contrib/Core → Portal → contrato neutro de apresentação → ACULTA420.
 
+## Tokens semânticos ACULTA420
+
+- novos componentes usam semantic token existente para a função visual; não espalhar palette primitives para representar contexto;
+- color mode troca tokens, não markup; não criar seletor, persistência ou JavaScript de modo antes da fase prevista;
+- o tema nunca escolhe cores/branding por Domain purpose ou hostname; apresentação por purpose chega preparada pelo Portal;
+- não criar SDC apenas para substituir uma classe/utilitário Bootstrap simples sem contrato reutilizável.
+
 ## Bootstrap Component Design System
 
 - O tema `aculta420` implementa o **ACULTA420 Bootstrap Component Design System**.
