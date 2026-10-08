@@ -135,9 +135,21 @@ $p2MigratedHooks = [
   'metatags_alter',
   'library_info_alter',
 ];
+$p2HookOwners = [
+  'token_info' => $tokenHooksSource,
+  'tokens' => $tokenHooksSource,
+  'metatag_tags_alter' => $editorialHooksSource,
+  'node_presave' => $editorialHooksSource,
+  'metatags_alter' => $editorialHooksSource,
+  'library_info_alter' => $editorialHooksSource,
+];
+// Drupal 11.1+ runs every #[Hook] method of a module, so distinct concerns may
+// live in different classes (e.g. PortalHooks owns route-based metatags_alter
+// and login/Profile form_alter). The migrated implementation must exist
+// exactly once in its owning class.
 foreach ($p2MigratedHooks as $hookName) {
   $check(
-    substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === 1,
+    substr_count($p2HookOwners[$hookName], "#[Hook('" . $hookName . "')]") === 1,
     'P2-R migrated hook must be implemented exactly once: ' . $hookName,
   );
 }
@@ -291,7 +303,7 @@ foreach ([
 }
 $check(
   preg_match(
-    '/AccessResult::neutral\\(\\)[\\s\\S]{0,220}?cachePerPermissions\\(\\)[\\s\\S]{0,220}?addCacheContexts\\(\\[\\'route\\', \\'user\\'\\]\\)[\\s\\S]{0,220}?setCacheMaxAge\\(0\\)/',
+    '/AccessResult::neutral\\(\\)[\\s\\S]{0,220}?cachePerPermissions\\(\\)[\\s\\S]{0,220}?addCacheContexts\\(\\[\'route\', \'user\'\\]\\)[\\s\\S]{0,220}?setCacheMaxAge\\(0\\)/',
     $entityHooksSource,
   ) === 1,
   'P4.2 valid password-reset neutral result must remain request-sensitive and uncacheable.',
@@ -301,7 +313,7 @@ $formHooks = $srcRoot . '/Hook/FormHooks.php';
 $formHooksSource = $read($formHooks);
 $check(is_file($formHooks), 'P4.1 FormHooks class must exist.');
 $check(
-  substr_count($hookRuntimeSources, "#[Hook('form_alter')]") === 1,
+  substr_count($formHooksSource, "#[Hook('form_alter')]") === 1,
   'P4.1 form_alter must be implemented exactly once as an OOP hook.',
 );
 $check(
@@ -352,6 +364,14 @@ foreach ([
   );
 }
 
+// Module-wide totals: owning class + the pre-existing PortalHooks concern.
+foreach (['form_alter' => 2, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
+  $check(
+    substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === $expected,
+    'Hook implementation count drifted for ' . $hookName . ' (expected ' . $expected . ').',
+  );
+}
+
 $p4HookSources = [
   'form_alter' => $formHooksSource ?? '',
   'entity_access' => $entityHooksSource ?? '',
@@ -359,7 +379,7 @@ $p4HookSources = [
 ];
 foreach ($p4HookSources as $hookName => $source) {
   $check(
-    substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === 1,
+    substr_count($source, "#[Hook('" . $hookName . "')]") === 1,
     'P4-R migrated hook must remain exactly-once: ' . $hookName,
   );
   $check(
@@ -394,7 +414,7 @@ $check(
 );
 $check(
   str_contains($entityHooksSource ?? '', "->addCacheContexts(['domain'])")
-    && str_contains($entityHooksSource ?? '', "->addCacheableDependency($entity)"),
+    && str_contains($entityHooksSource ?? '', '->addCacheableDependency($entity)'),
   'P4-R Wiki access must keep Domain variation and entity cache dependency.',
 );
 $check(

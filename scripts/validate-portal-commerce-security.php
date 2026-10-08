@@ -54,7 +54,7 @@ $assert(\Drupal::config('system.logging')->get('error_level') === 'verbose' && s
 $route_subscriber_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/EventSubscriber/AccountRouteSubscriber.php');
 $assert(str_contains($route_subscriber_source, "get('_raw_variables')") && str_contains($route_subscriber_source, 'isValidCorePasswordResetRequest'), 'Account route guard can identify raw user IDs before parameter conversion and delegates password-reset exception to a Core token check.');
 $assert(str_contains($route_subscriber_source, "get('pass-reset-token')") && str_contains($route_subscriber_source, "get('pass_reset_" ) && str_contains($route_subscriber_source, 'hash_equals'), 'The account edit exception requires Drupal Core\'s session-bound one-time token.');
-$assert(str_contains(file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/aculta_portal.module'), "getRouteName() === 'entity.user.edit_form'") && str_contains(file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/aculta_portal.module'), "->hasPermission('administer users')"), 'Core entity access also prevents regular users from reaching the generic account edit form.');
+$assert(str_contains(file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/EntityHooks.php'), "getRouteName() === 'entity.user.edit_form'") && str_contains(file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/EntityHooks.php'), "->hasPermission('administer users')"), 'Core entity access also prevents regular users from reaching the generic account edit form.');
 $portal_hooks = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
 $assert(str_contains($portal_hooks, "^/user/([1-9][0-9]*)/edit$") && str_contains($portal_hooks, "aculta_account_edit_blocked") && str_contains($portal_hooks, "aculta_portal.security"), 'A blocked own generic account edit page offers a direct Portal Security link.');
 $portal_hooks_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
@@ -400,7 +400,7 @@ foreach ([['single', 'custom_amount', ''], ['single', 'custom_amount', '0'], ['s
   $state->setValue(['commerce_donation_pane', 'field_gift_type'], [['value' => $gift_type]]);
   $state->setValue(['commerce_donation_pane', 'field_donation_amount'], [['donation_level' => ['value' => $choice, 'amount' => $amount]]]);
   $form = [];
-  aculta_portal_validate_donation_amount($form, $state);
+  \Drupal::service('aculta_portal.form_callbacks')->validateDonationAmount($form, $state);
   $assert($state->hasAnyErrors(), 'Donation form rejects empty, zero, negative, or recurring input.');
 }
 $valid_state = new \Drupal\Core\Form\FormState();
@@ -408,7 +408,7 @@ $valid_state->clearErrors();
 $valid_state->setValue(['commerce_donation_pane', 'field_gift_type'], [['value' => 'single']]);
 $valid_state->setValue(['commerce_donation_pane', 'field_donation_amount'], [['donation_level' => ['value' => 'custom_amount', 'amount' => '20']]]);
 $valid_form = [];
-aculta_portal_validate_donation_amount($valid_form, $valid_state);
+\Drupal::service('aculta_portal.form_callbacks')->validateDonationAmount($valid_form, $valid_state);
 $assert(!$valid_state->hasAnyErrors(), 'Donation form accepts a positive custom amount.');
 $number_state = new \Drupal\Core\Form\FormState();
 $number_state->clearErrors();

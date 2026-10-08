@@ -503,8 +503,6 @@ final class PortalHooks {
 
   /**
    * Supplies metadata for the public support page and private result routes.
-   *
-   * #[Hook('metatags_alter')]
    */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array $context): void {

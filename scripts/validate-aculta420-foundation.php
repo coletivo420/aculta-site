@@ -149,7 +149,8 @@ $assert(
 $portalSettings = \Drupal::config('aculta_portal.settings');
 $assert(trim((string) $portalSettings->get('institution_data_uuid')) !== '', 'Portal owns the institutional block UUID.');
 $assert((int) $portalSettings->get('institution_transparency_nid') > 0, 'Portal owns the institutional transparency page reference.');
-$portalModule = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/aculta_portal.module');
+// P2.1 moved the institutional token lookup from the removed .module to TokenHooks.
+$portalModule = (string) file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/TokenHooks.php');
 $emptyUuidGuard = strpos($portalModule, "if (\$uuid === '')") ?: FALSE;
 $uuidLookup = strpos($portalModule, "loadByProperties(['uuid' => \$uuid])") ?: FALSE;
 $assert($emptyUuidGuard !== FALSE && $uuidLookup !== FALSE && $emptyUuidGuard < $uuidLookup, 'Institutional token lookup returns before storage access when its UUID configuration is empty.');
