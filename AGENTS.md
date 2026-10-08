@@ -123,6 +123,45 @@ web/sites/default/settings.php
 
 17. Fazer alterações incrementais e fáceis de revisar no Git.
 
+## Padrão Drupal 11+ do aculta_portal
+
+O `aculta_portal` adota como baseline arquitetural **Drupal Core 11.3+**; o
+Runtime atual do projeto está na linha Drupal 11.4.x.
+
+Para qualquer implementação/refatoração no Portal:
+
+- hooks runtime usam classes OOP em `src/Hook/` com `#[Hook]`; não recriar
+  `aculta_portal.module`;
+- hooks de lifecycle/update que o Core ainda exige procedurais permanecem em
+  `.install`/post-update;
+- `web/modules/custom/aculta_portal/src/` não usa service locator
+  `\Drupal::*`; dependências entram por DI;
+- callbacks Form API com DI usam `service.id:method` via CallableResolver do
+  Drupal 11.3+; não reintroduzir callbacks globais `aculta_portal_*` nem
+  `[$this, ...]`;
+- subscribers usam `EventSubscriberInterface` + tag Drupal
+  `event_subscriber`;
+- Entity API usa storage/query com `accessCheck()` explícito; Views usa
+  storage `view` + `views.executable`, não `views_embed_view()` ou
+  `Views::getView()` em código novo;
+- classes runtime usam `declare(strict_types=1);`;
+- cacheability/access seguem Render API e objetos passados a
+  `Renderer::addCacheableDependency()` implementam
+  `CacheableDependencyInterface`;
+- não adotar API Core já deprecated quando houver substituto corrente;
+- compatibilidade formal com Drupal 12+ só é declarada depois de validar
+  contribs, embora código novo siga o caminho de upgrade publicado pelo Core.
+
+Referência normativa: `docs/portal/DRUPAL-11-STANDARDS.md`.
+
+Gate obrigatório após mudança estrutural do Portal:
+
+```sh
+php vendor/drush/drush/drush.php php:script validate-aculta-portal-drupal11 --script-path=../scripts
+```
+
+Este padrão vale para programação humana, Codex e demais agentes de IA.
+
 ## Git
 
 Branch principal:
