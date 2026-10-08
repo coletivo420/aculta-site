@@ -27,10 +27,13 @@ usar o Secure Bootstrap Adapter: o settings local ignorado carrega
 Os campos Google do storage bruto e do Configuration Sync estão vazios; as
 Keys resolvem os valores fora do banco e os Config Overrides preenchem a
 configuração efetiva em memória. Hostinger Web/Cloud e produção ainda não foram
-provisionadas. O gate completo Portal/Security continua bloqueado por uma
-diferença preexistente entre active config e sync em
-`captcha.captcha_point.user_login_form` (`langcode` e `label`); essa
-configuração não foi alterada nem o gate foi flexibilizado nesta migração.
+provisionadas. Os quatro objetos de configuração CAPTCHA localizados foram
+alinhados ao pt-BR do Runtime em `config/sync`; os rótulos de login, cadastro e
+recuperação, além do título, descrição e mensagem de erro, mantêm a mesma
+política e operação. Nenhuma configuração de credencial Turnstile foi
+modificada. O gate completo Portal/Security ainda para em `core.extension`,
+porque o Runtime tem `config_translation` habilitado e o sync não; essa
+diferença permanece fora do escopo e não foi importada nem exportada.
 
 ## Variáveis atuais
 

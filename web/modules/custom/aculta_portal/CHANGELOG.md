@@ -49,6 +49,7 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Autenticação
 
+- Sincroniza em pt-BR os rótulos dos CAPTCHA de login/cadastro/recuperação e as mensagens globais do Turnstile, sem alterar formulários protegidos, permissão `skip CAPTCHA`, provider ou credenciais.
 - Formaliza o ACULTA Secrets Contract: Drupal Key/env permanece a interface
   única e o provisioning fica desacoplado do sistema operacional. Homelab e
   Hostinger compartilham Keys e nomes de variáveis; config exportada continua
