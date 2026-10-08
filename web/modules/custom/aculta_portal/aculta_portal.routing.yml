@@ -90,6 +90,7 @@ aculta_portal.support_my:
     _title: Meu Apoio
   requirements:
     _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
 

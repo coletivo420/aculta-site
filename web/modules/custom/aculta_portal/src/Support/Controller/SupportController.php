@@ -1,24 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\aculta_portal\Support\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Presents support records owned by Commerce to the current account. */
 final class SupportController extends ControllerBase {
 
-  public function __construct(private readonly EntityTypeManagerInterface $entities) {}
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entities,
+    private readonly AccountInterface $account,
+  ) {}
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('entity_type.manager'));
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('current_user'),
+    );
   }
 
   public function mySupport(): array {
-    $uid = (int) $this->currentUser()->id();
-    $orders = $this->entities->getStorage('commerce_order')->loadByProperties(['uid' => $uid]);
+    // Orders are owner-scoped by the authenticated account; uid 0 would match
+    // every guest checkout, so anonymous never reaches the storage lookup
+    // (the route also requires _user_is_logged_in).
+    $uid = (int) $this->account->id();
+    $orders = $uid > 0
+      ? $this->entities->getStorage('commerce_order')->loadByProperties(['uid' => $uid])
+      : [];
     $rows = [];
     $payment_storage = $this->entities->getStorage('commerce_payment');
     foreach ($orders as $order) {

@@ -619,8 +619,33 @@ $check(
   'P5.3 Wiki queries must keep explicit access checks, WIKI Domain/status filters and per-entity access.',
 );
 
+// P5.4-A/B/C/E: account controllers receive every collaborator explicitly.
+$portalControllerSource = $read($srcRoot . '/Controller/PortalController.php');
+foreach (["'plugin.manager.block'", "'email_confirmer'", "'current_route_match'", "'current_user'", "'module_handler'", "'config.factory'"] as $serviceId) {
+  $check(
+    substr_count($portalControllerSource, '$container->get(' . $serviceId . ')') === 1,
+    'P5.4 PortalController must inject ' . $serviceId . ' exactly once.',
+  );
+}
+$check(
+  !preg_match('/\\$this->(?:currentUser|moduleHandler|config|entityTypeManager)\(/', $portalControllerSource)
+    && str_contains($portalControllerSource, '$parameters = $this->routeMatch->getParameters();')
+    && preg_match('/try \{[\s\S]*?finally \{[\s\S]*?\$parameters->remove\(\'user\'\)/', $portalControllerSource) === 1,
+  'P5.4-C PortalController must not use lazy helpers and must restore route parameters in finally.',
+);
+$supportControllerSource = $read($srcRoot . '/Support/Controller/SupportController.php');
+$check(
+  str_contains($supportControllerSource, '$uid > 0')
+    && !str_contains($supportControllerSource, 'currentUser()'),
+  'P5.4-E support history must stay owner-scoped and never query uid 0.',
+);
+$routingSource = $read(dirname($srcRoot) . '/aculta_portal.routing.yml');
+$check(
+  preg_match("/aculta_portal\\.support_my:[\\s\\S]*?_user_is_logged_in: 'TRUE'/", $routingSource) === 1,
+  'P5.6 support history route must require an authenticated user.',
+);
+
 $serviceLocatorCeilings = [
-  'src/Controller/PortalController.php' => 3,
   'src/Controller/PortalRequirementsController.php' => 2,
 ];
 $viewsWrapperCeilings = [
@@ -630,10 +655,8 @@ $staticLoadCeilings = [
 $strictTypesDebt = [
   'src/AccountShellBuilder.php',
   'src/Auth/AuthIntegrationManager.php',
-  'src/Controller/PortalController.php',
   'src/Controller/PortalRequirementsController.php',
   'src/Hook/PortalHooks.php',
-  'src/Support/Controller/SupportController.php',
   'src/Support/Form/SettingsForm.php',
   'src/Plugin/metatag/Tag/OrganizationAlternateName.php',
   'src/Plugin/metatag/Tag/OrganizationEmail.php',

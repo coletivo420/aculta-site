@@ -147,7 +147,9 @@ foreach (['aculta_apoio.client', 'aculta_apoio.credentials', 'aculta_apoio.manag
 }
 
 $anonymous = \Drupal\user\Entity\User::create(['name' => 'access-audit-anonymous']);
-$authenticated = \Drupal\user\Entity\User::create(['name' => 'access-audit-user', 'roles' => ['authenticated']]);
+// Unsaved fixture with a synthetic uid: real sessions are logged in only when
+// uid > 0, which routes using _user_is_logged_in require.
+$authenticated = \Drupal\user\Entity\User::create(['uid' => 999990, 'name' => 'access-audit-user', 'roles' => ['authenticated']]);
 $administrator = \Drupal\user\Entity\User::create(['uid' => 1, 'name' => 'access-audit-administrator', 'roles' => ['administrator']]);
 $access = \Drupal::service('access_manager');
 $route_expectations = [
