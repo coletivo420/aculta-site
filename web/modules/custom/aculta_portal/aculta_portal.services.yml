@@ -54,7 +54,7 @@ services:
       - { name: kernel.event_subscriber }
   aculta_portal.account_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber
-    arguments: ['@current_user']
+    arguments: ['@current_user', '@aculta_portal.domain_purpose']
     tags:
       - { name: kernel.event_subscriber }
   aculta_portal.cep_lookup_rate_limit_subscriber:

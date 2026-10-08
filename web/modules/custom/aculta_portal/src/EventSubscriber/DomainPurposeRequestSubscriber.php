@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-/** Enforces route purpose after Drupal has resolved the active Domain alias. */
+/** Enforces route purpose and canonicalizes admin navigation to MAIN. */
 final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
   private const LOGIN_DESTINATION_SESSION_KEY = 'aculta_portal.login_destination';
@@ -34,7 +35,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     // Match the same path before RouterListener/access checks (priority 32).
     return [
       KernelEvents::REQUEST => [['onRequestBeforeRouter', 33], ['onRequest', 31]],
-      KernelEvents::RESPONSE => ['onResponse', 0],
+      // Run before Core RedirectResponseSubscriber (priority 0) so any
+      // intentional cross-domain target is already a secured redirect.
+      KernelEvents::RESPONSE => ['onResponse', 1],
     ];
   }
 
@@ -62,7 +65,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
           if (is_array($query) && $query !== []) {
             $url->setOption('query', $query);
           }
-          $event->getResponse()->headers->set('Location', $url->toString());
+          $this->retargetRedirect($event, $url->toString());
           return;
         }
       }
@@ -71,7 +74,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       // front page resolves /conta-interna internally.
       $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
       if ($accountRoot !== NULL) {
-        $event->getResponse()->headers->set('Location', $accountRoot->toString());
+        $this->retargetRedirect($event, $accountRoot->toString());
         return;
       }
     }
@@ -83,11 +86,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
     if ($login) {
       // Keep Core's status, cookies, and headers after a successful logout.
-      $event->getResponse()->headers->set('Location', $login->toString());
+      $this->retargetRedirect($event, $login->toString());
     }
   }
 
-  /** Hides a wrong-host route before the access-aware router can return 403. */
+  /** Enforces wrong-host policy before the access-aware router can return 403. */
   public function onRequestBeforeRouter(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
       return;
@@ -95,7 +98,23 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     try {
       $matched = $this->accessFreeMatcher->matchRequest($event->getRequest());
     }
-    catch (ResourceNotFoundException | MethodNotAllowedException) {
+    catch (ResourceNotFoundException) {
+      return;
+    }
+    catch (MethodNotAllowedException) {
+      // If an admin route exists but does not accept this mutating method,
+      // keep the fail-closed response consistent on secondary purposes.
+      // Otherwise the router would expose a method-dependent 405 before the
+      // canonical admin policy gets a chance to return its non-replay 404.
+      $request = $event->getRequest();
+      $path = $request->getPathInfo();
+      $isAdminPath = $path === '/painel-administrativo'
+        || str_starts_with($path, '/painel-administrativo/');
+      if ($isAdminPath
+        && $this->domainPurposeManager->getCurrentPurpose() !== 'main'
+        && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
+        $event->setResponse($this->notFoundResponse());
+      }
       return;
     }
     $route = $this->routeProvider->getRouteByName($matched['_route']);
@@ -105,7 +124,20 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->getRequest(),
       $matched,
     );
-    if (is_string($requiredPurpose) && $this->domainPurposeManager->getCurrentPurpose() !== $requiredPurpose) {
+    $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
+    if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose) {
+      if ($this->isPasswordResetEditException(
+        $event->getRequest(),
+        (string) $matched['_route'],
+        $currentPurpose,
+        $matched,
+      )) {
+        return;
+      }
+      if ($requiredPurpose === 'main' && $this->isAdministrativeRoute($route)) {
+        $event->setResponse($this->canonicalAdminResponse($event->getRequest()));
+        return;
+      }
       $event->setResponse($this->notFoundResponse());
     }
   }
@@ -171,19 +203,16 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     );
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
 
-    $resetEditException = FALSE;
-    if ($request->attributes->get('_route') === 'entity.user.edit_form'
-      && $currentPurpose === 'account') {
-      $raw = $request->attributes->get('_raw_variables');
-      $uid = $request->attributes->get('user') ?? ($raw instanceof \Symfony\Component\HttpFoundation\ParameterBag ? $raw->get('user') : NULL);
-      $resetEditException = is_numeric($uid)
-        && \Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest(
-          $request,
-          (int) $uid,
-          (int) $this->currentUser->id(),
-        );
-    }
+    $resetEditException = $this->isPasswordResetEditException(
+      $request,
+      (string) $request->attributes->get('_route'),
+      $currentPurpose,
+    );
     if (is_string($requiredPurpose) && $currentPurpose !== $requiredPurpose && !$resetEditException) {
+      if ($requiredPurpose === 'main' && $this->isAdministrativeRoute($route)) {
+        $event->setResponse($this->canonicalAdminResponse($request));
+        return;
+      }
       $this->notFound($event);
       return;
     }
@@ -192,6 +221,94 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if ($contentPurpose !== NULL && $currentPurpose !== $contentPurpose) {
       $this->notFound($event);
     }
+  }
+
+  /**
+   * Returns TRUE when this route belongs to the centralized administration.
+   */
+  private function isAdministrativeRoute(object $route): bool {
+    if (!method_exists($route, 'getOption') || !method_exists($route, 'getPath')) {
+      return FALSE;
+    }
+    if ((bool) $route->getOption('_admin_route')) {
+      return TRUE;
+    }
+    $path = (string) $route->getPath();
+    return $path === '/painel-administrativo'
+      || str_starts_with($path, '/painel-administrativo/');
+  }
+
+  /**
+   * Canonicalizes safe admin navigation to MAIN and fails closed otherwise.
+   */
+  private function canonicalAdminResponse(Request $request): Response {
+    // Never replay a state-changing admin request across Domain boundaries.
+    if (!in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
+      return $this->notFoundResponse();
+    }
+
+    $url = $this->domainPurposeManager->pathUrl('main', $request->getPathInfo());
+    if ($url === NULL) {
+      return $this->notFoundResponse();
+    }
+
+    $query = $request->query->all();
+    if ($query !== []) {
+      $url->setOption('query', $query);
+    }
+
+    return new TrustedRedirectResponse($url->toString(), Response::HTTP_FOUND, [
+      'Cache-Control' => 'private, no-store',
+      'X-Robots-Tag' => 'noindex, nofollow',
+    ]);
+  }
+
+  /**
+   * Replaces a redirect target with an explicitly trusted Domain-managed URL.
+   */
+  private function retargetRedirect(ResponseEvent $event, string $target): void {
+    $response = $event->getResponse();
+    if ($response instanceof \Symfony\Component\HttpFoundation\RedirectResponse) {
+      $trusted = TrustedRedirectResponse::createFromRedirectResponse($response);
+      $trusted->setTrustedTargetUrl($target);
+      $event->setResponse($trusted);
+      return;
+    }
+
+    $event->setResponse(new TrustedRedirectResponse(
+      $target,
+      $response->getStatusCode(),
+      $response->headers->allPreserveCase(),
+    ));
+  }
+
+  /**
+   * Preserves Core's one-time password reset reuse of user edit on ACCOUNT.
+   *
+   * @param array<string, mixed> $matched
+   *   Access-free router parameters when called before RouterListener.
+   */
+  private function isPasswordResetEditException(
+    Request $request,
+    string $routeName,
+    ?string $currentPurpose,
+    array $matched = [],
+  ): bool {
+    if ($routeName !== 'entity.user.edit_form' || $currentPurpose !== 'account') {
+      return FALSE;
+    }
+
+    $raw = $request->attributes->get('_raw_variables');
+    $uid = $request->attributes->get('user')
+      ?? ($matched['user'] ?? NULL)
+      ?? ($raw instanceof \Symfony\Component\HttpFoundation\ParameterBag ? $raw->get('user') : NULL);
+
+    return is_numeric($uid)
+      && AccountRouteSubscriber::isValidCorePasswordResetRequest(
+        $request,
+        (int) $uid,
+        (int) $this->currentUser->id(),
+      );
   }
 
   /**

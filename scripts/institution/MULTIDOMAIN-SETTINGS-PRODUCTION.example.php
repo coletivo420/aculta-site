@@ -12,5 +12,7 @@ $settings['trusted_host_patterns'] = [
   '^cursos\.aculta\.org$',
 ];
 
-// Drupal's settings.php already loads sites/default/services.yml. That tracked
-// file sets the production session cookie domain to .aculta.org.
+// Cross-subdomain authentication also requires an environment services override
+// with session.storage.options.cookie_domain = '.aculta.org' and
+// cookie_samesite = 'Lax'. Do not assume a tracked sites/default/services.yml:
+// validate the active container parameter during deploy.

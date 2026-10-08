@@ -25,6 +25,14 @@ snapshots de fases e runbooks históricos.
 
 ## Domain
 
+- a administração Drupal é única e centralizada no purpose `main`; subdomínios não possuem painel administrativo próprio;
+- redirects intencionais entre purposes usam URL gerada por `DomainPurposeManager` + `TrustedRedirectResponse`; nunca usar `Symfony RedirectResponse` cru para atravessar host;
+- subscribers que retargetam redirects antes do Core devem usar prioridade explícita, não empate de priority/module weight;
+- sessão cross-subdomain exige `session.storage.options.cookie_domain` compartilhado por ambiente e `cookie_samesite: Lax` como baseline para preservar retorno OAuth top-level GET;
+- AJAX/fetch do Portal permanece same-origin; CORS não é mecanismo de comunicação entre purposes;
+- navegação GET/HEAD para `/painel-administrativo/**` em purpose secundário é canonicalizada para MAIN via `DomainPurposeManager`; métodos mutáveis em host errado permanecem fail-closed, sem redirect cross-domain;
+- wrong-purpose público/funcional continua 404; canonicalização administrativa não vira redirect genérico de Domain;
+- a exceção `entity.user.edit_form` usada pelo reset one-time do Core em ACCOUNT deve ser preservada nos dois estágios do `DomainPurposeRequestSubscriber` e nunca é interpretada como painel administrativo de ACCOUNT;
 - URLs e hosts especializados são resolvidos por purpose/Domain, nunca por
   hostname hardcoded;
 - wrong-host deve falhar conforme a política definida, normalmente 404;

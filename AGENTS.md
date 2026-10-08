@@ -325,6 +325,21 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - Não solicitar scopes OAuth que não correspondam a uma feature ativa e aprovada.
 - Produtos Google for Nonprofits pós-aprovação não devem ser tratados como disponíveis antes da ativação real.
 
+## Política de domínio administrativo
+
+- o painel administrativo Drupal é único e pertence ao purpose `main`;
+- `/painel-administrativo/**` em subdomínio não representa um segundo painel: GET/HEAD deve canonicalizar para MAIN usando `DomainPurposeManager` e Domain Alias do ambiente;
+- nunca hardcodar `aculta.org` ou hostname Homelab para essa canonicalização;
+- requests administrativos mutáveis no host errado não são redirecionados entre Domains; falham fechado;
+- wrong-purpose público continua 404 e não deve ser convertido em redirect genérico;
+- preservar a exceção técnica do reset Core que reutiliza `entity.user.edit_form` em ACCOUNT com token one-time válido;
+- ACULTA420/Twig/JavaScript não participam dessa política; ela pertence ao `aculta_portal` + Core/contrib access.
+- redirects intencionais entre purposes usam `DomainPurposeManager` + `Drupal\Core\Routing\TrustedRedirectResponse`; não usar `Symfony RedirectResponse` cru para target em outro host;
+- não depender de empate de prioridade entre response subscribers quando a ordem afeta redirect safety;
+- sessão compartilhada entre purposes deve ser validada via `session.storage.options.cookie_domain` do ambiente; baseline `cookie_samesite: Lax`;
+- AJAX/fetch do Portal é same-origin; não habilitar CORS para transportar estado/formulários entre purposes;
+- referências canônicas: `docs/portal/ADMIN-DOMAIN-POLICY.md` e `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md`.
+
 ## Fronteira de autenticação e anti-bot
 
 - ACULTA420 é dono somente da apresentação de login/formulários e de classes semânticas neutras;
