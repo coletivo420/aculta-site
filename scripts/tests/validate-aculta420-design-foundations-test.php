@@ -91,6 +91,10 @@ try {
     ['PHP comment inside unrelated condition is ignored', 'src/InlineComment.php', "<?php if (\$enabled /* theme dark */) { return; }", 'DARK PHP BRANCHES: 0'],
     ['commented JavaScript switch is ignored', 'js/comments.js', "/* switch (theme) { case 'dark': card.hidden = true; } */\nconst label = 'normal';", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['inline JavaScript comment is ignored', 'js/inline-comment.js', "const enabled = true; // if (theme === 'dark') { localStorage.setItem('x', 'y'); }", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['unrelated localStorage use is allowed', 'js/notice-storage.js', "localStorage.setItem('noticeDismissed', '1');", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['mode-like words inside a string are not a branch', 'js/string-only-mode.js', "if (label === 'dark theme') { renderLabel(); }", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['unrelated Twig conditional text is not a mode branch', 'templates/string-only-mode.html.twig', "{% if label == 'dark theme' %}label{% endif %}", 'DARK TWIG BRANCHES: 0'],
+    ['unrelated PHP conditional text is not a mode branch', 'src/StringOnlyMode.php', "<?php if (\$label === 'dark theme') { echo 'label'; }", 'DARK PHP BRANCHES: 0'],
     ['PHP switch on a non-mode value is accepted', 'src/LanguageSwitch.php', "<?php switch (\$locale) { case 'dark': echo 'label'; break; default: break; }", 'DARK PHP BRANCHES: 0'],
     ['PHP alternative switch on a non-mode value is accepted', 'src/AlternativeLanguageSwitch.php', "<?php switch (\$locale): case 'dark': echo 'label'; break; endswitch;", 'DARK PHP BRANCHES: 0'],
     ['JavaScript switch on a non-mode value is accepted', 'js/language-switch.js', "switch (locale) { case 'dark': label.textContent = 'dark'; break; default: break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
@@ -185,6 +189,7 @@ try {
     ['JavaScript ternary with object arms', 'js/object-arm-ternary.js', "const layout = theme === 'dark' ? { hidden: true } : {};", 'JavaScript has no color-mode layout behavior'],
     ['nested JavaScript if condition is scanned', 'js/nested-if.js', "if (getTheme(foo(bar())) === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['regex parentheses do not truncate JavaScript if condition', 'js/regex-condition.js', "if (/\\)/.test(value) && theme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['regex URL slashes do not truncate JavaScript if condition', 'js/regex-url-condition.js', "if (/https?:\\/\\//.test(url) && theme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['multiline JavaScript mode ternary is scanned', 'js/multiline-mode-ternary.js', "const layout = theme === 'dark'\n  ? 'compact'\n  : 'normal';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.theme assignment', 'js/dataset-theme.js', "document.documentElement.dataset.theme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.bsTheme assignment', 'js/dataset-bs-theme.js', "document.documentElement.dataset.bsTheme = 'dark';", 'JavaScript has no color-mode layout behavior'],
@@ -193,6 +198,8 @@ try {
     ['JavaScript compound className mode assignment', 'js/class-name-compound.js', "document.documentElement.className += ' theme-dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript logical className mode assignment', 'js/class-name-logical.js', "document.documentElement.className ||= 'theme-dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript classList uses every protected mode class', 'js/class-list-is-dark.js', "element.classList.add('is-dark');", 'JavaScript has no color-mode layout behavior'],
+    ['dynamic className mode getter is rejected', 'js/class-name-dynamic.js', "document.documentElement.className = getTheme();", 'JavaScript has no color-mode layout behavior'],
+    ['dynamic classList mode getter is rejected', 'js/class-list-dynamic.js', "document.documentElement.classList.add(getTheme());", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset fallback assignment', 'js/dataset-or.js', "document.documentElement.dataset.theme ||= nextMode;", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript bracket dataset assignment', 'js/dataset-bracket.js', "document.documentElement.dataset['theme'] = nextMode;", 'JavaScript has no color-mode layout behavior'],
     ['dynamic data-theme setAttribute is rejected', 'js/set-attribute-theme.js', "element.setAttribute('data-theme', getTheme());", 'JavaScript has no color-mode layout behavior'],
@@ -206,6 +213,9 @@ try {
     ['Structural declaration inside dark token block', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] {\n  display: none;\n}\n", 'custom properties only'],
     ['ordinary structural CSS rule in tokens stylesheet', 'css/tokens.css', "\n.card { color: #ffffff; display: none; }\n", 'Mode selectors and ACULTA/Bootstrap tokens occur only'],
     ['Twig inline script cannot branch on color mode', 'templates/inline-script.html.twig', "<script>if (theme === 'dark') { document.body.hidden = true; }</script>", 'JavaScript has no color-mode layout behavior'],
+    ['Twig inline script cannot persist color mode', 'templates/inline-storage.html.twig', "<script>localStorage.setItem('theme', 'dark');</script>", 'Twig inline scripts do not persist or initialize color mode prematurely'],
+    ['Twig style block cannot add a mode selector', 'templates/inline-style.html.twig', '<style>[data-bs-theme="dark"] .card { display:none; }</style>', 'Color mode is token-only'],
+    ['tokens stylesheet cannot import another stylesheet', 'css/tokens.css', "\n@import url('https://example.invalid/structural.css');\n", 'Token CSS parses within the supported flat-rule subset'],
   ];
   foreach ($cases as [$name, $relative, $contents, $expected_message]) {
     $fixture_path = $temporary_theme . '/' . $relative;

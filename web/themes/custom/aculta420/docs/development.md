@@ -250,6 +250,12 @@ considerados perigosos quando o valor parcial pode selecionar `dark` ou `light`.
 JavaScript inline em `<script>` dentro de Twig também passa pelo scanner JS.
 O balanceador de `if` e `switch` ignora regex literals simples com escapes e
 classes de caracteres; não implementa o lexer completo de ECMAScript.
+Blocos `<style>` inline em Twig passam pelo detector de seletores de modo.
+Scripts inline também são verificados contra inicialização ou persistência
+prematura; o uso de `localStorage` para uma chave sem relação com tema/cor é
+permitido. Mutação de classes por valores literais ou getters/variáveis de modo
+é proibida. Identificadores e palavras entre aspas são avaliados separadamente:
+`label === 'dark theme'` não é decisão de color mode.
 Em `switch`, a análise considera o discriminante e as expressões dos labels
 `case`, não texto arbitrário nos consequentes; PHP aceita a forma `endswitch`.
 Writes simples e compostos (`=`, `??=`, `||=`, `&&=`) em dataset de modo e
@@ -279,6 +285,9 @@ não substitui um parser completo.
 | Revisão PR #83: regex no corpo de switch | `JavaScript switch scans mode case after regex brace` |
 | Revisão PR #83: alias `VAR()` e RGB da superfície | fixtures `case-insensitive VAR()` e `ACULTA surface RGB companion mismatch` |
 | Revisão PR #83: JS inline e CSS arbitrário em tokens | fixtures `Twig inline script` e `ordinary structural CSS rule in tokens stylesheet` |
+| Revisão PR #83: CSS import e inline style | `tokens stylesheet cannot import another stylesheet`; `Twig style block cannot add a mode selector` |
+| Revisão PR #83: persistence, classes dinâmicas e falsos positivos textuais | fixtures `inline storage`, `dynamic className/classList`, `noticeDismissed` e `string-only mode` |
+| Revisão PR #83: regex URL | `regex URL slashes do not truncate JavaScript if condition` |
 
 Também há casos válidos para custom property, comentários, branches não
 relacionados ao modo, e casos inválidos para seletor `.dark`,
