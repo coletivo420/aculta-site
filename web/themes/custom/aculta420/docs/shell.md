@@ -60,8 +60,9 @@ domain_presentation
 ```
 
 O inventário 0.2-B.1 e a fronteira normativa estão registrados em
-`docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`. O contrato concreto será
-implementado e congelado progressivamente em 0.2-B.2 a 0.2-B.4.
+`docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`. A 0.2-B.2 implementou o builder
+Portal e a 0.2-B.3 conecta `identity` ao shell atual sem redesign; B.4 fecha a
+fronteira com fixtures/gates antes da Institution Bar.
 
 Não passar entidade `Domain`, storage, services, hostname ou regra de negócio
 para Twig/SDC.
