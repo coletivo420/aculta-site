@@ -33,11 +33,6 @@ $assert(
   str_contains($hookSource, "\$variables['domain_presentation']['identity']"),
   'ThemeHooks consumes the neutral domain_presentation identity contract.',
 );
-$assert(
-  str_contains($pageSource, 'data-aculta-domain-purpose'),
-  'Purpose is exposed only as neutral shell metadata.',
-);
-
 $hooks = new \Drupal\aculta420\Hook\ThemeHooks(
   \Drupal::service('path.matcher'),
   \Drupal::service('config.factory'),
@@ -62,14 +57,11 @@ $complete = [
 ];
 $hooks->preprocessPage($complete);
 $assert(
-  ($complete['aculta_domain_identity'] ?? NULL) === [
-    'purpose' => 'wiki',
-    'title' => 'Wiki420',
-    'short_title' => 'Wiki420',
+  ($complete['aculta_domain_brand_fallback'] ?? NULL) === [
+    'label' => 'Wiki420',
     'home_url' => 'https://wiki.example.test/',
-    'logo_alt' => 'Wiki420',
   ],
-  'Complete neutral identity is adapted without Domain objects or extra fields.',
+  'Complete neutral identity is reduced to the minimal textual branding fallback.',
 );
 
 $assert(
@@ -103,15 +95,15 @@ $partial = [
 ];
 $hooks->preprocessPage($partial);
 $assert(
-  ($partial['aculta_domain_identity'] ?? 'missing') === NULL,
+  ($partial['aculta_domain_brand_fallback'] ?? 'missing') === NULL,
   'Incomplete identity fails safely to NULL instead of inventing functional fallback.',
 );
 
 $absent = ['page' => ['header' => []]];
 $hooks->preprocessPage($absent);
 $assert(
-  array_key_exists('aculta_domain_identity', $absent)
-    && $absent['aculta_domain_identity'] === NULL,
+  array_key_exists('aculta_domain_brand_fallback', $absent)
+    && $absent['aculta_domain_brand_fallback'] === NULL,
   'Absent domain_presentation preserves a NULL presentation fallback.',
 );
 
@@ -130,10 +122,11 @@ $extra = [
 ];
 $hooks->preprocessPage($extra);
 $assert(
-  ($extra['aculta_domain_identity']['short_title'] ?? 'missing') === NULL
-    && ($extra['aculta_domain_identity']['logo_alt'] ?? 'missing') === NULL
-    && !array_key_exists('unexpected', $extra['aculta_domain_identity'] ?? []),
-  'Theme adapter normalizes optional empty strings and does not forward unknown/object fields.',
+  ($extra['aculta_domain_brand_fallback'] ?? NULL) === [
+    'label' => 'ACULTA',
+    'home_url' => 'https://example.test/',
+  ],
+  'Theme adapter ignores unused logo_alt, empty short_title, and unknown/object fields.',
 );
 
 $portalContract = DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Presentation/DomainPresentationBuilder.php';
