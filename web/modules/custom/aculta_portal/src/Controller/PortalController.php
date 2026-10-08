@@ -8,11 +8,11 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /** Private user account area. */
 final class PortalController extends ControllerBase {
@@ -45,9 +45,9 @@ final class PortalController extends ControllerBase {
   /**
    * Keeps Core's legacy user.page route compatible without exposing its UI.
    */
-  public function legacyUserPageRedirect(): RedirectResponse {
+  public function legacyUserPageRedirect(): TrustedRedirectResponse {
     $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
-    return new RedirectResponse(
+    return new TrustedRedirectResponse(
       $accountRoot?->toString() ?? Url::fromRoute('<front>')->toString(),
     );
   }
