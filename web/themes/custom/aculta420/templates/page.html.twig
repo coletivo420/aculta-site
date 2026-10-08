@@ -1,5 +1,5 @@
 {# Semantic layout; Bootstrap5 remains the sole provider of Bootstrap assets. #}
-<header class="aculta-header">
+<header class="aculta-header"{% if aculta_domain_identity %} data-aculta-domain-purpose="{{ aculta_domain_identity.purpose }}"{% endif %}>
   <div class="navbar aculta-navbar">
     <div class="container aculta-container">
       <div class="aculta-branding">
