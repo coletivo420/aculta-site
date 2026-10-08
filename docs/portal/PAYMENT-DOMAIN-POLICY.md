@@ -124,7 +124,7 @@ por purpose. A centralização é de ownership de rota/experiência, não duplic
 de dados.
 
 No futuro, a barra multidomínio poderá exibir um ícone de carrinho em qualquer
-purpose. Preferir reutilizar o `commerce_cart` Cart Block/lazy builder do Commerce ou um presenter do Portal baseado em `CartProviderInterface`, preservando o cache context `cart` e as dependências das orders. O Portal entrega um contrato neutro com URL MAIN e estado/contagem autorizada; o tema não consulta Commerce diretamente, não calcula contagem, não resolve hostname e não cria URL do carrinho por conta própria.
+purpose. O desenho preferencial é um `CartPresentationBuilder` no Portal baseado em `CartProviderInterface`, preservando o cache context `cart` e as dependências das orders, enquanto `DomainPurposeManager::routeUrl('main', 'commerce_cart.page')` fornece a URL absoluta MAIN. O Cart Block/lazy builder do Commerce pode servir de referência ou renderable interno, mas não deve ser usado cru na barra multidomínio porque sua URL padrão é gerada no host corrente. O Portal entrega um contrato neutro com URL MAIN e estado/contagem autorizada; o tema não consulta Commerce diretamente, não calcula contagem, não resolve hostname e não cria URL do carrinho por conta própria.
 
 Essa futura UI pertence à evolução do shell multidomínio; não é implementada
 nesta correção.
