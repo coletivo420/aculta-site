@@ -99,8 +99,10 @@ snapshots de fases e runbooks históricos.
 - o único provider público do tema é `aculta420`; não manter alias, shim ou provider legado de compatibilidade;
 - libraries usam `aculta420/*` e SDCs usam `aculta420:*`;
 - o tema não chama services/classes de `aculta_portal`; o Portal prepara contexto e o tema apresenta;
-- logo, título, menu e accent por domain devem chegar ao tema como contexto de
-  apresentação já resolvido pelo Portal; nunca escolher por hostname em Twig/PHP do tema;
+- o shell multidomínio usa um único contrato `domain_presentation`, preparado por um builder/presenter autoritativo no Portal; não espalhar `match ($purpose)` por hooks, controllers ou templates;
+- logo, título, home URL, navegação e ações por purpose chegam ao tema como valores simples/render arrays já resolvidos pelo Portal; nunca escolher por hostname em Twig/PHP do tema;
+- Domain ID, hostname, aliases, `DomainInterface`, storage, negotiator e services do Portal não atravessam a fronteira para Twig/SDC;
+- access é resolvido antes da apresentação e cacheability de render arrays/dependências deve ser preservada; o tema não corrige metadata funcional perdida;
 - nunca passar entidade `Domain` diretamente para Twig/SDC;
 - branding específico de purpose é opcional: fallback ACULTA e, depois, título textual;
 - todos os purposes compartilham a mesma arquitetura de shell; variam dados, não um
