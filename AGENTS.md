@@ -334,7 +334,11 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - wrong-purpose público continua 404 e não deve ser convertido em redirect genérico;
 - preservar a exceção técnica do reset Core que reutiliza `entity.user.edit_form` em ACCOUNT com token one-time válido;
 - ACULTA420/Twig/JavaScript não participam dessa política; ela pertence ao `aculta_portal` + Core/contrib access.
-- referência canônica: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
+- redirects intencionais entre purposes usam `DomainPurposeManager` + `Drupal\Core\Routing\TrustedRedirectResponse`; não usar `Symfony RedirectResponse` cru para target em outro host;
+- não depender de empate de prioridade entre response subscribers quando a ordem afeta redirect safety;
+- sessão compartilhada entre purposes deve ser validada via `session.storage.options.cookie_domain` do ambiente; baseline `cookie_samesite: Lax`;
+- AJAX/fetch do Portal é same-origin; não habilitar CORS para transportar estado/formulários entre purposes;
+- referências canônicas: `docs/portal/ADMIN-DOMAIN-POLICY.md` e `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md`.
 
 ## Fronteira de autenticação e anti-bot
 
