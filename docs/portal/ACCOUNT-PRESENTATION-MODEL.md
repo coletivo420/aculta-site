@@ -1,8 +1,4 @@
-# S3.2B — Semântica compartilhada da Minha Conta
-
-Data: 2026-10-06
-
-Status: **concluída documentalmente**
+# Semântica compartilhada da Minha Conta
 
 ## Objetivo
 
@@ -15,19 +11,7 @@ Ela define o que o `aculta_portal` deve entregar como **view-model semântico**
 para que o tema possa decidir, com evidência de reutilização, quando um
 primitive/component merece virar SDC.
 
-## Compatibilidade com a Fase H do tema
-
-A auditoria H3 do tema aprovou apenas `category-label` como novo primitive SDC
-neste momento.
-
-Ela também decidiu:
-
-- button continua primitive CSS/Bootstrap;
-- section heading é adiado;
-- media é adiado;
-- icon não deve ser criado sem sistema real de ícones.
-
-Portanto:
+## Compatibilidade com ACULTA420
 
 - `status-badge`, `empty-state`, `summary-card` e `action-list` são
   **contratos semânticos do Portal**, não SDCs automaticamente aprovados;
@@ -307,21 +291,18 @@ Um contrato semântico pode virar SDC no tema quando houver:
 | empty | aprovado como semântica | candidato futuro |
 | summary | aprovado como semântica | candidato futuro |
 | action list | aprovado como semântica | candidato futuro |
-| course card | presenter preparado no PR #24 | SDC planejado H4 |
-| category label | não específico da Conta | primitive SDC aprovado em H3 |
+| course card | contrato semântico permitido | tema decide quando existir reutilização real |
+| category label | não específico da Conta | seguir catálogo/roadmap atual do ACULTA420 |
 
-## Próxima subfase
+## Evolução
 
-S3.2C — presenters da Conta para Segurança e Conexões.
+Presenters podem ser extraídos do controller quando reduzirem acoplamento e
+tornarem access/cache/semântica mais testáveis.
 
-Objetivo:
+A extração não pode:
 
-retirar de `PortalController` a construção semântica de:
-
-- Google/Social Auth;
-- estado de conexão;
-- segurança;
-- disponibilidade de mudança de e-mail;
-- e-mail pendente;
-
-sem alterar OAuth, Form API ou fluxo de confirmação.
+- alterar OAuth;
+- substituir Form API;
+- duplicar Social Auth/Email Confirmer/LMS/Commerce;
+- criar dependência obrigatória de SDC ainda inexistente;
+- transferir regra funcional para ACULTA420.
