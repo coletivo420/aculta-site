@@ -136,7 +136,7 @@ try {
     $hookPath,
     str_replace(
       '$variables[\'institutional_home\'] = $this->pathMatcher->isFrontPage();',
-      "$host = \\Drupal::request()->getHost();\n    $variables['institutional_home'] = $this->pathMatcher->isFrontPage();",
+      "\$host = \\Drupal::request()->getHost();\n    \$variables['institutional_home'] = \$this->pathMatcher->isFrontPage();",
       $originalHook,
     ),
   );
@@ -170,8 +170,8 @@ try {
   file_put_contents(
     $hookPath,
     str_replace(
-      "$variables['domain_presentation']['identity']",
-      "$variables['domain_presentation']['wrong_key']",
+      "\$variables['domain_presentation']['identity']",
+      "\$variables['domain_presentation']['wrong_key']",
       $originalHook,
     ),
   );
