@@ -38,9 +38,9 @@ $assert(
   'page.html.twig consumes prepared home/title identity only as shell presentation.',
 );
 $assert(
-  str_contains($pageSource, '{% if page.header %}')
+  str_contains($pageSource, '{% if aculta_header_has_content %}')
     && str_contains($pageSource, '{% elseif aculta_domain_identity %}'),
-  'Existing Drupal header remains primary and domain identity is fallback-only.',
+  'Existing renderable Drupal header remains primary and domain identity is fallback-only.',
 );
 $assert(
   !str_contains($pageSource, "identity.purpose ==")
@@ -102,6 +102,25 @@ $assert(
     'logo_alt' => 'Wiki420',
   ],
   'Complete neutral identity is adapted without Domain objects or extra fields.',
+);
+
+$assert(
+  ($complete['aculta_header_has_content'] ?? NULL) === FALSE,
+  'Empty header render array is recognized as having no renderable branding content.',
+);
+
+$withHeader = [
+  'domain_presentation' => $complete['domain_presentation'],
+  'page' => [
+    'header' => [
+      'branding' => ['#markup' => 'Existing branding'],
+    ],
+  ],
+];
+$hooks->preprocessPage($withHeader);
+$assert(
+  ($withHeader['aculta_header_has_content'] ?? FALSE) === TRUE,
+  'Existing renderable header content remains the primary branding path.',
 );
 
 $partial = [
