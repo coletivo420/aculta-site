@@ -75,6 +75,9 @@ final class ThemeHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
+    $variables['aculta_domain_brand_fallback'] = $this->buildDomainBrandFallback(
+      $variables['domain_presentation']['identity'] ?? NULL,
+    );
 
     $destinations = [
       'page_title_block' => 'aculta_page_title',
@@ -85,6 +88,7 @@ final class ThemeHooks {
     foreach ($destinations as $destination) {
       $variables[$destination] = [];
     }
+    $variables['aculta_has_system_branding'] = FALSE;
 
     if (!isset($variables['page']['header'])) {
       return;
@@ -101,12 +105,55 @@ final class ThemeHooks {
           ? (string) ($this->configFactory->get('block.block.' . $blockId)->get('plugin') ?? '')
           : '';
       }
+      if ($pluginId === 'system_branding_block') {
+        $variables['aculta_has_system_branding'] = TRUE;
+      }
+
       $destination = $destinations[$pluginId] ?? NULL;
       if ($destination !== NULL) {
         $variables[$destination][$key] = $block;
         unset($variables['page']['header'][$key]);
       }
     }
+  }
+
+  /**
+   * Builds the minimal textual branding fallback from the neutral identity.
+   *
+   * @param mixed $identity
+   *   The neutral identity array prepared by the Portal presentation layer.
+   *
+   * @return array{label: string, home_url: string}|null
+   *   Presentation-only fallback data, or NULL when the contract is absent
+   *   or incomplete. No Domain lookup or functional fallback happens here.
+   */
+  private function buildDomainBrandFallback(mixed $identity): ?array {
+    if (!is_array($identity)) {
+      return NULL;
+    }
+
+    $purpose = isset($identity['purpose']) && is_string($identity['purpose'])
+      ? trim($identity['purpose'])
+      : '';
+    $title = isset($identity['title']) && is_string($identity['title'])
+      ? trim($identity['title'])
+      : '';
+    $homeUrl = isset($identity['home_url']) && is_string($identity['home_url'])
+      ? trim($identity['home_url'])
+      : '';
+
+    if ($purpose === '' || $title === '' || $homeUrl === '') {
+      return NULL;
+    }
+
+    $shortTitle = isset($identity['short_title']) && is_string($identity['short_title'])
+      ? trim($identity['short_title'])
+      : '';
+
+    return [
+      'label' => $shortTitle !== '' ? $shortTitle : $title,
+      'home_url' => $homeUrl,
+    ];
   }
 
 }

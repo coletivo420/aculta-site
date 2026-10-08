@@ -60,11 +60,21 @@ domain_presentation
 ```
 
 O inventário 0.2-B.1 e a fronteira normativa estão registrados em
-`docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`. O contrato concreto será
-implementado e congelado progressivamente em 0.2-B.2 a 0.2-B.4.
+`docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`. A 0.2-B.2 implementou o builder
+Portal, a 0.2-B.3 conecta `identity` ao shell atual sem redesign e a B.4 congela
+a fronteira com analyzer/fixtures compartilhados antes da Institution Bar.
 
 Não passar entidade `Domain`, storage, services, hostname ou regra de negócio
 para Twig/SDC.
+
+Na 0.2-B.3 o shell atual mantém o `system_branding_block` como caminho primário.
+`page.header` continua sempre renderizado. `ThemeHooks` detecta explicitamente o
+plugin `system_branding_block`; somente quando ele está ausente, reduz a identidade
+preparada pelo Portal ao fallback mínimo `{label, home_url}`, com `label =
+short_title ?? title`, e `page.html.twig` o acrescenta. Não inferir branding pela
+truthiness ou por “vazio visual” do render array. `purpose` não é emitido no DOM
+em B.3/B.4 e `logo_alt` fica reservado para mídia de branding futura. Regiões
+renderizáveis do contrato continuam deferidas.
 
 ## Branding e fallback
 

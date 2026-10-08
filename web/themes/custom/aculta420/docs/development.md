@@ -123,6 +123,8 @@ Ao evoluir o shell:
 - usar Domain purpose como chave funcional; nunca hostname hardcoded;
 - manter `DomainPurposeManager` e resolução funcional no `aculta_portal`;
 - passar ao tema apenas contexto de apresentação preparado;
+- `domain_presentation.identity` pode ser adaptado pelo `ThemeHooks` apenas para normalização visual; identidade incompleta falha para `NULL`, sem lookup funcional no tema;
+- `purpose` não deve ser emitido no DOM sem consumidor real e nunca vira branch de layout/cor/comportamento; B.3 deriva somente `label` + `home_url` para o fallback textual;
 - nunca passar entidade `Domain` diretamente para Twig/SDC;
 - manter branding de purpose opcional com fallback ACULTA/texto;
 - manter um único shell e variar dados, não criar headers paralelos;
@@ -190,7 +192,11 @@ Para tokens e fronteiras visuais da linha 0.2:
 ```sh
 php scripts/validate-aculta420-design-foundations.php
 php scripts/tests/validate-aculta420-design-foundations-test.php
+php scripts/tests/validate-aculta420-shell-contract-test.php
+vendor/bin/drush php:script validate-aculta420-shell-contract --script-path=../scripts
 ```
+
+O analyzer B.4 em `scripts/lib/Aculta420ShellContractAnalyzer.php` é compartilhado entre fixtures e Runtime; não duplicar regras de Domain/hostname/purpose branching em um segundo scanner.
 
 O validator e seus fixtures são PHP independente do Drupal e não alteram Runtime.
 Execute em Linux:

@@ -1,6 +1,6 @@
 # ACULTA420 0.2-B.1 — Inventário da fronteira Domain Presentation
 
-Status: **0.2-B.1 concluída; 0.2-B.2 validada no Runtime Homelab**.
+Status: **0.2-B.1 concluída; 0.2-B.2 validada no Runtime Homelab; 0.2-B.3 e 0.2-B.4 implementadas na PR #88 e aguardando Runtime final**.
 
 Este documento delimita a fronteira entre Drupal Domain, `aculta_portal` e o
 tema `aculta420` antes da implementação do shell multidomínio 0.2-C/0.2-D.
@@ -392,6 +392,20 @@ Integrações modernas com Domain tendem a manter Domain como contexto da camada
 funcional e filtrar/decidir antes da apresentação. Isso reforça nossa regra de
 que Domain Negotiator/entidade/hostname não chegam ao tema.
 
+## Revisão de compatibilidade Drupal 11 → 12 → 13
+
+Revisado em 2026-10-08 contra Core atual:
+
+- hooks OOP em módulos são suportados desde Drupal 11.2 e hooks OOP em temas desde Drupal 11.3; manter `#[Hook]` em `src/Hook/` é o caminho corrente;
+- `template_preprocess()` e `template_preprocess_HOOK()` legados estão deprecated na linha 11.x e removidos no Drupal 12; não reintroduzir callbacks mágicos legados;
+- a ordem documentada do Theme API continua módulo preprocess → theme preprocess, sustentando a ponte Portal → ACULTA420 sem chamada direta entre providers;
+- Render API continua exigindo que cache contexts/tags/max-age permaneçam no render tree e façam bubbling;
+- desde Drupal 11.3, passar a `Renderer::addCacheableDependency()` um objeto que não implemente `CacheableDependencyInterface` é deprecated e o Core anuncia type-hint obrigatório no Drupal 13; `DomainPresentation` implementa explicitamente essa interface;
+- `Element::children()` identifica filhos estruturais do render array, não garante que um filho represente branding visual efetivo. B.3/B.4 portanto preserva `page.header` e detecta explicitamente `system_branding_block` para decidir apenas o fallback de marca;
+- SDC continua reservado para a fase em que existir componente estável: props para dados tipados e slots para renderables. O Portal não instancia provider SDC do tema.
+
+Essas regras são deliberadamente mais estreitas que “funciona no Drupal 11”: evitam APIs já deprecated e preservam o caminho de atualização para Drupal 12/13.
+
 ## Compatibilidade Drupal 11+
 
 Baseline recomendado para esta fronteira:
@@ -468,11 +482,58 @@ Design Foundations, fixtures e Institution passaram; Composer audit passou e
 updatedb reportou nenhuma atualização. `config:status` ainda mostra drift
 preexistente de Runtime; nenhum `cim`/`cex` foi executado.
 
+## Implementação 0.2-B.3
+
+O ACULTA420 passa a consumir a identidade neutra entregue por `domain_presentation` sem alterar a arquitetura visual corrente:
+
+- `ThemeHooks::preprocessPage()` deriva de `identity` apenas `aculta_domain_brand_fallback = {label, home_url}`;
+- identidade ausente ou incompleta resulta em `NULL`; o tema não consulta Domain/config/hostname para inventar fallback funcional;
+- `page.html.twig` sempre preserva `page.header`; o fallback textual só é acrescentado quando `ThemeHooks` não encontra o plugin canônico `system_branding_block` na região;
+- `label` usa `short_title` quando disponível e cai para `title`; `home_url` continua preparado pelo Portal;
+- `purpose` permanece no contrato Portal para contexto futuro, mas não é emitido no DOM nem usado por branch visual em B.3/B.4;
+- `logo_alt` permanece reservado para branding visual futuro; não é reutilizado como `aria-label` de fallback textual;
+- `regions.brand_media`, `regions.navigation` e `regions.actions` continuam sem consumidor e permanecem `NULL` nesta fase;
+- nenhuma alteração de CSS, tokens, layout, Institution Bar, Domain Header, sticky/mobile ou color-mode foi introduzida.
+
+Gate Runtime read-only:
+
+```sh
+php vendor/drush/drush/drush.php php:script validate-aculta420-shell-contract --script-path=../scripts
+```
+
+O gate cobre contrato completo, parcial e ausente, rejeita forwarding de campos/objetos desconhecidos e verifica ausência de Domain/hostname/serviços Portal no runtime source do tema.
+
+## Implementação 0.2-B.4
+
+A fronteira passa a ter um analyzer estático reutilizado pelo gate Runtime e por fixtures independentes de Drupal:
+
+- `scripts/lib/Aculta420ShellContractAnalyzer.php` concentra invariantes da fronteira;
+- `scripts/tests/validate-aculta420-shell-contract-test.php` injeta regressões positivas/negativas em cópia temporária do tema;
+- o gate Runtime `validate-aculta420-shell-contract.php` reutiliza o mesmo analyzer para evitar divergência entre teste sintético e Homelab;
+- fixtures rejeitam branch concreta por purpose, `DomainInterface`, `DomainPurposeManager`, hostname/service locator, consumo prematuro de `regions.*`, fallback que ignore a presença do `system_branding_block`, remoção de `page.header` e quebra da chave `domain_presentation.identity`;
+- baseline restaurado precisa voltar a PASS ao final das fixtures;
+- o fechamento da B.4 depende também do gate Portal `validate-domain-presentation-contract.php`, que continua responsável por shape, sete purposes, cache contexts/tags e ausência de objetos no contrato exportado.
+
+Validação estática:
+
+```sh
+php scripts/tests/validate-aculta420-shell-contract-test.php
+```
+
+Validação Runtime combinada:
+
+```sh
+php vendor/drush/drush/drush.php php:script validate-domain-presentation-contract --script-path=../scripts
+php vendor/drush/drush/drush.php php:script validate-aculta420-shell-contract --script-path=../scripts
+```
+
+B.4 não preenche `regions.*`, não cria menu por purpose e não altera CSS/SDC/layout. O objetivo é congelar a dependência unidirecional Portal → tema antes da 0.2-C.
+
 ## Próximas etapas
 
 - **0.2-B.1** — inventário e fronteira normativa: concluída;
 - **0.2-B.2** — builder/presenter do contrato: implementado e validado no Runtime Homelab;
-- **0.2-B.3** — integrar/consumir o contrato no shell atual sem redesign;
-- **0.2-B.4** — gate/fixtures e fechamento da fronteira;
+- **0.2-B.3** — consumo de identity no shell atual sem redesign: implementado; Runtime pendente;
+- **0.2-B.4** — analyzer compartilhado + fixtures positivas/negativas + fechamento da fronteira: implementado; Runtime final pendente;
 - **0.2-C** — Institution Bar;
 - **0.2-D** — Domain Header.

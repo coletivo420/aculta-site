@@ -2,7 +2,16 @@
 <header class="aculta-header">
   <div class="navbar aculta-navbar">
     <div class="container aculta-container">
-      <div class="aculta-branding">{{ page.header }}</div>
+      <div class="aculta-branding">
+        {{ page.header }}
+        {% if not aculta_has_system_branding and aculta_domain_brand_fallback %}
+          <a href="{{ aculta_domain_brand_fallback.home_url }}"
+             rel="home"
+             class="site-title">
+            {{ aculta_domain_brand_fallback.label }}
+          </a>
+        {% endif %}
+      </div>
       {% if page.primary_menu %}
         <button class="navbar-toggler aculta-menu-toggle" type="button"
                 data-bs-toggle="collapse" data-bs-target="#aculta-primary-menu"
