@@ -7,7 +7,7 @@ Status: **implementada no hardening pré-ACULTA420 0.2-B.3; validação Runtime 
 Origem comercial e domínio de pagamento são responsabilidades diferentes.
 
 COURSES, SHOP e SUPPORT podem iniciar uma intenção de compra/apoio, mas todo
-checkout/pagamento Drupal Commerce pertence ao purpose `main`.
+carrinho, checkout e pagamento Drupal Commerce pertence ao purpose `main`.
 
 ```text
 COURSES → intenção de comprar curso ─┐
