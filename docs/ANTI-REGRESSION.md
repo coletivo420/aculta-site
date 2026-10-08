@@ -111,7 +111,7 @@ snapshots de fases e runbooks históricos.
 - o tema não chama services/classes de `aculta_portal`; o Portal prepara contexto e o tema apresenta;
 - o shell multidomínio usa um único contrato `domain_presentation`, preparado por um builder/presenter autoritativo no Portal; não espalhar `match ($purpose)` por hooks, controllers ou templates;
 - ACULTA420 pode derivar de `domain_presentation.identity` somente o fallback mínimo realmente consumido (`label` + `home_url`); `purpose` e `logo_alt` não são expostos/repurposed sem consumidor real, e identidade parcial/ausente nunca dispara lookup funcional, hostname inference ou branch visual no tema;
-- o branding Drupal existente continua prioritário durante 0.2-B.3; identidade Domain só atua como fallback textual/URL até as fases Institution Bar/Domain Header;
+- o branding Drupal existente continua prioritário durante 0.2-B.3: `page.header` é sempre preservado e o fallback textual só entra na ausência do plugin `system_branding_block`; não inferir branding por truthiness/“vazio visual” do render array;
 - o analyzer `Aculta420ShellContractAnalyzer` é a fonte única das checagens estáticas da fronteira B.4 e deve ser reutilizado por fixtures e gate Runtime; novas formas de leakage/branch exigem fixture negativa correspondente;
 - a ponte oficial é `PortalHooks::preprocessPage()` → variável neutra `domain_presentation` → `ThemeHooks::preprocessPage()`/Twig; módulos preprocessam antes do tema e essa ordem é parte do contrato;
 - `domain_presentation` separa identidade escalar (props-ready) de regiões renderizáveis (slots-ready); menu/actions/brand media não viram HTML/string prematuramente;
