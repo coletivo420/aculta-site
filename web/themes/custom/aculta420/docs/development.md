@@ -123,6 +123,8 @@ Ao evoluir o shell:
 - usar Domain purpose como chave funcional; nunca hostname hardcoded;
 - manter `DomainPurposeManager` e resolução funcional no `aculta_portal`;
 - passar ao tema apenas contexto de apresentação preparado;
+- `domain_presentation.identity` pode ser adaptado pelo `ThemeHooks` apenas para normalização visual; identidade incompleta falha para `NULL`, sem lookup funcional no tema;
+- `purpose` pode aparecer como metadata semântica neutra, mas não como branch de layout/cor/comportamento;
 - nunca passar entidade `Domain` diretamente para Twig/SDC;
 - manter branding de purpose opcional com fallback ACULTA/texto;
 - manter um único shell e variar dados, não criar headers paralelos;
