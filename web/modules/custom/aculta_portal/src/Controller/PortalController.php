@@ -7,12 +7,16 @@ namespace Drupal\aculta_portal\Controller;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
@@ -35,6 +39,10 @@ final class PortalController extends ControllerBase {
     private readonly BlockManagerInterface $blockManager,
     private readonly CurrentRouteMatch $currentRouteMatch,
     private readonly object $emailConfirmer,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly TranslationInterface $translation,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -49,6 +57,10 @@ final class PortalController extends ControllerBase {
       $container->get('plugin.manager.block'),
       $container->get('current_route_match'),
       $container->get('email_confirmer'),
+      $container->get('current_user'),
+      $container->get('module_handler'),
+      $container->get('config.factory'),
+      $container->get('string_translation'),
     );
   }
 
@@ -63,7 +75,7 @@ final class PortalController extends ControllerBase {
   }
 
   public function dashboard(): array {
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $account = $this->entities->getStorage('user')->load($this->currentUser->id());
     $profile = $this->loadParticipantProfile($account);
     $nickname = $profile && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty() ? $profile->get('field_nickname')->value : '';
     $first_name = $profile && !$profile->get('field_first_name')->isEmpty() ? $profile->get('field_first_name')->value : '';
@@ -73,7 +85,7 @@ final class PortalController extends ControllerBase {
       '#theme' => 'image_style',
       '#style_name' => 'aculta_avatar',
       '#uri' => $file->getFileUri(),
-      '#alt' => $this->t('Foto de perfil de @name', ['@name' => $display_name]),
+      '#alt' => $this->translation->translate('Foto de perfil de @name', ['@name' => $display_name]),
       '#attributes' => ['class' => ['aculta-account__avatar']],
     ] : [
       '#type' => 'html_tag',
@@ -99,7 +111,7 @@ final class PortalController extends ControllerBase {
         ],
       ],
       'intro' => [
-        '#plain_text' => $this->t('Use o menu para acompanhar seu apoio, seus cursos, atualizar seus dados e gerenciar sua conta.'),
+        '#plain_text' => $this->translation->translate('Use o menu para acompanhar seu apoio, seus cursos, atualizar seus dados e gerenciar sua conta.'),
       ],
       'courses_summary' => $this->buildCoursesSummary($account),
       '#cache' => ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
@@ -112,17 +124,17 @@ final class PortalController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-account-courses-summary']],
-      'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Cursos')],
+      'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->translation->translate('Cursos')],
       'summary' => [
         '#plain_text' => $count === 1
-          ? $this->t('Você participa de 1 curso.')
-          : $this->t('Você participa de @count cursos.', ['@count' => $count]),
+          ? $this->translation->translate('Você participa de 1 curso.')
+          : $this->translation->translate('Você participa de @count cursos.', ['@count' => $count]),
       ],
     ];
     if ($count > 0) {
       $build['link'] = [
         '#type' => 'link',
-        '#title' => $this->t('Ver meus cursos'),
+        '#title' => $this->translation->translate('Ver meus cursos'),
         '#url' => Url::fromRoute('aculta_portal.account_courses'),
       ];
     }
@@ -131,7 +143,7 @@ final class PortalController extends ControllerBase {
       if ($catalog) {
         $build['link'] = [
           '#type' => 'link',
-          '#title' => $this->t('Ver cursos disponíveis'),
+          '#title' => $this->translation->translate('Ver cursos disponíveis'),
           '#url' => $catalog,
         ];
       }
@@ -148,10 +160,10 @@ final class PortalController extends ControllerBase {
   }
 
   public function connections(): array {
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $account = $this->entities->getStorage('user')->load($this->currentUser->id());
     $google_ready = $this->authIntegrationManager->isGoogleConfigured();
     $links = [];
-    if ($this->moduleHandler()->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
+    if ($this->moduleHandler->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
       $links = $this->entities->getStorage('social_auth')->loadByProperties([
         'user_id' => $account->id(),
         'plugin_id' => self::GOOGLE_SOCIAL_AUTH_PLUGIN_ID,
@@ -159,24 +171,24 @@ final class PortalController extends ControllerBase {
     }
 
     $items = [
-      'description' => ['#plain_text' => $this->t('Gerencie as contas externas conectadas à sua conta.')],
+      'description' => ['#plain_text' => $this->translation->translate('Gerencie as contas externas conectadas à sua conta.')],
       'google_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => 'Google'],
     ];
     if ($links) {
       $social_auth = reset($links);
       $provider_email = $social_auth->getAdditionalData()['provider_email'] ?? NULL;
       if (is_string($provider_email) && filter_var($provider_email, FILTER_VALIDATE_EMAIL)) {
-        $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
+        $items['google_status'] = ['#plain_text' => $this->translation->translate('Conta conectada')];
         $items['google_account'] = [
-          '#plain_text' => $this->t('Conta Google: @email', ['@email' => $provider_email]),
+          '#plain_text' => $this->translation->translate('Conta Google: @email', ['@email' => $provider_email]),
         ];
       }
       else {
-        $items['google_status'] = ['#plain_text' => $this->t('Conta conectada')];
-        $items['google_account'] = ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')];
+        $items['google_status'] = ['#plain_text' => $this->translation->translate('Conta conectada')];
+        $items['google_account'] = ['#plain_text' => $this->translation->translate('O endereço da conta Google ainda não está disponível nesta conexão.')];
         $items['google_reconnect'] = [
           '#type' => 'link',
-          '#title' => $this->t('Atualizar conexão Google'),
+          '#title' => $this->translation->translate('Atualizar conexão Google'),
           '#url' => Url::fromRoute('social_auth.network.redirect', ['network' => 'google']),
           '#attributes' => ['class' => ['button', 'button--secondary']],
         ];
@@ -184,19 +196,19 @@ final class PortalController extends ControllerBase {
       if ($this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
           '#type' => 'link',
-          '#title' => $this->t('Desconectar Google'),
+          '#title' => $this->translation->translate('Desconectar Google'),
           '#url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()]),
           '#attributes' => ['class' => ['button', 'button--secondary']],
           '#access' => $social_auth->access('delete'),
         ];
       }
       else {
-        $items['password_notice'] = ['#plain_text' => $this->t('Defina uma senha para sua conta antes de desconectar o Google.')];
-        $items['password_link'] = ['#type' => 'link', '#title' => $this->t('Gerenciar segurança da conta'), '#url' => Url::fromRoute('aculta_portal.security')];
+        $items['password_notice'] = ['#plain_text' => $this->translation->translate('Defina uma senha para sua conta antes de desconectar o Google.')];
+        $items['password_link'] = ['#type' => 'link', '#title' => $this->translation->translate('Gerenciar segurança da conta'), '#url' => Url::fromRoute('aculta_portal.security')];
       }
     }
     elseif ($google_ready) {
-      $items['google_status'] = ['#plain_text' => $this->t('Nenhuma conta Google está conectada.')];
+      $items['google_status'] = ['#plain_text' => $this->translation->translate('Nenhuma conta Google está conectada.')];
       $items['google_login'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-auth-provider']],
@@ -206,55 +218,55 @@ final class PortalController extends ControllerBase {
       ];
     }
     else {
-      $items['google_status'] = ['#plain_text' => $this->t('A conexão com o Google estará disponível quando a configuração institucional estiver concluída.')];
+      $items['google_status'] = ['#plain_text' => $this->translation->translate('A conexão com o Google estará disponível quando a configuração institucional estiver concluída.')];
     }
     $items['#cache'] = ['contexts' => ['user'], 'tags' => $account->getCacheTags(), 'max-age' => 0];
     return $items;
   }
 
   public function security(): array {
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $account = $this->entities->getStorage('user')->load($this->currentUser->id());
     $email_ready = $this->transactionalMailReady();
     $content = [
-      'intro' => ['#plain_text' => $this->t('Gerencie como você acessa sua conta.')],
+      'intro' => ['#plain_text' => $this->translation->translate('Gerencie como você acessa sua conta.')],
       'email_section' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-security-card']],
-        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('E-mail de acesso')],
-        'current_label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
+        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->translation->translate('E-mail de acesso')],
+        'current_label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->translation->translate('E-mail atual')],
         'current_email' => ['#plain_text' => $account->getEmail()],
       ],
       'password_section' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-security-card']],
-        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Senha')],
-        'description' => ['#plain_text' => $this->t('Mantenha uma senha segura para acessar sua conta.')],
+        'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->translation->translate('Senha')],
+        'description' => ['#plain_text' => $this->translation->translate('Mantenha uma senha segura para acessar sua conta.')],
       ],
       '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
     ];
 
-    if ($email_ready && $this->moduleHandler()->moduleExists('email_confirmer_user') && $this->moduleHandler()->moduleExists('change_mail_page')) {
+    if ($email_ready && $this->moduleHandler->moduleExists('email_confirmer_user') && $this->moduleHandler->moduleExists('change_mail_page')) {
       $content['email_section']['change_form'] = $this->accountFormBuilder->getForm(\Drupal\change_mail_page\Form\ChangeMailForm::class, $account);
       $pending_email = $this->pendingEmail($account->id());
       if ($pending_email !== NULL) {
         $content['email_section']['pending'] = [
           '#type' => 'container',
           '#attributes' => ['class' => ['aculta-security-pending'], 'aria-live' => 'polite'],
-          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
+          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->translation->translate('Alteração pendente')],
           'email' => ['#plain_text' => $pending_email],
-          'message' => ['#plain_text' => $this->t('Aguardando confirmação no novo endereço.')],
+          'message' => ['#plain_text' => $this->translation->translate('Aguardando confirmação no novo endereço.')],
         ];
       }
     }
     else {
-      $content['email_section']['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
+      $content['email_section']['mail_notice'] = ['#plain_text' => $this->translation->translate('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
     }
 
     if ($this->hasUserChosenPassword($account)) {
       $content['password_section']['change_form'] = $this->buildPortalAccountForm($account);
     }
     else {
-      $content['password_section']['social_notice'] = ['#plain_text' => $this->t('Sua conta utiliza acesso externo. Quando o fluxo de definição de senha local estiver homologado, ele poderá ser oferecido aqui.')];
+      $content['password_section']['social_notice'] = ['#plain_text' => $this->translation->translate('Sua conta utiliza acesso externo. Quando o fluxo de definição de senha local estiver homologado, ele poderá ser oferecido aqui.')];
     }
 
     return [
@@ -271,10 +283,10 @@ final class PortalController extends ControllerBase {
   }
 
   private function transactionalMailReady(): bool {
-    $smtp = $this->config('smtp.settings');
-    $mail_system = $this->config('system.mail')->get('interface.default');
-    $site_mail = trim((string) $this->config('system.site')->get('mail'));
-    return $this->moduleHandler()->moduleExists('smtp')
+    $smtp = $this->configFactory->get('smtp.settings');
+    $mail_system = $this->configFactory->get('system.mail')->get('interface.default');
+    $site_mail = trim((string) $this->configFactory->get('system.site')->get('mail'));
+    return $this->moduleHandler->moduleExists('smtp')
       && $mail_system === 'SMTPMailSystem'
       && (bool) $smtp->get('smtp_on')
       && trim((string) $smtp->get('smtp_host')) !== ''
@@ -284,7 +296,7 @@ final class PortalController extends ControllerBase {
   }
 
   private function pendingEmail(int|string $uid): ?string {
-    if (!$this->moduleHandler()->moduleExists('email_confirmer_user')) {
+    if (!$this->moduleHandler->moduleExists('email_confirmer_user')) {
       return NULL;
     }
     $pending = $this->userData->get('email_confirmer_user', $uid, 'email_change_new_address');
@@ -301,16 +313,16 @@ final class PortalController extends ControllerBase {
   }
 
   private function buildDataSection(string $section): array {
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $account = $this->entities->getStorage('user')->load($this->currentUser->id());
     $profile = $section === 'address'
       ? $this->loadCommerceAddressProfile($account)
       : $this->loadParticipantProfile($account);
     $route = $section === 'address' ? 'aculta_portal.my_data_address' : 'aculta_portal.my_data';
-    $title = $section === 'address' ? $this->t('Endereço') : $this->t('Informações básicas');
+    $title = $section === 'address' ? $this->translation->translate('Endereço') : $this->translation->translate('Informações básicas');
     $links = [];
     foreach ([
-      'basics' => ['title' => $this->t('Informações básicas'), 'route' => 'aculta_portal.my_data'],
-      'address' => ['title' => $this->t('Endereço'), 'route' => 'aculta_portal.my_data_address'],
+      'basics' => ['title' => $this->translation->translate('Informações básicas'), 'route' => 'aculta_portal.my_data'],
+      'address' => ['title' => $this->translation->translate('Endereço'), 'route' => 'aculta_portal.my_data_address'],
     ] as $key => $tab) {
       $link = [
         '#type' => 'link',
@@ -325,10 +337,10 @@ final class PortalController extends ControllerBase {
       $links[] = $link;
     }
     return [
-      'description' => ['#plain_text' => $this->t('Mantenha suas informações pessoais e de contato atualizadas.')],
+      'description' => ['#plain_text' => $this->translation->translate('Mantenha suas informações pessoais e de contato atualizadas.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-account-data__nav'], 'aria-label' => $this->t('Seções de meus dados'), 'data-aculta-account-data-nav' => 'true'],
+        '#attributes' => ['class' => ['aculta-account-data__nav'], 'aria-label' => $this->translation->translate('Seções de meus dados'), 'data-aculta-account-data-nav' => 'true'],
         'links' => $links,
       ],
       'content' => [
@@ -338,7 +350,7 @@ final class PortalController extends ControllerBase {
         'account_email' => $section === 'basics' ? [
           '#type' => 'container',
           '#attributes' => ['class' => ['aculta-account-data__email']],
-          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail')],
+          'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->translation->translate('E-mail')],
           'value' => ['#plain_text' => $account->getEmail()],
         ] : [],
         'form' => $this->forms->getForm($profile, 'edit'),
