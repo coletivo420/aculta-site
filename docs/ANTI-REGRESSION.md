@@ -175,6 +175,11 @@ snapshots de fases e runbooks históricos.
 - coleções grandes só são removidas após inventário de Runtime/conteúdo;
 - assets de conteúdo devem tender a Media/File/CDN, não payload PHP do módulo,
   quando houver migração segura.
+- bibliotecas externas usadas pelo Webform devem seguir as versões e os paths
+  do Webform instalado, ser reconstruíveis por `composer install` e não ser
+  copiadas manualmente; ao atualizar Webform, revisar novamente seu contrato
+  `composer.libraries.json`/`webform.libraries.yml` e não reintroduzir
+  bibliotecas deprecated sem consumidor ativo comprovado.
 
 ## Cache, access e privacidade
 
