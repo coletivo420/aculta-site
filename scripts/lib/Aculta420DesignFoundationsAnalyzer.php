@@ -42,6 +42,15 @@ final class Aculta420DesignFoundationsAnalyzer {
   ];
 
   private const COLOR_TOKENS = [
+    '--aculta-green', '--aculta-green-dark', '--aculta-yellow', '--aculta-red',
+    '--aculta-cream', '--aculta-white', '--aculta-button-primary-bg',
+    '--aculta-button-primary-text', '--aculta-button-secondary-bg',
+    '--aculta-button-secondary-text', '--aculta-button-secondary-border',
+    '--aculta-button-hover-bg', '--aculta-button-hover-text', '--aculta-nav-current-bg',
+    '--aculta-nav-current-text', '--aculta-nav-current-underline', '--aculta-nav-hover-bg',
+    '--aculta-nav-hover-text', '--aculta-nav-hover-underline', '--aculta-link-editorial',
+    '--aculta-link-editorial-hover', '--aculta-link', '--aculta-border',
+    '--aculta-control-border', '--aculta-focus',
     '--aculta-surface-page', '--aculta-surface-raised', '--aculta-surface-muted',
     '--aculta-surface-header', '--aculta-surface-interactive', '--aculta-text-primary',
     '--aculta-text-secondary', '--aculta-text-muted', '--aculta-text-inverse',
@@ -54,6 +63,33 @@ final class Aculta420DesignFoundationsAnalyzer {
     '--aculta-shell-institution-text', '--aculta-shell-domain-bg',
     '--aculta-shell-domain-text', '--aculta-shell-border', '--aculta-shell-active-bg',
     '--aculta-shell-active-text',
+    '--bs-primary', '--bs-secondary', '--bs-success', '--bs-info', '--bs-warning',
+    '--bs-danger', '--bs-light', '--bs-dark', '--bs-black', '--bs-white', '--bs-gray',
+    '--bs-gray-dark', '--bs-gray-100', '--bs-gray-200', '--bs-gray-300', '--bs-gray-400',
+    '--bs-gray-500', '--bs-gray-600', '--bs-gray-700', '--bs-gray-800', '--bs-gray-900',
+    '--bs-code-color', '--bs-highlight-color', '--bs-highlight-bg', '--bs-heading-color',
+    '--bs-emphasis-color', '--bs-secondary-color', '--bs-tertiary-color',
+    '--bs-secondary-bg', '--bs-tertiary-bg', '--bs-link-color', '--bs-link-hover-color',
+    '--bs-border-color', '--bs-border-color-translucent', '--bs-focus-ring-color',
+    '--bs-form-valid-color', '--bs-form-valid-border-color', '--bs-form-invalid-color',
+    '--bs-form-invalid-border-color', '--bs-primary-text-emphasis',
+    '--bs-secondary-text-emphasis', '--bs-success-text-emphasis', '--bs-info-text-emphasis',
+    '--bs-warning-text-emphasis', '--bs-danger-text-emphasis', '--bs-light-text-emphasis',
+    '--bs-dark-text-emphasis', '--bs-primary-bg-subtle', '--bs-secondary-bg-subtle',
+    '--bs-success-bg-subtle', '--bs-info-bg-subtle', '--bs-warning-bg-subtle',
+    '--bs-danger-bg-subtle', '--bs-light-bg-subtle', '--bs-dark-bg-subtle',
+    '--bs-primary-border-subtle', '--bs-secondary-border-subtle', '--bs-success-border-subtle',
+    '--bs-info-border-subtle', '--bs-warning-border-subtle', '--bs-danger-border-subtle',
+    '--bs-light-border-subtle', '--bs-dark-border-subtle',
+  ];
+
+  private const RGB_TOKENS = [
+    '--aculta-surface-page-rgb', '--bs-body-color-rgb', '--bs-body-bg-rgb',
+    '--bs-primary-rgb', '--bs-secondary-rgb', '--bs-success-rgb', '--bs-info-rgb',
+    '--bs-warning-rgb', '--bs-danger-rgb', '--bs-light-rgb', '--bs-dark-rgb',
+    '--bs-black-rgb', '--bs-white-rgb', '--bs-emphasis-color-rgb',
+    '--bs-secondary-color-rgb', '--bs-tertiary-color-rgb', '--bs-secondary-bg-rgb',
+    '--bs-tertiary-bg-rgb', '--bs-link-color-rgb', '--bs-link-hover-color-rgb',
   ];
 
   private const RGB_MAPPINGS = [
@@ -177,6 +213,10 @@ final class Aculta420DesignFoundationsAnalyzer {
         $result = $resolve($token, $effective);
         $assert($result['error'] === NULL && self::parseColor($result['value'] ?? '') !== NULL, ucfirst($mode) . ' color token ' . $token . ' resolves to a supported color value.');
       }
+      foreach (self::RGB_TOKENS as $token) {
+        $result = $resolve($token, $effective);
+        $assert($result['error'] === NULL && self::parseRgbTriplet($result['value'] ?? '') !== NULL, ucfirst($mode) . ' RGB token ' . $token . ' resolves to a valid channel triplet.');
+      }
     }
 
     foreach (self::DARK_SURFACES as $token => $expected) {
@@ -200,7 +240,8 @@ final class Aculta420DesignFoundationsAnalyzer {
     foreach ($dark_pairs as [$foreground, $background]) {
       $fg = self::resolvedColor($foreground, $dark_effective);
       $bg = self::resolvedColor($background, $dark_effective);
-      $ratio = $fg !== NULL && $bg !== NULL ? self::contrast($fg, $bg) : 0.0;
+      $assert($bg !== NULL && ($bg[3] ?? 1.0) === 1.0, $background . ' is opaque for contrast evaluation.');
+      $ratio = $fg !== NULL && $bg !== NULL ? self::contrast(self::composite($fg, $bg), $bg) : 0.0;
       $dark_contrast[$foreground . ' / ' . $background] = $ratio;
       $assert($ratio >= 4.5, $foreground . ' / ' . $background . ' meets WCAG AA for normal text in dark mode.');
     }
@@ -208,7 +249,8 @@ final class Aculta420DesignFoundationsAnalyzer {
     foreach (['--aculta-surface-page', '--aculta-surface-raised', '--aculta-surface-muted', '--aculta-surface-header', '--aculta-surface-interactive'] as $surface) {
       $fg = self::resolvedColor('--aculta-focus-ring', $dark_effective);
       $bg = self::resolvedColor($surface, $dark_effective);
-      $ratio = $fg !== NULL && $bg !== NULL ? self::contrast($fg, $bg) : 0.0;
+      $assert($bg !== NULL && ($bg[3] ?? 1.0) === 1.0, $surface . ' is opaque for focus contrast evaluation.');
+      $ratio = $fg !== NULL && $bg !== NULL ? self::contrast(self::composite($fg, $bg), $bg) : 0.0;
       $focus_contrast[$surface] = $ratio;
       $assert($ratio >= 3.0, '--aculta-focus-ring has at least 3:1 contrast against ' . $surface . '.');
     }
@@ -230,7 +272,8 @@ final class Aculta420DesignFoundationsAnalyzer {
       ] as [$foreground, $background]) {
         $fg = self::resolvedColor($foreground, $effective);
         $bg = self::resolvedColor($background, $effective);
-        $ratio = $fg !== NULL && $bg !== NULL ? self::contrast($fg, $bg) : 0.0;
+        $assert($bg !== NULL && ($bg[3] ?? 1.0) === 1.0, $background . ' is opaque for ' . $mode . ' contrast evaluation.');
+        $ratio = $fg !== NULL && $bg !== NULL ? self::contrast(self::composite($fg, $bg), $bg) : 0.0;
         $mode_contrast[$mode][$foreground . ' / ' . $background] = $ratio;
         $assert($ratio >= 4.5, $foreground . ' / ' . $background . ' meets WCAG AA for normal text in ' . $mode . ' mode.');
       }
@@ -335,7 +378,10 @@ final class Aculta420DesignFoundationsAnalyzer {
       }
       [$condition, $after_condition] = self::readPhpParenthesized($tokens, $index + 1);
       $expression = $condition;
-      if (in_array($token[0], [T_SWITCH, T_MATCH], TRUE)) {
+      if ($token[0] === T_SWITCH) {
+        $expression .= ' ' . self::readPhpDecisionArms($tokens, $after_condition, TRUE);
+      }
+      elseif ($token[0] === T_MATCH) {
         $expression .= ' ' . self::readPhpDecisionArms($tokens, $after_condition);
       }
       if (self::hasModeDecision($expression)) {
@@ -354,11 +400,17 @@ final class Aculta420DesignFoundationsAnalyzer {
         $count++;
       }
     }
-    preg_match_all('/\bswitch\s*\(([^()]*)\)\s*\{/s', $source, $switches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
-    foreach ($switches as $match) {
-      $body_start = $match[0][1] + strlen($match[0][0]);
+    preg_match_all('/\bswitch\s*\(/s', $source, $switches, PREG_OFFSET_CAPTURE);
+    foreach ($switches[0] as [$switch_text, $switch_offset]) {
+      $open = $switch_offset + strlen($switch_text) - 1;
+      [$discriminant, $after_discriminant] = self::readBalancedJsParentheses($source, $open);
+      $brace = strpos($source, '{', $after_discriminant);
+      if ($brace === FALSE) {
+        continue;
+      }
+      $body_start = $brace + 1;
       $body = self::readBalancedJsBlock($source, $body_start);
-      if (self::hasModeDecision($match[1][0] . ' ' . $body)) {
+      if (self::hasModeDecision($discriminant . ' ' . $body)) {
         $count++;
       }
     }
@@ -368,7 +420,7 @@ final class Aculta420DesignFoundationsAnalyzer {
         $count++;
       }
     }
-    if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*=\s*["\'](?:dark|light)["\']/i', $source) === 1
+    if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*=/i', $source) === 1
       || preg_match('/(?:setAttribute)\s*\(\s*["\'](?:data-(?:bs-)?theme|data-color-(?:mode|scheme))["\']\s*,\s*["\'](?:dark|light)["\']/i', $source) === 1
       || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode)["\']/i', $source) === 1) {
       $count++;
@@ -540,7 +592,7 @@ final class Aculta420DesignFoundationsAnalyzer {
   private static function containsModeSelector(string $selector): bool {
     return preg_match('/prefers-color-scheme\s*:\s*(?:dark|light)/i', $selector) === 1
       || preg_match('/\[\s*data-(?:(?:bs-)?theme|color-mode|color-scheme)\s*=\s*(["\']?)(?:dark|light)\1\s*\]/i', $selector) === 1
-      || preg_match('/(?:^|[\s>+~,.])\.(?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode|is-dark|is-light|color-mode-dark|color-mode-light)(?![a-zA-Z0-9_-])/i', $selector) === 1;
+      || preg_match('/\.(?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode|is-dark|is-light|color-mode-dark|color-mode-light)(?![a-zA-Z0-9_-])/i', $selector) === 1;
   }
 
   private static function resolveToken(string $name, array $effective, array $stack = []): array {
@@ -580,6 +632,9 @@ final class Aculta420DesignFoundationsAnalyzer {
     }
     if ($value === 'white') {
       return [255, 255, 255, 1.0];
+    }
+    if ($value === 'transparent') {
+      return [0, 0, 0, 0.0];
     }
     if (preg_match('/^rgba?\(([^)]+)\)$/', $value, $match) === 1) {
       $channels = preg_split('/\s*,\s*|\s+\/\s+/', trim($match[1])) ?: [];
@@ -646,8 +701,19 @@ final class Aculta420DesignFoundationsAnalyzer {
     return (max($first, $second) + 0.05) / (min($first, $second) + 0.05);
   }
 
+  /** Composite a translucent foreground over its opaque contrast surface. */
+  private static function composite(array $foreground, array $background): array {
+    $alpha = $foreground[3] ?? 1.0;
+    return [
+      $foreground[0] * $alpha + $background[0] * (1 - $alpha),
+      $foreground[1] * $alpha + $background[1] * (1 - $alpha),
+      $foreground[2] * $alpha + $background[2] * (1 - $alpha),
+      1.0,
+    ];
+  }
+
   private static function hasModeDecision(string $expression): bool {
-    $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode)\b/i', $expression) === 1;
+    $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode|getTheme|getColorMode)\b/i', $expression) === 1;
     $mode_literal = preg_match('/(?:["\'](?:dark|light)["\']|\b(?:dark|light)\b)/i', $expression) === 1;
     $boolean_mode = preg_match('/\$?\b(?:is[_-]?(?:dark|light)(?:[_-]?mode)?|(?:dark|light)[_-]?mode)\b/i', $expression) === 1;
     return ($mode_reference && $mode_literal) || $boolean_mode;
@@ -658,6 +724,9 @@ final class Aculta420DesignFoundationsAnalyzer {
     $depth = 0;
     $started = FALSE;
     for ($i = $index; isset($tokens[$i]); $i++) {
+      if (is_array($tokens[$i]) && in_array($tokens[$i][0], [T_COMMENT, T_DOC_COMMENT], TRUE)) {
+        continue;
+      }
       $part = is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
       if (!$started && $part !== '(') {
         continue;
@@ -680,16 +749,19 @@ final class Aculta420DesignFoundationsAnalyzer {
     return [$condition, count($tokens)];
   }
 
-  private static function readPhpDecisionArms(array $tokens, int $index): string {
+  private static function readPhpDecisionArms(array $tokens, int $index, bool $switch = FALSE): string {
     $depth = 0;
     $started = FALSE;
     $body = '';
     for ($i = $index; isset($tokens[$i]); $i++) {
-      $part = is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
-      if (!$started && $part !== '{') {
+      if (is_array($tokens[$i]) && in_array($tokens[$i][0], [T_COMMENT, T_DOC_COMMENT], TRUE)) {
         continue;
       }
-      if ($part === '{') {
+      $part = is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
+      if (!$started && $part !== '{' && !($switch && $part === ':')) {
+        continue;
+      }
+      if ($part === '{' || ($switch && !$started && $part === ':')) {
         $depth++;
         $started = TRUE;
       }
@@ -698,6 +770,9 @@ final class Aculta420DesignFoundationsAnalyzer {
         if ($started && $depth === 0) {
           return $body;
         }
+      }
+      elseif ($switch && is_array($tokens[$i]) && $tokens[$i][0] === T_ENDSWITCH) {
+        return $body;
       }
       $body .= $part;
     }
@@ -733,6 +808,37 @@ final class Aculta420DesignFoundationsAnalyzer {
       }
     }
     return substr($source, $start);
+  }
+
+  /** Return the contents and ending offset for a balanced JS parenthesis. */
+  private static function readBalancedJsParentheses(string $source, int $open): array {
+    $length = strlen($source);
+    $depth = 0;
+    $quote = NULL;
+    for ($i = $open; $i < $length; $i++) {
+      $char = $source[$i];
+      if ($quote !== NULL) {
+        if ($char === '\\') {
+          $i++;
+        }
+        elseif ($char === $quote) {
+          $quote = NULL;
+        }
+      }
+      elseif ($char === '"' || $char === "'" || $char === '`') {
+        $quote = $char;
+      }
+      elseif ($char === '(') {
+        $depth++;
+      }
+      elseif ($char === ')') {
+        $depth--;
+        if ($depth === 0) {
+          return [substr($source, $open + 1, $i - $open - 1), $i + 1];
+        }
+      }
+    }
+    return [substr($source, $open + 1), $length];
   }
 
   private static function stripJsComments(string $source): string {

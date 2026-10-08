@@ -222,10 +222,13 @@ seletores estruturais por modo, inclusive dentro de `tokens.css`, falham.
 
 O scanner Twig verifica condições `if`/`elseif` e ternários em tags `{% ... %}`
 e `{{ ... }}`. O scanner PHP usa `token_get_all()` para condições `if`/`elseif`,
-`switch` com `case` e `match` com arms. O scanner JavaScript reconhece `if`,
-`switch`/`case`, ternários, alternância de classes/atributos e atribuições de
-modo via `dataset.theme`, `dataset.bsTheme`, `dataset.colorMode` ou
-`dataset.colorScheme`. Comentários não devem causar finding.
+`switch` com `case` nas formas com chaves e `endswitch`, e `match` com arms;
+comentários são removidos das expressões avaliadas. O scanner JavaScript
+reconhece `if`, `switch`/`case` com parênteses balanceados, ternários,
+alternância de classes/atributos e qualquer escrita em `dataset.theme`,
+`dataset.bsTheme`, `dataset.colorMode` ou `dataset.colorScheme`, mesmo quando o
+valor vem de variável ou função. Seletores de classe também são inspecionados
+dentro de pseudo-classes funcionais como `:where()` e `:is()`.
 
 | P2 da revisão da PR #80 | Fixture que prova a regressão |
 | --- | --- |
@@ -253,12 +256,20 @@ completas. Construções dinâmicas que ocultem o identificador de modo não sã
 inferidas. Ampliações exigem fixture positiva e negativa para cada forma nova.
 
 Todos os tokens `--aculta-*` e `--bs-*` declarados nos blocos suportados são
-resolvidos por modo; duplicatas, ciclos, referências não resolvidas e cores fora
-do subconjunto aceito falham. Os mappings Bootstrap e pares RGB são conferidos
-separadamente em light e dark. Contrastes dark seguem WCAG AA; a paleta de
-superfícies charcoal/graphite é protegida por valores aprovados explícitos.
+resolvidos por modo. O contrato enumera tokens de cor ACULTA/Bootstrap e tokens
+RGB: valores inválidos, duplicatas, ciclos e referências não resolvidas falham.
+Cores de primeiro plano translúcidas são compostas sobre a superfície opaca
+antes da medição WCAG; superfícies de contraste precisam ser opacas. Mappings
+Bootstrap e pares RGB são conferidos separadamente em light e dark. Contrastes
+seguem WCAG AA; a paleta charcoal/graphite é protegida por valores aprovados
+explícitos.
 Raízes aceitas são absolutas POSIX ou Windows (drive letter/UNC), sem segmento
 `..`; o caminho é então canonicalizado com `realpath()` antes da leitura.
+O subconjunto JavaScript não é um parser AST: a leitura de `switch` suporta
+parênteses balanceados e strings, mas construções geradas dinamicamente e
+sintaxe de template complexa ficam fora do contrato. Ao adicionar token de cor
+ou forma de decisão, atualize a lista contratual e inclua fixtures válidas e
+inválidas correspondentes.
 
 ## Testes mínimos
 
