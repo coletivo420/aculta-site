@@ -34,6 +34,12 @@ Ele não substitui as fontes de verdade desses subsistemas.
 - [Integração com o Component Design System](COMPONENT-DESIGN-SYSTEM.md)
 - [Documentação ACULTA420](../../web/themes/custom/aculta420/README.md)
 
+## Domínios e requests
+
+- [Política do domínio administrativo](ADMIN-DOMAIN-POLICY.md)
+- [Requests e redirects cross-domain](CROSS-DOMAIN-REQUEST-POLICY.md)
+- [Domain Presentation Contract](DOMAIN-PRESENTATION-CONTRACT.md)
+
 ## Operação
 
 - [Testes](../operations/TESTING.md)
