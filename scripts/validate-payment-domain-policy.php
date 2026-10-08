@@ -21,14 +21,20 @@ $routes = $routeProvider->getAllRoutes();
 
 $centralRoutes = [];
 foreach ($routes as $name => $route) {
-  if (!DomainRoutePolicy::isCentralPaymentRouteName((string) $name)) {
+  if (!DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
     continue;
   }
   $centralRoutes[(string) $name] = $route;
   $assert(
     $route->getOption('_aculta_domain_purpose') === 'main',
-    'Central payment route belongs to MAIN: ' . $name,
+    'Central commerce route belongs to MAIN: ' . $name,
   );
+  if ($name !== 'commerce_payment.notify') {
+    $assert(
+      $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main',
+      'Browser-facing central commerce route advertises MAIN canonical navigation: ' . $name,
+    );
+  }
 }
 
 $assert($centralRoutes !== [], 'At least one central Commerce payment route was inspected.');
@@ -90,24 +96,29 @@ foreach ([
 ] as $family) {
   $assert(
     str_contains($routePolicySource, $family),
-    'Shared DomainRoutePolicy owns payment route family: ' . $family,
+    'Shared DomainRoutePolicy owns central commerce route family: ' . $family,
   );
 }
 
 $assert(
-  str_contains($routeSubscriberSource, 'DomainRoutePolicy::isCentralPaymentRouteName'),
-  'Route classification reuses the shared payment route policy.',
+  str_contains($routeSubscriberSource, 'DomainRoutePolicy::isCentralTransactionRouteName'),
+  'Route classification reuses the shared central commerce route policy.',
 );
 $assert(
-  str_contains($requestSubscriberSource, 'DomainRoutePolicy::isCentralPaymentRouteName')
+  str_contains($requestSubscriberSource, 'DomainRoutePolicy::isCentralTransactionRouteName')
     && str_contains($requestSubscriberSource, "['GET', 'HEAD']"),
   'Wrong-host checkout navigation canonicalizes only safe methods.',
 );
 $assert(
-  str_contains($hooksSource, 'DomainRoutePolicy::isCentralPaymentRouteName')
+  str_contains($hooksSource, 'DomainRoutePolicy::isCentralTransactionRouteName')
     && str_contains($hooksSource, "routeUrl(
           'main'"),
   'Portal rewrites routed checkout/payment links directly to MAIN.',
+);
+
+$assert(
+  str_contains($hooksSource, "str_starts_with((string) \$route, 'commerce_cart.')"),
+  'Central cart pages are noindex/nofollow with the transaction flow.',
 );
 
 foreach ([$routePolicySource, $routeSubscriberSource, $requestSubscriberSource, $hooksSource] as $source) {
