@@ -75,6 +75,9 @@ final class ThemeHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
+    $variables['aculta_domain_identity'] = $this->normalizeDomainIdentity(
+      $variables['domain_presentation']['identity'] ?? NULL,
+    );
 
     $destinations = [
       'page_title_block' => 'aculta_page_title',
@@ -107,6 +110,51 @@ final class ThemeHooks {
         unset($variables['page']['header'][$key]);
       }
     }
+  }
+
+  /**
+   * Adapts the neutral Portal identity contract for shell presentation.
+   *
+   * @param mixed $identity
+   *   The neutral identity array prepared by aculta_portal, when available.
+   *
+   * @return array{purpose: string, title: string, short_title: ?string, home_url: string, logo_alt: ?string}|null
+   *   Presentation-safe scalar identity, or NULL when the contract is absent
+   *   or incomplete. No Domain lookup or functional fallback happens here.
+   */
+  private function normalizeDomainIdentity(mixed $identity): ?array {
+    if (!is_array($identity)) {
+      return NULL;
+    }
+
+    $purpose = isset($identity['purpose']) && is_string($identity['purpose'])
+      ? trim($identity['purpose'])
+      : '';
+    $title = isset($identity['title']) && is_string($identity['title'])
+      ? trim($identity['title'])
+      : '';
+    $homeUrl = isset($identity['home_url']) && is_string($identity['home_url'])
+      ? trim($identity['home_url'])
+      : '';
+
+    if ($purpose === '' || $title === '' || $homeUrl === '') {
+      return NULL;
+    }
+
+    $shortTitle = isset($identity['short_title']) && is_string($identity['short_title'])
+      ? trim($identity['short_title'])
+      : NULL;
+    $logoAlt = isset($identity['logo_alt']) && is_string($identity['logo_alt'])
+      ? trim($identity['logo_alt'])
+      : NULL;
+
+    return [
+      'purpose' => $purpose,
+      'title' => $title,
+      'short_title' => $shortTitle !== '' ? $shortTitle : NULL,
+      'home_url' => $homeUrl,
+      'logo_alt' => $logoAlt !== '' ? $logoAlt : NULL,
+    ];
   }
 
 }
