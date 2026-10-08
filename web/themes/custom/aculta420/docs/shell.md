@@ -1,9 +1,10 @@
 # Shell multidomínio — direção arquitetural
 
-Status: **planejado pós-0.1.0**.
+Status: **planejado para 0.2-B a 0.2-F; tokens preparados em 0.2-A**.
 
-Este documento fixa a direção do shell público sem antecipar o redesign para a
-Foundation. A 0.1.0 deve apenas impedir contratos que tornem essa evolução difícil.
+Este documento fixa a direção do shell público. A 0.1.0 preserva a arquitetura
+e o shell existente; 0.2-A prepara tokens; as etapas 0.2-B a 0.2-F entregam o
+contrato e a validação visual progressivamente.
 
 ## Hierarquia
 
@@ -117,13 +118,18 @@ A referência escolhida é próxima ao conceito “Design B”:
 - Institution Bar branca, compacta e visualmente secundária;
 - Domain Header branco, mais alto e dominante;
 - linha inferior verde estrutural;
-- item atual amarelo com texto vermelho;
+- item atual amarelo com texto escuro de contraste adequado;
 - texto base verde escuro;
 - logo ACULTA compacto na faixa institucional;
 - logo principal variável no Domain Header.
 
 Essas cores não devem ser espalhadas como literais. A implementação deve nascer
-sobre semantic tokens.
+sobre semantic tokens fornecidos em 0.2-A. O fundo da página usa uma superfície
+verde muito suave; conteúdo elevado usa superfície clara; a Institution Bar usa
+uma superfície secundária; o Domain Header usa a superfície elevada principal.
+O verde é acento estrutural. O item ativo usa fundo amarelo e texto escuro para
+manter contraste legível; qualquer ênfase adicional deve passar por avaliação
+de contraste.
 
 Vocabulário alvo:
 
@@ -140,15 +146,22 @@ Vocabulário alvo:
 
 ## Color modes
 
-Seguir Bootstrap:
+0.2-A fornece somente valores semânticos para `data-bs-theme="light"` e
+`data-bs-theme="dark"`. 0.2-E/0.2-F valida o shell nesses modos. Seletor,
+preferência automática e persistência ficam para uma fase posterior. Modo de cor
+troca tokens, não geometria nem markup.
 
-```text
-data-bs-theme="light"
-data-bs-theme="dark"
-auto via prefers-color-scheme
-```
+## Sequência 0.2.0
 
-Modo de cor troca tokens e assets compatíveis; não troca geometria nem markup.
+- 0.2-A — Semantic Foundations;
+- 0.2-B — Domain Presentation Contract;
+- 0.2-C — Institution Bar;
+- 0.2-D — Domain Header;
+- 0.2-E — Mobile/Sticky Shell;
+- 0.2-F — Design B QA.
+
+Somente 0.2-A está em execução neste incremento; nenhuma faixa do shell ou
+seleção de branding é implementada aqui.
 
 ## Sticky e mobile
 

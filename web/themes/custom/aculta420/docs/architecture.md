@@ -142,7 +142,11 @@ por outro lado, é sempre `aculta420`.
 
 ## Shell multidomínio planejado
 
-A Foundation 0.1.0 documenta o contrato sem executar o redesign completo.
+A Foundation 0.1.0 preserva o shell existente. A linha 0.2.0 prepara o Design B
+em etapas: 0.2-A entrega tokens semânticos; 0.2-B define o contrato de
+apresentação; 0.2-C/0.2-D implementam Institution Bar e Domain Header;
+0.2-E/0.2-F tratam mobile/sticky e validação. O 0.2-A não altera markup nem
+resolve purpose.
 
 Hierarquia:
 

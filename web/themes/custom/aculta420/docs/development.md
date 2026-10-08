@@ -122,12 +122,17 @@ Ao evoluir o shell:
 - nunca passar entidade `Domain` diretamente para Twig/SDC;
 - manter branding de purpose opcional com fallback ACULTA/texto;
 - manter um único shell e variar dados, não criar headers paralelos;
+- componentes novos usam semantic tokens quando já houver token para sua função;
+- palette primitives permanecem em `tokens.css`, sem espalhar semântica contextual;
+- color modes trocam tokens, nunca markup; não adicionar seletor/persistência antes da fase prevista;
+- purpose não escolhe cores e branding por hostname no tema;
 - color modes alteram tokens, não markup/geometria;
 - preferir `position: sticky` a `fixed` como ponto de partida;
 - reutilizar Bootstrap Collapse/Offcanvas em vez de criar engine JS própria.
 
-A Foundation 0.1.0 não autoriza o redesign visual completo. Ver
-[shell.md](shell.md).
+A Foundation 0.1.0 não autoriza o redesign visual completo. A fase 0.2-A prepara
+somente semantic tokens; o shell visual segue as etapas documentadas em
+[roadmap.md](roadmap.md) e [shell.md](shell.md).
 
 ## Configuração
 
@@ -168,6 +173,12 @@ vendor/bin/drush php:script validate-aculta420-foundation --script-path=../scrip
 
 O gate falha se reaparecerem provider legado, arquivo `.theme`, catch-all CSS,
 asset web sem contrato, dependência direta do tema no Portal ou library quebrada.
+
+Para tokens e fronteiras visuais da linha 0.2:
+
+```sh
+php scripts/validate-aculta420-design-foundations.php
+```
 
 ## Testes mínimos
 

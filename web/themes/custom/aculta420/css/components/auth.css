@@ -1,8 +1,8 @@
-/* Drupal-native account forms use the site's editorial cream and white system. */
+/* Drupal-native account forms use semantic page and raised surfaces. */
 body.page-route-user-login,
 body.page-route-user-register,
 body.page-route-user-pass {
-  background-color: var(--aculta-cream);
+  background-color: var(--aculta-surface-page);
 }
 
 body.page-route-user-login .aculta-page-heading,
@@ -11,8 +11,8 @@ body.page-route-user-pass .aculta-page-heading {
   max-width: 34rem;
   padding: 2rem 2rem 0.25rem;
   margin: clamp(2rem, 8vh, 5rem) auto 0;
-  background-color: var(--aculta-white);
-  border-inline-start: 4px solid var(--aculta-green);
+  background-color: var(--aculta-surface-raised);
+  border-inline-start: 4px solid var(--aculta-border-accent);
   border-radius: 0.375rem 0.375rem 0 0;
 }
 
@@ -20,7 +20,7 @@ body.page-route-user-login .aculta-page-heading h1,
 body.page-route-user-register .aculta-page-heading h1,
 body.page-route-user-pass .aculta-page-heading h1 {
   margin: 0;
-  color: var(--aculta-green-dark);
+  color: var(--aculta-text-primary);
   font-family: var(--aculta-font-display);
 }
 
@@ -30,15 +30,15 @@ body.page-route-user-pass .aculta-main .row:has(.user-pass) .aculta-content {
   max-width: 34rem;
   padding: 0 2rem 2rem;
   margin: 0 auto 3rem;
-  background-color: var(--aculta-white);
-  border-inline-start: 4px solid var(--aculta-green);
+  background-color: var(--aculta-surface-raised);
+  border-inline-start: 4px solid var(--aculta-border-accent);
   border-radius: 0 0 0.375rem 0.375rem;
 }
 
 body.page-route-user-login .user-login-form,
 body.page-route-user-register .user-register-form,
 body.page-route-user-pass .user-pass {
-  color: var(--aculta-green-dark);
+  color: var(--aculta-text-primary);
   font-family: var(--aculta-font-body);
 }
 
@@ -52,16 +52,16 @@ body.page-route-user-login .user-login-form .form-control,
 body.page-route-user-register .user-register-form .form-control,
 body.page-route-user-pass .user-pass .form-control {
   width: 100%;
-  border-color: var(--aculta-green-dark);
-  color: var(--aculta-green-dark);
-  background-color: var(--aculta-white);
+  border-color: var(--aculta-border-strong);
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-interactive);
 }
 
 body.page-route-user-login .user-login-form .form-control:focus,
 body.page-route-user-register .user-register-form .form-control:focus,
 body.page-route-user-pass .user-pass .form-control:focus {
-  border-color: var(--aculta-green);
-  box-shadow: 0 0 0 0.2rem var(--aculta-yellow);
+  border-color: var(--aculta-border-accent);
+  box-shadow: 0 0 0 0.2rem var(--aculta-focus-ring);
 }
 
 body.page-route-user-login .user-login-form .form-actions .button,
@@ -73,9 +73,9 @@ body.page-route-user-pass .user-pass .form-actions .button {
 body.page-route-user-login .aculta-login__reset-link {
   display: inline-block;
   margin-block: 0.25rem 1rem;
-  color: var(--aculta-green-dark);
+  color: var(--aculta-text-primary);
   text-decoration: underline;
-  text-decoration-color: var(--aculta-green);
+  text-decoration-color: var(--aculta-border-accent);
   text-underline-offset: 0.2em;
 }
 
@@ -84,7 +84,7 @@ body.page-route-user-login .aculta-login__divider {
   align-items: center;
   gap: 0.75rem;
   margin-block: 1rem;
-  color: var(--aculta-green-dark);
+  color: var(--aculta-text-secondary);
   font: 500 0.875rem/1.4 var(--aculta-font-body);
   text-transform: uppercase;
 }
@@ -92,22 +92,22 @@ body.page-route-user-login .aculta-login__divider {
 body.page-route-user-login .aculta-login__divider span {
   height: 1px;
   flex: 1;
-  background-color: var(--aculta-green);
+  background-color: var(--aculta-border-accent);
 }
 
 body.page-route-user-login .aculta-login__registration {
   margin-block-start: 1.25rem;
   padding-block-start: 1rem;
-  border-block-start: 1px solid var(--aculta-green);
-  color: var(--aculta-green-dark);
+  border-block-start: 1px solid var(--aculta-border-default);
+  color: var(--aculta-text-primary);
   font: 400 0.875rem/1.5 var(--aculta-font-body);
 }
 
 body.page-route-user-login .aculta-login__registration a {
-  color: var(--aculta-green-dark);
+  color: var(--aculta-text-primary);
   font-weight: 600;
   text-decoration: underline;
-  text-decoration-color: var(--aculta-yellow);
+  text-decoration-color: var(--aculta-interactive-active-bg);
   text-underline-offset: 0.2em;
 }
 

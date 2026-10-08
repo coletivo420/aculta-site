@@ -1,52 +1,95 @@
 /**
- * Identidade da Associação Cultural Antiproibicionista. Bootstrap5 fornece o layout e os componentes.
- * Todas as variações de cor derivam exclusivamente da paleta oficial.
+ * ACULTA420 palette primitives, semantic foundations and Bootstrap mapping.
+ * Components consume semantic tokens; palette values stay centralized here.
  */
-/* 1. Variables: official palette and Bootstrap component tokens. */
 :root,
-[data-bs-theme] {
+[data-bs-theme="light"] {
+  /* Physical palette primitives. */
   --aculta-green: #689427;
   --aculta-green-dark: #0c3c29;
   --aculta-yellow: #f2ca36;
   --aculta-red: #d4452d;
-  --aculta-button-primary-bg: var(--aculta-yellow);
-  --aculta-button-primary-text: var(--aculta-red);
-  --aculta-button-secondary-bg: transparent;
-  --aculta-button-secondary-text: var(--aculta-green-dark);
-  --aculta-button-secondary-border: var(--aculta-green-dark);
-  --aculta-button-hover-bg: var(--aculta-green-dark);
-  --aculta-button-hover-text: var(--aculta-white);
-  --aculta-nav-current-bg: var(--aculta-yellow);
-  --aculta-nav-current-text: var(--aculta-red);
-  --aculta-nav-current-underline: var(--aculta-red);
-  --aculta-nav-hover-bg: var(--aculta-green-dark);
-  --aculta-nav-hover-text: var(--aculta-white);
-  --aculta-nav-hover-underline: var(--aculta-white);
-  --aculta-link-editorial: var(--aculta-red);
-  --aculta-link-editorial-hover: var(--aculta-green-dark);
   --aculta-cream: #fbf4e8;
   --aculta-white: #ffffff;
+
+  /* Semantic surfaces. */
+  --aculta-surface-page: #f2f7f0;
+  --aculta-surface-page-rgb: 242, 247, 240;
+  --aculta-surface-raised: var(--aculta-white);
+  --aculta-surface-muted: var(--aculta-cream);
+  --aculta-surface-header: var(--aculta-surface-raised);
+  --aculta-surface-interactive: var(--aculta-surface-raised);
+
+  /* Semantic text and borders. */
+  --aculta-text-primary: var(--aculta-green-dark);
+  --aculta-text-secondary: var(--aculta-green-dark);
+  --aculta-text-muted: var(--aculta-green-dark);
+  --aculta-text-inverse: var(--aculta-white);
+  /* Darker than the brand red so semantic text meets AA on light surfaces. */
+  --aculta-text-accent: #b23a26;
+  --aculta-border-subtle: rgba(12, 60, 41, 0.1);
+  --aculta-border-default: rgba(12, 60, 41, 0.16);
+  --aculta-border-strong: rgba(12, 60, 41, 0.45);
+  --aculta-border-accent: var(--aculta-green);
+
+  /* Interactive states. */
+  --aculta-interactive-bg: var(--aculta-yellow);
+  --aculta-interactive-text: var(--aculta-green-dark);
+  --aculta-interactive-border: var(--aculta-yellow);
+  --aculta-interactive-hover-bg: var(--aculta-green-dark);
+  --aculta-interactive-hover-text: var(--aculta-white);
+  --aculta-interactive-active-bg: var(--aculta-yellow);
+  --aculta-interactive-active-text: var(--aculta-green-dark);
+  --aculta-focus-ring: var(--aculta-green-dark);
+
+  /* Shell roles are visual only; they do not encode a Domain purpose. */
+  --aculta-shell-institution-bg: var(--aculta-surface-muted);
+  --aculta-shell-institution-text: var(--aculta-text-primary);
+  --aculta-shell-domain-bg: var(--aculta-surface-raised);
+  --aculta-shell-domain-text: var(--aculta-text-primary);
+  --aculta-shell-border: var(--aculta-border-default);
+  --aculta-shell-active-bg: var(--aculta-interactive-active-bg);
+  --aculta-shell-active-text: var(--aculta-interactive-active-text);
+
+  /* Existing component contracts retained while consumers migrate gradually. */
+  --aculta-button-primary-bg: var(--aculta-interactive-bg);
+  --aculta-button-primary-text: var(--aculta-interactive-text);
+  --aculta-button-secondary-bg: transparent;
+  --aculta-button-secondary-text: var(--aculta-text-primary);
+  --aculta-button-secondary-border: var(--aculta-text-primary);
+  --aculta-button-hover-bg: var(--aculta-interactive-hover-bg);
+  --aculta-button-hover-text: var(--aculta-interactive-hover-text);
+  --aculta-nav-current-bg: var(--aculta-yellow);
+  --aculta-nav-current-text: var(--aculta-interactive-active-text);
+  --aculta-nav-current-underline: var(--aculta-text-accent);
+  --aculta-nav-hover-bg: var(--aculta-interactive-hover-bg);
+  --aculta-nav-hover-text: var(--aculta-interactive-hover-text);
+  --aculta-nav-hover-underline: var(--aculta-text-inverse);
+  --aculta-link-editorial: var(--aculta-red);
+  --aculta-link-editorial-hover: var(--aculta-text-primary);
+
+  /* Typography, spacing, motion, borders and shadows. */
   --aculta-font-body: "Inter", sans-serif;
   --aculta-font-display: "Oswald", sans-serif;
-  /* Verde principal ajustado apenas com o verde escuro: AA em texto pequeno. */
-  --aculta-link: var(--aculta-green-dark);
-  --aculta-border: rgba(12, 60, 41, 0.16);
-  --aculta-control-border: var(--aculta-green-dark);
+  --aculta-link: var(--aculta-text-primary);
+  --aculta-border: var(--aculta-border-default);
+  --aculta-control-border: var(--aculta-border-strong);
   --aculta-space-section: clamp(2.25rem, 4.5vw, 4.25rem);
-  --aculta-focus: rgba(104, 148, 39, 0.35);
+  --aculta-focus: var(--aculta-focus-ring);
   --aculta-motion-fast: 180ms;
   --aculta-ease-standard: ease;
   --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
 
+  /* Bootstrap consumes semantic surfaces/text instead of a second palette. */
   --bs-font-sans-serif: var(--aculta-font-body);
   --bs-body-font-family: var(--aculta-font-body);
   --bs-body-font-size: 16px;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.65;
-  --bs-body-color: var(--aculta-green-dark);
+  --bs-body-color: var(--aculta-text-primary);
   --bs-body-color-rgb: 12, 60, 41;
-  --bs-body-bg: var(--aculta-cream);
-  --bs-body-bg-rgb: 251, 244, 232;
+  --bs-body-bg: var(--aculta-surface-page);
+  --bs-body-bg-rgb: var(--aculta-surface-page-rgb);
   --bs-border-radius: 0.1875rem;
   --bs-border-radius-lg: 0.25rem;
   --bs-box-shadow: 0 0.25rem 0.75rem rgba(12, 60, 41, 0.08);
@@ -65,7 +108,7 @@
   --bs-warning-rgb: 242, 202, 54;
   --bs-danger: var(--aculta-red);
   --bs-danger-rgb: 212, 69, 45;
-  --bs-light: var(--aculta-cream);
+  --bs-light: var(--aculta-surface-muted);
   --bs-light-rgb: 251, 244, 232;
   --bs-dark: var(--aculta-green-dark);
   --bs-dark-rgb: 12, 60, 41;
@@ -73,67 +116,201 @@
   --bs-black-rgb: 12, 60, 41;
   --bs-white: var(--aculta-white);
   --bs-white-rgb: 255, 255, 255;
-  --bs-gray: var(--aculta-green-dark);
-  --bs-gray-dark: var(--aculta-green-dark);
-  --bs-gray-100: var(--aculta-cream);
-  --bs-gray-200: var(--aculta-cream);
-  --bs-gray-300: var(--aculta-border);
-  --bs-gray-400: var(--aculta-border);
-  --bs-gray-500: var(--aculta-green-dark);
-  --bs-gray-600: var(--aculta-green-dark);
-  --bs-gray-700: var(--aculta-green-dark);
-  --bs-gray-800: var(--aculta-green-dark);
-  --bs-gray-900: var(--aculta-green-dark);
-  --bs-code-color: var(--aculta-green-dark);
-  --bs-highlight-color: var(--aculta-green-dark);
+  --bs-gray: var(--aculta-text-secondary);
+  --bs-gray-dark: var(--aculta-text-primary);
+  --bs-gray-100: var(--aculta-surface-muted);
+  --bs-gray-200: var(--aculta-surface-muted);
+  --bs-gray-300: var(--aculta-border-default);
+  --bs-gray-400: var(--aculta-border-strong);
+  --bs-gray-500: var(--aculta-text-muted);
+  --bs-gray-600: var(--aculta-text-secondary);
+  --bs-gray-700: var(--aculta-text-primary);
+  --bs-gray-800: var(--aculta-text-primary);
+  --bs-gray-900: var(--aculta-text-primary);
+  --bs-code-color: var(--aculta-text-primary);
+  --bs-highlight-color: var(--aculta-text-primary);
   --bs-highlight-bg: rgba(242, 202, 54, 0.2);
-  --bs-heading-color: var(--aculta-green-dark);
-  --bs-emphasis-color: var(--aculta-green-dark);
+  --bs-heading-color: var(--aculta-text-primary);
+  --bs-emphasis-color: var(--aculta-text-primary);
   --bs-emphasis-color-rgb: 12, 60, 41;
-  --bs-secondary-color: var(--aculta-green-dark);
+  --bs-secondary-color: var(--aculta-text-secondary);
   --bs-secondary-color-rgb: 12, 60, 41;
-  --bs-tertiary-color: var(--aculta-green-dark);
+  --bs-tertiary-color: var(--aculta-text-muted);
   --bs-tertiary-color-rgb: 12, 60, 41;
-  --bs-secondary-bg: var(--aculta-white);
+  --bs-secondary-bg: var(--aculta-surface-raised);
   --bs-secondary-bg-rgb: 255, 255, 255;
-  --bs-tertiary-bg: var(--aculta-cream);
+  --bs-tertiary-bg: var(--aculta-surface-muted);
   --bs-tertiary-bg-rgb: 251, 244, 232;
   --bs-link-color: var(--aculta-link);
-  --bs-link-hover-color: var(--aculta-green-dark);
+  --bs-link-hover-color: var(--aculta-text-primary);
   --bs-link-color-rgb: 12, 60, 41;
   --bs-link-hover-color-rgb: 12, 60, 41;
-  --bs-border-color: var(--aculta-border);
+  --bs-border-color: var(--aculta-border-default);
   --bs-border-color-translucent: rgba(12, 60, 41, 0.2);
-  --bs-focus-ring-color: var(--aculta-focus);
-  --bs-form-valid-color: var(--aculta-green-dark);
+  --bs-focus-ring-color: var(--aculta-focus-ring);
+  --bs-form-valid-color: var(--aculta-text-primary);
   --bs-form-valid-border-color: var(--aculta-green);
-  --bs-form-invalid-color: var(--aculta-green-dark);
+  --bs-form-invalid-color: var(--aculta-text-primary);
   --bs-form-invalid-border-color: var(--aculta-red);
 
-  /* Semantic component tokens. */
-  --bs-primary-text-emphasis: var(--aculta-green-dark);
-  --bs-secondary-text-emphasis: var(--aculta-green-dark);
-  --bs-success-text-emphasis: var(--aculta-green-dark);
-  --bs-info-text-emphasis: var(--aculta-green-dark);
-  --bs-warning-text-emphasis: var(--aculta-green-dark);
-  --bs-danger-text-emphasis: var(--aculta-green-dark);
-  --bs-light-text-emphasis: var(--aculta-green-dark);
-  --bs-dark-text-emphasis: var(--aculta-green-dark);
-  --bs-primary-bg-subtle: var(--aculta-cream);
-  --bs-secondary-bg-subtle: var(--aculta-cream);
+  /* Bootstrap semantic component tokens. */
+  --bs-primary-text-emphasis: var(--aculta-text-primary);
+  --bs-secondary-text-emphasis: var(--aculta-text-primary);
+  --bs-success-text-emphasis: var(--aculta-text-primary);
+  --bs-info-text-emphasis: var(--aculta-text-primary);
+  --bs-warning-text-emphasis: var(--aculta-text-primary);
+  --bs-danger-text-emphasis: var(--aculta-text-primary);
+  --bs-light-text-emphasis: var(--aculta-text-primary);
+  --bs-dark-text-emphasis: var(--aculta-text-primary);
+  --bs-primary-bg-subtle: var(--aculta-surface-muted);
+  --bs-secondary-bg-subtle: var(--aculta-surface-muted);
   --bs-success-bg-subtle: var(--bs-primary-bg-subtle);
   --bs-info-bg-subtle: var(--bs-primary-bg-subtle);
-  --bs-warning-bg-subtle: var(--aculta-cream);
-  --bs-danger-bg-subtle: var(--aculta-cream);
-  --bs-light-bg-subtle: var(--aculta-white);
-  --bs-dark-bg-subtle: var(--aculta-cream);
-  --bs-primary-border-subtle: var(--aculta-green);
-  --bs-secondary-border-subtle: var(--aculta-border);
-  --bs-success-border-subtle: var(--aculta-green);
-  --bs-info-border-subtle: var(--aculta-green);
-  --bs-warning-border-subtle: var(--aculta-yellow);
-  --bs-danger-border-subtle: var(--aculta-red);
-  --bs-light-border-subtle: var(--aculta-border);
-  --bs-dark-border-subtle: var(--aculta-green-dark);
+  --bs-warning-bg-subtle: var(--aculta-surface-muted);
+  --bs-danger-bg-subtle: var(--aculta-surface-muted);
+  --bs-light-bg-subtle: var(--aculta-surface-raised);
+  --bs-dark-bg-subtle: var(--aculta-surface-muted);
+  --bs-primary-border-subtle: var(--aculta-border-accent);
+  --bs-secondary-border-subtle: var(--aculta-border-default);
+  --bs-success-border-subtle: var(--aculta-border-accent);
+  --bs-info-border-subtle: var(--aculta-border-accent);
+  --bs-warning-border-subtle: var(--aculta-interactive-border);
+  --bs-danger-border-subtle: var(--aculta-text-accent);
+  --bs-light-border-subtle: var(--aculta-border-default);
+  --bs-dark-border-subtle: var(--aculta-border-strong);
 }
 
+[data-bs-theme="dark"] {
+  /* Keep palette primitives stable; color modes replace semantic meanings. */
+  --aculta-surface-page: #121a16;
+  --aculta-surface-page-rgb: 18, 26, 22;
+  --aculta-surface-raised: #1b2720;
+  --aculta-surface-muted: #223229;
+  --aculta-surface-header: var(--aculta-surface-raised);
+  --aculta-surface-interactive: #293a30;
+
+  --aculta-text-primary: #f0f5f1;
+  --aculta-text-secondary: #e0e9e3;
+  --aculta-text-muted: #bdccc2;
+  --aculta-text-inverse: var(--aculta-white);
+  --aculta-text-accent: #f1a08f;
+  --aculta-border-subtle: rgba(224, 233, 227, 0.12);
+  --aculta-border-default: rgba(224, 233, 227, 0.22);
+  --aculta-border-strong: rgba(224, 233, 227, 0.42);
+  --aculta-border-accent: #9ac15a;
+
+  --aculta-interactive-bg: #293a30;
+  --aculta-interactive-text: var(--aculta-text-primary);
+  --aculta-interactive-border: var(--aculta-border-strong);
+  --aculta-interactive-hover-bg: #385142;
+  --aculta-interactive-hover-text: #ffffff;
+  --aculta-interactive-active-bg: var(--aculta-yellow);
+  --aculta-interactive-active-text: var(--aculta-green-dark);
+  --aculta-focus-ring: var(--aculta-yellow);
+
+  --aculta-shell-institution-bg: var(--aculta-surface-muted);
+  --aculta-shell-institution-text: var(--aculta-text-primary);
+  --aculta-shell-domain-bg: var(--aculta-surface-raised);
+  --aculta-shell-domain-text: var(--aculta-text-primary);
+  --aculta-shell-border: var(--aculta-border-default);
+  --aculta-shell-active-bg: var(--aculta-interactive-active-bg);
+  --aculta-shell-active-text: var(--aculta-interactive-active-text);
+
+  --aculta-button-primary-bg: var(--aculta-interactive-active-bg);
+  --aculta-button-primary-text: var(--aculta-interactive-active-text);
+  --aculta-button-secondary-text: var(--aculta-text-primary);
+  --aculta-button-secondary-border: var(--aculta-border-strong);
+  --aculta-button-hover-bg: var(--aculta-interactive-hover-bg);
+  --aculta-button-hover-text: var(--aculta-interactive-hover-text);
+  --aculta-nav-current-bg: var(--aculta-interactive-active-bg);
+  --aculta-nav-current-text: var(--aculta-interactive-active-text);
+  --aculta-nav-current-underline: var(--aculta-interactive-active-text);
+  --aculta-nav-hover-bg: var(--aculta-interactive-hover-bg);
+  --aculta-nav-hover-text: var(--aculta-interactive-hover-text);
+  --aculta-nav-hover-underline: var(--aculta-interactive-hover-text);
+  --aculta-link-editorial: var(--aculta-text-accent);
+  --aculta-link-editorial-hover: var(--aculta-text-primary);
+  --aculta-link: var(--aculta-text-primary);
+  --aculta-border: var(--aculta-border-default);
+  --aculta-control-border: var(--aculta-border-strong);
+  --aculta-focus: var(--aculta-focus-ring);
+  --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+
+  --bs-body-color: var(--aculta-text-primary);
+  --bs-body-color-rgb: 240, 245, 241;
+  --bs-body-bg: var(--aculta-surface-page);
+  --bs-body-bg-rgb: var(--aculta-surface-page-rgb);
+  --bs-box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.28);
+  --bs-box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.24);
+  --bs-box-shadow-lg: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.32);
+  --bs-box-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.24);
+  --bs-light: var(--aculta-surface-muted);
+  --bs-light-rgb: 34, 50, 41;
+  --bs-dark: var(--aculta-surface-page);
+  --bs-dark-rgb: 18, 26, 22;
+  --bs-black: #000000;
+  --bs-black-rgb: 0, 0, 0;
+  --bs-white: #ffffff;
+  --bs-white-rgb: 255, 255, 255;
+  --bs-gray: var(--aculta-text-muted);
+  --bs-gray-dark: var(--aculta-text-primary);
+  --bs-gray-100: var(--aculta-surface-muted);
+  --bs-gray-200: var(--aculta-surface-muted);
+  --bs-gray-300: var(--aculta-border-default);
+  --bs-gray-400: var(--aculta-border-strong);
+  --bs-gray-500: var(--aculta-text-muted);
+  --bs-gray-600: var(--aculta-text-secondary);
+  --bs-gray-700: var(--aculta-text-primary);
+  --bs-gray-800: var(--aculta-text-primary);
+  --bs-gray-900: var(--aculta-text-primary);
+  --bs-code-color: var(--aculta-text-primary);
+  --bs-highlight-color: var(--aculta-text-primary);
+  --bs-highlight-bg: rgba(242, 202, 54, 0.2);
+  --bs-heading-color: var(--aculta-text-primary);
+  --bs-emphasis-color: var(--aculta-text-primary);
+  --bs-emphasis-color-rgb: 240, 245, 241;
+  --bs-secondary-color: var(--aculta-text-secondary);
+  --bs-secondary-color-rgb: 224, 233, 227;
+  --bs-tertiary-color: var(--aculta-text-muted);
+  --bs-tertiary-color-rgb: 189, 204, 194;
+  --bs-secondary-bg: var(--aculta-surface-raised);
+  --bs-secondary-bg-rgb: 27, 39, 32;
+  --bs-tertiary-bg: var(--aculta-surface-muted);
+  --bs-tertiary-bg-rgb: 34, 50, 41;
+  --bs-link-color: var(--aculta-link);
+  --bs-link-hover-color: var(--aculta-text-primary);
+  --bs-link-color-rgb: 240, 245, 241;
+  --bs-link-hover-color-rgb: 240, 245, 241;
+  --bs-border-color: var(--aculta-border-default);
+  --bs-border-color-translucent: rgba(224, 233, 227, 0.22);
+  --bs-focus-ring-color: var(--aculta-focus-ring);
+  --bs-form-valid-color: var(--aculta-text-primary);
+  --bs-form-valid-border-color: var(--aculta-border-accent);
+  --bs-form-invalid-color: var(--aculta-text-primary);
+  --bs-form-invalid-border-color: var(--aculta-text-accent);
+
+  --bs-primary-text-emphasis: var(--aculta-text-primary);
+  --bs-secondary-text-emphasis: var(--aculta-text-primary);
+  --bs-success-text-emphasis: var(--aculta-text-primary);
+  --bs-info-text-emphasis: var(--aculta-text-primary);
+  --bs-warning-text-emphasis: var(--aculta-text-primary);
+  --bs-danger-text-emphasis: var(--aculta-text-primary);
+  --bs-light-text-emphasis: var(--aculta-text-primary);
+  --bs-dark-text-emphasis: var(--aculta-text-primary);
+  --bs-primary-bg-subtle: var(--aculta-surface-muted);
+  --bs-secondary-bg-subtle: var(--aculta-surface-muted);
+  --bs-success-bg-subtle: var(--aculta-surface-muted);
+  --bs-info-bg-subtle: var(--aculta-surface-muted);
+  --bs-warning-bg-subtle: var(--aculta-surface-muted);
+  --bs-danger-bg-subtle: var(--aculta-surface-muted);
+  --bs-light-bg-subtle: var(--aculta-surface-raised);
+  --bs-dark-bg-subtle: var(--aculta-surface-muted);
+  --bs-primary-border-subtle: var(--aculta-border-accent);
+  --bs-secondary-border-subtle: var(--aculta-border-default);
+  --bs-success-border-subtle: var(--aculta-border-accent);
+  --bs-info-border-subtle: var(--aculta-border-accent);
+  --bs-warning-border-subtle: var(--aculta-interactive-border);
+  --bs-danger-border-subtle: var(--aculta-text-accent);
+  --bs-light-border-subtle: var(--aculta-border-default);
+  --bs-dark-border-subtle: var(--aculta-border-strong);
+}

@@ -4,8 +4,8 @@ body {
   font-size: 16px;
   font-weight: 400;
   line-height: 1.65;
-  color: var(--aculta-green-dark);
-  background-color: var(--aculta-cream);
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-page);
 }
 
 /* 3. Typography */
@@ -44,4 +44,3 @@ form, input, select, textarea, .form-label, .form-text,
 figcaption, caption, .site-slogan, .aculta-metadata {
   font-family: var(--aculta-font-body);
 }
-

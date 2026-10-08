@@ -38,23 +38,32 @@ resolve o problema.
 
 ## Foundations
 
-0.1.0 possui:
+ACULTA420 0.1.0 estabeleceu palette, tipografia, bordas/foco, espaçamento de
+seção e mapping Bootstrap. A 0.2-A adiciona semantic surfaces, text, borders,
+interactive e shell tokens, mantendo as primitivas físicas da paleta em
+`tokens.css`.
 
-- color tokens;
-- font tokens;
-- border/focus tokens;
-- section spacing;
-- Bootstrap semantic mapping.
+Inventário CSS da 0.2-A:
 
-Próximos foundations previstos:
+- **KEEP PALETTE:** hex/RGB físicos permanecem em `tokens.css`;
+- **MIGRATE TO SEMANTIC:** fundo da página, controles, foco, links, cartões e
+  superfícies Bootstrap com função visual clara usam semantic tokens;
+- **COMPONENT-SPECIFIC:** verde estrutural de cabeçalho/rodapé, navegação atual e
+  seções institucionais de contraste permanecem decisões visuais locais;
+- **DUPLICATE:** motion tem um único nível consumido; valores de sombra Bootstrap
+  são níveis distintos e não são duplicatas removíveis;
+- **DEAD:** nenhum token ou seletor foi removido como código morto sem evidência.
 
-- semantic surface/text/interactive tokens;
-- semantic tokens específicos do shell, sem amarrá-los a um purpose;
-- motion durations/easings;
-- color modes;
-- spacing scale mais explícita quando houver uso comprovado.
+Novas regras devem seguir:
 
-Vocabulário alvo do shell inclui conceitos como:
+```text
+palette tokens → semantic tokens → components
+```
+
+Um componente usa o token semântico que descreve sua função. A paleta continua
+centralizada e não deve ser espalhada para representar contexto.
+
+O contrato de superfície e shell inclui:
 
 ```css
 --aculta-surface-page: ...;
@@ -67,24 +76,43 @@ Vocabulário alvo do shell inclui conceitos como:
 --aculta-shell-domain-bg: ...;
 ```
 
-Os nomes semânticos definem função, não cor literal.
+Os nomes semânticos definem função, não cor literal ou Domain purpose.
+
+### Direção visual Design B
+
+- fundo da página: superfície semântica verde muito suave;
+- superfícies elevadas: superfície clara/branca;
+- Institution Bar: superfície secundária;
+- Domain Header: superfície elevada principal;
+- acento estrutural: verde;
+- navegação ativa: fundo amarelo e texto escuro com contraste adequado;
+- valores são escolhidos nos tokens por modo, sem hex espalhado pelos componentes.
+
+O texto ativo usa o verde escuro, não o vermelho de marca: medição de contraste
+na superfície amarela deu 7.84:1 para verde escuro e 2.83:1 para o vermelho
+original. O token de texto-acento também usa um tom mais escuro para cumprir AA
+em texto normal sobre a superfície da página; a primitiva `--aculta-red` não foi
+alterada.
+
+As etapas 0.2-C/0.2-D implementam as faixas do shell; 0.2-A fornece somente
+tokens e não altera `page.html.twig` ou markup do shell.
 
 ## Color modes
 
 Bootstrap 5.3 usa `data-bs-theme` para color modes. ACULTA420 seguirá o mesmo
 contrato.
 
-Ordem de implementação:
+Estado e sequência:
 
-1. semantic tokens independentes de modo;
-2. valores light;
-3. valores dark;
-4. `auto` baseado em `prefers-color-scheme`;
-5. seletor e persistência;
-6. alto contraste somente após auditoria.
+1. 0.2-A define valores semânticos light/dark por `data-bs-theme`;
+2. 0.2-E/0.2-F valida visualmente o shell nos dois modos;
+3. uma fase posterior adicionará `auto` via `prefers-color-scheme`, seletor e
+   persistência;
+4. alto contraste só será considerado após auditoria.
 
-Não ativar dark mode enquanto componentes dependerem de cores literais que não
-tenham equivalente semântico.
+Esta foundation não declara Dark Mode como feature completa e não ativa um modo
+por padrão. Ela prepara tokens para que uma fase posterior possa testar o shell
+e componentes sem mudar markup.
 
 Modo de cor troca tokens, não geometria nem markup do shell. Logos específicos de
 purpose podem futuramente ter variantes light/dark, mas o contrato inicial não
@@ -97,16 +125,17 @@ https://getbootstrap.com/docs/5.3/customize/color-modes/
 
 Motion deve ser foundation, não decisão local de cada componente.
 
-A Foundation já possui o contrato mínimo `--aculta-motion-fast` +
-`--aculta-ease-standard` para impedir durations locais duplicadas. Escalas
-adicionais entram somente quando houver uso real.
+A Foundation mantém o contrato mínimo `--aculta-motion-fast` +
+`--aculta-ease-standard`; o inventário não justificou uma segunda duração ou
+uma escala maior nesta fase.
 
 ```css
 --aculta-motion-fast: 180ms;
 --aculta-ease-standard: ease;
 ```
 
-Todos os componentes animados devem respeitar `prefers-reduced-motion`.
+Todos os componentes animados devem respeitar `prefers-reduced-motion`. A 0.2-A
+preserva as regras existentes e não faz o estado depender de transição.
 
 ## Primitives
 
@@ -158,6 +187,9 @@ Branding de purpose é opcional e deve respeitar o fallback documentado em
 Não:
 
 - introduzir cor literal duplicada quando existe token;
+- espalhar palette primitives por componentes quando já existe token semântico;
+- codificar cores de Domain purpose ou hostname no tema;
+- criar JavaScript de color-mode antes da fase do seletor/persistência;
 - criar nova fonte/tipografia sem decisão;
 - embarcar Bootstrap novamente;
 - usar utilitário Bootstrap para substituir contrato semântico necessário;

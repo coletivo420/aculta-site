@@ -106,6 +106,10 @@ snapshots de fases e runbooks históricos.
 - todos os purposes compartilham a mesma arquitetura de shell; variam dados, não um
   header paralelo por subdomínio;
 - light/dark/auto troca tokens e assets compatíveis, não geometria ou markup do shell;
+- novos componentes consomem semantic tokens quando a função já existe; palette primitives ficam centralizadas;
+- purpose não define cor no tema e nunca é inferido por hostname;
+- não adicionar color-mode JS, seletor ou persistência antes da fase prevista;
+- não criar SDC apenas para encapsular classe Bootstrap simples sem contrato reutilizável comprovado;
 - não criar segunda engine de navegação quando Bootstrap já fornece Collapse/Offcanvas;
 - Bootstrap5 continua infraestrutura estrutural/comportamental;
 - não reimplementar behavior Bootstrap/VVJ;
