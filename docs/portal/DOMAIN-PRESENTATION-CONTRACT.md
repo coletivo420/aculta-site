@@ -488,6 +488,32 @@ php vendor/drush/drush/drush.php php:script validate-aculta420-shell-contract --
 
 O gate cobre contrato completo, parcial e ausente, rejeita forwarding de campos/objetos desconhecidos e verifica ausência de Domain/hostname/serviços Portal no runtime source do tema.
 
+## Implementação 0.2-B.4
+
+A fronteira passa a ter um analyzer estático reutilizado pelo gate Runtime e por fixtures independentes de Drupal:
+
+- `scripts/lib/Aculta420ShellContractAnalyzer.php` concentra invariantes da fronteira;
+- `scripts/tests/validate-aculta420-shell-contract-test.php` injeta regressões positivas/negativas em cópia temporária do tema;
+- o gate Runtime `validate-aculta420-shell-contract.php` reutiliza o mesmo analyzer para evitar divergência entre teste sintético e Homelab;
+- fixtures rejeitam branch concreta por purpose, `DomainInterface`, `DomainPurposeManager`, hostname/service locator, consumo prematuro de `regions.*`, bypass do sinal `aculta_header_has_content` e quebra da chave `domain_presentation.identity`;
+- baseline restaurado precisa voltar a PASS ao final das fixtures;
+- o fechamento da B.4 depende também do gate Portal `validate-domain-presentation-contract.php`, que continua responsável por shape, sete purposes, cache contexts/tags e ausência de objetos no contrato exportado.
+
+Validação estática:
+
+```sh
+php scripts/tests/validate-aculta420-shell-contract-test.php
+```
+
+Validação Runtime combinada:
+
+```sh
+php vendor/drush/drush/drush.php php:script validate-domain-presentation-contract --script-path=../scripts
+php vendor/drush/drush/drush.php php:script validate-aculta420-shell-contract --script-path=../scripts
+```
+
+B.4 não preenche `regions.*`, não cria menu por purpose e não altera CSS/SDC/layout. O objetivo é congelar a dependência unidirecional Portal → tema antes da 0.2-C.
+
 ## Próximas etapas
 
 - **0.2-B.1** — inventário e fronteira normativa: concluída;
