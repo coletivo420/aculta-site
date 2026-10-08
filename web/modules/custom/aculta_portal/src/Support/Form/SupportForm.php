@@ -11,6 +11,7 @@ use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 
 /** Institutional support page, integrated with Commerce Donation Flow. */
@@ -20,6 +21,7 @@ final class SupportForm extends FormBase {
     private readonly ConfigFactoryInterface $configs,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly BlockManagerInterface $blockManager,
+    private readonly TranslationInterface $translation,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -27,6 +29,7 @@ final class SupportForm extends FormBase {
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.block'),
+      $container->get('string_translation'),
     );
   }
 
@@ -41,7 +44,7 @@ final class SupportForm extends FormBase {
     $form['intro'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => Html::escape((string) ($this->configs->get('aculta_portal.support')->get('intro') ?: $this->t('Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.'))),
+      '#value' => Html::escape((string) ($this->configs->get('aculta_portal.support')->get('intro') ?: $this->translation->translate('Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.'))),
       '#attributes' => ['class' => ['aculta-support-intro']],
     ];
     $gateway = $this->entityTypeManager->getStorage('commerce_payment_gateway')->load('mercado_pago');
@@ -57,7 +60,7 @@ final class SupportForm extends FormBase {
         ['return_path' => FALSE]
       )->build();
       if (isset($donation_link['#links']['default']['title'])) {
-        $donation_link['#links']['default']['title'] = $this->t('Continuar para pagamento');
+        $donation_link['#links']['default']['title'] = $this->translation->translate('Continuar para pagamento');
       }
       $form['donation_flow'] = $donation_link;
     }
@@ -66,16 +69,16 @@ final class SupportForm extends FormBase {
         '#type' => 'container',
         '#attributes' => ['class' => ['messages', 'messages--warning']],
         'message' => [
-          '#plain_text' => $this->t('O apoio financeiro está temporariamente indisponível. Nenhuma cobrança será iniciada por esta página.'),
+          '#plain_text' => $this->translation->translate('O apoio financeiro está temporariamente indisponível. Nenhuma cobrança será iniciada por esta página.'),
         ],
       ];
     }
     $form['other_support'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-support-other']],
-      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Outras formas de apoio')],
-      'text' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.')],
-      'contact' => ['#type' => 'link', '#title' => $this->t('Fale com a Associação'), '#url' => Url::fromUri('internal:/contato'), '#attributes' => ['class' => ['aculta-button', 'aculta-button--outline']]],
+      'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->translation->translate('Outras formas de apoio')],
+      'text' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->translation->translate('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.')],
+      'contact' => ['#type' => 'link', '#title' => $this->translation->translate('Fale com a Associação'), '#url' => Url::fromUri('internal:/contato'), '#attributes' => ['class' => ['aculta-button', 'aculta-button--outline']]],
     ];
     return $form;
   }
