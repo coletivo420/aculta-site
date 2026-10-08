@@ -88,6 +88,7 @@ final class ThemeHooks {
     foreach ($destinations as $destination) {
       $variables[$destination] = [];
     }
+    $variables['aculta_header_has_content'] = FALSE;
 
     if (!isset($variables['page']['header'])) {
       return;
@@ -110,6 +111,10 @@ final class ThemeHooks {
         unset($variables['page']['header'][$key]);
       }
     }
+
+    $variables['aculta_header_has_content'] = Element::children(
+      $variables['page']['header'],
+    ) !== [];
   }
 
   /**
