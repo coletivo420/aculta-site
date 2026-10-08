@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 $repository = dirname(__DIR__, 2);
 $validator = $repository . '/scripts/validate-aculta420-design-foundations.php';
+$analyzer = $repository . '/scripts/lib/Aculta420DesignFoundationsAnalyzer.php';
 $theme_source = $repository . '/web/themes/custom/aculta420';
 $temporary_root = sys_get_temp_dir() . '/aculta420-design-gate-' . bin2hex(random_bytes(6));
 $temporary_theme = $temporary_root . '/web/themes/custom/aculta420';
@@ -45,6 +46,7 @@ try {
     $copy_file($theme_source . '/' . $relative, $temporary_theme . '/' . $relative);
   }
   $copy_file($validator, $temporary_root . '/scripts/validate-aculta420-design-foundations.php');
+  $copy_file($analyzer, $temporary_root . '/scripts/lib/Aculta420DesignFoundationsAnalyzer.php');
 
   $run_validator = static function () use ($temporary_root): array {
     $command = [PHP_BINARY, $temporary_root . '/scripts/validate-aculta420-design-foundations.php', '--root=' . $temporary_root];
@@ -65,6 +67,65 @@ try {
     $failures[] = 'clean fixture baseline did not pass';
   }
 
+  require_once $analyzer;
+  foreach ([
+    ['/tmp/aculta420-root', 'Unix', TRUE],
+    ['relative/path', 'Unix', FALSE],
+    ['/tmp/aculta420/../outside', 'Unix', FALSE],
+    ['C:\\aculta420\\repo', 'Windows', TRUE],
+    ['C:aculta420\\repo', 'Windows', FALSE],
+    ['C:\\aculta420\\..\\outside', 'Windows', FALSE],
+    ['\\\\server\\share\\aculta420', 'Windows', TRUE],
+    ['\\\\server\\share\\..\\outside', 'Windows', FALSE],
+  ] as [$path, $platform, $expected]) {
+    $fixtures++;
+    if (Aculta420DesignFoundationsAnalyzer::isAbsolutePath($path, $platform) !== $expected) {
+      $failures[] = 'absolute path validation returned the wrong result for ' . $platform . ' syntax';
+    }
+  }
+
+  $positive_cases = [
+    ['commented CSS selector is ignored', 'css/comments.css', "/* [data-theme=\"dark\"] .card { display:none } */\n/* .dark .card { padding:0 } */", 'STRUCTURAL DARK OVERRIDES: 0'],
+    ['commented Twig branch is ignored', 'templates/comments.html.twig', '{# {% set x = theme == \'dark\' ? \'a\' : \'b\' %} #}{{ label }}', 'DARK TWIG BRANCHES: 0'],
+    ['commented PHP switch is ignored', 'src/Comments.php', "<?php // switch (\$theme) { case 'dark': }\nreturn 1;", 'DARK PHP BRANCHES: 0'],
+    ['commented JavaScript switch is ignored', 'js/comments.js', "/* switch (theme) { case 'dark': card.hidden = true; } */\nconst label = 'normal';", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['PHP switch on a non-mode value is accepted', 'src/LanguageSwitch.php', "<?php switch (\$locale) { case 'dark': echo 'label'; break; default: break; }", 'DARK PHP BRANCHES: 0'],
+    ['JavaScript switch on a non-mode value is accepted', 'js/language-switch.js', "switch (locale) { case 'dark': label.textContent = 'dark'; break; default: break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['Twig ternary on a non-mode value is accepted', 'templates/language-ternary.html.twig', "{% set label = locale == 'dark' ? 'a' : 'b' %}", 'DARK TWIG BRANCHES: 0'],
+    ['unrelated dataset assignment is accepted', 'js/dataset-status.js', "document.documentElement.dataset.status = 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
+  ];
+  foreach ($positive_cases as [$name, $relative, $contents, $expected_message]) {
+    $fixture_path = $temporary_theme . '/' . $relative;
+    if (!is_dir(dirname($fixture_path)) && !mkdir(dirname($fixture_path), 0700, TRUE) && !is_dir(dirname($fixture_path))) {
+      throw new RuntimeException('Could not create source fixture directory.');
+    }
+    file_put_contents($fixture_path, $contents);
+    [$status, $output] = $run_validator();
+    $fixtures++;
+    if ($status !== 0 || !str_contains($output, $expected_message)) {
+      $failures[] = $name . ' was not accepted by the clean contract.';
+    }
+    unlink($fixture_path);
+  }
+
+  $tokens_path = $temporary_theme . '/css/tokens.css';
+  $original_tokens = file_get_contents($tokens_path);
+  if (!is_string($original_tokens)) {
+    throw new RuntimeException('Could not read token fixture.');
+  }
+  $light_end = strpos($original_tokens, "\n}");
+  if ($light_end === FALSE) {
+    throw new RuntimeException('Light token block is missing from fixture.');
+  }
+  $positive_tokens = substr_replace($original_tokens, "\n  --fixture-safe-token: 1;", $light_end, 0);
+  file_put_contents($tokens_path, $positive_tokens);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status !== 0) {
+    $failures[] = 'a custom property in a supported mode block was rejected';
+  }
+  file_put_contents($tokens_path, $original_tokens);
+
   $cases = [
     ['.dark selector layout rule', 'css/fixtures/dark.css', '.dark .card { padding: 1rem; }', 'Color mode is token-only'],
     ['.dark-theme selector layout rule', 'css/fixtures/dark.css', '.dark-theme .card { padding: 1rem; }', 'Color mode is token-only'],
@@ -75,11 +136,32 @@ try {
     ['Twig color-mode ternary', 'templates/ternary.html.twig', "{{ theme == 'light' ? 'light' : 'dark' }}", 'Twig has no color-mode branch'],
     ['PHP color-mode branch', 'src/Fixture.php', "<?php if (\$theme === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
     ['PHP color-mode match', 'src/MatchFixture.php', "<?php \$variant = match (\$theme) { 'dark' => 'compact', default => 'standard' };", 'PHP has no color-mode branch'],
+    ['PHP switch case arm', 'src/SwitchFixture.php', "<?php switch (\$theme) { case 'dark': \$layout = 'compact'; break; default: \$layout = 'standard'; }", 'PHP has no color-mode branch'],
     ['JavaScript color-mode layout branch', 'js/fixture.js', "if (theme === 'dark') { card.style.display = 'none'; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript boolean mode branch', 'js/boolean-mode.js', "if (isDarkMode) { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript switch case arm', 'js/switch.js', "switch (theme) { case 'dark': card.hidden = true; break; default: card.hidden = false; }", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript dataset.theme assignment', 'js/dataset-theme.js', "document.documentElement.dataset.theme = 'dark';", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript dataset.bsTheme assignment', 'js/dataset-bs-theme.js', "document.documentElement.dataset.bsTheme = 'dark';", 'JavaScript has no color-mode layout behavior'],
+    ['Twig statement ternary', 'templates/set-ternary.html.twig', "{% set klass = theme == 'dark' ? 'compact' : 'standard' %}", 'Twig has no color-mode branch'],
+    ['Dark selector in tokens stylesheet', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] .fixture { padding: 1rem; }\n", 'Color mode is token-only'],
+    ['Structural declaration inside dark token block', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] {\n  display: none;\n}\n", 'custom properties only'],
   ];
   foreach ($cases as [$name, $relative, $contents, $expected_message]) {
     $fixture_path = $temporary_theme . '/' . $relative;
+    if ($relative === 'css/tokens.css') {
+      $base_tokens = file_get_contents($fixture_path);
+      if (!is_string($base_tokens)) {
+        throw new RuntimeException('Could not read token fixture before injecting a selector.');
+      }
+      file_put_contents($fixture_path, $base_tokens . $contents);
+      [$status, $output] = $run_validator();
+      $fixtures++;
+      if ($status === 0 || !str_contains($output, $expected_message)) {
+        $failures[] = $name . ' was not rejected for the expected reason: ' . trim(preg_replace('/\s+/', ' ', $output) ?? $output);
+      }
+      file_put_contents($fixture_path, $base_tokens);
+      continue;
+    }
     if (!is_dir(dirname($fixture_path)) && !mkdir(dirname($fixture_path), 0700, TRUE) && !is_dir(dirname($fixture_path))) {
       throw new RuntimeException('Could not create source fixture directory.');
     }
@@ -119,10 +201,11 @@ try {
   $token_cases = [
     ['approved page surface rejected when green legacy value returns', '--aculta-surface-page: #171513;', '--aculta-surface-page: #121a16;', 'resolves to approved neutral dark surface'],
     ['intermediate alias to prohibited green surface rejected', '--aculta-surface-page: #171513;', "--aculta-surface-page: var(--fixture-surface);\n  --fixture-surface: #1b2720;", 'resolves to approved neutral dark surface'],
-    ['conflicting duplicate token rejected', '--aculta-surface-page: #171513;', "--aculta-surface-page: #171513;\n  --aculta-surface-page: #121a16;", 'no duplicate declaration'],
+    ['conflicting duplicate token rejected', '--aculta-surface-page: #171513;', "--aculta-surface-page: #171513;\n  --aculta-surface-page: #121a16;", 'one declaration for --aculta-surface-page'],
     ['last duplicate is used for WCAG evaluation', '--aculta-text-primary: #f4efe8;', "--aculta-text-primary: #f4efe8;\n  --aculta-text-primary: #171513;", 'meets WCAG AA'],
-    ['circular token references rejected', "--aculta-text-primary: #f4efe8;\n  --aculta-text-secondary: #d8d0c8;", "--aculta-text-primary: var(--aculta-text-secondary);\n  --aculta-text-secondary: var(--aculta-text-primary);", 'resolves without missing or circular references'],
+    ['circular token references rejected', "--aculta-text-primary: #f4efe8;\n  --aculta-text-secondary: #d8d0c8;", "--aculta-text-primary: var(--aculta-text-secondary);\n  --aculta-text-secondary: var(--aculta-text-primary);", 'resolves without missing references or cycles'],
     ['missing required token rejected', '--aculta-shell-active-text: var(--aculta-interactive-active-text);', '', 'has a dark value'],
+    ['new ACULTA token alias must resolve', '--aculta-surface-page: #171513;', "--aculta-surface-page: #171513;\n  --aculta-fixture-new: var(--aculta-does-not-exist);", 'resolves without missing references or cycles'],
   ];
   foreach ($token_cases as [$name, $old, $new, $expected_message]) {
     $replace_dark($old, $new);
@@ -134,8 +217,27 @@ try {
     $restore_tokens();
   }
 
+  $dark_start = strpos($original_tokens, '[data-bs-theme="dark"]');
+  $dark_contents = substr($original_tokens, $dark_start === FALSE ? 0 : $dark_start);
+  $dark_contents = str_replace(
+    '--bs-body-bg: var(--aculta-surface-page);',
+    '--bs-body-bg: var(--aculta-surface-muted);',
+    $dark_contents,
+  );
+  $dark_mapping = $dark_start === FALSE ? $original_tokens : substr($original_tokens, 0, $dark_start) . $dark_contents;
+  if ($dark_start === FALSE || $dark_contents === substr($original_tokens, $dark_start)) {
+    throw new RuntimeException('Could not create dark Bootstrap mapping fixture.');
+  }
+  file_put_contents($tokens_path, $dark_mapping);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, 'Dark --bs-body-bg effectively maps')) {
+    $failures[] = 'a dark-only Bootstrap body mapping regression was not rejected';
+  }
+  file_put_contents($tokens_path, $original_tokens);
+
   if ($failures === []) {
-    fwrite(STDOUT, 'DESIGN FOUNDATION NEGATIVE FIXTURES: PASS (' . $fixtures . " expected outcomes)\n");
+    fwrite(STDOUT, 'DESIGN FOUNDATION FIXTURES: PASS (' . $fixtures . " expected outcomes)\n");
   }
 }
 finally {
@@ -143,7 +245,7 @@ finally {
 }
 
 if ($failures !== []) {
-  fwrite(STDERR, 'DESIGN FOUNDATION NEGATIVE FIXTURES: FAIL (' . count($failures) . '/' . $fixtures . " expected outcomes)\n");
+  fwrite(STDERR, 'DESIGN FOUNDATION FIXTURES: FAIL (' . count($failures) . '/' . $fixtures . " expected outcomes)\n");
   foreach ($failures as $failure) {
     fwrite(STDERR, '- ' . $failure . "\n");
   }

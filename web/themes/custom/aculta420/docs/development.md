@@ -192,28 +192,73 @@ php scripts/validate-aculta420-design-foundations.php
 php scripts/tests/validate-aculta420-design-foundations-test.php
 ```
 
-O validator protege o color mode como token-only. Fora de `css/tokens.css`, ele
-reconhece seletores CSS com `[data-theme="dark|light"]`,
-`[data-bs-theme="dark|light"]`, atributos equivalentes de color-mode/scheme,
-classes `.dark`/`.light` e variantes explícitas como `.dark-theme`,
-`.theme-dark`, `.dark-mode`, `.is-dark` e suas formas light. Também verifica
-condições Twig `if`/`elseif` e ternárias, condições PHP
-`if`/`elseif`/`switch`/`match` e condições JavaScript `if`/`switch`/ternárias
-que comparam uma variável de modo a `dark`/`light` ou usam um sinalizador
-`isDark`/`darkMode` equivalente.
-O gate também bloqueia scripts que alternem classes ou atributos de color mode.
+O validator e seus fixtures são PHP independente do Drupal e não alteram Runtime.
+Execute em Linux:
 
-O parser CSS cobre as regras planas e os blocos de tokens usados pela foundation;
-não é um parser CSS completo. `var()` com fallback, seletores aninhados não
-convencionais e formas dinâmicas de decisão que não exponham um identificador de
-modo reconhecido ficam fora do subconjunto. Tokens `--aculta-*`/`--bs-*` fora
-dos blocos root/light e dark são rejeitados. Antes de ampliar a sintaxe aceita,
-adicione fixtures positivas e negativas ao teste do validator.
+```sh
+php scripts/validate-aculta420-design-foundations.php
+php scripts/tests/validate-aculta420-design-foundations-test.php
+```
 
-Para tokens dark, o gate resolve aliases recursivamente, usa a última declaração
-na cascata suportada e falha com duplicatas, referências ausentes ou ciclos.
-As superfícies charcoal/graphite são valores explícitos aprovados no teste;
-não dependem de uma heurística subjetiva RGB.
+No Windows, execute os mesmos scripts com caminhos PHP nativos, por exemplo:
+
+```powershell
+php .\scripts\validate-aculta420-design-foundations.php
+php .\scripts\tests\validate-aculta420-design-foundations-test.php
+```
+
+`scripts/lib/Aculta420DesignFoundationsAnalyzer.php` separa análise de CSS,
+resolução de tokens, avaliação de contraste, inspeção de branches e validação
+de caminhos. O contrato de modo é:
+
+> Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
+
+O scanner de CSS remove comentários antes de inspecionar seletores e reconhece
+atributos de tema dark/light, classes `.dark`/`.light` e variantes explícitas,
+além de `prefers-color-scheme`. Em `tokens.css`, somente os dois blocos
+top-level `:root, [data-bs-theme="light"]` e `[data-bs-theme="dark"]` são
+permitidos, e cada bloco pode conter apenas custom properties. Regras ou
+seletores estruturais por modo, inclusive dentro de `tokens.css`, falham.
+
+O scanner Twig verifica condições `if`/`elseif` e ternários em tags `{% ... %}`
+e `{{ ... }}`. O scanner PHP usa `token_get_all()` para condições `if`/`elseif`,
+`switch` com `case` e `match` com arms. O scanner JavaScript reconhece `if`,
+`switch`/`case`, ternários, alternância de classes/atributos e atribuições de
+modo via `dataset.theme`, `dataset.bsTheme`, `dataset.colorMode` ou
+`dataset.colorScheme`. Comentários não devem causar finding.
+
+| P2 da revisão da PR #80 | Fixture que prova a regressão |
+| --- | --- |
+| P2-01 seletor/regra estrutural em `tokens.css` | `Dark selector in tokens stylesheet`; `Structural declaration inside dark token block` |
+| P2-02 arms `case` PHP | `PHP switch case arm` |
+| P2-03 arms `case` JavaScript | `JavaScript switch case arm` |
+| P2-04 ternário em statement Twig | `Twig statement ternary` |
+| P2-05 aliases de tokens novos | `new ACULTA token alias must resolve`; ciclos e referências ausentes |
+| P2-06 atribuição `dataset` | `JavaScript dataset.theme assignment`; `JavaScript dataset.bsTheme assignment` |
+| P2-07 raízes Windows | matriz de drive letter, UNC, caminho relativo e traversal |
+| P2-08 Bootstrap por modo | `dark-only Bootstrap body mapping regression` |
+
+Também há casos válidos para custom property, comentários, branches não
+relacionados ao modo, e casos inválidos para seletor `.dark`,
+`[data-theme="dark"]`, duplicatas, contraste insuficiente e superfície verde.
+Cada fixture inválida exige exit code diferente de zero; fixtures válidas
+exigem sucesso.
+
+O analisador CSS cobre regras planas, blocos de modo top-level, blocos aninhados
+usados para detectar seletores e `var(--token)` sem fallback. Não é um parser
+CSS completo; `var()` com fallback, CSS nesting fora do contrato e seletores
+dinâmicos não convencionais ficam fora do subconjunto. PHP analisa branches por
+tokens; Twig e JavaScript usam scanners deliberadamente delimitados, não ASTs
+completas. Construções dinâmicas que ocultem o identificador de modo não são
+inferidas. Ampliações exigem fixture positiva e negativa para cada forma nova.
+
+Todos os tokens `--aculta-*` e `--bs-*` declarados nos blocos suportados são
+resolvidos por modo; duplicatas, ciclos, referências não resolvidas e cores fora
+do subconjunto aceito falham. Os mappings Bootstrap e pares RGB são conferidos
+separadamente em light e dark. Contrastes dark seguem WCAG AA; a paleta de
+superfícies charcoal/graphite é protegida por valores aprovados explícitos.
+Raízes aceitas são absolutas POSIX ou Windows (drive letter/UNC), sem segmento
+`..`; o caminho é então canonicalizado com `realpath()` antes da leitura.
 
 ## Testes mínimos
 

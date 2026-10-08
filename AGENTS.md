@@ -341,8 +341,9 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - Color mode no ACULTA420 é uma variação de tokens, não uma variação de layout.
 - modos compartilham DOM, markup, hierarquia, componentes, tipografia, espaçamento, dimensões, grid, breakpoints, posicionamento, shell, navegação e comportamento;
 - somente semantic visual tokens variam; não criar seletores dark fora de `css/tokens.css`;
-- validadores do tema devem reconhecer seletores dark alternativos (`.dark`, `.dark-theme`, `[data-theme="dark"]` e equivalentes) e branches por modo em Twig/PHP/JavaScript; mudanças no parser exigem fixtures negativas;
-- o contrato de superfície dark charcoal/graphite é explícito; resolver aliases e cascata, rejeitar tokens duplicados, ciclos e referências ausentes, e avaliar contraste sobre o valor efetivo;
+- validadores do tema devem reconhecer seletores dark alternativos inclusive em `tokens.css`, PHP `switch/case` e `match`, JavaScript `switch/case`/`dataset`, ternários Twig em statements/outputs; comentários não devem causar falso positivo e mudanças de sintaxe exigem fixtures positivas e negativas;
+- o contrato de superfície dark charcoal/graphite é explícito; resolver todos os tokens ACULTA/Bootstrap por modo, validar mapping Bootstrap light/dark, rejeitar aliases/ciclos/cores inválidas/duplicatas e avaliar contraste efetivo;
+- scripts PHP estáticos do tema devem aceitar roots absolutos POSIX e Windows (drive letter/UNC) sem traversal `..`, sem exigir Bash/WSL para executar;
 - componente não conhece light, dark ou `prefers-color-scheme`; uma futura variante de asset de logo mantém espaço, dimensões e layout;
 - não criar seletor, persistência ou JavaScript de modo antes da fase prevista;
 - o tema nunca escolhe cores/branding por Domain purpose ou hostname; apresentação por purpose chega preparada pelo Portal;
