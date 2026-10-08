@@ -84,6 +84,17 @@ try {
     }
   }
 
+  foreach ([
+    ['C:\\Repo\\web\\themes\\custom\\aculta420\\css\\tokens.css', 'C:/Repo/web/themes/custom/aculta420/css/tokens.css', 'Windows', TRUE],
+    ['C:\\Repo\\web\\themes\\custom\\aculta420\\css\\other.css', 'C:/Repo/web/themes/custom/aculta420/css/tokens.css', 'Windows', FALSE],
+    ['/repo/web/themes/custom/aculta420/css/tokens.css', '/repo/web/themes/custom/aculta420/css/tokens.css', 'Unix', TRUE],
+  ] as [$first, $second, $platform, $expected]) {
+    $fixtures++;
+    if (Aculta420DesignFoundationsAnalyzer::pathsEquivalent($first, $second, $platform) !== $expected) {
+      $failures[] = 'path equivalence returned the wrong result for ' . $platform . ' syntax';
+    }
+  }
+
   $positive_cases = [
     ['commented CSS selector is ignored', 'css/comments.css', "/* [data-theme=\"dark\"] .card { display:none } */\n/* .dark .card { padding:0 } */", 'STRUCTURAL DARK OVERRIDES: 0'],
     ['commented Twig branch is ignored', 'templates/comments.html.twig', '{# {% set x = theme == \'dark\' ? \'a\' : \'b\' %} #}{{ label }}', 'DARK TWIG BRANCHES: 0'],
@@ -94,6 +105,7 @@ try {
     ['unrelated localStorage use is allowed', 'js/notice-storage.js', "localStorage.setItem('noticeDismissed', '1');", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['unrelated localStorage read is allowed', 'js/notice-storage-read.js', "const dismissed = localStorage.getItem('noticeDismissed');", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['CSS comments do not count as raw colors', 'css/comment-color.css', '/* legacy fallback was #fff; color: red */', ''],
+    ['quoted CSS comment opener does not hide later mode selector', 'css/quoted-comment-marker.css', '.icon::before { content: "/*"; } [data-bs-theme="dark"] .card { display:none; } /* note */', 'Color mode is token-only'],
     ['mode-like words inside a string are not a branch', 'js/string-only-mode.js', "if (label === 'dark theme') { renderLabel(); }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['unrelated Twig conditional text is not a mode branch', 'templates/string-only-mode.html.twig', "{% if label == 'dark theme' %}label{% endif %}", 'DARK TWIG BRANCHES: 0'],
     ['unrelated PHP conditional text is not a mode branch', 'src/StringOnlyMode.php', "<?php if (\$label === 'dark theme') { echo 'label'; }", 'DARK PHP BRANCHES: 0'],
@@ -188,12 +200,14 @@ try {
     ['JavaScript switch method discriminant', 'js/switch-method.js', "switch (theme.toLowerCase()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch getter discriminant', 'js/switch-getter.js', "switch (getTheme()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch scans mode case after regex brace', 'js/switch-regex.js', "switch (theme) { case 'compact': const closeBrace = /\\}/; break; case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript switch scans mode case after return regex brace', 'js/switch-return-regex.js', "switch (theme) { case 'compact': return /\\}/; case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript ternary with object arms', 'js/object-arm-ternary.js', "const layout = theme === 'dark' ? { hidden: true } : {};", 'JavaScript has no color-mode layout behavior'],
     ['nested JavaScript if condition is scanned', 'js/nested-if.js', "if (getTheme(foo(bar())) === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['regex parentheses do not truncate JavaScript if condition', 'js/regex-condition.js', "if (/\\)/.test(value) && theme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['regex URL slashes do not truncate JavaScript if condition', 'js/regex-url-condition.js', "if (/https?:\\/\\//.test(url) && theme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['multiline JavaScript mode ternary is scanned', 'js/multiline-mode-ternary.js', "const layout = theme === 'dark'\n  ? 'compact'\n  : 'normal';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript mode ternary preserves semicolons inside strings', 'js/semicolon-string-ternary.js', "const layout = theme === 'dark' ? 'compact;wide' : 'normal';", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript mode ternary preserves escaped quotes before semicolons', 'js/escaped-quote-semicolon-ternary.js', "const layout = theme === 'dark' ? \"compact\\\";wide\" : \"normal\";", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.theme assignment', 'js/dataset-theme.js', "document.documentElement.dataset.theme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.bsTheme assignment', 'js/dataset-bs-theme.js', "document.documentElement.dataset.bsTheme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dynamic dataset.theme assignment', 'js/dataset-dynamic.js', "document.documentElement.dataset.bsTheme = getTheme();", 'JavaScript has no color-mode layout behavior'],
@@ -201,6 +215,7 @@ try {
     ['JavaScript compound className mode assignment', 'js/class-name-compound.js', "document.documentElement.className += ' theme-dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript logical className mode assignment', 'js/class-name-logical.js', "document.documentElement.className ||= 'theme-dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript classList uses every protected mode class', 'js/class-list-is-dark.js', "element.classList.add('is-dark');", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript classList.replace cannot activate mode class', 'js/class-list-replace.js', "element.classList.replace('base', 'dark');", 'JavaScript has no color-mode layout behavior'],
     ['dynamic className mode getter is rejected', 'js/class-name-dynamic.js', "document.documentElement.className = getTheme();", 'JavaScript has no color-mode layout behavior'],
     ['dynamic classList mode getter is rejected', 'js/class-list-dynamic.js', "document.documentElement.classList.add(getTheme());", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset fallback assignment', 'js/dataset-or.js', "document.documentElement.dataset.theme ||= nextMode;", 'JavaScript has no color-mode layout behavior'],
@@ -230,6 +245,9 @@ try {
     ['bracket dataset read in mode branch is rejected', 'js/dataset-read.js', "if (document.documentElement.dataset['theme'] === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['protected getAttribute read in mode branch is rejected', 'js/get-attribute-read.js', "if (document.documentElement.getAttribute('data-color-mode') === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['persisted color-mode read is rejected', 'js/storage-read-theme.js', "const saved = localStorage.getItem('theme'); applyTheme(saved);", 'No premature color-mode script'],
+    ['property-style localStorage mode write is rejected', 'js/storage-property-theme.js', "localStorage.theme = 'dark';", 'No premature color-mode script'],
+    ['bracket-style sessionStorage mode read is rejected', 'js/storage-bracket-mode.js', "const saved = sessionStorage['colorMode'];", 'No premature color-mode script'],
+    ['explicit color-mode initializer is rejected', 'js/initializer-call.js', "applyColorMode('dark');", 'No premature color-mode script'],
   ];
   foreach ($cases as [$name, $relative, $contents, $expected_message]) {
     $fixture_path = $temporary_theme . '/' . $relative;
