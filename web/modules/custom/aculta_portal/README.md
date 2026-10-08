@@ -33,6 +33,24 @@ Core + módulos contrib -> aculta_portal -> tema ACULTA420
 O tema é apresentação. O Portal é integração. Os módulos funcionais continuam
 fontes de verdade.
 
+## Baseline Drupal 11+
+
+O módulo adota Drupal Core **11.3+** como baseline arquitetural. O padrão
+normativo está em
+`docs/portal/DRUPAL-11-STANDARDS.md`.
+
+Regras principais: hooks runtime OOP com `#[Hook]`; DI em `src/` sem
+`\Drupal::*`; callbacks Form API por `service.id:method`; subscribers com
+`event_subscriber`; Entity/Views APIs via services/storages; `strict_types=1`
+em classes runtime; Render API/cacheability/access explícitos; lifecycle hooks
+procedurais apenas quando o Core exige.
+
+Gate:
+
+```sh
+php vendor/drush/drush/drush.php php:script validate-aculta-portal-drupal11 --script-path=../scripts
+```
+
 ## Contratos
 
 - trabalhar com Domain purpose, não hostname hardcoded;
