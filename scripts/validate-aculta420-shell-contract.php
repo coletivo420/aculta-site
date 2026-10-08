@@ -33,6 +33,7 @@ $assert(
   str_contains($hookSource, "\$variables['domain_presentation']['identity']"),
   'ThemeHooks consumes the neutral domain_presentation identity contract.',
 );
+require_once $hookPath;
 $hooks = new \Drupal\aculta420\Hook\ThemeHooks(
   \Drupal::service('path.matcher'),
   \Drupal::service('config.factory'),
@@ -98,7 +99,8 @@ $partial = [
 ];
 $hooks->preprocessPage($partial);
 $assert(
-  ($partial['aculta_domain_brand_fallback'] ?? 'missing') === NULL,
+  array_key_exists('aculta_domain_brand_fallback', $partial)
+    && $partial['aculta_domain_brand_fallback'] === NULL,
   'Incomplete identity fails safely to NULL instead of inventing functional fallback.',
 );
 

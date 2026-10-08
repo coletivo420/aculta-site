@@ -121,7 +121,7 @@ final class ThemeHooks {
    * Builds the minimal textual branding fallback from the neutral identity.
    *
    * @param mixed $identity
-   *   The neutral identity array prepared by aculta_portal, when available.
+   *   The neutral identity array prepared by the Portal presentation layer.
    *
    * @return array{label: string, home_url: string}|null
    *   Presentation-only fallback data, or NULL when the contract is absent
