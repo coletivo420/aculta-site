@@ -5,57 +5,7 @@
  * Legacy procedural integrations pending Drupal 11+ OOP migration.
  */
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Session\AccountInterface;
-
-/**
- * Implements hook_entity_access().
- *
- * This gateway is managed through reviewed config and environment values,
- * never through the contrib form that persists its credential fields.
- */
-function aculta_portal_entity_access(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
-  $purpose = \Drupal::service('aculta_portal.domain_purpose')->getCurrentPurpose();
-  $wikiEntity = ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'wiki_entry')
-    || ($entity->getEntityTypeId() === 'taxonomy_term' && $entity->bundle() === 'wiki_category');
-  if ($wikiEntity && $purpose !== 'wiki') {
-    return AccessResult::forbidden()
-      ->cachePerPermissions()
-      ->addCacheContexts(['domain'])
-      ->addCacheableDependency($entity);
-  }
-
-  if ($entity->getEntityTypeId() === 'user'
-    && $operation === 'update'
-    && \Drupal::routeMatch()->getRouteName() === 'entity.user.edit_form'
-    && !$account->hasPermission('administer users')) {
-    if (\Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber::isValidCorePasswordResetRequest(
-      \Drupal::request(),
-      (int) $entity->id(),
-      (int) $account->id(),
-    )) {
-      return AccessResult::neutral();
-    }
-    // Defense in depth if a request lacks an upcasted target for the redirect
-    // subscriber: regular users must never receive Drupal's generic account
-    // editing interface.
-    return AccessResult::forbidden()
-      ->cachePerPermissions()
-      ->addCacheContexts(['route', 'user'])
-      ->setCacheMaxAge(0);
-  }
-
-  if ($entity->getEntityTypeId() !== 'commerce_payment_gateway'
-    || $entity->id() !== 'mercado_pago'
-    || $operation !== 'update') {
-    return AccessResult::neutral();
-  }
-
-  return AccessResult::forbidden('This gateway is managed through reviewed configuration and environment values; editing it here could persist credentials.')
-    ->cachePerPermissions()
-    ->setCacheMaxAge(0);
-}
 
 /** Implements hook_entity_presave(). Keeps the Mercado Pago gateway fail-closed. */
 function aculta_portal_entity_presave(EntityInterface $entity): void {

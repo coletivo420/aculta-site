@@ -45,6 +45,7 @@ fontes de verdade.
 - não consultar tabelas contrib diretamente quando houver API;
 - não criar storage paralelo;
 - respeitar entity access antes de expor metadata;
+- decisões de entity access condicionadas por Domain/rota/usuário/request carregam cacheability explícita; tokens one-time de request/session não recebem cache persistente;
 - dados privados variam por usuário e não usam cache compartilhado;
 - segredos ficam fora de Configuration Sync e Git;
 - AJAX usa preferencialmente APIs Drupal;

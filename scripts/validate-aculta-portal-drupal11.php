@@ -100,7 +100,6 @@ $check(
 );
 
 $legacyProceduralFunctions = [
-  'aculta_portal_entity_access',
   'aculta_portal_entity_presave',
 ];
 
@@ -204,6 +203,63 @@ $check(
     && str_contains($editorialHooksSource, "'wiki'"),
   'P2-R editorial/CEP/Domain behavior invariants must remain present.',
 );
+$entityHooks = $srcRoot . '/Hook/EntityHooks.php';
+$entityHooksSource = $read($entityHooks);
+$check(is_file($entityHooks), 'P4.2 EntityHooks class must exist.');
+$check(
+  substr_count($hookRuntimeSources, "#[Hook('entity_access')]") === 1,
+  'P4.2 entity_access must be implemented exactly once as an OOP hook.',
+);
+$check(
+  preg_match(
+    '/function\\s+entityAccess\\s*\\(\\s*EntityInterface\\s+\\$entity,\\s*\\$operation,\\s*AccountInterface\\s+\\$account,?\\s*\\)\\s*:\\s*AccessResultInterface/',
+    $entityHooksSource,
+  ) === 1,
+  'P4.2 EntityHooks::entityAccess() must preserve the Drupal 11 hook_entity_access signature.',
+);
+$check(
+  preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $entityHooksSource) === 1,
+  'P4.2 EntityHooks must declare strict_types=1.',
+);
+$check(
+  !str_contains($entityHooksSource, '\\Drupal::'),
+  'P4.2 EntityHooks must use explicit DI instead of Drupal static service locators.',
+);
+foreach (['aculta_portal.domain_purpose', 'current_route_match', 'request_stack'] as $serviceId) {
+  $check(
+    str_contains($entityHooksSource, "service: '" . $serviceId . "'"),
+    'P4.2 EntityHooks must inject service ' . $serviceId . '.',
+  );
+}
+$check(
+  !str_contains($services, 'Drupal\\aculta_portal\\Hook\\EntityHooks'),
+  'P4.2 Hook classes are auto-discovered/autowired; do not add redundant EntityHooks YAML service definitions.',
+);
+foreach ([
+  "'wiki_entry'",
+  "'wiki_category'",
+  "'domain'",
+  "'entity.user.edit_form'",
+  "'administer users'",
+  'AccountRouteSubscriber::isValidCorePasswordResetRequest',
+  "['route', 'user']",
+  'setCacheMaxAge(0)',
+  "'commerce_payment_gateway'",
+  "'mercado_pago'",
+] as $invariant) {
+  $check(
+    str_contains($entityHooksSource, $invariant),
+    'P4.2 entity access invariant must remain present: ' . $invariant,
+  );
+}
+$check(
+  preg_match(
+    '/AccessResult::neutral\\(\\)[\\s\\S]{0,220}?cachePerPermissions\\(\\)[\\s\\S]{0,220}?addCacheContexts\\(\\[\\'route\\', \\'user\\'\\]\\)[\\s\\S]{0,220}?setCacheMaxAge\\(0\\)/',
+    $entityHooksSource,
+  ) === 1,
+  'P4.2 valid password-reset neutral result must remain request-sensitive and uncacheable.',
+);
+
 $formHooks = $srcRoot . '/Hook/FormHooks.php';
 $formHooksSource = $read($formHooks);
 $check(is_file($formHooks), 'P4.1 FormHooks class must exist.');

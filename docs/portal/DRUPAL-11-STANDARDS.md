@@ -116,6 +116,8 @@ ou:
 
 A escolha precisa refletir a finalidade da query; `FALSE` não é atalho de performance. Entity access, route access, permissions, ownership e Domain purpose devem ser resolvidos antes da apresentação, com cacheability correta do resultado.
 
+Em `hook_entity_access()`, retornar `AccessResultInterface` e manter metadata proporcional às condições usadas. Resultado condicionado por Domain deve variar por `domain`; resultado condicionado por rota/usuário/request/session deve carregar contexts correspondentes e, quando depender de token one-time ou estado efêmero da request, usar `max-age: 0`. Não adicionar `cachePerPermissions()` quando a decisão não depende de permissões.
+
 Evitar static entity loads em runtime custom quando storage injetado estiver disponível e não consultar tabelas internas de contrib quando houver API pública.
 
 Referência: https://www.drupal.org/node/3201242
