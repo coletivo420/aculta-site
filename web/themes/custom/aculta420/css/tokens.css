@@ -181,31 +181,31 @@
 }
 
 [data-bs-theme="dark"] {
-  /* Keep palette primitives stable; color modes replace semantic meanings. */
-  --aculta-surface-page: #121a16;
-  --aculta-surface-page-rgb: 18, 26, 22;
-  --aculta-surface-raised: #1b2720;
-  --aculta-surface-muted: #223229;
+  /* The same ACULTA420 uses warm charcoal surfaces in dark mode. */
+  --aculta-surface-page: #171513;
+  --aculta-surface-page-rgb: 23, 21, 19;
+  --aculta-surface-raised: #211e1b;
+  --aculta-surface-muted: #2b2723;
   --aculta-surface-header: var(--aculta-surface-raised);
-  --aculta-surface-interactive: #293a30;
+  --aculta-surface-interactive: #302b27;
 
-  --aculta-text-primary: #f0f5f1;
-  --aculta-text-secondary: #e0e9e3;
-  --aculta-text-muted: #bdccc2;
+  --aculta-text-primary: #f4efe8;
+  --aculta-text-secondary: #d8d0c8;
+  --aculta-text-muted: #b7aea5;
   --aculta-text-inverse: var(--aculta-white);
   --aculta-text-accent: #f1a08f;
-  --aculta-border-subtle: rgba(224, 233, 227, 0.12);
-  --aculta-border-default: rgba(224, 233, 227, 0.22);
-  --aculta-border-strong: rgba(224, 233, 227, 0.42);
+  --aculta-border-subtle: rgba(216, 208, 200, 0.12);
+  --aculta-border-default: rgba(216, 208, 200, 0.22);
+  --aculta-border-strong: rgba(216, 208, 200, 0.42);
   --aculta-border-accent: #9ac15a;
 
-  --aculta-interactive-bg: #293a30;
-  --aculta-interactive-text: var(--aculta-text-primary);
-  --aculta-interactive-border: var(--aculta-border-strong);
-  --aculta-interactive-hover-bg: #385142;
-  --aculta-interactive-hover-text: #ffffff;
+  --aculta-interactive-bg: var(--aculta-yellow);
+  --aculta-interactive-text: var(--aculta-surface-page);
+  --aculta-interactive-border: var(--aculta-yellow);
+  --aculta-interactive-hover-bg: var(--aculta-border-accent);
+  --aculta-interactive-hover-text: var(--aculta-surface-page);
   --aculta-interactive-active-bg: var(--aculta-yellow);
-  --aculta-interactive-active-text: var(--aculta-green-dark);
+  --aculta-interactive-active-text: var(--aculta-surface-page);
   --aculta-focus-ring: var(--aculta-yellow);
 
   --aculta-shell-institution-bg: var(--aculta-surface-muted);
@@ -216,8 +216,8 @@
   --aculta-shell-active-bg: var(--aculta-interactive-active-bg);
   --aculta-shell-active-text: var(--aculta-interactive-active-text);
 
-  --aculta-button-primary-bg: var(--aculta-interactive-active-bg);
-  --aculta-button-primary-text: var(--aculta-interactive-active-text);
+  --aculta-button-primary-bg: var(--aculta-interactive-bg);
+  --aculta-button-primary-text: var(--aculta-interactive-text);
   --aculta-button-secondary-text: var(--aculta-text-primary);
   --aculta-button-secondary-border: var(--aculta-border-strong);
   --aculta-button-hover-bg: var(--aculta-interactive-hover-bg);
@@ -237,7 +237,7 @@
   --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
 
   --bs-body-color: var(--aculta-text-primary);
-  --bs-body-color-rgb: 240, 245, 241;
+  --bs-body-color-rgb: 244, 239, 232;
   --bs-body-bg: var(--aculta-surface-page);
   --bs-body-bg-rgb: var(--aculta-surface-page-rgb);
   --bs-box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.28);
@@ -245,9 +245,9 @@
   --bs-box-shadow-lg: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.32);
   --bs-box-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.24);
   --bs-light: var(--aculta-surface-muted);
-  --bs-light-rgb: 34, 50, 41;
+  --bs-light-rgb: 43, 39, 35;
   --bs-dark: var(--aculta-surface-page);
-  --bs-dark-rgb: 18, 26, 22;
+  --bs-dark-rgb: 23, 21, 19;
   --bs-black: #000000;
   --bs-black-rgb: 0, 0, 0;
   --bs-white: #ffffff;
@@ -268,21 +268,21 @@
   --bs-highlight-bg: rgba(242, 202, 54, 0.2);
   --bs-heading-color: var(--aculta-text-primary);
   --bs-emphasis-color: var(--aculta-text-primary);
-  --bs-emphasis-color-rgb: 240, 245, 241;
+  --bs-emphasis-color-rgb: 244, 239, 232;
   --bs-secondary-color: var(--aculta-text-secondary);
-  --bs-secondary-color-rgb: 224, 233, 227;
+  --bs-secondary-color-rgb: 216, 208, 200;
   --bs-tertiary-color: var(--aculta-text-muted);
-  --bs-tertiary-color-rgb: 189, 204, 194;
+  --bs-tertiary-color-rgb: 183, 174, 165;
   --bs-secondary-bg: var(--aculta-surface-raised);
-  --bs-secondary-bg-rgb: 27, 39, 32;
+  --bs-secondary-bg-rgb: 33, 30, 27;
   --bs-tertiary-bg: var(--aculta-surface-muted);
-  --bs-tertiary-bg-rgb: 34, 50, 41;
+  --bs-tertiary-bg-rgb: 43, 39, 35;
   --bs-link-color: var(--aculta-link);
   --bs-link-hover-color: var(--aculta-text-primary);
-  --bs-link-color-rgb: 240, 245, 241;
-  --bs-link-hover-color-rgb: 240, 245, 241;
+  --bs-link-color-rgb: 244, 239, 232;
+  --bs-link-hover-color-rgb: 244, 239, 232;
   --bs-border-color: var(--aculta-border-default);
-  --bs-border-color-translucent: rgba(224, 233, 227, 0.22);
+  --bs-border-color-translucent: rgba(216, 208, 200, 0.22);
   --bs-focus-ring-color: var(--aculta-focus-ring);
   --bs-form-valid-color: var(--aculta-text-primary);
   --bs-form-valid-border-color: var(--aculta-border-accent);

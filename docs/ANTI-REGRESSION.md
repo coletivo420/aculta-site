@@ -106,6 +106,10 @@ snapshots de fases e runbooks históricos.
 - todos os purposes compartilham a mesma arquitetura de shell; variam dados, não um
   header paralelo por subdomínio;
 - light/dark/auto troca tokens e assets compatíveis, não geometria ou markup do shell;
+- light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura;
+- color mode no ACULTA420 é uma variação de tokens, não uma variação de layout;
+- componentes não conhecem o color mode; seletores dark são permitidos somente em `aculta420/css/tokens.css`;
+- uma variante futura de asset de logo por modo preserva espaço, dimensões e layout;
 - novos componentes consomem semantic tokens quando a função já existe; palette primitives ficam centralizadas;
 - purpose não define cor no tema e nunca é inferido por hostname;
 - não adicionar color-mode JS, seletor ou persistência antes da fase prevista;

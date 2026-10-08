@@ -148,6 +148,19 @@ apresentação; 0.2-C/0.2-D implementam Institution Bar e Domain Header;
 0.2-E/0.2-F tratam mobile/sticky e validação. O 0.2-A não altera markup nem
 resolve purpose.
 
+### Contrato de color mode
+
+> Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
+
+> Color mode no ACULTA420 é uma variação de tokens, não uma variação de layout.
+
+Os modos compartilham DOM, markup, hierarquia, componentes, tipografia,
+espaçamento, dimensões, grid, breakpoints, posicionamento, shell, navegação e
+comportamento. Somente cores, bordas e sombras tokenizadas variam. Componentes
+consomem semantic tokens e não consultam light/dark ou `prefers-color-scheme`.
+Variantes de asset de logo podem ser adotadas futuramente somente se necessárias
+para legibilidade, mantendo o mesmo espaço, dimensões e layout.
+
 Hierarquia:
 
 ```text

@@ -114,6 +114,10 @@ ela provavelmente está no lugar errado.
 
 ## Shell multidomínio
 
+> Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
+
+> Color mode no ACULTA420 é uma variação de tokens, não uma variação de layout.
+
 Ao evoluir o shell:
 
 - usar Domain purpose como chave funcional; nunca hostname hardcoded;
@@ -127,6 +131,13 @@ Ao evoluir o shell:
 - color modes trocam tokens, nunca markup; não adicionar seletor/persistência antes da fase prevista;
 - purpose não escolhe cores e branding por hostname no tema;
 - color modes alteram tokens, não markup/geometria;
+- modos compartilham tipografia, espaçamento, dimensões, grid, breakpoints,
+  posicionamento, shell, navegação e comportamento;
+- componentes não consultam modo de cor ou `prefers-color-scheme`; a escolha
+  visual é resolvida em `css/tokens.css`;
+- seletores dark fora de `css/tokens.css` são proibidos pelo gate;
+- asset de logo light/dark só pode variar se necessário à legibilidade, mantendo
+  espaço, dimensão e layout iguais;
 - preferir `position: sticky` a `fixed` como ponto de partida;
 - reutilizar Bootstrap Collapse/Offcanvas em vez de criar engine JS própria.
 

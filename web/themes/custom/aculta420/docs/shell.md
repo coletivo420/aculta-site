@@ -74,8 +74,9 @@ branding ACULTA padrão
 título textual
 ```
 
-Variantes light/dark de logo podem existir no futuro, mas não fazem parte do
-contrato mínimo.
+Assets de logo light/dark podem existir no futuro somente quando necessários
+para legibilidade. O espaço, as dimensões e a estrutura reservados à marca
+permanecem iguais nos dois modos; a exceção não autoriza DOM ou layout distinto.
 
 ## Navegação por purpose
 
@@ -146,10 +147,23 @@ Vocabulário alvo:
 
 ## Color modes
 
-0.2-A fornece somente valores semânticos para `data-bs-theme="light"` e
-`data-bs-theme="dark"`. 0.2-E/0.2-F valida o shell nesses modos. Seletor,
-preferência automática e persistência ficam para uma fase posterior. Modo de cor
-troca tokens, não geometria nem markup.
+> Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
+
+> Color mode no ACULTA420 é uma variação de tokens, não uma variação de layout.
+
+0.2-A/0.2-A.1 fornece somente valores semânticos para
+`data-bs-theme="light"` e `data-bs-theme="dark"`. Light usa página verde suave,
+superfícies elevadas claras e identidade estrutural verde. Dark usa página
+carvão quente, superfícies grafite quentes, texto creme/branco quente e bordas
+neutras. Verde é marca/acento/interação; amarelo é ação/estado ativo; vermelho é
+ênfase editorial. Dark não é uma versão verde-escura do ACULTA420.
+
+O shell, DOM, markup, hierarquia, tipografia, dimensões, espaçamento, navegação e
+comportamento são compartilhados. Somente tokens visuais variam. Componentes não
+conhecem o modo nem `prefers-color-scheme`; tokens resolvem a aparência. O gate
+proíbe seletores dark fora de `css/tokens.css`. 0.2-E/0.2-F valida visualmente o
+shell nos dois modos. Seletor, preferência automática e persistência ficam para
+uma fase posterior.
 
 ## Sequência 0.2.0
 
