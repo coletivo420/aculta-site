@@ -70,6 +70,7 @@ Regras resumidas:
 - Core/contrib continuam fonte de verdade; não criar storage paralelo quando a capacidade já existir;
 - preferir dependency injection em classes; não introduzir novos service locators `\Drupal::...` em `src/`;
 - hooks runtime novos/refatorados usam OOP `#[Hook]` quando suportado pelo Core instalado; lifecycle permanece procedural quando exigido;
+- tratar como deprecada no projeto qualquer prática runtime legada contrária ao padrão moderno Drupal 11+ (por exemplo `#[FormAlter]`, hook procedural migrável, novo callback global ou novo service locator), mesmo quando ainda tolerada por compatibilidade; exceções precisam de evidência da API upstream;
 - EntityQuery declara `accessCheck(TRUE|FALSE)` conscientemente;
 - Form API em Drupal 11.3+ prefere callbacks resolvidos pelo `CallableResolver` e serviços DI;
 - subscribers usam `EventSubscriberInterface` e o tag `event_subscriber`; prioridades funcionais não mudam por estética;

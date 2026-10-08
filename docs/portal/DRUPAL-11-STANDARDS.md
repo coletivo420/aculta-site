@@ -32,6 +32,8 @@ ACULTA420
 Drupal Core introduziu hooks OOP com `#[Hook]` em 11.1. Para código runtime novo/refatorado do módulo:
 
 - preferir classes em `src/Hook/` com `#[Hook('hook_name')]`;
+- `#[FormAlter]` não é API válida no baseline atual: foi removido antes do Drupal 11.2 estável; forms OOP usam `#[Hook('form_alter')]`, `#[Hook('form_BASE_FORM_ID_alter')]` ou `#[Hook('form_FORM_ID_alter')]`;
+- práticas runtime legadas contrárias a este padrão (hook procedural quando OOP é suportado, service locator estático, callback global novo) são consideradas **deprecadas pelo projeto ACULTA**, mesmo quando o Core ainda as aceite por compatibilidade; exceções exigem API upstream ou necessidade comprovada;
 - confirmar no Core instalado que o hook específico aceita implementação OOP e conferir sua assinatura;
 - preservar ordering/module weight; não alterar ordem apenas por modernização;
 - dependências de hook entram por DI/autowiring compatível com o Core;
@@ -73,6 +75,7 @@ Regras:
 - evitar `[$this, 'callback']` quando o formulário puder ser serializado;
 - agrupar callbacks em serviço coeso;
 - antes de migrar callback legado, validar assinatura e fluxo no Core/contrib instalado.
+- preferir `form_FORM_ID_alter`/`form_BASE_FORM_ID_alter` quando o alvo é realmente específico e a mudança não altera ordering/semântica; não fragmentar um `form_alter` funcional apenas por estética sem provar paridade.
 
 Referência: https://www.drupal.org/node/3548821
 

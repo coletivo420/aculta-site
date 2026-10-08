@@ -102,7 +102,6 @@ $check(
 $legacyProceduralFunctions = [
   'aculta_portal_entity_access',
   'aculta_portal_entity_presave',
-  'aculta_portal_form_alter',
 ];
 
 $tokenHooks = $srcRoot . '/Hook/TokenHooks.php';
@@ -205,6 +204,61 @@ $check(
     && str_contains($editorialHooksSource, "'wiki'"),
   'P2-R editorial/CEP/Domain behavior invariants must remain present.',
 );
+$formHooks = $srcRoot . '/Hook/FormHooks.php';
+$formHooksSource = $read($formHooks);
+$check(is_file($formHooks), 'P4.1 FormHooks class must exist.');
+$check(
+  substr_count($hookRuntimeSources, "#[Hook('form_alter')]") === 1,
+  'P4.1 form_alter must be implemented exactly once as an OOP hook.',
+);
+$check(
+  !str_contains($hookRuntimeSources, '#[FormAlter'),
+  'P4.1 removed Drupal 11.2 #[FormAlter] attribute must not be used; use #[Hook(\'form_alter\')].',
+);
+$check(
+  preg_match(
+    '/function\\s+formAlter\\s*\\(array\\s*&\\$form,\\s*FormStateInterface\\s+\\$formState,\\s*string\\s+\\$formId\\s*\\)\\s*:\\s*void/',
+    $formHooksSource,
+  ) === 1,
+  'P4.1 FormHooks::formAlter() must match the Drupal 11 hook_form_alter signature.',
+);
+$check(
+  preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $formHooksSource) === 1,
+  'P4.1 FormHooks must declare strict_types=1.',
+);
+$check(
+  !str_contains($formHooksSource, '\\Drupal::'),
+  'P4.1 FormHooks must use explicit DI instead of Drupal static service locators.',
+);
+foreach (['current_route_match', 'current_user', 'string_translation'] as $serviceId) {
+  $check(
+    str_contains($formHooksSource, "service: '" . $serviceId . "'"),
+    'P4.1 FormHooks must inject service ' . $serviceId . '.',
+  );
+}
+$check(
+  !str_contains($services, 'Drupal\\aculta_portal\\Hook\\FormHooks'),
+  'P4.1 Hook classes are auto-discovered/autowired; do not add redundant FormHooks YAML service definitions.',
+);
+foreach ([
+  "'change_mail_form'",
+  "'user_form'",
+  'PaymentGatewayForm',
+  "'commerce_donation_pane'",
+  "'credentials_test'",
+  "'access_token_test'",
+  "'client_secret'",
+  "'aculta_portal.form_callbacks:changeMailConfirmationMessage'",
+  "'aculta_portal.form_callbacks:securityPasswordAfterBuild'",
+  "'aculta_portal.form_callbacks:securityPasswordRedirect'",
+  "'aculta_portal.form_callbacks:validateDonationAmount'",
+] as $invariant) {
+  $check(
+    str_contains($formHooksSource, $invariant),
+    'P4.1 form behavior invariant must remain present: ' . $invariant,
+  );
+}
+
 $formCallbacks = $srcRoot . '/Form/PortalFormCallbacks.php';
 $formCallbacksSource = $read($formCallbacks);
 $check(is_file($formCallbacks), 'P3.1 PortalFormCallbacks service class must exist.');
@@ -247,6 +301,7 @@ $p3RuntimeSources = [
   $moduleCallbacksSource,
   $portalHooksSource,
   $editorialHooksSource,
+  $formHooksSource,
   $formCallbacksSource,
   $services,
 ];
@@ -292,13 +347,13 @@ foreach ([
 
 $formCallbackRegistrations = [
   'validateActivity' => [$editorialHooksSource],
-  'changeMailConfirmationMessage' => [$moduleCallbacksSource],
-  'securityPasswordRedirect' => [$moduleCallbacksSource],
-  'securityPasswordAfterBuild' => [$moduleCallbacksSource],
+  'changeMailConfirmationMessage' => [$formHooksSource],
+  'securityPasswordRedirect' => [$formHooksSource],
+  'securityPasswordAfterBuild' => [$formHooksSource],
   'accountPhotoRedirect' => [$portalHooksSource],
   'addressRedirect' => [$portalHooksSource],
   'syncCustomerAddressNames' => [$portalHooksSource],
-  'validateDonationAmount' => [$moduleCallbacksSource],
+  'validateDonationAmount' => [$formHooksSource],
 ];
 foreach ($formCallbackRegistrations as $methodName => $sources) {
   $check(
