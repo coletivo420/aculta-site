@@ -1,6 +1,6 @@
 # ACULTA420 0.2-B.1 — Inventário da fronteira Domain Presentation
 
-Status: **0.2-B.1 concluída; 0.2-B.2 implementada, validação Runtime pendente**.
+Status: **0.2-B.1 concluída; 0.2-B.2 validada no Runtime Homelab**.
 
 Este documento delimita a fronteira entre Drupal Domain, `aculta_portal` e o
 tema `aculta420` antes da implementação do shell multidomínio 0.2-C/0.2-D.
@@ -451,19 +451,27 @@ A implementação corrente adiciona:
 
 Em 0.2-B.2, `regions.brand_media`, `regions.navigation` e `regions.actions` permanecem `NULL` deliberadamente. A fase não antecipa consumidores ou decisões visuais da B.3/B.4.
 
-Validação Runtime prevista:
+Validação Runtime da 0.2-B.2:
 
 ```sh
 php vendor/drush/drush/drush.php php:script validate-domain-presentation-contract --script-path=../scripts
 php vendor/drush/drush/drush.php cr
 ```
 
-Até esses gates rodarem no Homelab, a mudança executável permanece **RUNTIME STATUS: DEFERRED**.
+**RUNTIME STATUS: PASS** — no Homelab local, `drush cr` concluiu e o gate
+retornou `DOMAIN PRESENTATION CONTRACT: PASS (127 checks)`. Os sete purposes
+produziram `home_url` absoluto usando os aliases `.toca.net.br` quando Drush
+foi iniciado com URI do Homelab; `unknown-purpose` retornou `NULL`. O smoke HTTP
+retornou 200 para MAIN, ACCOUNT `/entrar`, SUPPORT, MAGAZINE, WIKI e COURSES;
+SHOP retornou o 404 esperado e `/meus-cursos` anônimo retornou 403. Foundation,
+Design Foundations, fixtures e Institution passaram; Composer audit passou e
+updatedb reportou nenhuma atualização. `config:status` ainda mostra drift
+preexistente de Runtime; nenhum `cim`/`cex` foi executado.
 
 ## Próximas etapas
 
 - **0.2-B.1** — inventário e fronteira normativa: concluída;
-- **0.2-B.2** — builder/presenter do contrato: implementado, Runtime pendente;
+- **0.2-B.2** — builder/presenter do contrato: implementado e validado no Runtime Homelab;
 - **0.2-B.3** — integrar/consumir o contrato no shell atual sem redesign;
 - **0.2-B.4** — gate/fixtures e fechamento da fronteira;
 - **0.2-C** — Institution Bar;

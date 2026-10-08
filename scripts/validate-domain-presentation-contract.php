@@ -21,6 +21,7 @@ $assert($container->has('aculta_portal.presentation.domain'), 'Domain presentati
 
 $builder = $container->get('aculta_portal.presentation.domain');
 $assert($builder instanceof DomainPresentationBuilder, 'Domain presentation service uses the canonical builder.');
+$domainPurpose = $container->get('aculta_portal.domain_purpose');
 
 $expected = [
   'main' => ['ACULTA', 'ACULTA'],
@@ -78,9 +79,13 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
   foreach (['domain', 'languages:language_interface', 'url.site'] as $context) {
     $assert(in_array($context, $contexts, TRUE), 'Presentation carries cache context ' . $context . ': ' . $purpose);
   }
+  $domain = $domainPurpose->getDomain($purpose);
+  $assert($domain !== NULL, 'Configured Domain entity exists for purpose: ' . $purpose);
+  $domainTags = $domain->getCacheTags();
+  $assert($domainTags !== [], 'Domain entity exposes cache tags: ' . $purpose);
   $assert(
-    array_filter($presentation->getCacheTags(), static fn(string $tag): bool => str_starts_with($tag, 'domain:')) !== [],
-    'Presentation depends on the Domain entity cache tag: ' . $purpose,
+    array_diff($domainTags, $presentation->getCacheTags()) === [],
+    'Presentation includes the actual Domain entity cache tags: ' . $purpose,
   );
 }
 
