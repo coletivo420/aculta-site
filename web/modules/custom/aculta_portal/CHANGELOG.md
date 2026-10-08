@@ -1,5 +1,15 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P3.1: Form API editorial e CallableResolver
+
+- Migra `hook_form_node_form_alter()` para `EditorialHooks::formNodeFormAlter()` com `#[Hook]`.
+- Preserva os grupos, pesos e rótulos editoriais existentes para article/activity/project.
+- Substitui o callback procedural `aculta_portal_validate_activity` pelo serviço `aculta_portal.form_callbacks:validateActivity`, suportado pelo CallableResolver do Drupal 11.3+.
+- Cria `PortalFormCallbacks` mínimo com DI apenas de `string_translation`; callbacks de conta/Commerce permanecem procedurais por enquanto.
+- Preserva as três validações condicionais de Activity: local presencial, URL online e término posterior ao início.
+- Reduz o allowlist procedural do gate em mais duas funções e passa a exigir o hook OOP, o serviço e o callback serializável.
+- Entity access/presave, form_alter de conta/Commerce, controllers e subscribers permanecem fora desta subfase.
+
 ## 2026-10-08 — P2.3: library_info_alter em OOP
 
 - Migra `hook_library_info_alter()` para `EditorialHooks::libraryInfoAlter()` com `#[Hook]`.

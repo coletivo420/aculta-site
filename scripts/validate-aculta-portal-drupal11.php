@@ -73,8 +73,6 @@ $check(
 );
 
 $legacyProceduralFunctions = [
-  'aculta_portal_form_node_form_alter',
-  'aculta_portal_validate_activity',
   'aculta_portal_entity_access',
   'aculta_portal_entity_presave',
   'aculta_portal_form_alter',
@@ -108,6 +106,30 @@ foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter', 'library_info_
     'P2 EditorialHooks must implement ' . $hookName . ' as an OOP hook.',
   );
 }
+
+$formCallbacks = $srcRoot . '/Form/PortalFormCallbacks.php';
+$formCallbacksSource = $read($formCallbacks);
+$check(is_file($formCallbacks), 'P3.1 PortalFormCallbacks service class must exist.');
+$check(
+  str_contains($services, 'aculta_portal.form_callbacks:'),
+  'P3.1 aculta_portal.form_callbacks service must be registered.',
+);
+$check(
+  str_contains($services, 'Drupal\\aculta_portal\\Form\\PortalFormCallbacks'),
+  'P3.1 form callback service must use PortalFormCallbacks.',
+);
+$check(
+  str_contains($editorialHooksSource, "#[Hook('form_node_form_alter')]"),
+  'P3.1 EditorialHooks must implement form_node_form_alter as OOP.',
+);
+$check(
+  str_contains($editorialHooksSource, "'aculta_portal.form_callbacks:validateActivity'"),
+  'P3.1 activity validation must use the Drupal 11.3+ service callback syntax.',
+);
+$check(
+  str_contains($formCallbacksSource, 'function validateActivity('),
+  'P3.1 PortalFormCallbacks must provide validateActivity().',
+);
 
 $moduleFile = $moduleRoot . '/aculta_portal.module';
 if (is_file($moduleFile)) {
