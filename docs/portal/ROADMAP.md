@@ -1,6 +1,6 @@
 # Roadmap atual do ACULTA Portal
 
-Data da revisão: 2026-10-07.
+Data da revisão: 2026-10-08.
 
 Este documento contém apenas trabalho futuro/relevante. Fases concluídas e
 snapshots de execução ficam no histórico Git/PR.
@@ -17,6 +17,33 @@ Já consolidados no `main`:
 - Turnstile como único CAPTCHA, fail-closed;
 - Social Auth Google integrado;
 - documentação modular por domínio.
+
+## Modernização técnica Drupal 11+ em curso
+
+Esta sequência é executada em subfases pequenas, sempre com revisão formal antes
+de avançar para a próxima família:
+
+1. **P4-R — revisão OOP/DI**: revisar `form_alter`, `entity_access` e
+   `entity_presave`, remover resíduos procedurais e consolidar o gate.
+2. **P5 — EntityQuery / Views / access**: eliminar service locators e static
+   entity loads das áreas-alvo; toda EntityQuery declara `accessCheck()`;
+   wrappers de Views só são substituídos com paridade comprovada.
+3. **P6 — cacheability**: revisar `max-age: 0`, contexts/tags, tokens
+   Domain/alias, dados privados e contratos Portal → tema.
+4. **P7 — subscribers / services / multidomínio**: modernizar tags e DI,
+   revisar `isMainRequest()`, prioridades/event races e preservar MAIN como
+   autoridade para admin/cart/checkout/payment.
+5. **P8 — deprecações / Drupal 12 readiness**: classificar recomendado em D11,
+   deprecado em D11, removido/mudado em D12 e anunciado para D13; validar
+   contrib antes de declarar compatibilidade.
+6. **P9 — hardening final**: documentação, gates, failure modes, segurança,
+   SQLite/MariaDB, dependency audit e limpeza residual.
+7. **Finalização Codex/Homelab**: lint integral, gate real, `drush cr`,
+   Composer validate/audit, `updatedb:status`, `config:status` e smokes;
+   somente depois revisar/mergear a PR cumulativa.
+
+P1, P2 e P3 já possuem revisões formais. A P4-R fecha a família OOP/DI antes
+da P5.
 
 ## Prioridade 1 — fechar internacionalização pt-BR
 

@@ -68,8 +68,7 @@ php scripts/validate-aculta-portal-drupal11.php
 
 Consultar também [docs/portal](../../../../docs/portal/README.md).
 
-O roadmap e decisões de arquitetura vivem lá. Este README serve como entrada
-rápida para quem está no diretório do módulo.
+O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime migráveis estão em `src/Hook/` e o módulo não mantém mais um `aculta_portal.module` vazio. Este README serve como entrada rápida para quem está no diretório do módulo.
 
 ## Changelog
 

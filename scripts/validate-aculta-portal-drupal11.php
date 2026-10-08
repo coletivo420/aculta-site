@@ -5,9 +5,9 @@ declare(strict_types=1);
 /**
  * Progressive static gate for the aculta_portal Drupal 11+ standard.
  *
- * P1 intentionally freezes known modernization debt instead of pretending it
- * is already removed. Later phases must reduce the allowlists/count ceilings
- * when they eliminate debt. New files/usages must comply immediately.
+ * The gate started as a P1 debt freeze and is now progressively hardened as
+ * modernization phases remove legacy patterns. Resolved debt must not return,
+ * while remaining ceilings stay explicit until later phases eliminate them.
  */
 
 $root = dirname(__DIR__);
@@ -239,6 +239,65 @@ foreach ([
     'P4.3 Mercado Pago presave invariant must remain present: ' . $invariant,
   );
 }
+
+$p4HookSources = [
+  'form_alter' => $formHooksSource ?? '',
+  'entity_access' => $entityHooksSource ?? '',
+  'entity_presave' => $entitySaveHooksSource,
+];
+foreach ($p4HookSources as $hookName => $source) {
+  $check(
+    substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === 1,
+    'P4-R migrated hook must remain exactly-once: ' . $hookName,
+  );
+  $check(
+    preg_match('/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', $source) === 1,
+    'P4-R migrated hook class must keep strict_types=1: ' . $hookName,
+  );
+  $check(
+    !str_contains($source, '\\Drupal::'),
+    'P4-R migrated hook class must remain free of Drupal static service locators: ' . $hookName,
+  );
+}
+foreach ([
+  'Drupal\\aculta_portal\\Hook\\FormHooks',
+  'Drupal\\aculta_portal\\Hook\\EntityHooks',
+  'Drupal\\aculta_portal\\Hook\\EntitySaveHooks',
+] as $hookClass) {
+  $check(
+    !str_contains($services, $hookClass),
+    'P4-R OOP hook classes must not receive redundant YAML service definitions: ' . $hookClass,
+  );
+}
+$check(
+  !str_contains($hookRuntimeSources, '#[FormAlter'),
+  'P4-R removed #[FormAlter] attribute must remain absent.',
+);
+$check(
+  substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:changeMailConfirmationMessage'") === 1
+    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordAfterBuild'") === 1
+    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordRedirect'") === 1
+    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:validateDonationAmount'") === 1,
+  'P4-R FormHooks must preserve the four P3 service callbacks exactly once.',
+);
+$check(
+  str_contains($entityHooksSource ?? '', "->addCacheContexts(['domain'])")
+    && str_contains($entityHooksSource ?? '', "->addCacheableDependency($entity)"),
+  'P4-R Wiki access must keep Domain variation and entity cache dependency.',
+);
+$check(
+  preg_match(
+    '/AccessResult::neutral\(\)[\s\S]{0,240}?cachePerPermissions\(\)[\s\S]{0,240}?addCacheContexts\(\[\'route\', \'user\'\]\)[\s\S]{0,240}?setCacheMaxAge\(0\)/',
+    $entityHooksSource ?? '',
+  ) === 1,
+  'P4-R password-reset neutral access must remain request-sensitive and uncacheable.',
+);
+$check(
+  str_contains($entitySaveHooksSource, "getenv('MERCADOPAGO_PUBLIC_KEY')")
+    && str_contains($entitySaveHooksSource, "getenv('MERCADOPAGO_ACCESS_TOKEN')")
+    && str_contains($entitySaveHooksSource, 'throw new \\LogicException'),
+  'P4-R Mercado Pago presave guard must remain fail-closed on missing runtime credentials.',
+);
 
 $entityHooks = $srcRoot . '/Hook/EntityHooks.php';
 $entityHooksSource = $read($entityHooks);
@@ -474,18 +533,10 @@ $check(
 );
 
 $moduleFile = $moduleRoot . '/aculta_portal.module';
-if (is_file($moduleFile)) {
-  $moduleSource = $read($moduleFile);
-  preg_match_all('/^function\s+(aculta_portal_[A-Za-z0-9_]+)\s*\(/m', $moduleSource, $matches);
-  $unknown = array_values(array_diff($matches[1] ?? [], $legacyProceduralFunctions));
-  $check(
-    $unknown === [],
-    'No new procedural runtime functions may be added to aculta_portal.module: ' . implode(', ', $unknown),
-  );
-}
-else {
-  $check(TRUE, 'aculta_portal.module removed after procedural debt migration.');
-}
+$check(
+  !is_file($moduleFile),
+  'P4-R aculta_portal.module must remain absent after all runtime hooks migrated to OOP.',
+);
 
 $serviceLocatorCeilings = [
   'src/Controller/PortalController.php' => 3,

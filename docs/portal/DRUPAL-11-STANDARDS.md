@@ -192,7 +192,7 @@ O gate também valida que o `composer.lock` realmente mantém Drupal Core na lin
 
 O gate da P1 não finge que a modernização terminou. Ele registra e congela dívidas observadas na `main` de origem:
 
-- funções procedurais runtime existentes em `aculta_portal.module`;
+- hooks runtime procedurais foram eliminados na P4; `aculta_portal.module` foi removido e não deve retornar apenas para abrigar hooks migráveis;
 - service locators ainda existentes em quatro arquivos `src/`;
 - wrappers de Views conhecidos;
 - um static load conhecido em SupportForm;
@@ -200,6 +200,8 @@ O gate da P1 não finge que a modernização terminou. Ele registra e congela d�
 - seis registros `kernel.event_subscriber`.
 
 Esses limites são **tetos**, não metas. Fases posteriores devem reduzir os allowlists/contagens no mesmo commit que eliminarem a dívida. Qualquer arquivo novo deve nascer conforme o padrão atual.
+
+Após a P4, `form_alter`, `entity_access` e `entity_presave` são contratos OOP protegidos pelo gate exatamente uma vez. A ausência de `aculta_portal.module` é intencional; criar um novo `.module` só é aceitável para uma API procedural realmente exigida pelo Core/contrib e deve vir com justificativa/documentação.
 
 ## Validação por fase
 
