@@ -59,8 +59,12 @@ domain_presentation
 └── optional accent
 ```
 
-O contrato concreto só deve ser congelado quando houver implementação e testes.
-Não passar entidade `Domain`, storage, services ou regra de negócio para Twig/SDC.
+O inventário 0.2-B.1 e a fronteira normativa estão registrados em
+`docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`. O contrato concreto será
+implementado e congelado progressivamente em 0.2-B.2 a 0.2-B.4.
+
+Não passar entidade `Domain`, storage, services, hostname ou regra de negócio
+para Twig/SDC.
 
 ## Branding e fallback
 
