@@ -1,7 +1,5 @@
 # Minha Conta — matriz SDC, integrações e AJAX
 
-Data: 2026-10-06
-
 ## Objetivo
 
 Definir explicitamente como a experiência **Minha Conta** evolui para o

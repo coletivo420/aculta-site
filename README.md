@@ -48,6 +48,7 @@ Referências transversais:
 - [Camadas anti-regressão](docs/ANTI-REGRESSION.md)
 - [Política de documentação](docs/DOCUMENTATION.md)
 - [Operação, testes e releases](docs/operations/README.md)
+- [Deployment](docs/operations/DEPLOYMENT.md)
 
 - Portal: [docs/portal](docs/portal/README.md)
 - Módulos: [docs/modules](docs/modules/README.md)
