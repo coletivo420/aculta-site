@@ -29,6 +29,10 @@ Purpose:
 | workflow editorial | Workflow/Content Moderation configurado para Wiki |
 | origem/domain | Domain Source |
 
+O formato de texto Wiki usa o filtro Freelinking para links entre verbetes.
+`drupal/freelinking` permanece instalado em 4.0.3; o advisory
+SA-CONTRIB-2026-213 afeta versões anteriores a 4.0.3.
+
 O Portal não cria entidade, tabela ou índice próprio para espelhar verbetes.
 
 ## Experiência WIKI

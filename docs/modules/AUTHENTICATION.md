@@ -74,6 +74,20 @@ vendor/bin/drush updatedb:status
 Em instalação nova, o módulo já não faz parte do Composer nem de
 `core.extension`.
 
+## Credenciais Google e ACULTA Secrets Contract
+
+O OAuth Google usa as Keys `google_oauth_client_id` e
+`google_oauth_client_secret`, com provider `env` e variáveis
+`GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CLIENT_SECRET`. Key Configuration
+Overrides ligam essas Keys a `social_auth_google.settings`. O Social Auth não
+conhece caminhos de arquivo, systemd, PHP-FPM ou fornecedor de hospedagem.
+
+O sync mantém os campos Google vazios. O Runtime ainda tem os valores legados
+no storage bruto até a migração R0.4; por isso as Keys Environment não resolvem
+no Homelab antes do provisioning. O estado final e os adapters portáveis estão
+descritos em [ACULTA Secrets Contract](../operations/SECRETS.md). Nunca
+preencher credenciais em config exportada ou imprimir seus valores.
+
 ## Roadmap — verificação de conta e e-mail ACULTA
 
 ### Estado

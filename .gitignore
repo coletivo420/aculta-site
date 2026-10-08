@@ -26,6 +26,10 @@
 .env
 .env.*
 !.env.example
+secrets.env
+*.secrets.env
+/web/sites/*/settings.hostinger.php
+/web/sites/*/settings.secrets.php
 
 # Database dumps
 *.sql

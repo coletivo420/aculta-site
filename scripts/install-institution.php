@@ -228,9 +228,8 @@ institution_node('projects', 'page', 'Projetos', '<p class="aculta-page-intro">'
 institution_node('activities', 'page', 'Atividades', institution_paragraphs($data['city']['paragraphs']) . '<h2>Cultura e arte</h2><p>' . institution_escape($data['work']['areas'][0]['text']) . '</p>', '/atividades');
 institution_node('news', 'page', 'Notícias', '<h2>' . institution_escape($data['knowledge']['title']) . '</h2>' . institution_paragraphs($data['knowledge']['paragraphs']) . '<p>' . institution_link('/projetos/podplant420', 'Conheça o PodPlant420') . '</p>', '/noticias');
 institution_node('transparency', 'page', 'Transparência', '<p class="aculta-page-intro">' . institution_escape($data['transparency']['intro']) . '</p>' . institution_paragraphs($data['transparency']['paragraphs']), '/transparencia');
-$privacy = '<p>Esta página descreve as funcionalidades de privacidade presentes nesta versão do site oficial da Associação Cultural Antiproibicionista.</p><h2>Navegação e autenticação</h2><p>O site utiliza mecanismos de sessão e proteção para o acesso de usuários autenticados. Os formulários de acesso solicitam as informações necessárias à autenticação.</p><h2>Fontes externas</h2><p>O site carrega Inter e Oswald pelo Google Fonts. O navegador faz requisições ao serviço para obter esses arquivos.</p><h2>Contato</h2><p>Esta versão não disponibiliza envio público de mensagens por formulário. Os canais institucionais são apresentados na página de contato quando confirmados pela Associação.</p><p>' . institution_link('/contato', 'Contato institucional') . '</p>';
+$privacy = '<p>Esta página descreve as funcionalidades de privacidade presentes nesta versão do site oficial da Associação Cultural Antiproibicionista.</p><h2>Navegação e autenticação</h2><p>O site utiliza mecanismos de sessão e proteção para o acesso de usuários autenticados. Os formulários de acesso solicitam as informações necessárias à autenticação.</p><h2>Fontes externas</h2><p>O site carrega Inter e Oswald pelo Google Fonts. O navegador faz requisições ao serviço para obter esses arquivos.</p><h2>Contato</h2><p>O formulário institucional em <code>/contato</code> permite o envio de mensagens à Associação. Os canais institucionais são apresentados nessa página conforme confirmação da Associação.</p><p>' . institution_link('/contato', 'Contato institucional') . '</p>';
 institution_node('privacy', 'page', 'Política de Privacidade', $privacy, '/politica-de-privacidade');
-institution_node('contact', 'page', 'Contato', '<p>Conheça os projetos e as atividades da Associação Cultural Antiproibicionista em Goiânia, Goiás, Brasil.</p><p>' . institution_link('/projetos', 'Nossos projetos') . ' · ' . institution_link('/atividades', 'Nossas atividades') . '</p>', '/contato');
 
 // Reusable structured institutional data: empty fields are never rendered.
 if (!BlockContentType::load('aculta_institution')) {
@@ -330,21 +329,8 @@ foreach (['institutional' => 'Institucional', 'projects' => 'Projetos', 'activit
   institution_menu_link('main', 'main_' . $key, $label, 'entity:node/' . $state['nodes'][$key], count($state['menus']));
 }
 
-// Prepare the Core form privately. Do not enable public sending without a recipient.
-if (!\Drupal::moduleHandler()->moduleExists('contact')) {
-  \Drupal::service('module_installer')->install(['contact']);
-}
-$contact = \Drupal\contact\Entity\ContactForm::load('aculta_contact');
-if (!$contact) {
-  $contact = \Drupal\contact\Entity\ContactForm::create(['id' => 'aculta_contact', 'label' => 'Contato institucional — configurar destinatário antes de ativar', 'langcode' => 'pt-br', 'recipients' => $data['email'] ? [$data['email']] : [], 'reply' => '', 'weight' => 0, 'message' => 'Sua mensagem foi enviada. Obrigado pelo contato.', 'redirect' => '/contato']);
-  $contact->save();
-}
-\Drupal::configFactory()->getEditable('contact.settings')->set('user_default_enabled', FALSE)->save();
-foreach (['anonymous', 'authenticated'] as $role_id) {
-  $role = \Drupal\user\Entity\Role::load($role_id);
-  $role->revokePermission('access site-wide contact form')->save();
-}
-institution_menu_link('main', 'main_contact', 'Contato', 'entity:node/' . $state['nodes']['contact'], 99);
+// The institutional Webform owns /contato; no legacy node or Core Contact form is created.
+institution_menu_link('main', 'main_contact', 'Contato', 'internal:/contato', 99);
 institution_place('aculta_contact_data', 'block_content:' . $institution_data->uuid(), 'content', -10, 'Contato institucional', '/contato', ['view_mode' => 'contact']);
 
 $footer_menus = [
@@ -357,7 +343,8 @@ foreach ($footer_menus as $id => [$label, $links]) {
     Menu::create(['id' => $id, 'label' => $label])->save();
   }
   foreach ($links as $key => $title) {
-    institution_menu_link($id, $id . '_' . $key, $title, 'entity:node/' . $state['nodes'][$key], array_search($key, array_keys($links), TRUE));
+    $uri = $key === 'contact' ? 'internal:/contato' : 'entity:node/' . $state['nodes'][$key];
+    institution_menu_link($id, $id . '_' . $key, $title, $uri, array_search($key, array_keys($links), TRUE));
   }
   institution_place(str_replace('-', '_', $id), 'system_menu_block:' . $id, 'footer', 10 + array_search($id, array_keys($footer_menus), TRUE), $label, '', ['label_display' => 'visible', 'level' => 1, 'depth' => 1, 'expand_all_items' => FALSE]);
 }
@@ -375,7 +362,7 @@ if ($account) {
   $visibility['user_role'] = ['id' => 'user_role', 'negate' => FALSE, 'roles' => ['authenticated' => 'authenticated'], 'context_mapping' => ['user' => '@user.current_user_context:current_user']];
   $account->setVisibilityConfig('user_role', $visibility['user_role'])->save();
 }
-\Drupal::configFactory()->getEditable('aculta420.settings')->set('institution_home_nid', (int) $home->id())->set('institution_data_uuid', $institution_data->uuid())->save();
+\Drupal::configFactory()->getEditable('aculta_portal.settings')->set('institution_data_uuid', $institution_data->uuid())->save();
 $state['complete'] = TRUE;
 // Preserve section wrappers and their classes when editing via CKEditor 5.
 $editor = \Drupal\editor\Entity\Editor::load('full_html');

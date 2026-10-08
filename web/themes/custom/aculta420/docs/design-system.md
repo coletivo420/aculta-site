@@ -97,13 +97,13 @@ https://getbootstrap.com/docs/5.3/customize/color-modes/
 
 Motion deve ser foundation, não decisão local de cada componente.
 
-Roadmap:
+A Foundation já possui o contrato mínimo `--aculta-motion-fast` +
+`--aculta-ease-standard` para impedir durations locais duplicadas. Escalas
+adicionais entram somente quando houver uso real.
 
 ```css
---aculta-motion-fast: ...;
---aculta-motion-normal: ...;
---aculta-motion-slow: ...;
---aculta-ease-standard: ...;
+--aculta-motion-fast: 180ms;
+--aculta-ease-standard: ease;
 ```
 
 Todos os componentes animados devem respeitar `prefers-reduced-motion`.
@@ -135,8 +135,10 @@ arbitrária de opções.
 ## Assets
 
 - foundations realmente globais ficam em `aculta420/global`;
+- CSS global não significa CSS sem ownership: cada arquivo representa uma responsabilidade;
+- não manter `css/style.css`, `css/responsive.css` ou outro catch-all residual;
 - CSS/JS exclusivo de SDC fica no diretório do componente;
-- integrations/patterns podem usar libraries contextuais;
+- integrations/patterns usam libraries contextuais quando o consumidor é identificável; o carrossel editorial é o caso-base;
 - evitar asset global “por conveniência”.
 
 ## Branding assets

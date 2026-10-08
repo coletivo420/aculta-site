@@ -10,12 +10,11 @@ global:
       css/components/breadcrumb.css: {}
       css/components/content.css: {}
       css/components/buttons.css: {}
-      css/components/footer.css: {}
       css/drupal-bootstrap.css: {}
       css/components/institutional.css: {}
-      css/style.css: {}
-      css/components/editorial-carousel.css: {}
-      css/responsive.css: {}
+      css/components/footer.css: {}
+      css/components/forms.css: {}
+      css/components/account.css: {}
       css/components/auth.css: {}
   js:
     js/navigation.js: {}
@@ -26,6 +25,9 @@ global:
     - core/once
 
 editorial-carousel:
+  css:
+    theme:
+      css/components/editorial-carousel.css: {}
   js:
     js/editorial-carousel.js: {}
   dependencies:

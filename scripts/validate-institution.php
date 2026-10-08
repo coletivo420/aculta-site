@@ -35,6 +35,11 @@ if (empty($state['complete'])) {
 }
 foreach ($state['nodes'] as $key => $id) {
   $node = \Drupal\node\Entity\Node::load($id);
+  if ($key === 'contact') {
+    // The historical node remains unpublished. The open institutional Webform
+    // is the canonical public /contato experience.
+    continue;
+  }
   if ($key === 'cnpj_document') {
     if (!$node || $node->isPublished() || !$node->get('field_document')->isEmpty()) {
       throw new RuntimeException('CNPJ PDF draft should remain private until the document is supplied.');
@@ -46,6 +51,14 @@ foreach ($state['nodes'] as $key => $id) {
     throw new RuntimeException('Missing public content: ' . $key);
   }
   echo 'Content OK: ' . $key . ' / ' . $node->toUrl()->toString() . PHP_EOL;
+}
+if (!empty($state['cms_enhancements'])) {
+  $contact_webform = \Drupal\webform\Entity\Webform::load('aculta_contact');
+  $contact_path = $contact_webform ? parse_url($contact_webform->toUrl('canonical')->toString(), PHP_URL_PATH) : NULL;
+  if (!$contact_webform || !$contact_webform->isOpen() || $contact_path !== '/contato') {
+    throw new RuntimeException('The open institutional Webform must own the public /contato route.');
+  }
+  echo 'Public contact route is owned by the open aculta_contact Webform; legacy node is not required.' . PHP_EOL;
 }
 foreach (\Drupal::menuTree()->load('main', new \Drupal\Core\Menu\MenuTreeParameters()) as $item) {
   if (!$item->link->isEnabled()) {

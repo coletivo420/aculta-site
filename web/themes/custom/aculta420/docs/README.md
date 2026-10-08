@@ -15,7 +15,6 @@ Esta pasta contém a documentação normativa do tema e design system.
    evidência nova.
 9. [roadmap.md](roadmap.md) — evolução versionada.
 10. [versioning.md](versioning.md) — SemVer e releases.
-11. [migration-0.1.0.md](migration-0.1.0.md) — rename `aculta` -> `aculta420`.
 
 ## Fonte de verdade
 
@@ -45,8 +44,10 @@ Prioridade quando houver conflito:
 - `.aculta-*` e `--aculta-*` = vocabulário visual mantido por decisão
   arquitetural; não são o machine name do tema.
 
-## Provider funcional e shim
+## Provider
 
 `web/themes/custom/aculta420/` é o único provider funcional do tema.
-`web/themes/custom/aculta/` é somente o shim temporário da migração 0.1.0 e não
-pode receber documentação de feature, Twig, CSS, JS, libraries ou SDC.
+
+A Foundation não mantém provider alternativo, alias ou shim de compatibilidade.
+Histórico de migração pertence ao Git/ADR, não ao runtime nem à documentação
+operacional corrente.

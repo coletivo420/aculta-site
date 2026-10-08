@@ -17,8 +17,8 @@
       {% endif %}
     {% endfor %}
   </dl>
-  {% if view_mode == 'home' %}
-    <p><a href="{{ path('entity.node.canonical', {'node': institution_transparency_nid}) }}" class="aculta-editorial-link">{{ 'TRANSPARÊNCIA'|t }}</a></p>
+  {% if view_mode == 'home' and institution_transparency_url %}
+    <p>{{ link('TRANSPARÊNCIA'|t, institution_transparency_url, {'class': ['aculta-editorial-link']}) }}</p>
   {% endif %}
   {% endif %}
 </div>

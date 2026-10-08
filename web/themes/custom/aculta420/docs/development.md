@@ -20,7 +20,8 @@ Tema: `aculta420`.
 
 Hooks:
 
-`aculta420_preprocess_*`
+`src/Hook/ThemeHooks.php` com `#[Hook]` e DI/autowiring. A Foundation não usa
+arquivo `.theme` procedural.
 
 Libraries:
 
@@ -38,14 +39,19 @@ Não reintroduzir provider `aculta`.
 
 ## Estrutura de CSS
 
-O CSS global existente permanece dividido por responsabilidade:
+O CSS global é dividido por responsabilidade explícita:
 
 - tokens;
 - base;
 - layout;
 - shell/component CSS;
-- Drupal/Bootstrap integration;
-- residual legacy controlado.
+- formulários;
+- Conta/apresentação;
+- Drupal/Bootstrap integration.
+
+Não existem `css/style.css` ou `css/responsive.css` genéricos/catch-all. Regra nova deve entrar no arquivo
+da responsabilidade que a possui; se nenhuma responsabilidade existente servir,
+criar uma unidade nomeada e documentada em vez de recriar um arquivo residual.
 
 Mover CSS para SDC somente quando ownership exclusivo estiver provado.
 
@@ -60,6 +66,24 @@ Regras:
 - Bootstrap/contrib continuam donos de suas engines;
 - nada de listener global duplicado;
 - assets específicos carregam contextualmente quando possível.
+
+## Allowlist de overrides Twig
+
+A Foundation mantém somente overrides com delta comprovado em relação a
+Core/Bootstrap5/contrib:
+
+| Override | Motivo atual |
+| --- | --- |
+| `page.html.twig` | compor o shell público e regiões existentes |
+| `block--system-branding-block.html.twig` | wrapper visual ACULTA420 + fallback textual |
+| `navigation/breadcrumb.html.twig` | apresentar o título atual preparado pelo Portal |
+| `block--block-content--type--aculta-institution.html.twig` | view modes institucionais específicos |
+| `node--editorial-highlight.html.twig` | presenter do SDC `editorial-card` |
+| `node--project--teaser.html.twig` | teaser de projeto existente até o Card System v1 |
+| `views-view-vvjb.html.twig` | delta de integração/acessibilidade e library contextual do VVJB |
+
+Novo override exige comparação com o template upstream da versão instalada e
+uma justificativa documental. Override sem delta real deve ser removido.
 
 ## Twig
 
@@ -116,6 +140,10 @@ Renomear machine name do tema exige sincronizar:
 - libraries/component provider IDs.
 
 IDs históricos de conteúdo/config não são renomeados sem benefício funcional.
+Para placements de blocos customizados, `plugin`, `settings.id` e a dependência
+de conteúdo devem apontar para o mesmo UUID existente; tema e região também
+precisam corresponder ao provider e às regiões declaradas pelo ACULTA420. O gate
+da Foundation verifica tanto a configuração ativa quanto `config/sync`.
 
 ## Workflow
 
@@ -129,6 +157,17 @@ Para cada mudança:
 6. validar config;
 7. testar páginas representativas;
 8. comparar visual quando houver mudança visual.
+
+## Gate de Foundation
+
+Após qualquer mudança estrutural do tema:
+
+```sh
+vendor/bin/drush php:script validate-aculta420-foundation --script-path=../scripts
+```
+
+O gate falha se reaparecerem provider legado, arquivo `.theme`, catch-all CSS,
+asset web sem contrato, dependência direta do tema no Portal ou library quebrada.
 
 ## Testes mínimos
 

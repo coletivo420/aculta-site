@@ -46,6 +46,7 @@ utilities e behaviors.
 - cards/prosa/projetos/institucional/footer;
 - foco visível, teclado e reduced-motion;
 - schema obrigatório para SDCs via `enforce_prop_schemas: true`;
+- hooks do tema em OOP/DI (`src/Hook/ThemeHooks.php`), sem arquivo `.theme` procedural;
 - versionamento SemVer próprio.
 
 ## Limite da Foundation 0.1.0
@@ -77,7 +78,9 @@ dos semantic tokens.
 web/themes/custom/aculta420/
 ├── aculta420.info.yml
 ├── aculta420.libraries.yml
-├── aculta420.theme
+├── src/
+│   └── Hook/
+│       └── ThemeHooks.php
 ├── assets/
 ├── components/
 │   └── content/
@@ -108,7 +111,6 @@ Documentos normativos:
 - [Decisões](docs/decisions.md)
 - [Roadmap](docs/roadmap.md)
 - [Versionamento](docs/versioning.md)
-- [Migração 0.1.0](docs/migration-0.1.0.md)
 - [CHANGELOG](CHANGELOG.md)
 
 ## Regra principal

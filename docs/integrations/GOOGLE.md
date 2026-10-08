@@ -98,23 +98,22 @@ Segredos entram por ambiente/Key ou mecanismo equivalente revisado.
 
 ### Homelab e importação de configuração
 
-O botão de login Google depende de valores efetivos para o client ID e o
-client secret. A configuração exportada mantém esses campos vazios e os
-resolve pelas Keys `google_oauth_client_id` e
-`google_oauth_client_secret`, vinculadas a `GOOGLE_OAUTH_CLIENT_ID` e
-`GOOGLE_OAUTH_CLIENT_SECRET`.
+O contrato portátil está definido em
+[ACULTA Secrets Contract](../operations/SECRETS.md). Homelab e Hostinger usam
+os mesmos Key IDs, `GOOGLE_OAUTH_CLIENT_ID`,
+`GOOGLE_OAUTH_CLIENT_SECRET` e Config Overrides. Só muda o adapter operacional:
+environment nativo ou arquivo seguro carregado no bootstrap. Drupal e Social
+Auth não dependem do sistema operacional, do PHP-FPM ou do fornecedor.
 
-No Homelab, essas variáveis precisam estar disponíveis ao PHP-FPM e aos
-processos Drupal/Drush que importam configuração. Não preencher os campos
-diretamente em `social_auth_google.settings` como solução persistente: uma
-importação posterior os substituirá pelos valores versionados, que são
-intencionalmente vazios. Nunca colocar os valores das variáveis no Git,
-documentação, URL ou histórico de shell.
+O Configuration Sync e o storage bruto do Homelab mantêm `client_id` e
+`client_secret` vazios após a R0.4. O Secure Bootstrap Adapter fornece as
+variáveis ao Drupal Key para web e Drush; a configuração efetiva é preenchida
+somente em memória pelos Config Overrides. Hostinger Web/Cloud ainda não foi
+provisionada. Não use a leitura efetiva como prova de ausência de segredo;
+essa prova deve ler `config.storage` e o sync diretamente.
 
-Depois de configurar o ambiente, limpar o cache e confirmar que o botão
-aparece em `/entrar` e que o início do OAuth responde com redirecionamento para
-o provedor. Se as variáveis não estiverem disponíveis, o botão deve permanecer
-oculto, sem expor erro ou credencial.
+Não preencher valores reais em Configuration Sync nem imprimir credenciais em
+Git, documentação, logs, URLs ou histórico de shell.
 
 ### Segurança da desconexão
 

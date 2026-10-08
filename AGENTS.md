@@ -42,13 +42,9 @@ web/
 
 ## Estrutura do desenvolvimento customizado
 
-Tema customizado funcional:
+Tema customizado:
 
 web/themes/custom/aculta420/
-
-Shim legado de migração (0.1.0 apenas; sem código funcional):
-
-web/themes/custom/aculta/
 
 Módulos customizados:
 
@@ -270,7 +266,7 @@ Provider funcional:
 
 web/themes/custom/aculta420/
 
-`web/themes/custom/aculta/` é somente o shim temporário de migração da 0.1.0 e não pode receber novas features, Twig, CSS, JS, libraries ou SDC.
+Não recriar provider, alias, shim ou camada de compatibilidade de tema com machine name diferente de `aculta420`.
 
 Prioridades:
 
@@ -298,6 +294,12 @@ Nunca colocar credenciais no repositório.
 Não alterar configurações de segurança sem explicar a mudança.
 
 O ambiente local pode utilizar configurações de desenvolvimento diferentes das configurações de produção.
+
+Credenciais de integrações devem usar Drupal Key com provider `env`; nunca
+preencher segredo diretamente em config, exportar configuração com segredo,
+mover credenciais para o tema ou hardcodar caminhos Homelab/Hostinger no
+Portal. Adicionar credencial exige Key, nome de variável, atualização do
+ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 
 ## Bancos e Sistema de Estados
 
@@ -363,7 +365,7 @@ Para tarefas do `aculta_portal`:
 - `origin/main` é a base autoritativa; trabalho local antigo não publicado foi descartado;
 - mudanças executáveis sem Runtime ficam em draft com `RUNTIME STATUS: DEFERRED`;
 - não modificar `web/themes/custom/aculta420/**` sem autorização explícita;
-- nunca adicionar funcionalidade a `web/themes/custom/aculta/**`; esse diretório é apenas shim temporário de migração da 0.1.0;
+- não recriar `web/themes/custom/aculta/` nem qualquer provider legado/alias do tema;
 - consultar `docs/portal/` antes de implementar;
 - manter as fontes de verdade definidas em `docs/portal/SOURCE-OF-TRUTH.md`;
 - não instalar dependência planejada antes da versão correspondente;
@@ -377,7 +379,7 @@ A documentação arquitetural e o roadmap são definidos fora da execução de
 código. O Codex deve principalmente implementar, testar e registrar o resultado
 da implementação.
 
-O Portal usa tags `portal-vX.Y.Z`. Ver `docs/portal/VERSIONING.md`.
+O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 
 ## Forma de trabalho esperada do Codex
 

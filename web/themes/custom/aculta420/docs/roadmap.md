@@ -10,7 +10,7 @@ tema `aculta`.
 Inclui:
 
 - rename completo do provider funcional do tema;
-- shim legado mínimo apenas para migração de ambientes existentes;
+- nenhum alias, shim ou provider legado de compatibilidade;
 - versionamento SemVer próprio;
 - documentação reestruturada;
 - config sync apontando para `aculta420`;
@@ -21,29 +21,20 @@ Inclui:
 - Bootstrap5 4.0.8 como infraestrutura;
 - assets globais/contextuais já separados onde comprovado;
 - contrato arquitetural do shell multidomínio documentado sem executar o redesign;
-- provider funcional e shim legado diferenciados em toda documentação normativa.
+- provider `aculta420` tratado como único contrato corrente em código, config e documentação normativa.
 
 Gate de release:
 
-- migration shim presente, mas sem runtime funcional;
-
 - tema descoberto/instalável;
-- config import sem referência runtime ao provider `aculta`;
+- `system.theme default = aculta420`;
+- `core.extension` sem provider legado do tema;
+- diretório `web/themes/custom/aculta/` ausente;
+- config import/status clean no Runtime validado;
 - blocks continuam posicionados;
 - SDC e libraries descobertos;
 - todos os domains representativos passam smoke test;
-- nenhuma instrução normativa trata `web/themes/custom/aculta/` como provider funcional.
-
-## 0.1.1 — Remove legacy shim
-
-Patch planejado somente após todos os ambientes confirmarem:
-
-- `system.theme default = aculta420`;
-- `core.extension` sem `aculta`;
-- config clean;
-- smoke tests de ACULTA420 aprovados.
-
-A entrega remove `web/themes/custom/aculta/` definitivamente.
+- `validate-aculta420-foundation` passa no Runtime;
+- documentação corrente não instrui compatibilidade com provider legado.
 
 ## 0.2.0 — Foundations 2.0
 

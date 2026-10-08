@@ -57,6 +57,21 @@ Client ID e segredo não são documentados nem impressos. O responsável
 configurou o cliente OAuth Google; nenhuma alteração foi feita na Hostinger ou
 no Drupal de produção neste trabalho.
 
+As configurações exportadas de Social Auth Google mantêm `client_id` e
+`client_secret` vazios. As Keys `google_oauth_client_id` e
+`google_oauth_client_secret` usam o provider Environment com
+`GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CLIENT_SECRET`; os objetos Key
+Configuration Override injetam esses valores no runtime quando as Keys os
+resolvem. Native Environment e Secure Bootstrap Adapter são operacionalmente
+equivalentes e não alteram as rotas/callbacks OAuth. Consulte o
+[ACULTA Secrets Contract](../operations/SECRETS.md).
+
+Na R0.4, o Homelab migrou para o Secure Bootstrap Adapter. O storage bruto e o
+YAML mantêm ambos os campos vazios; o loader local publica as variáveis para
+Drupal Key, e os Config Overrides fornecem os valores somente à configuração
+efetiva em memória. Web e Drush usam o mesmo bootstrap. Hostinger ainda não foi
+provisionada. OAuth e seus callbacks não dependem do adapter escolhido.
+
 ### Vínculos em Minha Conta
 
 A página `/conexoes` lê os vínculos da entidade Social Auth do usuário atual.
@@ -80,8 +95,9 @@ real continua pendente de validação interativa.
 ## Turnstile
 
 O Turnstile é o desafio ativo para visitantes anônimos nos formulários públicos
-em rotas não administrativas. O CAPTCHA global cobre formulários sem uma regra
-específica; os pontos configurados também permanecem ativos. As chaves são
+em rotas não administrativas. O Turnstile global protege formulários de
+visitantes anônimos; o papel `authenticated` usa `skip CAPTCHA` para não receber
+o widget. As chaves são
 mantidas na configuração de Key do runtime; seus valores não pertencem ao
 código nem à documentação. Após o
 responsável confirmar que o Turnstile estava funcionando, foi desativado o

@@ -10,8 +10,7 @@ snapshots de fases e runbooks históricos.
 - Drupal Core/contrib são a fonte de verdade das capacidades que já fornecem.
 - `aculta_portal` integra/orquestra; não cria storage paralelo sem necessidade.
 - o tema funcional `aculta420` é apresentação; não decide autenticação, access,
-  Domain, Commerce, LMS ou persistência. `aculta` é apenas shim temporário da
-  migração 0.1.0 e não recebe funcionalidade.
+  Domain, Commerce, LMS ou persistência.
 - SDC recebe dados preparados; não consulta storage/serviços/entidades diretamente.
 - não criar segunda suíte de design system concorrente ao Bootstrap5 + ACULTA420.
 
@@ -19,6 +18,7 @@ snapshots de fases e runbooks históricos.
 
 - preferir DI explícita e hooks OOP do Drupal 11 em código novo/refatorado;
 - não introduzir novo service locator `\Drupal::...` em classes onde DI cabe;
+- hooks do ACULTA420 vivem em `src/Hook/` com `#[Hook]`; não recriar arquivo `.theme` procedural;
 - callbacks procedurais registrados nominalmente pelo Form API podem permanecer
   procedurais enquanto o contrato exigir o nome da função;
 - refactor de hook não pode alterar comportamento/access/cache como efeito colateral.
@@ -91,8 +91,9 @@ snapshots de fases e runbooks históricos.
 
 ## Tema e CSS
 
-- o provider público do tema é `aculta420`; `aculta` só pode existir como shim temporário de migração 0.1.0, sem código de apresentação;
+- o único provider público do tema é `aculta420`; não manter alias, shim ou provider legado de compatibilidade;
 - libraries usam `aculta420/*` e SDCs usam `aculta420:*`;
+- o tema não chama services/classes de `aculta_portal`; o Portal prepara contexto e o tema apresenta;
 - logo, título, menu e accent por domain devem chegar ao tema como contexto de
   apresentação já resolvido pelo Portal; nunca escolher por hostname em Twig/PHP do tema;
 - nunca passar entidade `Domain` diretamente para Twig/SDC;
@@ -104,7 +105,8 @@ snapshots de fases e runbooks históricos.
 - Bootstrap5 continua infraestrutura estrutural/comportamental;
 - não reimplementar behavior Bootstrap/VVJ;
 - não converter Twig em massa para SDC;
-- mover CSS apenas quando ownership do componente estiver comprovado;
+- não manter `css/style.css`, `css/responsive.css` ou outro catch-all residual no tema; CSS deve ter ownership explícito;
+- mover CSS para SDC apenas quando ownership exclusivo do componente estiver comprovado;
 - regra antiga só sai após paridade visual, mobile, teclado/foco, AJAX
   reattachment e fallback;
 - CSS de admin/diagnóstico pode permanecer no módulo.
@@ -116,6 +118,8 @@ snapshots de fases e runbooks históricos.
 - segredos permanecem em environment/Key;
 - não versionar credenciais reais ou de teste;
 - alterações de módulos/config exigem documentação correspondente.
+- block placements do ACULTA420 devem usar região declarada e manter `plugin`,
+  `settings.id` e a dependência de conteúdo alinhados ao UUID existente.
 
 ## Lifecycle / updates
 

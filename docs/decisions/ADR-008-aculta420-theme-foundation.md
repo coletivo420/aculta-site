@@ -31,20 +31,19 @@ camada de integração.
 
 ## Compatibilidade de deploy
 
-0.1.0 mantém temporariamente um shim oculto em
-`web/themes/custom/aculta/`, contendo apenas metadata mínima.
+A decisão inicial considerou um shim temporário para facilitar a transição de
+ambientes. Durante o fechamento da Foundation 0.1.0 essa exceção foi retirada.
 
-Motivo: ambientes existentes podem ainda listar `aculta` em `core.extension`.
-Drupal trata extensão instalada ausente do filesystem como estado inválido.
+A versão final da fundação **não mantém provider legado, alias ou shim no
+repositório**. O estado suportado parte de `aculta420` instalado e configurado
+como tema público.
 
-O shim:
+Ambientes históricos que ainda dependam do provider anterior devem ser migrados
+operacionalmente antes de receber o estado final da 0.1.0; essa compatibilidade
+não é responsabilidade do runtime atual.
 
-- não possui Twig, CSS, JS, libraries ou SDC;
-- não é o tema default sincronizado;
-- não recebe novas features;
-- será removido em 0.1.1 após todos os ambientes migrarem.
-
-A migração deve ocorrer em maintenance mode.
+A troca de provider continua exigindo janela controlada/maintenance mode quando
+aplicável.
 
 ## IDs preservados
 
@@ -70,13 +69,11 @@ subsistemas e não o provider do tema.
 ### Custos
 
 - config sync precisa migrar theme dependencies/settings;
-- deploy exige sequência controlada;
-- consumidores do namespace antigo precisam migrar;
-- shim temporário precisa ser removido após a migração.
+- deploy de ambiente histórico exige sequência controlada;
+- consumidores históricos do namespace anterior precisam migrar fora do runtime atual.
 
 ## Referências
 
 - documentação ACULTA420: `web/themes/custom/aculta420/docs/`;
-- migração: `web/themes/custom/aculta420/docs/migration-0.1.0.md`;
 - SDC API: https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/api-for-single-directory-components
 - troubleshooting de extensão ausente: https://www.drupal.org/docs/updating-drupal/troubleshooting-database-updates

@@ -4,7 +4,8 @@
 
 - Pessoas anônimas recebem Turnstile nos formulários públicos. O token válido é
   obrigatório para enviar; submissão sem token válido é recusada.
-- Turnstile é o único desafio configurado como padrão global. Não existe
+- Turnstile é o único desafio e fica ativo globalmente para visitantes anônimos.
+  Pessoas autenticadas podem ignorá-lo pela permissão `skip CAPTCHA`. Não existe
   fallback para outro CAPTCHA quando JavaScript ou o serviço falha.
 - O widget é apresentado em português brasileiro (`pt-br`) e usa aparência
   `always`, para ficar visível ao usuário anônimo.
@@ -15,9 +16,10 @@
 
 ## Configuração
 
-`captcha.settings` habilita CAPTCHA globalmente para formulários não
-administrativos e define `turnstile/Turnstile` como desafio padrão. CAPTCHA
-points explícitos também usam Turnstile; não devem selecionar outro desafio.
+`captcha.settings.enable_globally` fica habilitado (`1`) para visitantes
+anônimos, com rotas administrativas excluídas. O papel `authenticated` possui
+`skip CAPTCHA`. CAPTCHA points explícitos também usam `turnstile/Turnstile`; nenhum ponto deve
+selecionar outro desafio.
 
 As chaves do serviço continuam fornecidas pelo mecanismo de Key/environment do
 ambiente. `TURNSTILE_KEYS_JSON` contém JSON codificado em Base64 e o provider

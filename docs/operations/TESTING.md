@@ -36,6 +36,19 @@ vendor/bin/drush updatedb:status
 
 Adicionar lint e testes específicos dos arquivos alterados.
 
+### Gate ACULTA420 Foundation
+
+O tema possui gate próprio, separado de Portal/Commerce:
+
+```sh
+vendor/bin/drush php:script validate-aculta420-foundation --script-path=../scripts
+```
+
+Esse gate é somente leitura e valida provider/config, OOP hooks, fronteira
+Portal/tema, libraries/assets, Twig/YAML, descoberta SDC e invariantes
+anti-regressão de CSS. O gate `validate-portal-commerce-security.php` não deve
+voltar a testar internals do tema.
+
 ## Configuration Sync
 
 - aplicar apenas configuração pretendida;

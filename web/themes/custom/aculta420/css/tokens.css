@@ -34,6 +34,9 @@
   --aculta-control-border: var(--aculta-green-dark);
   --aculta-space-section: clamp(2.25rem, 4.5vw, 4.25rem);
   --aculta-focus: rgba(104, 148, 39, 0.35);
+  --aculta-motion-fast: 180ms;
+  --aculta-ease-standard: ease;
+  --aculta-shadow-hover: 0 0.125rem 0.5rem rgba(12, 60, 41, 0.08);
 
   --bs-font-sans-serif: var(--aculta-font-body);
   --bs-body-font-family: var(--aculta-font-body);

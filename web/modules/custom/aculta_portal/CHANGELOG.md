@@ -8,13 +8,26 @@ O Portal usa tags `portal-vX.Y.Z`.
 
 ### Correções da fundação ACULTA420
 
+- Portal passa a preparar breadcrumb e URL de transparência institucional sem criar dependência reversa no tema.
 - Atualiza o relatório de requisitos para reconhecer `aculta420` como tema público/default.
-- Migra os tokens institucionais e cache tag de `aculta.settings` para `aculta420.settings`.
-- Atualiza validadores pós-rename para `aculta420.theme` e para o provider funcional.
+- Move dados institucionais funcionais para `aculta_portal.settings`; o tema mantém apenas configuração de apresentação.
+- Tokens institucionais ignoram UUID ausente/vazio antes da consulta de entidade, evitando condições SQL `uuid IN ()` durante configurações incompletas; o gate da Foundation protege essa ordem.
+- O contato público é servido pelo Webform `aculta_contact` em `/contato`; o gate deixa de exigir publicação do node histórico `contact`, e o instalador não cria mais esse node nem o formulário legado do módulo Contact.
+- Atualiza o teste de redirects de Conta para comparar URLs geradas pelas rotas vigentes, sem exigir slugs antigos (`/minha-conta/...`).
+- Freelinking permanece ativo porque o formato de texto Wiki o utiliza; Composer foi atualizado para 4.0.3, corrigindo SA-CONTRIB-2026-213 (CVE-2026-107310; versões afetadas `<4.0.3`).
+- Separa o gate ACULTA420 do gate Portal/Commerce e acompanha os hooks OOP do tema.
 - Alinha o gate de autenticação à remoção de `user_registrationpassword` e à permanência de `username_enumeration_prevention`.
 
 ### Autenticação
 
+- Formaliza o ACULTA Secrets Contract: Drupal Key/env permanece a interface
+  única e o provisioning fica desacoplado do sistema operacional. Homelab e
+  Hostinger compartilham Keys e nomes de variáveis; config exportada continua
+  sem credenciais. A R0.4 validou o Secure Bootstrap Adapter no Homelab e
+  limpou o storage bruto Google; Hostinger ainda não foi provisionada.
+- Corrige o gate Portal/Security para mapear explicitamente Key ID, variável de
+  ambiente e item `client_id`/`client_secret` da configuração OAuth.
+- Define a prova OAuth no gate pela separação entre storage bruto vazio, Keys Environment, Key Configuration Overrides ativos e configuração efetiva coincidente, sem exibir valores.
 - Preserva query string no destination de login/OAuth e adiciona `url.query_args` ao cache do menu, mantendo buscas, filtros e paginação após autenticação.
 - Corrige o identificador do usuário externo no callback Google para `SocialAuthUserInterface::getId()`.
 - Impede desconexão Google quando a conta Social Auth ainda não possui senha local escolhida, reutilizando o marcador `social_auth_password_unset` via DI de `UserDataInterface`.

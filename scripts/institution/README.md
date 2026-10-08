@@ -15,7 +15,6 @@ Para estado atual use:
 
 - [documentação raiz](../../docs/README.md);
 - [ACULTA420](../../web/themes/custom/aculta420/README.md);
-- [migração 0.1.0](../../web/themes/custom/aculta420/docs/migration-0.1.0.md);
 - [camadas anti-regressão](../../docs/ANTI-REGRESSION.md).
 
 Não atualizar relatórios históricos apenas para fazê-los parecer atuais, salvo
