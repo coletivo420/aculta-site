@@ -75,7 +75,7 @@ final class ThemeHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
-    $variables['aculta_domain_identity'] = $this->normalizeDomainIdentity(
+    $variables['aculta_domain_brand_fallback'] = $this->buildDomainBrandFallback(
       $variables['domain_presentation']['identity'] ?? NULL,
     );
 
@@ -118,16 +118,16 @@ final class ThemeHooks {
   }
 
   /**
-   * Adapts the neutral Portal identity contract for shell presentation.
+   * Builds the minimal textual branding fallback from the neutral identity.
    *
    * @param mixed $identity
    *   The neutral identity array prepared by aculta_portal, when available.
    *
-   * @return array{purpose: string, title: string, short_title: ?string, home_url: string, logo_alt: ?string}|null
-   *   Presentation-safe scalar identity, or NULL when the contract is absent
+   * @return array{label: string, home_url: string}|null
+   *   Presentation-only fallback data, or NULL when the contract is absent
    *   or incomplete. No Domain lookup or functional fallback happens here.
    */
-  private function normalizeDomainIdentity(mixed $identity): ?array {
+  private function buildDomainBrandFallback(mixed $identity): ?array {
     if (!is_array($identity)) {
       return NULL;
     }
@@ -148,17 +148,11 @@ final class ThemeHooks {
 
     $shortTitle = isset($identity['short_title']) && is_string($identity['short_title'])
       ? trim($identity['short_title'])
-      : NULL;
-    $logoAlt = isset($identity['logo_alt']) && is_string($identity['logo_alt'])
-      ? trim($identity['logo_alt'])
-      : NULL;
+      : '';
 
     return [
-      'purpose' => $purpose,
-      'title' => $title,
-      'short_title' => $shortTitle !== '' ? $shortTitle : NULL,
+      'label' => $shortTitle !== '' ? $shortTitle : $title,
       'home_url' => $homeUrl,
-      'logo_alt' => $logoAlt !== '' ? $logoAlt : NULL,
     ];
   }
 
