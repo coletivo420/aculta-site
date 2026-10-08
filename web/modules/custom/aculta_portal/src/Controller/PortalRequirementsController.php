@@ -6,7 +6,7 @@ namespace Drupal\aculta_portal\Controller;
 
 use Composer\Semver\Semver;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -15,7 +15,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Administrative status report for the Portal's runtime integrations. */
-final class PortalRequirementsController extends ControllerBase {
+final class PortalRequirementsController implements ContainerInjectionInterface {
 
   public function __construct(
     private readonly ThemeHandlerInterface $themeHandler,
