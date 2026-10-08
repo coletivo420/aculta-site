@@ -21,6 +21,11 @@ anônimos, com rotas administrativas excluídas. O papel `authenticated` possui
 `skip CAPTCHA`. CAPTCHA points explícitos também usam `turnstile/Turnstile`; nenhum ponto deve
 selecionar outro desafio.
 
+Os rótulos dos pontos de login, cadastro e recuperação, assim como título,
+descrição e mensagem de validação, são mantidos em pt-BR na configuração
+canônica `config/sync`. Localização não altera o escopo nem a validação do
+challenge.
+
 As chaves do serviço continuam fornecidas pelo mecanismo de Key/environment do
 ambiente. `TURNSTILE_KEYS_JSON` contém JSON codificado em Base64 e o provider
 Key faz a decodificação. Nunca versionar segredos ou habilitar um desafio
