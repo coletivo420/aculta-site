@@ -1,6 +1,6 @@
 # ACULTA420 0.2-B.1 — Inventário da fronteira Domain Presentation
 
-Status: **inventário documental; sem alteração de Runtime**.
+Status: **0.2-B.1 concluída; 0.2-B.2 implementada, validação Runtime pendente**.
 
 Este documento delimita a fronteira entre Drupal Domain, `aculta_portal` e o
 tema `aculta420` antes da implementação do shell multidomínio 0.2-C/0.2-D.
