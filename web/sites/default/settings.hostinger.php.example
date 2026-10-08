@@ -1,7 +1,0 @@
-<?php
-
-// Scaffolding only; this is not a complete production settings file.
-// Replace ACCOUNT locally. Keep the secret file outside public_html and do not
-// version this settings file. Production database settings remain local.
-$settings['aculta_secrets_file'] = '/home/ACCOUNT/.aculta/secrets.env';
-require __DIR__ . '/aculta.secrets.php';

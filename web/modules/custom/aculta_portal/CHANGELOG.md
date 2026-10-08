@@ -1,5 +1,14 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P1: padrão Drupal 11+ e gate progressivo
+
+- Drupal Core 11.3+ passa a ser o baseline arquitetural explícito do módulo.
+- Adicionada documentação normativa para humanos, Codex, ChatGPT e demais agentes de IA.
+- Adicionado gate estático progressivo que impede expansão da dívida conhecida de service locators, hooks procedurais, wrappers de Views, static entity loads, ausência de strict_types e tag legado de subscriber.
+- Nenhum hook, controller, form, subscriber, fluxo Domain/Commerce/LMS ou comportamento runtime foi refatorado nesta fase.
+- Compatibilidade formal com Drupal 12/13 continua condicionada à validação das dependências contrib.
+
+
 Todas as mudanças relevantes do `aculta_portal` devem ser registradas aqui.
 
 O Portal usa tags `portal-vX.Y.Z`.

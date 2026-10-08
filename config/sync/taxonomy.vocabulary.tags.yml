@@ -1,9 +1,0 @@
-uuid: 9a68445d-3ee6-4e99-9c3d-cbc9d260291d
-langcode: pt-br
-status: true
-dependencies: {  }
-name: Tags
-vid: tags
-description: 'Palavras-chave administráveis para organizar conteúdos publicados, sem preenchimento automático fictício.'
-weight: 0
-new_revision: false

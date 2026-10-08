@@ -1,0 +1,198 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Progressive static gate for the aculta_portal Drupal 11+ standard.
+ *
+ * P1 intentionally freezes known modernization debt instead of pretending it
+ * is already removed. Later phases must reduce the allowlists/count ceilings
+ * when they eliminate debt. New files/usages must comply immediately.
+ */
+
+$root = dirname(__DIR__);
+$moduleRoot = $root . '/web/modules/custom/aculta_portal';
+$srcRoot = $moduleRoot . '/src';
+$failures = [];
+$checks = 0;
+
+$check = static function (bool $condition, string $message) use (&$failures, &$checks): void {
+  $checks++;
+  if (!$condition) {
+    $failures[] = $message;
+  }
+};
+
+$read = static function (string $path) use (&$failures): string {
+  $content = @file_get_contents($path);
+  if ($content === FALSE) {
+    $failures[] = 'Cannot read required file: ' . $path;
+    return '';
+  }
+  return $content;
+};
+
+$check(is_dir($moduleRoot), 'aculta_portal module directory must exist.');
+$check(is_dir($srcRoot), 'aculta_portal src directory must exist.');
+
+$info = $read($moduleRoot . '/aculta_portal.info.yml');
+$check(
+  preg_match('/^core_version_requirement:\s*\^11\.3\s*$/m', $info) === 1,
+  'aculta_portal.info.yml must declare core_version_requirement: ^11.3.',
+);
+
+$requiredDocs = [
+  $root . '/AGENTS.md' => 'docs/portal/DRUPAL-11-STANDARDS.md',
+  $root . '/docs/ANTI-REGRESSION.md' => 'DRUPAL-11-STANDARDS.md',
+  $root . '/docs/README.md' => 'DRUPAL-11-STANDARDS.md',
+  $root . '/docs/portal/README.md' => 'DRUPAL-11-STANDARDS.md',
+  $moduleRoot . '/README.md' => 'DRUPAL-11-STANDARDS.md',
+  $moduleRoot . '/CHANGELOG.md' => 'Drupal 11+',
+];
+foreach ($requiredDocs as $path => $needle) {
+  $content = $read($path);
+  $check(
+    str_contains($content, $needle),
+    basename($path) . ' must reference the Drupal 11+ standard/change.',
+  );
+}
+$check(
+  is_file($root . '/docs/portal/DRUPAL-11-STANDARDS.md'),
+  'Normative docs/portal/DRUPAL-11-STANDARDS.md must exist.',
+);
+
+$services = $read($moduleRoot . '/aculta_portal.services.yml');
+$legacySubscriberTags = preg_match_all('/name:\s*kernel\.event_subscriber\b/', $services);
+$check(
+  is_int($legacySubscriberTags) && $legacySubscriberTags <= 6,
+  'Legacy kernel.event_subscriber debt may not grow above the P1 baseline of 6.',
+);
+$check(
+  preg_match('/name:\s*event_subscriber\b/', $services) === 1,
+  'At least one canonical event_subscriber tag must remain present.',
+);
+
+$legacyProceduralFunctions = [
+  'aculta_portal_metatag_tags_alter',
+  'aculta_portal_token_info',
+  'aculta_portal_tokens',
+  'aculta_portal_node_presave',
+  'aculta_portal_metatags_alter',
+  'aculta_portal_form_node_form_alter',
+  'aculta_portal_validate_activity',
+  'aculta_portal_entity_access',
+  'aculta_portal_entity_presave',
+  'aculta_portal_form_alter',
+  'aculta_portal_change_mail_confirmation_message',
+  'aculta_portal_security_password_redirect',
+  'aculta_portal_security_password_after_build',
+  'aculta_portal_account_photo_redirect',
+  'aculta_portal_address_redirect',
+  'aculta_portal_sync_customer_address_names',
+  'aculta_portal_library_info_alter',
+  'aculta_portal_validate_donation_amount',
+];
+
+$moduleFile = $moduleRoot . '/aculta_portal.module';
+if (is_file($moduleFile)) {
+  $moduleSource = $read($moduleFile);
+  preg_match_all('/^function\s+(aculta_portal_[A-Za-z0-9_]+)\s*\(/m', $moduleSource, $matches);
+  $unknown = array_values(array_diff($matches[1] ?? [], $legacyProceduralFunctions));
+  $check(
+    $unknown === [],
+    'No new procedural runtime functions may be added to aculta_portal.module: ' . implode(', ', $unknown),
+  );
+}
+else {
+  $check(TRUE, 'aculta_portal.module removed after procedural debt migration.');
+}
+
+$serviceLocatorCeilings = [
+  'src/Controller/PortalController.php' => 3,
+  'src/Controller/PortalRequirementsController.php' => 2,
+  'src/Controller/WikiController.php' => 6,
+  'src/Support/Form/SupportForm.php' => 1,
+];
+$viewsWrapperCeilings = [
+  'src/Controller/CoursesController.php' => 1,
+  'src/Controller/WikiController.php' => 1,
+];
+$staticLoadCeilings = [
+  'src/Support/Form/SupportForm.php' => 1,
+];
+$strictTypesDebt = [
+  'src/AccountShellBuilder.php',
+  'src/Auth/AuthIntegrationManager.php',
+  'src/Controller/PortalController.php',
+  'src/Controller/PortalRequirementsController.php',
+  'src/Hook/PortalHooks.php',
+  'src/Support/Controller/SupportController.php',
+  'src/Support/Form/SettingsForm.php',
+  'src/Support/Form/SupportForm.php',
+  'src/Plugin/metatag/Tag/OrganizationAlternateName.php',
+  'src/Plugin/metatag/Tag/OrganizationEmail.php',
+  'src/Plugin/metatag/Tag/OrganizationLegalName.php',
+  'src/Plugin/metatag/Tag/OrganizationTaxId.php',
+  'src/Plugin/metatag/Tag/PostalAddressTag.php',
+  'src/Plugin/metatag/Tag/SchemaWebPageName.php',
+  'src/Plugin/metatag/Tag/SchemaWebPageUrl.php',
+];
+
+$phpFiles = [];
+$iterator = new RecursiveIteratorIterator(
+  new RecursiveDirectoryIterator($srcRoot, FilesystemIterator::SKIP_DOTS),
+);
+foreach ($iterator as $file) {
+  if ($file->isFile() && strtolower($file->getExtension()) === 'php') {
+    $phpFiles[] = $file->getPathname();
+  }
+}
+sort($phpFiles);
+$check(count($phpFiles) >= 38, 'Portal runtime PHP inventory must not unexpectedly shrink below the P1 baseline without gate review.');
+
+$locatorPattern = '/\\\\Drupal::(?:service|entityTypeManager|database|request|routeMatch|currentUser|config|messenger|entityQuery)\s*\(/';
+$viewsPattern = '/\b(?:views_embed_view|Views::getView)\s*\(/';
+$staticLoadPattern = '/\b(?:Node|User|Role|PaymentGateway|ProfileType|FieldConfig|FieldStorageConfig)::(?:load|loadByName)\s*\(/';
+
+foreach ($phpFiles as $path) {
+  $source = $read($path);
+  $relative = 'src/' . str_replace('\\', '/', substr($path, strlen($srcRoot) + 1));
+
+  $locatorCount = preg_match_all($locatorPattern, $source);
+  $locatorCeiling = $serviceLocatorCeilings[$relative] ?? 0;
+  $check(
+    is_int($locatorCount) && $locatorCount <= $locatorCeiling,
+    $relative . ' exceeds service-locator debt ceiling ' . $locatorCeiling . '.',
+  );
+
+  $viewsCount = preg_match_all($viewsPattern, $source);
+  $viewsCeiling = $viewsWrapperCeilings[$relative] ?? 0;
+  $check(
+    is_int($viewsCount) && $viewsCount <= $viewsCeiling,
+    $relative . ' exceeds Views-wrapper debt ceiling ' . $viewsCeiling . '.',
+  );
+
+  $staticLoadCount = preg_match_all($staticLoadPattern, $source);
+  $staticLoadCeiling = $staticLoadCeilings[$relative] ?? 0;
+  $check(
+    is_int($staticLoadCount) && $staticLoadCount <= $staticLoadCeiling,
+    $relative . ' exceeds static entity-load debt ceiling ' . $staticLoadCeiling . '.',
+  );
+
+  if (!in_array($relative, $strictTypesDebt, TRUE)) {
+    $check(
+      preg_match('/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/', $source) === 1,
+      $relative . ' must declare strict_types=1.',
+    );
+  }
+}
+
+if ($failures !== []) {
+  fwrite(STDERR, "ACULTA PORTAL DRUPAL 11+ GATE: FAIL\n");
+  foreach ($failures as $failure) {
+    fwrite(STDERR, '- ' . $failure . "\n");
+  }
+  exit(1);
+}
+
+echo 'ACULTA PORTAL DRUPAL 11+ GATE: PASS (' . $checks . " checks; progressive P1 baseline)\n";

@@ -14,14 +14,23 @@ snapshots de fases e runbooks históricos.
 - SDC recebe dados preparados; não consulta storage/serviços/entidades diretamente.
 - não criar segunda suíte de design system concorrente ao Bootstrap5 + ACULTA420.
 
-## Dependency Injection e hooks
+## Dependency Injection, hooks e padrão Drupal 11+
 
-- preferir DI explícita e hooks OOP do Drupal 11 em código novo/refatorado;
-- não introduzir novo service locator `\Drupal::...` em classes onde DI cabe;
-- hooks do ACULTA420 vivem em `src/Hook/` com `#[Hook]`; não recriar arquivo `.theme` procedural;
-- callbacks procedurais registrados nominalmente pelo Form API podem permanecer
-  procedurais enquanto o contrato exigir o nome da função;
-- refactor de hook não pode alterar comportamento/access/cache como efeito colateral.
+O padrão normativo do Portal é `docs/portal/DRUPAL-11-STANDARDS.md` e vale para desenvolvimento humano e por IA.
+
+- baseline arquitetural do `aculta_portal`: Drupal Core 11.3+;
+- preferir DI explícita em classes e não introduzir novos service locators `\Drupal::...` em `src/`;
+- hooks runtime novos/refatorados do módulo usam OOP em `src/Hook/` com `#[Hook]` quando o Core instalado suporta o hook;
+- hooks de install/update/post-update/schema e outros lifecycle que o Core exige procedurais permanecem procedurais;
+- não recriar ou expandir `aculta_portal.module` para novos hooks runtime; a dívida procedural existente só pode diminuir;
+- callbacks Form API novos/refatorados em Drupal 11.3+ usam callables suportados pelo `CallableResolver`, preferencialmente serviços DI; evitar `[$this, 'callback']` persistível;
+- EntityQuery de conteúdo sempre declara conscientemente `accessCheck(TRUE)` ou `accessCheck(FALSE)`;
+- subscribers implementam `EventSubscriberInterface` e novos registros usam `event_subscriber`; prioridade só muda com justificativa funcional e teste;
+- `max-age: 0` não é substituto automático para contexts/tags corretos; access e cacheability acompanham a decisão funcional;
+- compatibilidade formal com Drupal 12/13 só é declarada após validação de Core e contrib; deprecations são tratadas pelo substituto publicado, não por suposição;
+- o gate progressivo `php scripts/validate-aculta-portal-drupal11.php` congela a dívida atual e impede sua expansão até as fases que a removerão.
+
+Refactor de infraestrutura não pode alterar comportamento, access, cache, Domain, Commerce, autenticação ou segurança como efeito colateral.
 
 ## Domain
 

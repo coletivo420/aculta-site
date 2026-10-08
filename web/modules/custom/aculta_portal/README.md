@@ -53,7 +53,15 @@ fontes de verdade.
 
 ## Documentação normativa
 
-Consultar [docs/portal](../../../../docs/portal/README.md).
+O padrão obrigatório para código humano e gerado/revisado por IA é [Padrão Drupal 11+](../../../../docs/portal/DRUPAL-11-STANDARDS.md).
+
+Execute o gate progressivo antes de concluir alterações estruturais:
+
+```sh
+php scripts/validate-aculta-portal-drupal11.php
+```
+
+Consultar também [docs/portal](../../../../docs/portal/README.md).
 
 O roadmap e decisões de arquitetura vivem lá. Este README serve como entrada
 rápida para quem está no diretório do módulo.

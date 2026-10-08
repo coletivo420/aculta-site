@@ -1,7 +1,0 @@
-access aculta portal:
-  title: Acessar o portal da pessoa usuária
-  description: Consultar e administrar somente as próprias informações de conta no portal.
-administer aculta support settings:
-  title: Administrar configurações editoriais de Apoie
-  description: Alterar o texto público da página Apoie.
-  restrict access: true
