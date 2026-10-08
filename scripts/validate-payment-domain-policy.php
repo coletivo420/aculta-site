@@ -33,7 +33,7 @@ foreach ($routes as $name => $route) {
 
 $assert($centralRoutes !== [], 'At least one central Commerce payment route was inspected.');
 
-foreach (['commerce_checkout.checkout', 'commerce_checkout.form'] as $required) {
+foreach (['commerce_cart.page', 'commerce_checkout.checkout', 'commerce_checkout.form'] as $required) {
   $assert(isset($centralRoutes[$required]), 'Required checkout route is central: ' . $required);
 }
 
@@ -82,6 +82,7 @@ $requestSubscriberSource = file_get_contents($portalRoot . '/src/EventSubscriber
 $hooksSource = file_get_contents($portalRoot . '/src/Hook/PortalHooks.php');
 
 foreach ([
+  'commerce_cart.',
   'commerce_checkout.',
   'commerce_payment.checkout.',
   'commerce_payment.notify',
