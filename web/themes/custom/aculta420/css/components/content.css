@@ -1,0 +1,85 @@
+/* 8. Main content: editorial spacing rather than a dashboard of panels. */
+.aculta-page-heading { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+.aculta-page-heading h1 { margin: 0; }
+.aculta-highlighted:has(.alert, .nav, .button, .help) { margin-bottom: 1.5rem; }
+.aculta-content .view-empty { max-width: 70ch; padding-block: 1rem; }
+
+/* 9. Section headers, ready for future content. */
+/* Oswald em faixas de seção; detalhes discretos em CSS, sem imagens. */
+.aculta-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  padding: 0.625rem 1.25rem;
+  margin-block: var(--aculta-space-section) 1.125rem;
+  color: var(--aculta-text-inverse);
+  background-color: var(--aculta-green-dark);
+  font-family: var(--aculta-font-display);
+  font-size: clamp(1.5625rem, 2vw, 1.8125rem);
+  line-height: 1.1;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.aculta-section-title::before,
+.aculta-section-title::after {
+  content: "";
+  flex: 0 0 clamp(0.75rem, 2vw, 1.75rem);
+  height: 1px;
+  background-color: currentColor;
+  opacity: 0.5;
+}
+.aculta-main .aculta-section-title { margin-block: var(--aculta-space-section) 1.125rem; }
+
+/* Superfícies brancas sobre creme, com pouca ornamentação. */
+.aculta-surface,
+.aculta-content-surface {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background-color: var(--aculta-surface-raised);
+  border-inline-start: 3px solid var(--aculta-border-accent);
+  border-radius: var(--bs-border-radius);
+}
+.card {
+  --bs-card-border-color: var(--aculta-border-default);
+  --bs-card-border-radius: var(--bs-border-radius);
+  --bs-card-inner-border-radius: calc(var(--bs-border-radius) - 1px);
+  --bs-card-spacer-x: 1.5rem;
+  --bs-card-spacer-y: 1.5rem;
+  box-shadow: none;
+}
+.card .card-title { margin-block: 0 0.75rem; }
+.card .card-title a { color: var(--aculta-text-primary); text-decoration: none; }
+.card .card-title a:hover, .card .card-title a:focus-visible { text-decoration: underline; text-decoration-color: var(--aculta-border-accent); }
+.card .card-text:last-child { margin-bottom: 0; }
+.card,
+.aculta-project,
+.aculta-areas > section,
+.aculta-editorial-list .views-row {
+  background-color: var(--aculta-surface-raised);
+}
+.card,
+.aculta-project,
+.aculta-editorial-list .views-row {
+  border: 1px solid var(--aculta-border-default);
+  border-top: 3px solid var(--aculta-interactive-active-bg);
+  border-radius: var(--bs-border-radius);
+}
+.card,
+.aculta-project,
+.aculta-editorial-list .views-row {
+  transition: border-color var(--aculta-motion-fast) var(--aculta-ease-standard), box-shadow var(--aculta-motion-fast) var(--aculta-ease-standard), transform var(--aculta-motion-fast) var(--aculta-ease-standard);
+}
+.card:is(:hover, :focus-within),
+.aculta-project:is(:hover, :focus-within),
+.aculta-editorial-list .views-row:is(:hover, :focus-within) {
+  border-color: var(--aculta-interactive-active-bg);
+  box-shadow: var(--aculta-shadow-hover);
+  transform: translateY(-2px);
+}
+.aculta-metadata, .aculta-category { line-height: 1.5; }
+.aculta-category { color: var(--aculta-text-primary); font-weight: 600; }
+
+@media (max-width: 575.98px) {
+  .aculta-section-title { gap: 0.75rem; }
+}

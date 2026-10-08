@@ -1,0 +1,38 @@
+aculta_portal.dashboard:
+  title: Minha conta
+  description: Acesso privado ao perfil e às interações pessoais com a Associação.
+  route_name: aculta_portal.dashboard
+  menu_name: account
+  weight: 5
+aculta_portal.support_settings:
+  title: Configurações do Apoio
+  description: Editar o texto introdutório da página pública Apoie.
+  route_name: aculta_portal.support_settings
+  parent: aculta_portal.admin
+  weight: 1
+aculta_portal.admin:
+  title: ACULTA Portal
+  description: Configurações e relatórios administrativos do módulo ACULTA Portal.
+  route_name: aculta_portal.admin
+  parent: system.admin_config
+  weight: 5
+aculta_portal.requirements:
+  title: Status dos módulos e temas
+  description: Status, versão mínima e versão instalada das integrações do Portal.
+  route_name: aculta_portal.requirements
+  parent: aculta_portal.admin
+  weight: 2
+aculta_portal.footer_support:
+  title: Apoie
+  description: Conheça as formas de apoio institucional disponíveis.
+  route_name: aculta_portal.support_form
+  menu_name: aculta-footer-participation
+  weight: -10
+aculta_portal.footer_participation:
+  title: Faça Parte
+  description: Envie uma manifestação de interesse em participar das iniciativas da Associação.
+  route_name: entity.webform.canonical
+  route_parameters:
+    webform: aculta_participation
+  menu_name: aculta-footer-participation
+  weight: -5

@@ -1,0 +1,73 @@
+{# Semantic layout; Bootstrap5 remains the sole provider of Bootstrap assets. #}
+<header class="aculta-header">
+  <div class="navbar aculta-navbar">
+    <div class="container aculta-container">
+      <div class="aculta-branding">
+        {{ page.header }}
+        {% if not aculta_has_system_branding and aculta_domain_brand_fallback %}
+          <a href="{{ aculta_domain_brand_fallback.home_url }}"
+             rel="home"
+             class="site-title">
+            {{ aculta_domain_brand_fallback.label }}
+          </a>
+        {% endif %}
+      </div>
+      {% if page.primary_menu %}
+        <button class="navbar-toggler aculta-menu-toggle" type="button"
+                data-bs-toggle="collapse" data-bs-target="#aculta-primary-menu"
+                aria-controls="aculta-primary-menu" aria-expanded="false"
+                aria-label="{{ 'Menu principal'|t }}">
+          <span class="navbar-toggler-icon" aria-hidden="true"></span>
+          <span>{{ 'Menu'|t }}</span>
+        </button>
+        <div class="collapse navbar-collapse" id="aculta-primary-menu">
+          {{ page.primary_menu }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+{% if aculta_account_menu %}
+  <div class="aculta-utility">
+    <div class="container aculta-container">{{ aculta_account_menu }}</div>
+  </div>
+{% endif %}
+
+<main id="main-content" class="aculta-main flex-grow-1" tabindex="-1">
+  <div class="container aculta-container">
+    {% if aculta_breadcrumb %}
+      <div class="aculta-breadcrumb">{{ aculta_breadcrumb }}</div>
+    {% endif %}
+    {% if page.highlighted or aculta_help %}
+      <div class="aculta-highlighted">{{ page.highlighted }}{{ aculta_help }}</div>
+    {% endif %}
+    {% if aculta_page_title and not institutional_home %}
+      <div class="aculta-page-heading">{{ aculta_page_title }}</div>
+    {% endif %}
+    <div class="row g-4 g-xl-5">
+      <div class="{{ page.sidebar ? 'col-12 col-lg-8' : 'col-12' }} aculta-content">
+        {% if aculta_account_edit_blocked %}
+          <div class="aculta-account-edit-notice" role="status">
+            <p>{{ 'O gerenciamento da sua conta é feito em Minha Conta.'|t }}</p>
+            <a href="{{ aculta_account_security_url }}">{{ 'Ir para Segurança'|t }}</a>
+          </div>
+        {% endif %}
+        {{ page.content }}
+      </div>
+      {% if page.sidebar %}
+        <aside class="col-12 col-lg-4 aculta-sidebar" aria-label="{{ 'Informações complementares'|t }}">
+          {{ page.sidebar }}
+        </aside>
+      {% endif %}
+    </div>
+  </div>
+</main>
+
+<footer class="aculta-footer mt-auto">
+  <div class="container aculta-container">
+    <div class="aculta-footer-surface">
+      {{ page.footer }}
+    </div>
+  </div>
+</footer>
