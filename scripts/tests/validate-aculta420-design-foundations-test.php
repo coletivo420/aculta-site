@@ -92,6 +92,7 @@ try {
     ['commented JavaScript switch is ignored', 'js/comments.js', "/* switch (theme) { case 'dark': card.hidden = true; } */\nconst label = 'normal';", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['inline JavaScript comment is ignored', 'js/inline-comment.js', "const enabled = true; // if (theme === 'dark') { localStorage.setItem('x', 'y'); }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['unrelated localStorage use is allowed', 'js/notice-storage.js', "localStorage.setItem('noticeDismissed', '1');", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['unrelated localStorage read is allowed', 'js/notice-storage-read.js', "const dismissed = localStorage.getItem('noticeDismissed');", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['CSS comments do not count as raw colors', 'css/comment-color.css', '/* legacy fallback was #fff; color: red */', ''],
     ['mode-like words inside a string are not a branch', 'js/string-only-mode.js', "if (label === 'dark theme') { renderLabel(); }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['unrelated Twig conditional text is not a mode branch', 'templates/string-only-mode.html.twig', "{% if label == 'dark theme' %}label{% endif %}", 'DARK TWIG BRANCHES: 0'],
@@ -192,6 +193,7 @@ try {
     ['regex parentheses do not truncate JavaScript if condition', 'js/regex-condition.js', "if (/\\)/.test(value) && theme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['regex URL slashes do not truncate JavaScript if condition', 'js/regex-url-condition.js', "if (/https?:\\/\\//.test(url) && theme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['multiline JavaScript mode ternary is scanned', 'js/multiline-mode-ternary.js', "const layout = theme === 'dark'\n  ? 'compact'\n  : 'normal';", 'JavaScript has no color-mode layout behavior'],
+    ['JavaScript mode ternary preserves semicolons inside strings', 'js/semicolon-string-ternary.js', "const layout = theme === 'dark' ? 'compact;wide' : 'normal';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.theme assignment', 'js/dataset-theme.js', "document.documentElement.dataset.theme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dataset.bsTheme assignment', 'js/dataset-bs-theme.js', "document.documentElement.dataset.bsTheme = 'dark';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript dynamic dataset.theme assignment', 'js/dataset-dynamic.js', "document.documentElement.dataset.bsTheme = getTheme();", 'JavaScript has no color-mode layout behavior'],
@@ -208,18 +210,26 @@ try {
     ['dynamic data-color-scheme setAttribute is rejected', 'js/set-attribute-color-scheme.js', "element.setAttribute('data-color-scheme', getScheme());", 'JavaScript has no color-mode layout behavior'],
     ['optional dynamic setAttribute is rejected', 'js/optional-set-attribute.js', "element.setAttribute?.('data-theme', getTheme());", 'JavaScript has no color-mode layout behavior'],
     ['direct className mode assignment is rejected', 'js/class-name-theme.js', "document.documentElement.className = 'theme-dark';", 'JavaScript has no color-mode layout behavior'],
+    ['template-literal className mode assignment is rejected', 'js/class-name-template.js', 'document.documentElement.className = `dark`;', 'JavaScript has no color-mode layout behavior'],
     ['Twig statement ternary', 'templates/set-ternary.html.twig', "{% set klass = theme == 'dark' ? 'compact' : 'standard' %}", 'Twig has no color-mode branch'],
     ['Twig colorScheme branch', 'templates/color-scheme.html.twig', "{% if colorScheme == 'dark' %}different{% endif %}", 'Twig has no color-mode branch'],
+    ['Twig whitespace-control mode branch', 'templates/whitespace-control.html.twig', "{%- if theme == 'dark' -%}different{%- endif -%}", 'Twig has no color-mode branch'],
     ['Dark selector in tokens stylesheet', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] .fixture { padding: 1rem; }\n", 'Color mode is token-only'],
     ['Structural declaration inside dark token block', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] {\n  display: none;\n}\n", 'custom properties only'],
     ['ordinary structural CSS rule in tokens stylesheet', 'css/tokens.css', "\n.card { color: #ffffff; display: none; }\n", 'Mode selectors and ACULTA/Bootstrap tokens occur only'],
     ['Twig inline script cannot branch on color mode', 'templates/inline-script.html.twig', "<script>if (theme === 'dark') { document.body.hidden = true; }</script>", 'JavaScript has no color-mode layout behavior'],
     ['Twig inline script cannot persist color mode', 'templates/inline-storage.html.twig', "<script>localStorage.setItem('theme', 'dark');</script>", 'Twig inline scripts do not persist or initialize color mode prematurely'],
+    ['Twig inline script cannot restore persisted color mode', 'templates/inline-storage-read.html.twig', "<script>const saved = localStorage.getItem('theme'); applyTheme(saved);</script>", 'Twig inline scripts do not persist or initialize color mode prematurely'],
     ['Twig style block cannot add a mode selector', 'templates/inline-style.html.twig', '<style>[data-bs-theme="dark"] .card { display:none; }</style>', 'Color mode is token-only'],
+    ['Twig style block cannot use raw named color', 'templates/inline-style-color.html.twig', '<style>.notice { color: red; }</style>', 'CSS literals in Twig style blocks need semantic tokens'],
     ['tokens stylesheet cannot import another stylesheet', 'css/tokens.css', "\n@import url('https://example.invalid/structural.css');\n", 'Token CSS parses within the supported flat-rule subset'],
     ['modern oklch color literal outside tokens is rejected', 'css/fixtures/oklch.css', '.notice { color: oklch(60% 0.2 120); }', 'CSS literals outside tokens.css need semantic tokens'],
     ['modern lab color literal outside tokens is rejected', 'css/fixtures/lab.css', '.notice { color: lab(50% 20 30); }', 'CSS literals outside tokens.css need semantic tokens'],
     ['named color literal outside tokens is rejected', 'css/fixtures/named-color.css', '.notice { color: red; }', 'CSS literals outside tokens.css need semantic tokens'],
+    ['side-specific border color literal outside tokens is rejected', 'css/fixtures/border-top-color.css', '.notice { border-top-color: red; }', 'CSS literals outside tokens.css need semantic tokens'],
+    ['bracket dataset read in mode branch is rejected', 'js/dataset-read.js', "if (document.documentElement.dataset['theme'] === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['protected getAttribute read in mode branch is rejected', 'js/get-attribute-read.js', "if (document.documentElement.getAttribute('data-color-mode') === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['persisted color-mode read is rejected', 'js/storage-read-theme.js', "const saved = localStorage.getItem('theme'); applyTheme(saved);", 'No premature color-mode script'],
   ];
   foreach ($cases as [$name, $relative, $contents, $expected_message]) {
     $fixture_path = $temporary_theme . '/' . $relative;
@@ -369,6 +379,22 @@ try {
     }
     file_put_contents($tokens_path, $original_tokens);
   }
+
+  $link_rgb_mismatch = str_replace(
+    '--aculta-link: var(--aculta-text-primary);',
+    '--aculta-link: var(--aculta-text-secondary);',
+    $original_tokens,
+  );
+  if ($link_rgb_mismatch === $original_tokens) {
+    throw new RuntimeException('Could not create Bootstrap link RGB companion fixture.');
+  }
+  file_put_contents($tokens_path, $link_rgb_mismatch);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, '--bs-link-color-rgb matches --bs-link-color')) {
+    $failures[] = 'Bootstrap link RGB companion mismatch was not rejected';
+  }
+  file_put_contents($tokens_path, $original_tokens);
 
   $surface_rgb_mismatch = str_replace(
     ['--aculta-surface-page-rgb: 242, 247, 240;', '--aculta-surface-page-rgb: 23, 21, 19;'],
