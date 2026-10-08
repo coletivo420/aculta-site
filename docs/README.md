@@ -28,6 +28,7 @@ Snapshots de PR/fase, SHAs e logs pertencem ao Git/GitHub.
 | shell multidomínio ACULTA420 | [../web/themes/custom/aculta420/docs/shell.md](../web/themes/custom/aculta420/docs/shell.md) |
 | fronteira Domain → Portal → ACULTA420 | [portal/DOMAIN-PRESENTATION-CONTRACT.md](portal/DOMAIN-PRESENTATION-CONTRACT.md) |
 | política do domínio administrativo central | [portal/ADMIN-DOMAIN-POLICY.md](portal/ADMIN-DOMAIN-POLICY.md) |
+| requests/redirects cross-domain | [portal/CROSS-DOMAIN-REQUEST-POLICY.md](portal/CROSS-DOMAIN-REQUEST-POLICY.md) |
 | Homelab | [../scripts/homelab/README.md](../scripts/homelab/README.md) |
 | Estados SQLite | [../estados/README.md](../estados/README.md) |
 
