@@ -64,6 +64,8 @@ Este padrão é obrigatório para:
 - ChatGPT e outros agentes;
 - demais ferramentas de IA que produzam ou revisem código neste repositório.
 
+O projeto em andamento é **Modernização Drupal 11+ Aculta Portal**. Antes de retomar PR #90, ler `docs/portal/ROADMAP.md` e `docs/portal/MODERNIZACAO-DRUPAL-11-HANDOFF.md`. Próxima fase: P5.2-A. Não antecipar P6.
+
 A referência normativa é `docs/portal/DRUPAL-11-STANDARDS.md`. Antes de alterar o Portal, leia esse documento e preserve as fronteiras Core/contrib → `aculta_portal` → contrato neutro → ACULTA420.
 
 Regras resumidas:

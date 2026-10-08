@@ -12,7 +12,8 @@ Ele não substitui as fontes de verdade desses subsistemas.
 - [Fontes de verdade](SOURCE-OF-TRUTH.md)
 - [Camadas anti-regressão](../ANTI-REGRESSION.md)
 - [Módulos Drupal](../modules/README.md)
-- [Roadmap atual](ROADMAP.md)
+- [Modernização Drupal 11+ Aculta Portal — roadmap P0–P10 e P5.x](ROADMAP.md)
+- [Passagem para o próximo agente](MODERNIZACAO-DRUPAL-11-HANDOFF.md)
 
 ## Conta
 

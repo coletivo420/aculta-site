@@ -1,5 +1,11 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — Modernização Drupal 11+ Aculta Portal: documentação
+
+- Roadmap detalhado P0–P10 e P5.x consolidado com próximos passos.
+- Novo documento de continuidade entre agentes e referências atualizadas em AGENTS e READMEs.
+- Somente documentação; comportamento runtime inalterado.
+
 ## 2026-10-08 — P5.1: SupportForm Entity API + DI
 
 - Substitui `PaymentGateway::load('mercado_pago')` por storage `commerce_payment_gateway` via `EntityTypeManagerInterface` injetado.

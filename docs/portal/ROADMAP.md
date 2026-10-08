@@ -1,49 +1,88 @@
-# Roadmap atual do ACULTA Portal
+# Modernização Drupal 11+ Aculta Portal
 
-Data da revisão: 2026-10-08.
+Atualizado em 2026-10-08. Plano técnico de modernização do módulo `aculta_portal`, separado das prioridades gerais do produto.
 
-Este documento contém apenas trabalho futuro/relevante. Fases concluídas e
-snapshots de execução ficam no histórico Git/PR.
+Repositório: `coletivo420/aculta-site`; branch `refactor/aculta-portal-p1-drupal11-standards`; PR [#90](https://github.com/coletivo420/aculta-site/pull/90).
+Referência normativa: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md). Transferência entre agentes: [guia de continuidade](MODERNIZACAO-DRUPAL-11-HANDOFF.md).
 
-## Baseline atual
+## Objetivo e restrições
 
-Já consolidados no `main`:
+Core Drupal 11.3+ com verificação de APIs no Core instalado; preferir práticas modernas e registrar separadamente deprecações oficiais e dívidas normativas ACULTA. Arquitetura: Core/contrib → Portal → contrato neutro → ACULTA420. Evitar novos service locators, storage paralelo, bypass de access, URLs hardcoded e lógica financeira custom redundante. MAIN mantém administração, cart, checkout e payment.
 
-- Drupal 11 + Domain com sete purposes ativos;
-- Apache + PHP-FPM no Homelab;
-- SQLite no Runtime de desenvolvimento;
-- Portal como camada de integração;
-- ACULTA420 Bootstrap Component Design System 0.1.0 como fundação do tema;
-- Turnstile como único CAPTCHA, fail-closed;
-- Social Auth Google integrado;
-- documentação modular por domínio.
+## Todas as fases
 
-## Modernização técnica Drupal 11+ em curso
+| Fase | Entrega | Estado |
+| --- | --- | --- |
+| P0 | Auditoria e inventário | Concluída |
+| P1 + P1-R | Baseline Drupal 11+, documentação, IA, gates | Revisada estaticamente |
+| P2.1–P2.3 + P2-R | Token/Editorial/Library OOP e DI | Revisada estaticamente |
+| P3.1–P3.3 | Form API/CallableResolver/callbacks exactly-once | Revisada estaticamente |
+| P4.1–P4.3 + P4-R | form_alter, entity_access, entity_presave OOP; .module vazio removido | Revisada estaticamente |
+| P5.1 | SupportForm: storage e BlockManager injetados | Concluída estaticamente |
+| P5.2–P5.7 e P5-R | Views, EntityQuery, controllers, storage e access | Próximas |
+| P6 | Render API, cache, privacidade, Domain | Planejada |
+| P7 | Subscribers, serviços, multidomínio | Planejada |
+| P8 | Deprecações e prontidão D12/D13 | Planejada |
+| P9 | Hardening, segurança, documentação e gates | Planejada |
+| P10 | Codex/Homelab, homologação, correções e merge | Planejada |
 
-Esta sequência é executada em subfases pequenas, sempre com revisão formal antes
-de avançar para a próxima família:
+Na P1 havia 18 funções runtime procedurais no `.module`; após P4, zero e arquivo removido. Lifecycle procedural exigido pelo Core é exceção legítima. Testes completos em runtime ainda NÃO foram executados.
 
-1. **P4-R — revisão OOP/DI**: revisar `form_alter`, `entity_access` e
-   `entity_presave`, remover resíduos procedurais e consolidar o gate.
-2. **P5 — EntityQuery / Views / access**: eliminar service locators e static
-   entity loads das áreas-alvo; toda EntityQuery declara `accessCheck()`;
-   wrappers de Views só são substituídos com paridade comprovada.
-3. **P6 — cacheability**: revisar `max-age: 0`, contexts/tags, tokens
-   Domain/alias, dados privados e contratos Portal → tema.
-4. **P7 — subscribers / services / multidomínio**: modernizar tags e DI,
-   revisar `isMainRequest()`, prioridades/event races e preservar MAIN como
-   autoridade para admin/cart/checkout/payment.
-5. **P8 — deprecações / Drupal 12 readiness**: classificar recomendado em D11,
-   deprecado em D11, removido/mudado em D12 e anunciado para D13; validar
-   contrib antes de declarar compatibilidade.
-6. **P9 — hardening final**: documentação, gates, failure modes, segurança,
-   SQLite/MariaDB, dependency audit e limpeza residual.
-7. **Finalização Codex/Homelab**: lint integral, gate real, `drush cr`,
-   Composer validate/audit, `updatedb:status`, `config:status` e smokes;
-   somente depois revisar/mergear a PR cumulativa.
+## P5 — EntityQuery, Views, Storage, DI e Access
 
-P1, P2 e P3 já possuem revisões formais. A P4-R fecha a família OOP/DI antes
-da P5.
+### P5.1 — concluída
+`src/Support/Form/SupportForm.php`: troca de `PaymentGateway::load()` por `EntityTypeManagerInterface` e de `\\Drupal::service('plugin.manager.block')` por `BlockManagerInterface`; strict_types, gate e changelog. Commit `75362a35c14156be9274ed1a29181e71a7bcf6e6`. Mantido fail-closed e Commerce Donation Flow; homologação runtime pendente.
+
+### P5.2-A — Cursos (PRÓXIMA)
+`src/Controller/CoursesController.php`: avaliar `views_embed_view('courses_catalog', 'block_1')` e confirmar a API do Core instalado; quando suportado, trocar por render element `#type => 'view'`. Preservar View/display, argumentos, empty state, cache, access, pager, filtros, attachments. Não pré-renderizar HTML ou introduzir fábrica de Views sem necessidade. Atualizar gate, changelog e docs no mesmo commit; smoke Homelab pendente.
+
+### P5.2-B — Wiki420
+`src/Controller/WikiController.php`: inventariar `views_embed_view` e `Views::getView`; distinguir renderização simples de execução programática. Migrar cada ponto apenas com paridade de display, filtros, argumentos, paginação, access, cache e isolamento do purpose WIKI.
+
+### P5.2-R — revisão de Views
+Comparação pré/pós para cada display, critérios de access/cache, output vazio e registro de testes pendentes; teto do gate zerado somente para wrappers eliminados.
+
+### P5.3 — EntityQuery/access
+Inventariar `getQuery()`, `entityQuery()`, `loadByProperties()`; impor `accessCheck(TRUE/FALSE)` explícito e justificado onde aplicável; validar filtros de UID, bundle, status, idioma, Domain, ownership e diferenças SQLite/MariaDB. `accessCheck(TRUE)` não substitui verificações individuais de entity access.
+
+### P5.4 — Controllers/DI
+- P5.4-A: `PortalController`, BlockManager e Social Auth.
+- P5.4-B: `PortalController`, Email Confirmer.
+- P5.4-C: `PortalController`, route match/form de conta e preservação de parâmetros com try/finally.
+- P5.4-D: `PortalRequirementsController`, ThemeHandler, Composer/root path.
+- P5.4-E: controllers residuais, inclusive Wiki.
+Cada recorte tem paridade funcional, DI e redução de teto no gate.
+
+### P5.5 — Storage
+Uniformizar storages injetados; revisar Profile `loadByUser`, `loadByProperties`, `loadMultiple`, Commerce customer e Social Auth, sem storage paralelo ou acesso direto a tabelas internas contrib.
+
+### P5.6 — Access
+Testar A vs B, operações view/update/delete, Wiki fora do Domain correto, conta privada, vínculos OAuth, perfis Commerce e cacheability de AccessResult. Preservar fail-closed do Mercado Pago.
+
+### P5.7 / P5-R — revisão formal
+Validar APIs modernas, EntityQuery, Views, DI, access, cache, storage, invariantes e gates, documentando resultados realmente executados e pendências de runtime.
+
+## P6 — Render/cache/privacidade
+P6.1 inventário render arrays; P6.2 tokens de URL/imagem e cache Domain/alias/host/scheme (`domain`, `url.site`); P6.3 Conta privada; P6.4 Views/LMS/Group; P6.5 Form API/AccessResult; P6.6 contrato Portal → ACULTA420; P6-R revisão de contexts, tags, max-age e isolamento.
+
+## P7 — Subscribers/serviços/multidomínio
+P7.1 inventário listeners; P7.2 tags legadas e API atual; P7.3 isMainRequest e subrequests; P7.4 DI; P7.5 Domain purpose/rotas; P7.6 eventos Conta/OAuth/Commerce; P7.7 deduplicação; P7-R revisão de prioridades/segurança.
+
+## P8 — Deprecações/prontidão D12/D13
+P8.1 inventário; P8.2 substituições seguras; P8.3 Upgrade Status/Rector conforme pertinência; P8.4 matriz contrib; P8.5 PHP/Symfony/Composer; P8.6 matriz CURRENTLY RECOMMENDED IN D11 / DEPRECATED IN D11 / REMOVED/CHANGED IN D12 / ANNOUNCED FOR D13; P8-R revisão. Nunca declarar compatibilidade major sem validar Core e contrib.
+
+## P9 — Hardening final
+P9.1 segredos/segurança; P9.2 erros/failure modes; P9.3 SQLite/MariaDB; P9.4 performance; P9.5 gates; P9.6 código órfão; P9.7 documentação/IA; P9.8 rollback/release readiness; P9-R revisão acumulada.
+
+## P10 — Codex/Homelab
+Verificar branch, HEAD e main; lint PHP integral e gate; Composer validate/audit; `drush cr`; `updatedb:status` e `config:status`; smoke Conta/Wiki/Cursos/Social Auth/Commerce/Domain e isolamento A/B; correções finas e revisão final. Não executar updb/cim/cex automaticamente. Merge só após validação e autorização.
+
+## Protocolo de execução
+Uma subfase por vez na **mesma branch/PR #90**; sem merge/rebase/force push prematuro. Sempre código + gate + changelog + documentação; ao fim de cada família revisão -R. Reportar separadamente estático, lint, gate real e Homelab. Não assumir que histórico de chat substitui código Git.
+
+---
+
+## Prioridades do produto independentes desta modernização
 
 ## Prioridade 1 — fechar internacionalização pt-BR
 
