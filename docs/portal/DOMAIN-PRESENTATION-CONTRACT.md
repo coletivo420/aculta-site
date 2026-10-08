@@ -439,11 +439,32 @@ A fase estará pronta para avançar à 0.2-C quando:
 11. documentação e gate anti-regressão refletirem o contrato;
 12. nenhuma mudança visual estrutural tiver sido introduzida na 0.2-B.
 
+## Implementação 0.2-B.2
+
+A implementação corrente adiciona:
+
+- `Presentation/DomainPresentation.php`: value object interno, cache-aware, que não atravessa para Twig;
+- `Presentation/DomainPresentationBuilder.php`: único builder autoritativo dos sete purposes correntes;
+- service `aculta_portal.presentation.domain`;
+- `PortalHooks::preprocessPage()` exporta somente `domain_presentation` neutro e usa `RendererInterface::addCacheableDependency()` para mesclar cacheability sem sobrescrever metadata existente;
+- `scripts/validate-domain-presentation-contract.php`: gate Runtime read-only para shape, purposes, URLs, cache contexts/tags, ausência de objetos no contrato e independência do provider visual.
+
+Em 0.2-B.2, `regions.brand_media`, `regions.navigation` e `regions.actions` permanecem `NULL` deliberadamente. A fase não antecipa consumidores ou decisões visuais da B.3/B.4.
+
+Validação Runtime prevista:
+
+```sh
+php vendor/drush/drush/drush.php php:script validate-domain-presentation-contract --script-path=../scripts
+php vendor/drush/drush/drush.php cr
+```
+
+Até esses gates rodarem no Homelab, a mudança executável permanece **RUNTIME STATUS: DEFERRED**.
+
 ## Próximas etapas
 
-- **0.2-B.1** — este inventário e fronteira normativa;
-- **0.2-B.2** — implementar builder/presenter do contrato;
-- **0.2-B.3** — integrar o contrato ao preprocess do shell sem redesign;
+- **0.2-B.1** — inventário e fronteira normativa: concluída;
+- **0.2-B.2** — builder/presenter do contrato: implementado, Runtime pendente;
+- **0.2-B.3** — integrar/consumir o contrato no shell atual sem redesign;
 - **0.2-B.4** — gate/fixtures e fechamento da fronteira;
 - **0.2-C** — Institution Bar;
 - **0.2-D** — Domain Header.
