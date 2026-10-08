@@ -4,10 +4,12 @@ namespace Drupal\aculta_portal\Controller;
 
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
 use Drupal\user\UserDataInterface;
@@ -28,6 +30,9 @@ final class PortalController extends ControllerBase {
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly UserDataInterface $userData,
     private readonly AuthIntegrationManager $authIntegrationManager,
+    private readonly BlockManagerInterface $blockManager,
+    private readonly CurrentRouteMatch $currentRouteMatch,
+    private readonly object $emailConfirmer,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -39,6 +44,9 @@ final class PortalController extends ControllerBase {
       $container->get('aculta_portal.domain_purpose'),
       $container->get('user.data'),
       $container->get('aculta_portal.auth_integration'),
+      $container->get('plugin.manager.block'),
+      $container->get('current_route_match'),
+      $container->get('email_confirmer'),
     );
   }
 
@@ -190,7 +198,7 @@ final class PortalController extends ControllerBase {
       $items['google_login'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-auth-provider']],
-        'provider' => \Drupal::service('plugin.manager.block')
+        'provider' => $this->blockManager
           ->createInstance('social_auth_login', [])
           ->build(),
       ];
@@ -281,7 +289,7 @@ final class PortalController extends ControllerBase {
     if (!is_string($pending) || $pending === '') {
       return NULL;
     }
-    $confirmations = \Drupal::service('email_confirmer')->getConfirmations($pending, 'pending', 0, 'email_confirmer_user');
+    $confirmations = $this->emailConfirmer->getConfirmations($pending, 'pending', 0, 'email_confirmer_user');
     foreach ($confirmations as $confirmation) {
       if ((int) $confirmation->get('uid')->target_id === (int) $uid) {
         return $pending;
@@ -377,7 +385,7 @@ final class PortalController extends ControllerBase {
    * management section because the Portal has a dedicated Connections page.
    */
   private function buildPortalAccountForm($account): array {
-    $parameters = \Drupal::routeMatch()->getParameters();
+    $parameters = $this->currentRouteMatch->getParameters();
     $had_user_parameter = $parameters->has('user');
     $previous_user_parameter = $parameters->get('user');
     $parameters->set('user', $account);
