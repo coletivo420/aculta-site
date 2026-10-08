@@ -99,9 +99,7 @@ $check(
   'At least one canonical event_subscriber tag must remain present.',
 );
 
-$legacyProceduralFunctions = [
-  'aculta_portal_entity_presave',
-];
+$legacyProceduralFunctions = [];
 
 $tokenHooks = $srcRoot . '/Hook/TokenHooks.php';
 $tokenHooksSource = $read($tokenHooks);
@@ -203,6 +201,45 @@ $check(
     && str_contains($editorialHooksSource, "'wiki'"),
   'P2-R editorial/CEP/Domain behavior invariants must remain present.',
 );
+$entitySaveHooks = $srcRoot . '/Hook/EntitySaveHooks.php';
+$entitySaveHooksSource = $read($entitySaveHooks);
+$check(is_file($entitySaveHooks), 'P4.3 EntitySaveHooks class must exist.');
+$check(
+  substr_count($hookRuntimeSources, "#[Hook('entity_presave')]") === 1,
+  'P4.3 entity_presave must be implemented exactly once as an OOP hook.',
+);
+$check(
+  preg_match(
+    '/function\\s+entityPresave\\s*\\(EntityInterface\\s+\\$entity\\)\\s*:\\s*void/',
+    $entitySaveHooksSource,
+  ) === 1,
+  'P4.3 EntitySaveHooks::entityPresave() must preserve the Drupal 11 hook_entity_presave signature.',
+);
+$check(
+  preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $entitySaveHooksSource) === 1,
+  'P4.3 EntitySaveHooks must declare strict_types=1.',
+);
+$check(
+  !str_contains($entitySaveHooksSource, '\\Drupal::'),
+  'P4.3 EntitySaveHooks must not use Drupal static service locators.',
+);
+$check(
+  !str_contains($services, 'Drupal\\aculta_portal\\Hook\\EntitySaveHooks'),
+  'P4.3 Hook classes are auto-discovered/autowired; do not add redundant EntitySaveHooks YAML service definitions.',
+);
+foreach ([
+  "'commerce_payment_gateway'",
+  "'mercado_pago'",
+  'MERCADOPAGO_PUBLIC_KEY',
+  'MERCADOPAGO_ACCESS_TOKEN',
+  'LogicException',
+] as $invariant) {
+  $check(
+    str_contains($entitySaveHooksSource, $invariant),
+    'P4.3 Mercado Pago presave invariant must remain present: ' . $invariant,
+  );
+}
+
 $entityHooks = $srcRoot . '/Hook/EntityHooks.php';
 $entityHooksSource = $read($entityHooks);
 $check(is_file($entityHooks), 'P4.2 EntityHooks class must exist.');

@@ -150,6 +150,13 @@ Referência: https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-
 - Mercado Pago preserva os guards e comportamento fail-closed já definidos;
 - LMS/Group, Social Auth e demais contrib continuam fonte de verdade de seus domínios.
 
+## Entity lifecycle guards
+
+- guards de persistência devem usar hooks OOP quando suportados pelo Core instalado;
+- `hook_entity_presave()` em Drupal 11 usa `EntityInterface` e roda imediatamente antes da persistência;
+- validações de segurança fail-closed devem ocorrer antes do save e lançar exceção explícita quando o estado solicitado não é seguro;
+- não mover segredos para Configuration Sync nem persistir credenciais apenas para facilitar o formulário administrativo.
+
 ## PHP
 
 Classes runtime novas em `src/` usam:

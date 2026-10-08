@@ -5,17 +5,3 @@
  * Legacy procedural integrations pending Drupal 11+ OOP migration.
  */
 
-use Drupal\Core\Entity\EntityInterface;
-
-/** Implements hook_entity_presave(). Keeps the Mercado Pago gateway fail-closed. */
-function aculta_portal_entity_presave(EntityInterface $entity): void {
-  if ($entity->getEntityTypeId() !== 'commerce_payment_gateway'
-    || $entity->id() !== 'mercado_pago'
-    || !$entity->status()) {
-    return;
-  }
-
-  if (!getenv('MERCADOPAGO_PUBLIC_KEY') || !getenv('MERCADOPAGO_ACCESS_TOKEN')) {
-    throw new \LogicException('The Mercado Pago gateway cannot be enabled without both runtime test credentials.');
-  }
-}
