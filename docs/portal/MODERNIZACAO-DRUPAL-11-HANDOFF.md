@@ -24,6 +24,10 @@ Auditar CoursesController.php, views_embed_view('courses_catalog', 'block_1') e 
 
 Portabilidade, migração e conversão SQLite/MariaDB pertencem exclusivamente ao projeto separado **DBTNG-2**, e não ao `aculta_portal`. Não adicionar essa responsabilidade a P5, P9, P10, gates ou testes do Portal. Menções aos SGBDs para descrever ambientes são permitidas.
 
+## P5-extra-2 — economia de tokens para agentes
+
+Antes de continuar, consultar [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md). Preferir modelos econômicos em pesquisa e tarefas pequenas, reservar modelos de maior capacidade para revisão final ou segurança/Domain/Auth/Commerce. `python3 scripts/portal-agent-budget.py route research` recomenda o tier manualmente e `context P5.2-A 3000` prepara contexto reduzido. Nenhuma ferramenta muda modelos automaticamente; economizar tokens não elimina gates nem documentação.
+
 ## Política de execução
 Mesma PR #90 e branch. Não mergear, rebasiar ou usar force-push. Commits pequenos, padrão Drupal Core 11.3+ e preferir APIs modernas. Diferenciar deprecações oficiais de dívida normativa ACULTA. Nunca modificar Core/contrib, armazenar credenciais, criar estado paralelo ou enfraquecer segurança. MAIN mantém administração, carrinho, checkout e pagamentos.
 
