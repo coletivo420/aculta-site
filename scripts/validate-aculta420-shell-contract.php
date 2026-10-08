@@ -3,11 +3,12 @@
 declare(strict_types=1);
 
 /**
- * Read-only Runtime gate for ACULTA420 0.2-B.3 shell contract consumption.
+ * Read-only Runtime gate for ACULTA420 0.2-B.3/B.4 shell contract consumption.
  */
 
 $root = dirname(__DIR__);
 $themeRoot = $root . '/web/themes/custom/aculta420';
+require_once $root . '/scripts/lib/Aculta420ShellContractAnalyzer.php';
 $checks = [];
 
 $assert = static function (bool $condition, string $message) use (&$checks): void {
@@ -16,6 +17,12 @@ $assert = static function (bool $condition, string $message) use (&$checks): voi
   }
   $checks[] = $message;
 };
+
+$findings = Aculta420ShellContractAnalyzer::analyze($themeRoot);
+$assert(
+  $findings === [],
+  'Static shell boundary analyzer passes: ' . ($findings === [] ? 'clean' : implode(' | ', $findings)),
+);
 
 $hookPath = $themeRoot . '/src/Hook/ThemeHooks.php';
 $pagePath = $themeRoot . '/templates/page.html.twig';
@@ -27,48 +34,9 @@ $assert(
   'ThemeHooks consumes the neutral domain_presentation identity contract.',
 );
 $assert(
-  str_contains($hookSource, 'normalizeDomainIdentity'),
-  'ThemeHooks adapts identity through a presentation-only normalizer.',
+  str_contains($pageSource, 'data-aculta-domain-purpose'),
+  'Purpose is exposed only as neutral shell metadata.',
 );
-$assert(
-  str_contains($pageSource, 'aculta_domain_identity.purpose')
-    && str_contains($pageSource, 'aculta_domain_identity.home_url')
-    && str_contains($pageSource, 'aculta_domain_identity.short_title')
-    && str_contains($pageSource, 'aculta_domain_identity.title'),
-  'page.html.twig consumes prepared home/title identity only as shell presentation.',
-);
-$assert(
-  str_contains($pageSource, '{% if aculta_header_has_content %}')
-    && str_contains($pageSource, '{% elseif aculta_domain_identity %}'),
-  'Existing renderable Drupal header remains primary and domain identity is fallback-only.',
-);
-$assert(
-  !str_contains($pageSource, "identity.purpose ==")
-    && !str_contains($pageSource, "identity.purpose is")
-    && !preg_match('/\b(?:wiki|courses|shop|support|account|magazine|main)\b\s*(?:==|!=)/i', $pageSource),
-  'Twig contains no purpose-specific branching.',
-);
-
-$forbiddenThemePatterns = [
-  'DomainInterface' => '/\bDomainInterface\b/',
-  'DomainPurposeManager' => '/\bDomainPurposeManager\b/',
-  'domain negotiator' => '/domain\.negotiator|DomainNegotiator/i',
-  'Portal service' => '/aculta_portal\./',
-  'hostname decision' => '/getHost\s*\(|HTTP_HOST|SERVER_NAME|\.aculta\.org|\.toca\.net\.br/i',
-];
-foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {
-  if (!$file->isFile() || !in_array(strtolower($file->getExtension()), ['php', 'twig', 'js'], TRUE)) {
-    continue;
-  }
-  $source = file_get_contents($file->getPathname());
-  $relative = str_replace($themeRoot . DIRECTORY_SEPARATOR, '', $file->getPathname());
-  foreach ($forbiddenThemePatterns as $label => $pattern) {
-    $assert(
-      !preg_match($pattern, $source),
-      $label . ' absent from theme runtime source: ' . $relative,
-    );
-  }
-}
 
 $hooks = new \Drupal\aculta420\Hook\ThemeHooks(
   \Drupal::service('path.matcher'),
@@ -175,4 +143,4 @@ $assert(
   'Portal presentation builder still has no ACULTA420 SDC dependency.',
 );
 
-echo 'ACULTA420 B.3 SHELL CONTRACT: PASS (' . count($checks) . " checks)\n";
+echo 'ACULTA420 B.4 SHELL CONTRACT: PASS (' . count($checks) . " checks)\n";
