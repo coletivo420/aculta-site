@@ -142,8 +142,8 @@ final class Aculta420DesignFoundationsAnalyzer {
     '--bs-secondary-color-rgb' => '--aculta-text-secondary',
     '--bs-tertiary-color-rgb' => '--aculta-text-muted',
     '--bs-emphasis-color-rgb' => '--aculta-text-primary',
-    '--bs-link-color-rgb' => '--aculta-text-primary',
-    '--bs-link-hover-color-rgb' => '--aculta-text-primary',
+    '--bs-link-color-rgb' => '--bs-link-color',
+    '--bs-link-hover-color-rgb' => '--bs-link-hover-color',
     '--aculta-surface-page-rgb' => '--aculta-surface-page',
   ];
 
@@ -460,7 +460,8 @@ final class Aculta420DesignFoundationsAnalyzer {
     [$rules] = self::parseCssRules($clean);
     $color_properties = [
       'color', 'background', 'background-color', 'background-image', 'border', 'border-top', 'border-right',
-      'border-bottom', 'border-left', 'border-color', 'outline', 'outline-color',
+      'border-bottom', 'border-left', 'border-color', 'border-top-color', 'border-right-color',
+      'border-bottom-color', 'border-left-color', 'outline', 'outline-color',
       'text-decoration-color', 'text-emphasis-color', 'column-rule-color', 'caret-color',
       'accent-color', 'fill', 'stroke', 'box-shadow', 'text-shadow',
     ];
@@ -487,6 +488,8 @@ final class Aculta420DesignFoundationsAnalyzer {
     $count = 0;
     foreach ($tags as $tag) {
       $expression = trim(($tag[1] ?? '') !== '' ? $tag[1] : ($tag[2] ?? ''));
+      $expression = preg_replace('/^-\\s*(?=(?:if|elseif|set)\\b)/i', '', $expression) ?? $expression;
+      $expression = preg_replace('/\\s+-$/', '', $expression) ?? $expression;
       $is_branch = preg_match('/^(?:if|elseif)\b/i', $expression) === 1;
       $is_ternary = str_contains($expression, '?') && str_contains($expression, ':');
       $decisions = $is_ternary ? self::collectTernaryPredicates($expression) : [$expression];
@@ -524,6 +527,16 @@ final class Aculta420DesignFoundationsAnalyzer {
       $count += self::countModeSelectors($style);
     }
     return $count;
+  }
+
+  public static function hasTwigInlineRawColorLiteral(string $source): bool {
+    preg_match_all('/<style\\b[^>]*>(.*?)<\\/style\\s*>/is', $source, $styles);
+    foreach ($styles[1] ?? [] as $style) {
+      if (self::hasRawColorLiteral($style)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   public static function hasTwigEmbeddedPrematureColorModeScript(string $source): bool {
@@ -583,8 +596,8 @@ final class Aculta420DesignFoundationsAnalyzer {
         $count++;
       }
     }
-    // Keep object-literal arms intact; their braces are expression syntax.
-    $statements = preg_split('/;/', $source) ?: [$source];
+    // Keep object-literal arms and semicolons inside strings/templates intact.
+    $statements = self::splitJsTopLevelStatements($source);
     foreach ($statements as $statement) {
       foreach (self::collectTernaryPredicates($statement) as $predicate) {
         if (self::hasModeDecision($predicate)) {
@@ -599,7 +612,10 @@ final class Aculta420DesignFoundationsAnalyzer {
       $count++;
     }
     preg_match_all('/\.className\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))\s*(["\'])(.*?)\1/s', $source, $class_assignments);
-    foreach ($class_assignments[2] ?? [] as $class_value) {
+    $class_values = $class_assignments[2] ?? [];
+    preg_match_all('/\.className\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))\s*`([^`]*)`/s', $source, $template_class_assignments);
+    $class_values = array_merge($class_values, $template_class_assignments[1] ?? []);
+    foreach ($class_values as $class_value) {
       if (self::containsModeClass($class_value)) {
         $count++;
         break;
@@ -611,12 +627,45 @@ final class Aculta420DesignFoundationsAnalyzer {
     return $count;
   }
 
+  /** Split JavaScript at statement-level semicolons only. */
+  private static function splitJsTopLevelStatements(string $source): array {
+    $statements = [];
+    $start = 0;
+    $quote = NULL;
+    $paren = $bracket = $brace = 0;
+    $length = strlen($source);
+    for ($i = 0; $i < $length; $i++) {
+      $char = $source[$i];
+      if ($quote !== NULL) {
+        if ($char === '\\\\') { $i++; }
+        elseif ($char === $quote) { $quote = NULL; }
+        continue;
+      }
+      if ($char === '"' || $char === "'" || $char === '`') { $quote = $char; continue; }
+      if ($char === '/' && self::isJsRegexStart($source, $i)) { $i = self::skipJsRegexLiteral($source, $i); continue; }
+      if ($char === '(') { $paren++; continue; }
+      if ($char === ')') { $paren = max(0, $paren - 1); continue; }
+      if ($char === '[') { $bracket++; continue; }
+      if ($char === ']') { $bracket = max(0, $bracket - 1); continue; }
+      if ($char === '{') { $brace++; continue; }
+      if ($char === '}') { $brace = max(0, $brace - 1); continue; }
+      if ($char === ';' && $paren === 0 && $bracket === 0 && $brace === 0) {
+        $statement = trim(substr($source, $start, $i - $start));
+        if ($statement !== '') { $statements[] = $statement; }
+        $start = $i + 1;
+      }
+    }
+    $tail = trim(substr($source, $start));
+    if ($tail !== '') { $statements[] = $tail; }
+    return $statements === [] ? [$source] : $statements;
+  }
+
   public static function hasPrematureColorModeScript(string $source): bool {
     $source = self::stripJsComments($source);
     if (preg_match('/prefers-color-scheme|setAttribute\s*(?:\?\.)?\s*\(\s*[\'\"]data-(?:(?:bs-)?theme|color-mode|color-scheme)/i', $source) === 1) {
       return TRUE;
     }
-    preg_match_all('/\b(?:localStorage|sessionStorage)\s*\.\s*(?:setItem|removeItem)\s*\(([^;]*)/i', $source, $storage_calls);
+    preg_match_all('/\b(?:localStorage|sessionStorage)\s*\.\s*(?:getItem|setItem|removeItem)\s*\(([^;]*)/i', $source, $storage_calls);
     foreach ($storage_calls[1] ?? [] as $arguments) {
       if (preg_match('/(?:theme|color[-_ ]?(?:mode|scheme)|getTheme|getColorMode|getColorScheme)/i', $arguments) === 1) {
         return TRUE;
@@ -1068,7 +1117,8 @@ final class Aculta420DesignFoundationsAnalyzer {
   private static function hasModeDecision(string $expression): bool {
     [$code, $strings] = self::extractQuotedStrings($expression);
     $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode|colorScheme|color_scheme|color-scheme|getTheme|getColorMode|getColorScheme)\b/i', $code) === 1
-      || preg_match('/(?:dataset\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|getAttribute\s*\(\s*["\']data-(?:bs-)?theme)/i', $expression) === 1;
+      || preg_match('/dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])/i', $expression) === 1
+      || preg_match('/getAttribute\s*(?:\?\.)?\s*\(\s*["\']data-(?:(?:bs-)?theme|color-mode|color-scheme)["\']/i', $expression) === 1;
     $mode_literal = preg_match('/\b(?:dark|light)\b/i', $code) === 1;
     foreach ($strings as $string) {
       if (preg_match('/^(?:dark|light)$/i', trim($string)) === 1) {
