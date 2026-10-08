@@ -4,7 +4,7 @@ Este changelog versiona o tema/design system ACULTA420.
 
 ## [Unreleased]
 
-- 0.2-B.3 conecta o `domain_presentation.identity` neutro ao shell ACULTA420 sem redesign: `ThemeHooks` normaliza apenas escalares, o header Drupal atual continua prioritário e Twig usa identidade como fallback seguro quando branding não está disponível. `purpose` é apenas metadata semântica; nenhuma regra Domain/hostname/Portal service foi movida para o tema.
+- 0.2-B.3 conecta `domain_presentation.identity` ao shell sem redesign e deriva somente o fallback realmente consumido (`label` + `home_url`). O header Drupal atual continua prioritário; `purpose` não é emitido no DOM e `logo_alt` não é repurposed em links textuais. Nenhuma regra Domain/hostname/Portal service foi movida para o tema.
 - Adiciona o gate Runtime read-only `validate-aculta420-shell-contract.php` para contrato completo/parcial/ausente, ausência de object leakage e independência funcional do tema.
 - 0.2-B.4 extrai `Aculta420ShellContractAnalyzer` e adiciona fixtures independentes do Drupal para branches por purpose, Domain/Portal leakage, hostname/service locator, `regions.*` prematuras e regressões de fallback; o gate Runtime reutiliza o mesmo analyzer.
 
