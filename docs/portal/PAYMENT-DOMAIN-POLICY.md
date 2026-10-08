@@ -75,10 +75,11 @@ usuário nunca é reaproveitado.
 
 ## Requests mutáveis
 
-O checkout deve começar em MAIN antes de qualquer formulário mutável.
+O checkout e a UI de gerenciamento do carrinho devem começar em MAIN antes de seus formulários mutáveis.
 
-Se um `POST`, `PUT`, `PATCH` ou `DELETE` de checkout/pagamento chegar em
-outro purpose, ele **não é redirecionado**. O request falha fechado.
+Isso não proíbe o `Add to cart` nativo na página de produto/curso em SHOP/COURSES: essa mutação faz parte da seleção comercial e usa a API/Form API do Commerce para atualizar a mesma order de carrinho.
+
+Se um `POST`, `PUT`, `PATCH` ou `DELETE` de uma rota central `commerce_cart.*`, `commerce_checkout.*` ou payment chegar em outro purpose, ele **não é redirecionado**. O request falha fechado.
 
 Não usar 307/308 para transferir corpo/método entre hosts.
 
