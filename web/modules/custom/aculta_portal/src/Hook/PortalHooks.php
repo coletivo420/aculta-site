@@ -6,6 +6,7 @@ use Drupal\aculta_portal\AccountShellBuilder;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Block\BlockManagerInterface;
@@ -190,7 +191,21 @@ final class PortalHooks {
     $resolver = $this->domainPurposeManager;
     foreach ($variables['links'] as &$link) {
       $url = $link['url'] ?? NULL;
-      if (!$url instanceof Url || !$url->isRouted() || $url->getRouteName() !== 'entity.taxonomy_term.canonical') {
+      if (!$url instanceof Url || !$url->isRouted()) {
+        continue;
+      }
+
+      $routeName = $url->getRouteName();
+      if (DomainRoutePolicy::isCentralPaymentRouteName($routeName)) {
+        $link['url'] = $resolver->routeUrl(
+          'main',
+          $routeName,
+          $url->getRouteParameters(),
+        ) ?? $url;
+        continue;
+      }
+
+      if ($routeName !== 'entity.taxonomy_term.canonical') {
         continue;
       }
       $term_id = $url->getRouteParameters()['taxonomy_term'] ?? NULL;
@@ -210,7 +225,10 @@ final class PortalHooks {
         $route = $url->isRouted() ? $url->getRouteName() : NULL;
         $uri = $url->isRouted() ? NULL : $url->getUri();
         $target = NULL;
-        if (in_array($route, ['user.login', 'user.register', 'user.pass', 'user.logout'], TRUE)) {
+        if (is_string($route) && DomainRoutePolicy::isCentralPaymentRouteName($route)) {
+          $target = $resolver->routeUrl('main', $route, $url->getRouteParameters());
+        }
+        elseif (in_array($route, ['user.login', 'user.register', 'user.pass', 'user.logout'], TRUE)) {
           $target = $resolver->routeUrl('account', $route, $url->getRouteParameters());
           if ($route === 'user.login' && !$this->currentUser->isAuthenticated()
             && $this->routeMatch->getRouteName() !== 'user.login') {
