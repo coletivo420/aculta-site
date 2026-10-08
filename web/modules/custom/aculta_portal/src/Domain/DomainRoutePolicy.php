@@ -10,9 +10,9 @@ namespace Drupal\aculta_portal\Domain;
 final class DomainRoutePolicy {
 
   /**
-   * Returns TRUE for checkout/payment routes that always belong to MAIN.
+   * Returns TRUE for cart/checkout/payment routes that always belong to MAIN.
    */
-  public static function isCentralPaymentRouteName(string $routeName): bool {
+  public static function isCentralTransactionRouteName(string $routeName): bool {
     return str_starts_with($routeName, 'commerce_cart.')
       || str_starts_with($routeName, 'commerce_checkout.')
       || str_starts_with($routeName, 'commerce_payment.checkout.')
