@@ -6,10 +6,10 @@ namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -35,7 +35,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     // Match the same path before RouterListener/access checks (priority 32).
     return [
       KernelEvents::REQUEST => [['onRequestBeforeRouter', 33], ['onRequest', 31]],
-      KernelEvents::RESPONSE => ['onResponse', 0],
+      // Run before Core RedirectResponseSubscriber (priority 0) so any
+      // intentional cross-domain target is already a secured redirect.
+      KernelEvents::RESPONSE => ['onResponse', 1],
     ];
   }
 
@@ -63,7 +65,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
           if (is_array($query) && $query !== []) {
             $url->setOption('query', $query);
           }
-          $event->getResponse()->headers->set('Location', $url->toString());
+          $this->retargetRedirect($event, $url->toString());
           return;
         }
       }
@@ -72,7 +74,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       // front page resolves /conta-interna internally.
       $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
       if ($accountRoot !== NULL) {
-        $event->getResponse()->headers->set('Location', $accountRoot->toString());
+        $this->retargetRedirect($event, $accountRoot->toString());
         return;
       }
     }
@@ -84,7 +86,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
     if ($login) {
       // Keep Core's status, cookies, and headers after a successful logout.
-      $event->getResponse()->headers->set('Location', $login->toString());
+      $this->retargetRedirect($event, $login->toString());
     }
   }
 
@@ -239,10 +241,29 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $url->setOption('query', $query);
     }
 
-    return new RedirectResponse($url->toString(), Response::HTTP_FOUND, [
+    return new TrustedRedirectResponse($url->toString(), Response::HTTP_FOUND, [
       'Cache-Control' => 'private, no-store',
       'X-Robots-Tag' => 'noindex, nofollow',
     ]);
+  }
+
+  /**
+   * Replaces a redirect target with an explicitly trusted Domain-managed URL.
+   */
+  private function retargetRedirect(ResponseEvent $event, string $target): void {
+    $response = $event->getResponse();
+    if ($response instanceof \Symfony\Component\HttpFoundation\RedirectResponse) {
+      $trusted = TrustedRedirectResponse::createFromRedirectResponse($response);
+      $trusted->setTrustedTargetUrl($target);
+      $event->setResponse($trusted);
+      return;
+    }
+
+    $event->setResponse(new TrustedRedirectResponse(
+      $target,
+      $response->getStatusCode(),
+      $response->headers->allPreserveCase(),
+    ));
   }
 
   /**
