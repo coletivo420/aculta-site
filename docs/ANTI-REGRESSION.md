@@ -99,8 +99,14 @@ snapshots de fases e runbooks históricos.
 - o único provider público do tema é `aculta420`; não manter alias, shim ou provider legado de compatibilidade;
 - libraries usam `aculta420/*` e SDCs usam `aculta420:*`;
 - o tema não chama services/classes de `aculta_portal`; o Portal prepara contexto e o tema apresenta;
-- logo, título, menu e accent por domain devem chegar ao tema como contexto de
-  apresentação já resolvido pelo Portal; nunca escolher por hostname em Twig/PHP do tema;
+- o shell multidomínio usa um único contrato `domain_presentation`, preparado por um builder/presenter autoritativo no Portal; não espalhar `match ($purpose)` por hooks, controllers ou templates;
+- a ponte oficial é `PortalHooks::preprocessPage()` → variável neutra `domain_presentation` → `ThemeHooks::preprocessPage()`/Twig; módulos preprocessam antes do tema e essa ordem é parte do contrato;
+- `domain_presentation` separa identidade escalar (props-ready) de regiões renderizáveis (slots-ready); menu/actions/brand media não viram HTML/string prematuramente;
+- logo, título, home URL, navegação e ações por purpose chegam ao tema como valores simples/render arrays já resolvidos pelo Portal; nunca escolher por hostname em Twig/PHP do tema;
+- Domain ID, hostname, aliases, `DomainInterface`, storage, negotiator e services do Portal não atravessam a fronteira para Twig/SDC;
+- access é resolvido antes da apresentação e cacheability é acumulada com `CacheableMetadata` e aplicada/mesclada ao render tree; não criar campo ad hoc `cacheability` no view-model e o tema não corrige metadata funcional perdida;
+- o Portal não instancia SDC `aculta420:*`; o tema é quem mapeia dados neutros para props/slots e escolhe SDC/Bootstrap, evitando dependência inversa do módulo funcional no provider visual;
+- navegação usa Menu API/MenuLinkTree sempre que possível para preservar access, cache contexts/tags e invalidação de `system.menu.*`;
 - nunca passar entidade `Domain` diretamente para Twig/SDC;
 - branding específico de purpose é opcional: fallback ACULTA e, depois, título textual;
 - todos os purposes compartilham a mesma arquitetura de shell; variam dados, não um

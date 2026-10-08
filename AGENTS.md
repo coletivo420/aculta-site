@@ -352,7 +352,14 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - scripts PHP estáticos do tema devem aceitar roots absolutos POSIX e Windows (drive letter/UNC) sem traversal `..`, sem exigir Bash/WSL para executar;
 - componente não conhece light, dark ou `prefers-color-scheme`; uma futura variante de asset de logo mantém espaço, dimensões e layout;
 - não criar seletor, persistência ou JavaScript de modo antes da fase prevista;
-- o tema nunca escolhe cores/branding por Domain purpose ou hostname; apresentação por purpose chega preparada pelo Portal;
+- o tema nunca resolve Domain, hostname ou regra funcional; a apresentação por purpose chega por um único contrato `domain_presentation` preparado pelo Portal;
+- a integração segue o Theme API moderno: módulo injeta em `#[Hook('preprocess_page')]`, tema consome depois em hook OOP; não criar novo `template_preprocess_*` legado;
+- `domain_presentation` separa identidade escalar de renderables; valores para props permanecem simples e navigation/actions/brand media permanecem render arrays para futuros slots;
+- Domain ID, hostname, aliases, `DomainInterface`, storage, negotiator e serviços do Portal não atravessam a fronteira para Twig/SDC;
+- URLs, título, branding disponível, navegação e ações chegam já resolvidos; access/cache são acumulados no Portal via Render API/`CacheableMetadata` e devem borbulhar no render tree;
+- o Portal nunca referencia `#component: aculta420:*`; apenas o tema escolhe SDC/Bootstrap e mapeia dados neutros para props/slots, evitando acoplamento inverso;
+- menus devem usar Menu API/MenuLinkTree em vez de listas manuais quando aplicável, preservando access/cache;
+- não espalhar `match ($purpose)` por hooks/controllers/templates nem criar contratos paralelos de shell;
 - não criar SDC apenas para substituir uma classe/utilitário Bootstrap simples sem contrato reutilizável.
 
 ## Bootstrap Component Design System

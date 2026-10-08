@@ -67,12 +67,32 @@ seguros.
 Requisitos:
 
 - access antes de metadata;
-- cache tags/contexts preservados;
+- cache tags/contexts/max-age preservados via Render API e `CacheableMetadata`;
 - URLs construídas por purpose;
 - formatted text continua render array;
+- menus/actions/media permanecem renderables quando isso preserva access/cache;
 - não converter markup filtrado em string crua;
 - não incluir entidades inteiras como prop de SDC;
 - não usar SDC como service locator.
+
+### Fronteira com SDC
+
+No shell multidomínio, o Portal **não instancia componentes do tema**. Ele não
+deve retornar `#component: aculta420:...` nem conhecer IDs de SDC do provider
+visual.
+
+O Portal entrega:
+
+- identidade escalar/estruturada, adequada a futuros props;
+- regiões renderizáveis, adequadas a futuros slots;
+- cacheability aplicada ao render tree.
+
+O ACULTA420 decide depois se usa Twig direto, Bootstrap ou um SDC e mapeia os
+dados neutros para props/slots. Isso mantém a dependência na direção correta:
+
+```text
+Core/contrib → Portal → contrato neutro → tema → SDC/Bootstrap
+```
 
 ## Shell multidomínio
 
@@ -99,6 +119,9 @@ depois para título textual, sem impedir a criação de um novo purpose.
 
 A arquitetura visual planejada está em
 `web/themes/custom/aculta420/docs/shell.md`.
+
+O inventário autoritativo da fronteira e o contrato alvo da linha 0.2-B estão
+em [DOMAIN-PRESENTATION-CONTRACT.md](DOMAIN-PRESENTATION-CONTRACT.md).
 
 ## Bootstrap primeiro
 
