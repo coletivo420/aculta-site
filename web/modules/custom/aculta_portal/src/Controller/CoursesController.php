@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Presents the course catalog on the COURSES Domain. */
-final class CoursesController extends ControllerBase {
+final class CoursesController implements ContainerInjectionInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
