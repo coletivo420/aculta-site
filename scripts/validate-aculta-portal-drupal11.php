@@ -655,6 +655,31 @@ $check(
   'P5.4-D requirements controller must use injected theme handler, app root and services.',
 );
 
+// P5.5: storage comes from injected managers and public services only.
+// Static Group membership loads are replaced by the group.membership_loader
+// service; storage queries remain on injected entity storage.
+$coursesManagerSource = $read($srcRoot . '/AccountCoursesManager.php');
+$servicesSource = $read(dirname($srcRoot) . '/aculta_portal.services.yml');
+$check(
+  !str_contains($coursesManagerSource, 'GroupMembership::loadByUser')
+    && str_contains($coursesManagerSource, 'GroupMembershipLoaderInterface $membershipLoader')
+    && str_contains($coursesManagerSource, '$this->membershipLoader->loadByUser($account)')
+    && str_contains($servicesSource, "'@group.membership_loader'"),
+  'P5.5 AccountCoursesManager must read Group memberships through the injected group.membership_loader service.',
+);
+$storageStaticPattern = '/\\\\Drupal::(?:entityTypeManager|entityQuery)\(\)|\\\\Drupal::service\(\'entity_type\.manager\'\)/';
+$storageStaticHits = 0;
+$storageFiles = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($srcRoot, FilesystemIterator::SKIP_DOTS));
+foreach ($storageFiles as $storageFile) {
+  if ($storageFile->isFile() && strtolower($storageFile->getExtension()) === 'php') {
+    $storageStaticHits += preg_match_all($storageStaticPattern, $read($storageFile->getPathname()));
+  }
+}
+$check(
+  $storageStaticHits === 0,
+  'P5.5 runtime storage must not use static entity-type or entity-query locators.',
+);
+
 $serviceLocatorCeilings = [
 ];
 $viewsWrapperCeilings = [

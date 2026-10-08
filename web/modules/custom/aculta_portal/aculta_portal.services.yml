@@ -10,7 +10,7 @@ services:
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
-    arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose']
+    arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose', '@group.membership_loader']
   aculta_portal.presentation.account_course:
     class: Drupal\aculta_portal\Presentation\AccountCoursePresenter
     arguments: ['@aculta_portal.account_courses', '@string_translation']
