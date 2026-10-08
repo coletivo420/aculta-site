@@ -6,6 +6,7 @@ use Drupal\aculta_portal\AccountShellBuilder;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Block\BlockManagerInterface;
@@ -190,7 +191,28 @@ final class PortalHooks {
     $resolver = $this->domainPurposeManager;
     foreach ($variables['links'] as &$link) {
       $url = $link['url'] ?? NULL;
-      if (!$url instanceof Url || !$url->isRouted() || $url->getRouteName() !== 'entity.taxonomy_term.canonical') {
+      if (!$url instanceof Url || !$url->isRouted()) {
+        continue;
+      }
+
+      $routeName = $url->getRouteName();
+      if (DomainRoutePolicy::isCentralTransactionRouteName($routeName)) {
+        $target = $resolver->routeUrl(
+          'main',
+          $routeName,
+          $url->getRouteParameters(),
+        );
+        if ($target instanceof Url) {
+          $options = $url->getOptions();
+          if (!empty($options['query']) && is_array($options['query'])) {
+            $target->setOption('query', $options['query']);
+          }
+          $link['url'] = $target;
+        }
+        continue;
+      }
+
+      if ($routeName !== 'entity.taxonomy_term.canonical') {
         continue;
       }
       $term_id = $url->getRouteParameters()['taxonomy_term'] ?? NULL;
@@ -210,7 +232,14 @@ final class PortalHooks {
         $route = $url->isRouted() ? $url->getRouteName() : NULL;
         $uri = $url->isRouted() ? NULL : $url->getUri();
         $target = NULL;
-        if (in_array($route, ['user.login', 'user.register', 'user.pass', 'user.logout'], TRUE)) {
+        if (is_string($route) && DomainRoutePolicy::isCentralTransactionRouteName($route)) {
+          $target = $resolver->routeUrl('main', $route, $url->getRouteParameters());
+          $options = $url->getOptions();
+          if ($target instanceof Url && !empty($options['query']) && is_array($options['query'])) {
+            $target->setOption('query', $options['query']);
+          }
+        }
+        elseif (in_array($route, ['user.login', 'user.register', 'user.pass', 'user.logout'], TRUE)) {
           $target = $resolver->routeUrl('account', $route, $url->getRouteParameters());
           if ($route === 'user.login' && !$this->currentUser->isAuthenticated()
             && $this->routeMatch->getRouteName() !== 'user.login') {
@@ -501,13 +530,10 @@ final class PortalHooks {
     elseif (str_starts_with((string) $route, 'aculta_portal.') && $route !== 'aculta_portal.support_form') {
       $tags['robots'] = 'noindex, nofollow';
     }
-    elseif (str_starts_with((string) $route, 'commerce_donation_flow.')
-      || str_starts_with((string) $route, 'commerce_checkout.')
-      || str_starts_with((string) $route, 'commerce_payment.')
-      || str_starts_with((string) $route, 'entity.commerce_order.')) {
+    elseif (DomainRoutePolicy::isTransactionalSeoRouteName((string) $route)) {
       $tags['robots'] = 'noindex, nofollow';
       unset($tags['canonical_url'], $tags['og_url'], $tags['schema_web_page_url']);
-      if (str_starts_with((string) $route, 'commerce_donation_flow.')) {
+      if (DomainRoutePolicy::isDonationFlowRouteName((string) $route)) {
         $tags['title'] = 'Apoio | Associação Cultural Antiproibicionista';
       }
     }

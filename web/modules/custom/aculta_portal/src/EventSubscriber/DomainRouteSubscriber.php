@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\EventSubscriber;
 
+use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\Core\Routing\RoutingEvents;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -116,9 +117,17 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
 
-    foreach ($collection as $route) {
+    foreach ($collection as $name => $route) {
       if ($route->getOption('_admin_route')) {
         $route->setOption('_aculta_domain_purpose', 'main');
+      }
+      if (DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
+        $route->setOption('_aculta_domain_purpose', 'main');
+        if ($name !== 'commerce_payment.notify') {
+          // Browser navigation may canonicalize to MAIN. Machine-to-machine
+          // notification POSTs must never be redirected between hosts.
+          $route->setOption('_aculta_cross_domain_canonical_purpose', 'main');
+        }
       }
     }
 

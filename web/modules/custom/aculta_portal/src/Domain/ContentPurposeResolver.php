@@ -39,8 +39,8 @@ final class ContentPurposeResolver {
     Request $request,
     array $matched = [],
   ): ?string {
-    // Administration is a platform-level concern and always belongs to MAIN.
-    // This must precede content-specific ownership (Wiki, Courses, etc.).
+    // Platform-level route metadata is authoritative and precedes content
+    // ownership (Wiki, Courses, etc.).
     if ($route->getOption('_admin_route')
       || $route->getOption('_aculta_domain_purpose') === 'main') {
       return 'main';

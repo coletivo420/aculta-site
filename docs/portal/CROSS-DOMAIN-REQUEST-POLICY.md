@@ -134,15 +134,18 @@ entre purposes.
 - mudanças futuras em Account AJAX devem provar explicitamente mesma origin
   antes de interceptar links.
 
-## Commerce/webhooks
+## Commerce, checkout e webhooks
 
-- `commerce_payment.notify` pertence a MAIN;
-- webhook é POST-only;
-- wrong-purpose falha fechado;
+O contrato detalhado está em `PAYMENT-DOMAIN-POLICY.md`.
+
+- COURSES, SHOP e SUPPORT podem originar intenção comercial, mas carrinho/checkout/pagamento pertencem a MAIN;
+- `commerce_checkout.*`, `commerce_payment.checkout.*` e `commerce_donation_flow.*` são ownership MAIN;
+- links conhecidos pelo Portal devem apontar diretamente para MAIN, evitando redirect corretivo desnecessário;
+- formulário mutável só deve ser exibido em MAIN; POST wrong-host falha fechado;
+- `commerce_payment.notify` pertence a MAIN e é POST-only;
 - assinatura é validada antes do contrib consumir a notificação;
 - webhook nunca é canonicalizado/redirecionado para outro host;
-- retorno de gateway externo permanece responsabilidade do Commerce/contrib,
-  salvo contrato explícito futuro.
+- return/cancel browser-facing do gateway permanecem no fluxo Commerce, mas no Domain MAIN.
 
 ## Anti-regressão
 

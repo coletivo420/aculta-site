@@ -29,6 +29,7 @@ Snapshots de PR/fase, SHAs e logs pertencem ao Git/GitHub.
 | fronteira Domain → Portal → ACULTA420 | [portal/DOMAIN-PRESENTATION-CONTRACT.md](portal/DOMAIN-PRESENTATION-CONTRACT.md) |
 | política do domínio administrativo central | [portal/ADMIN-DOMAIN-POLICY.md](portal/ADMIN-DOMAIN-POLICY.md) |
 | requests/redirects cross-domain | [portal/CROSS-DOMAIN-REQUEST-POLICY.md](portal/CROSS-DOMAIN-REQUEST-POLICY.md) |
+| checkout/pagamentos centralizados em MAIN | [portal/PAYMENT-DOMAIN-POLICY.md](portal/PAYMENT-DOMAIN-POLICY.md) |
 | Homelab | [../scripts/homelab/README.md](../scripts/homelab/README.md) |
 | Estados SQLite | [../estados/README.md](../estados/README.md) |
 
