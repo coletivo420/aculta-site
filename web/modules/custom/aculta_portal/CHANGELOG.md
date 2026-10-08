@@ -12,6 +12,9 @@ O Portal usa tags `portal-vX.Y.Z`.
 - Mantém requests administrativos mutáveis em host errado fail-closed para não repetir POST/CSRF entre Domains.
 - Preserva a exceção one-time do Core para `entity.user.edit_form` no fluxo de reset em ACCOUNT, agora aplicada de forma consistente antes e depois do RouterListener.
 - Wrong-purpose público/funcional continua retornando 404; a regra administrativa não vira redirect genérico.
+- Redirects intencionais entre purposes agora usam `TrustedRedirectResponse`; o retorno pós-login/OAuth roda antes do safety subscriber do Core e preserva headers/cookies ao trocar o target.
+- Redirects de `AccountRouteSubscriber` passam por `DomainPurposeManager`, e requests mutáveis não são encaminhados MAIN → ACCOUNT.
+- `user.page` usa redirect explicitamente confiável para a raiz ACCOUNT. A sessão compartilhada (`cookie_domain`) passa a ser requisito Runtime documentado/gateado por ambiente.
 
 ### Domain Presentation Contract
 
