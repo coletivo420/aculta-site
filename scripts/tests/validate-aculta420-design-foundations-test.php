@@ -102,6 +102,8 @@ try {
     ['Twig ternary on a non-mode value is accepted', 'templates/language-ternary.html.twig', "{% set label = locale == 'dark' ? 'a' : 'b' %}", 'DARK TWIG BRANCHES: 0'],
     ['Twig ternary result mentioning a mode is not a mode branch', 'templates/result-mode-ternary.html.twig', "{% set label = compact ? 'dark' : 'plain' %}", 'DARK TWIG BRANCHES: 0'],
     ['parenthesized Twig ternary result mentioning a mode is not a mode branch', 'templates/parenthesized-result-mode-ternary.html.twig', "{% set label = (compact ? theme : 'dark') %}", 'DARK TWIG BRANCHES: 0'],
+    ['nested Twig ternary with mode-like results is accepted', 'templates/nested-result-ternary.html.twig', "{% set x = compact ? (label ? 'dark' : 'plain') : 'other' %}", 'DARK TWIG BRANCHES: 0'],
+    ['JavaScript ternary result mentioning a mode is accepted', 'js/result-mode-ternary.js', "const label = compact ? theme : 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['PHP match result mentioning a mode is not a mode branch', 'src/MatchResult.php', "<?php \$variant = match (\$density) { 'compact' => 'dark', default => 'plain' };", 'DARK PHP BRANCHES: 0'],
     ['brace switch ignores nested alternative switch labels', 'src/BraceWithAlternativeSwitch.php', "<?php switch (\$theme) { case 'compact': switch (\$locale): case 'dark': break; endswitch; break; }", 'DARK PHP BRANCHES: 0'],
     ['unrelated dataset assignment is accepted', 'js/dataset-status.js', "document.documentElement.dataset.status = 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
@@ -151,6 +153,7 @@ try {
     ['light selector layout rule', 'css/fixtures/light.css', '.light-theme .card { padding: 2rem; }', 'Color mode is token-only'],
     ['Twig color-mode branch', 'templates/fixture.html.twig', "{% if theme == 'dark' %}dark markup{% endif %}", 'Twig has no color-mode branch'],
     ['Twig color-mode ternary', 'templates/ternary.html.twig', "{{ theme == 'light' ? 'light' : 'dark' }}", 'Twig has no color-mode branch'],
+    ['nested Twig ternary mode predicate', 'templates/nested-mode-ternary.html.twig', "{% set x = compact ? (theme == 'dark' ? 'a' : 'b') : 'c' %}", 'Twig has no color-mode branch'],
     ['PHP color-mode branch', 'src/Fixture.php', "<?php if (\$theme === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
     ['PHP colorScheme branch', 'src/ColorScheme.php', "<?php if (\$colorScheme === 'dark') { echo 'different'; }", 'PHP has no color-mode branch'],
     ['PHP color-mode match', 'src/MatchFixture.php', "<?php \$variant = match (\$theme) { 'dark' => 'compact', default => 'standard' };", 'PHP has no color-mode branch'],
@@ -160,6 +163,7 @@ try {
     ['JavaScript color-mode layout branch', 'js/fixture.js', "if (theme === 'dark') { card.style.display = 'none'; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript colorScheme branch', 'js/color-scheme.js', "if (colorScheme === 'dark') { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript boolean mode branch', 'js/boolean-mode.js', "if (isDarkMode) { card.hidden = true; }", 'JavaScript has no color-mode layout behavior'],
+    ['nested JavaScript ternary mode predicate', 'js/nested-mode-ternary.js', "const x = compact ? (theme === 'dark' ? 'a' : 'b') : 'c';", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch case arm', 'js/switch.js', "switch (theme) { case 'dark': card.hidden = true; break; default: card.hidden = false; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch method discriminant', 'js/switch-method.js', "switch (theme.toLowerCase()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
     ['JavaScript switch getter discriminant', 'js/switch-getter.js', "switch (getTheme()) { case 'dark': card.hidden = true; break; }", 'JavaScript has no color-mode layout behavior'],
@@ -175,6 +179,7 @@ try {
     ['dynamic data-color-mode setAttribute is rejected', 'js/set-attribute-color-mode.js', "element.setAttribute('data-color-mode', nextMode);", 'JavaScript has no color-mode layout behavior'],
     ['dynamic data-color-scheme setAttribute is rejected', 'js/set-attribute-color-scheme.js', "element.setAttribute('data-color-scheme', getScheme());", 'JavaScript has no color-mode layout behavior'],
     ['optional dynamic setAttribute is rejected', 'js/optional-set-attribute.js', "element.setAttribute?.('data-theme', getTheme());", 'JavaScript has no color-mode layout behavior'],
+    ['direct className mode assignment is rejected', 'js/class-name-theme.js', "document.documentElement.className = 'theme-dark';", 'JavaScript has no color-mode layout behavior'],
     ['Twig statement ternary', 'templates/set-ternary.html.twig', "{% set klass = theme == 'dark' ? 'compact' : 'standard' %}", 'Twig has no color-mode branch'],
     ['Twig colorScheme branch', 'templates/color-scheme.html.twig', "{% if colorScheme == 'dark' %}different{% endif %}", 'Twig has no color-mode branch'],
     ['Dark selector in tokens stylesheet', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] .fixture { padding: 1rem; }\n", 'Color mode is token-only'],
@@ -307,6 +312,19 @@ try {
     file_put_contents($tokens_path, $original_tokens);
   }
 
+  $invalid_rgb_slash = str_replace(
+    '--bs-primary: var(--aculta-green);',
+    '--bs-primary: rgb(104 / 148 39);',
+    $original_tokens,
+  );
+  file_put_contents($tokens_path, $invalid_rgb_slash);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, 'color token --bs-primary')) {
+    $failures[] = 'modern RGB slash alpha before the third channel was not rejected';
+  }
+  file_put_contents($tokens_path, $original_tokens);
+
   $equivalent_rgb_primary = str_replace(
     '--bs-primary: var(--aculta-green);',
     '--bs-primary: rgb(104, 148, 39);',
@@ -320,6 +338,19 @@ try {
   $fixtures++;
   if ($status !== 0) {
     $failures[] = 'equivalent rgb() and hexadecimal semantic colors should compare equal';
+  }
+  file_put_contents($tokens_path, $original_tokens);
+
+  $modern_rgb_primary = str_replace(
+    '--bs-primary: var(--aculta-green);',
+    '--bs-primary: rgb(104 148 39 / 1);',
+    $original_tokens,
+  );
+  file_put_contents($tokens_path, $modern_rgb_primary);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status !== 0) {
+    $failures[] = 'valid modern space-separated rgb() with trailing slash alpha should pass';
   }
   file_put_contents($tokens_path, $original_tokens);
 

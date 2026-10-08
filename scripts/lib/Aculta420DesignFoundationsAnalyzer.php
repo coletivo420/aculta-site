@@ -431,8 +431,15 @@ final class Aculta420DesignFoundationsAnalyzer {
       $expression = trim(($tag[1] ?? '') !== '' ? $tag[1] : ($tag[2] ?? ''));
       $is_branch = preg_match('/^(?:if|elseif)\b/i', $expression) === 1;
       $is_ternary = str_contains($expression, '?') && str_contains($expression, ':');
-      $decision = $is_ternary ? self::beforeTopLevelTernary($expression) : $expression;
-      if (($is_branch || $is_ternary) && self::hasModeDecision($decision ?? $expression)) {
+      $decisions = $is_ternary ? self::collectTernaryPredicates($expression) : [$expression];
+      $has_mode_decision = FALSE;
+      foreach ($decisions as $decision) {
+        if (self::hasModeDecision($decision)) {
+          $has_mode_decision = TRUE;
+          break;
+        }
+      }
+      if (($is_branch || $is_ternary) && $has_mode_decision) {
         $count++;
       }
     }
@@ -486,16 +493,25 @@ final class Aculta420DesignFoundationsAnalyzer {
         $count++;
       }
     }
-    preg_match_all('/([^;{}?]+\?[^;{}:]+:[^;{}]+)/s', $source, $ternaries);
-    foreach ($ternaries[0] as $expression) {
-      if (self::hasModeDecision($expression)) {
-        $count++;
+    $statements = preg_split('/[;{}]/', $source) ?: [$source];
+    foreach ($statements as $statement) {
+      foreach (self::collectTernaryPredicates($statement) as $predicate) {
+        if (self::hasModeDecision($predicate)) {
+          $count++;
+        }
       }
     }
     if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))/i', $source) === 1
       || preg_match('/setAttribute\s*(?:\?\.)?\s*\(\s*["\']data-(?:(?:bs-)?theme|color-mode|color-scheme)["\']\s*,/i', $source) === 1
       || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode)["\']/i', $source) === 1) {
       $count++;
+    }
+    preg_match_all('/\.className\s*=\s*(["\'])(.*?)\1/s', $source, $class_assignments);
+    foreach ($class_assignments[2] ?? [] as $class_value) {
+      if (preg_match('/(?:^|\s)(?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode)(?=$|\s)/i', $class_value) === 1) {
+        $count++;
+        break;
+      }
     }
     return $count;
   }
@@ -715,12 +731,15 @@ final class Aculta420DesignFoundationsAnalyzer {
       if ($has_commas && $has_slash) {
         return NULL;
       }
-      $channels = preg_split(
-        $has_commas ? '/\s*,\s*/' : '/\s*\/\s*|\s+/',
-        $body,
-        -1,
-        PREG_SPLIT_NO_EMPTY,
-      ) ?: [];
+      if ($has_commas) {
+        $channels = preg_split('/\s*,\s*/', $body) ?: [];
+      }
+      else {
+        if (preg_match('/^\s*(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)(?:\s*\/\s*(\d+(?:\.\d+)?))?\s*$/', $body, $modern) !== 1) {
+          return NULL;
+        }
+        $channels = array_values(array_filter(array_slice($modern, 1), static fn (string $channel): bool => $channel !== ''));
+      }
       if (count($channels) < 3 || count($channels) > 4) {
         return NULL;
       }
@@ -806,10 +825,65 @@ final class Aculta420DesignFoundationsAnalyzer {
     ];
   }
 
-  /** Return the predicate of a Twig ternary, excluding its result branches. */
-  private static function beforeTopLevelTernary(string $expression): ?string {
+  /**
+   * Extract nested ternary predicates without inspecting result expressions.
+   *
+   * This is a bounded expression scanner, not a full Twig/JavaScript parser.
+   */
+  private static function collectTernaryPredicates(string $expression): array {
+    $length = strlen($expression);
     $quote = NULL;
-    for ($i = 0, $length = strlen($expression); $i < $length; $i++) {
+    $stack = [];
+    $question = NULL;
+    $question_depth = NULL;
+    $question_stack = [];
+    $paren = $bracket = $brace = 0;
+    for ($i = 0; $i < $length; $i++) {
+      $char = $expression[$i];
+      if ($quote !== NULL) {
+        if ($char === '\\') { $i++; }
+        elseif ($char === $quote) { $quote = NULL; }
+        continue;
+      }
+      if ($char === '"' || $char === "'") {
+        $quote = $char;
+        continue;
+      }
+      if ($char === '(' || $char === '[' || $char === '{') {
+        $stack[] = [$char, $i];
+        if ($char === '(') { $paren++; }
+        elseif ($char === '[') { $bracket++; }
+        else { $brace++; }
+        continue;
+      }
+      if ($char === ')' || $char === ']' || $char === '}') {
+        array_pop($stack);
+        if ($char === ')') { $paren--; }
+        elseif ($char === ']') { $bracket--; }
+        else { $brace--; }
+        continue;
+      }
+      if ($char === '?' && ($expression[$i + 1] ?? '') !== '?'
+        && ($expression[$i + 1] ?? '') !== '.'
+        && ($expression[$i - 1] ?? '') !== '?') {
+        $question = $i;
+        $question_depth = [$paren, $bracket, $brace];
+        $question_stack = $stack;
+        break;
+      }
+    }
+    if ($question === NULL || $question_depth === NULL) {
+      return [];
+    }
+
+    [$target_paren, $target_bracket, $target_brace] = $question_depth;
+    $paren = $target_paren;
+    $bracket = $target_bracket;
+    $brace = $target_brace;
+    $nested_questions = 0;
+    $colon = NULL;
+    $quote = NULL;
+    for ($i = $question + 1; $i < $length; $i++) {
       $char = $expression[$i];
       if ($quote !== NULL) {
         if ($char === '\\') { $i++; }
@@ -817,11 +891,41 @@ final class Aculta420DesignFoundationsAnalyzer {
         continue;
       }
       if ($char === '"' || $char === "'") { $quote = $char; continue; }
-      elseif ($char === '?' && ($expression[$i + 1] ?? '') !== '?') {
-        return substr($expression, 0, $i);
+      if ($char === '(') { $paren++; continue; }
+      if ($char === ')') { $paren--; continue; }
+      if ($char === '[') { $bracket++; continue; }
+      if ($char === ']') { $bracket--; continue; }
+      if ($char === '{') { $brace++; continue; }
+      if ($char === '}') { $brace--; continue; }
+      if ([$paren, $bracket, $brace] !== $question_depth) {
+        continue;
+      }
+      if ($char === '?' && ($expression[$i + 1] ?? '') !== '?'
+        && ($expression[$i + 1] ?? '') !== '.') {
+        $nested_questions++;
+      }
+      elseif ($char === ':') {
+        if ($nested_questions > 0) {
+          $nested_questions--;
+        }
+        else {
+          $colon = $i;
+          break;
+        }
       }
     }
-    return NULL;
+    if ($colon === NULL) {
+      return [];
+    }
+
+    $start = $question_stack === [] ? 0 : $question_stack[array_key_last($question_stack)][1] + 1;
+    $predicates = [trim(substr($expression, $start, $question - $start))];
+    $predicates = array_merge(
+      $predicates,
+      self::collectTernaryPredicates(substr($expression, $question + 1, $colon - $question - 1)),
+      self::collectTernaryPredicates(substr($expression, $colon + 1)),
+    );
+    return $predicates;
   }
 
   private static function hasModeDecision(string $expression): bool {

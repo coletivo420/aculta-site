@@ -230,8 +230,8 @@ formas com chaves e `endswitch` aninhado, e `match` usando apenas condições de
 arms antes de `=>`; textos nos resultados não são ramificações.
 comentários são removidos das expressões avaliadas. O scanner JavaScript
 reconhece `if` e discriminantes de `switch` com parênteses balanceados,
-`switch`/`case`, inclusive ternários multiline,
-alternância de classes/atributos e qualquer escrita em `dataset.theme`,
+`switch`/`case`, ternários multiline/nested,
+alternância de classes/atributos e escritas em `dataset.theme`,
 `dataset.bsTheme`, `dataset.colorMode` ou `dataset.colorScheme`, mesmo quando o
 valor vem de variável ou função. Seletores de classe também são inspecionados
 dentro de pseudo-classes funcionais como `:where()` e `:is()`.
@@ -239,9 +239,10 @@ Decisões Twig/PHP/JavaScript reconhecem também `colorScheme`/`color_scheme`.
 Em `switch`, a análise considera o discriminante e as expressões dos labels
 `case`, não texto arbitrário nos consequentes; PHP aceita a forma `endswitch`.
 Writes simples e compostos (`=`, `??=`, `||=`, `&&=`) em dataset de modo e
-chamadas opcionais (`setAttribute?.()`) ou regulares para atributos de modo são
-proibidos mesmo com valor dinâmico. O scanner também mantém isolados os labels
-de switches aninhados nos dois estilos PHP. O scanner JavaScript é delimitado e
+chamadas opcionais (`setAttribute?.()`) ou regulares para atributos de modo e
+atribuições `className` com classes protegidas são proibidos mesmo com valores
+dinâmicos quando aplicável. O scanner também mantém isolados os labels de
+switches aninhados nos dois estilos PHP. O scanner JavaScript é delimitado e
 não substitui um parser completo.
 
 | P2 da revisão da PR #80 | Fixture que prova a regressão |
@@ -282,8 +283,9 @@ seu RGB para outro valor não contorna o gate. Os resultados de `--bs-dark`,
 específicos de light/dark, registrados no próprio contrato do analisador.
 Comparações de cor normalizam os canais numericamente, portanto `rgb()` e hex
 equivalentes são tratados como a mesma cor. O parser aceita formas RGB legacy
-com vírgulas ou a forma moderna separada por espaços; não aceita a mistura de
-vírgulas legacy com slash-alpha moderno.
+com vírgulas ou a forma moderna separada por espaços, com slash-alpha opcional
+somente após os três canais; não aceita mistura de vírgulas legacy com
+slash-alpha moderno.
 Cores de primeiro plano translúcidas são compostas sobre a superfície opaca
 antes da medição WCAG; superfícies de contraste precisam ser opacas. Mappings
 Bootstrap e pares RGB são conferidos separadamente em light e dark. Contrastes
