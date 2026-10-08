@@ -637,7 +637,7 @@ final class Aculta420DesignFoundationsAnalyzer {
     for ($i = 0; $i < $length; $i++) {
       $char = $source[$i];
       if ($quote !== NULL) {
-        if ($char === '\\\\') { $i++; }
+        if ($char === '\\') { $i++; }
         elseif ($char === $quote) { $quote = NULL; }
         continue;
       }
