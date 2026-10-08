@@ -161,7 +161,7 @@ Nunca:
 Antes da B.3, validar:
 
 1. todas as rotas reconhecidas pela política têm `_aculta_domain_purpose=main`;
-2. `commerce_checkout.checkout` e `commerce_checkout.form` existem e são MAIN;
+2. `commerce_cart.page`, `commerce_checkout.checkout` e `commerce_checkout.form` existem e são MAIN;
 3. return/cancel de pagamento, quando existentes, são MAIN;
 4. Donation Flow instalado expõe somente rotas centrais marcadas MAIN;
 5. notify é MAIN e POST-only;
