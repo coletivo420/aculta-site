@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-/** Enforces route purpose after Drupal has resolved the active Domain alias. */
+/** Enforces route purpose and canonicalizes admin navigation to MAIN. */
 final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
   private const LOGIN_DESTINATION_SESSION_KEY = 'aculta_portal.login_destination';
@@ -88,7 +88,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
   }
 
-  /** Hides a wrong-host route before the access-aware router can return 403. */
+  /** Enforces wrong-host policy before the access-aware router can return 403. */
   public function onRequestBeforeRouter(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
       return;
