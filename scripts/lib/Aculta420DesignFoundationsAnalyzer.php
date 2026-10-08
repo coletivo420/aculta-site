@@ -326,6 +326,7 @@ final class Aculta420DesignFoundationsAnalyzer {
       '--bs-form-valid-border-color' => '--aculta-border-accent',
       '--bs-form-invalid-color' => '--aculta-text-primary',
       '--bs-form-invalid-border-color' => '--aculta-red',
+      '--bs-border-color-translucent' => 'rgba(12, 60, 41, 0.2)',
       '--bs-primary-text-emphasis' => '--aculta-text-primary',
       '--bs-secondary-text-emphasis' => '--aculta-text-primary',
       '--bs-success-text-emphasis' => '--aculta-text-primary',
@@ -358,6 +359,9 @@ final class Aculta420DesignFoundationsAnalyzer {
       $mode_mappings['--bs-gray'] = $mode === 'dark' ? '--aculta-text-muted' : '--aculta-text-secondary';
       $mode_mappings['--bs-black'] = $mode === 'dark' ? '#000000' : '--aculta-green-dark';
       $mode_mappings['--bs-form-invalid-border-color'] = $mode === 'dark' ? '--aculta-text-accent' : '--aculta-red';
+      $mode_mappings['--bs-border-color-translucent'] = $mode === 'dark'
+        ? 'rgba(216, 208, 200, 0.22)'
+        : 'rgba(12, 60, 41, 0.2)';
       foreach ($mode_mappings as $bootstrap_token => $source_token) {
         $actual = $resolve($bootstrap_token, $effective);
         $expected = str_starts_with($source_token, '--')
@@ -460,9 +464,11 @@ final class Aculta420DesignFoundationsAnalyzer {
   public static function countJsModeBranches(string $source): int {
     $source = self::stripJsComments($source);
     $count = 0;
-    preg_match_all('/\bif\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)/s', $source, $ifs, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
-    foreach ($ifs as $match) {
-      if (self::hasModeDecision($match[1][0])) {
+    preg_match_all('/\bif\s*\(/s', $source, $ifs, PREG_OFFSET_CAPTURE);
+    foreach ($ifs[0] ?? [] as [$match_text, $match_offset]) {
+      $open = $match_offset + strlen($match_text) - 1;
+      [$condition] = self::readBalancedJsParentheses($source, $open);
+      if (self::hasModeDecision($condition)) {
         $count++;
       }
     }
@@ -487,7 +493,7 @@ final class Aculta420DesignFoundationsAnalyzer {
       }
     }
     if (preg_match('/\.dataset(?:\s*\.\s*(?:theme|bsTheme|colorMode|colorScheme)|\s*\[\s*["\'](?:theme|bsTheme|colorMode|colorScheme)["\']\s*\])\s*(?:\?\?=|\|\|=|&&=|[+*\/%&|^\-]?=(?!=|>))/i', $source) === 1
-      || preg_match('/(?:setAttribute)\s*\(\s*["\'](?:data-(?:bs-)?theme|data-color-(?:mode|scheme))["\']\s*,\s*["\'](?:dark|light)["\']/i', $source) === 1
+      || preg_match('/setAttribute\s*\(\s*["\']data-(?:(?:bs-)?theme|color-mode|color-scheme)["\']\s*,/i', $source) === 1
       || preg_match('/classList\s*\.\s*(?:add|toggle|remove)\s*\([^)]*["\'](?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode)["\']/i', $source) === 1) {
       $count++;
     }
@@ -657,7 +663,7 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   private static function containsModeSelector(string $selector): bool {
     return preg_match('/prefers-color-scheme\s*:\s*(?:dark|light)/i', $selector) === 1
-      || preg_match('/\[\s*data-(?:(?:bs-)?theme|color-mode|color-scheme)\s*=\s*(["\']?)(?:dark|light)\1(?:\s+[is])?\s*\]/i', $selector) === 1
+      || preg_match('/\[\s*data-(?:(?:bs-)?theme|color-mode|color-scheme)\s*(?:[~|^$*]?=)\s*(["\']?)(?:dark|light)\1(?:\s+[is])?\s*\]/i', $selector) === 1
       || preg_match('/\.(?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode|is-dark|is-light|color-mode-dark|color-mode-light)(?![a-zA-Z0-9_-])/i', $selector) === 1;
   }
 
@@ -734,7 +740,15 @@ final class Aculta420DesignFoundationsAnalyzer {
   private static function sameColor(string $first, string $second): bool {
     $a = self::parseColor($first);
     $b = self::parseColor($second);
-    return $a !== NULL && $b !== NULL && $a === $b;
+    if ($a === NULL || $b === NULL) {
+      return FALSE;
+    }
+    foreach ($a as $index => $channel) {
+      if (abs((float) $channel - (float) $b[$index]) > 0.000001) {
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
   private static function normalizeColorValue(string $value): string {
@@ -784,7 +798,6 @@ final class Aculta420DesignFoundationsAnalyzer {
   /** Return the predicate of a Twig ternary, excluding its result branches. */
   private static function beforeTopLevelTernary(string $expression): ?string {
     $quote = NULL;
-    $paren = $bracket = 0;
     for ($i = 0, $length = strlen($expression); $i < $length; $i++) {
       $char = $expression[$i];
       if ($quote !== NULL) {
@@ -793,11 +806,7 @@ final class Aculta420DesignFoundationsAnalyzer {
         continue;
       }
       if ($char === '"' || $char === "'") { $quote = $char; continue; }
-      if ($char === '(') { $paren++; }
-      elseif ($char === ')') { $paren--; }
-      elseif ($char === '[') { $bracket++; }
-      elseif ($char === ']') { $bracket--; }
-      elseif ($char === '?' && $paren === 0 && $bracket === 0) {
+      elseif ($char === '?' && ($expression[$i + 1] ?? '') !== '?') {
         return substr($expression, 0, $i);
       }
     }
@@ -923,7 +932,7 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   /** Read only PHP switch case expressions, excluding consequent statements. */
   private static function readPhpSwitchCaseLabels(array $tokens, int $index): string {
-    $alternative = FALSE;
+    $alternative_depth = 0;
     $started = FALSE;
     $brace_depth = 0;
     $labels = '';
@@ -939,23 +948,34 @@ final class Aculta420DesignFoundationsAnalyzer {
         }
         elseif ($part === ':') {
           $started = TRUE;
-          $alternative = TRUE;
+          $alternative_depth = 1;
         }
         continue;
       }
-      if ($alternative && is_array($tokens[$i]) && $tokens[$i][0] === T_ENDSWITCH) {
-        return $labels;
+      if ($alternative_depth > 0 && is_array($tokens[$i])) {
+        if ($tokens[$i][0] === T_SWITCH && self::phpSwitchUsesAlternativeSyntax($tokens, $i)) {
+          $alternative_depth++;
+        }
+        elseif ($tokens[$i][0] === T_ENDSWITCH) {
+          $alternative_depth--;
+          if ($alternative_depth === 0) {
+            return $labels;
+          }
+        }
       }
-      if (!$alternative && $part === '}') {
+      if ($part === '}') {
         $brace_depth--;
-        if ($brace_depth === 0) {
+        if ($alternative_depth === 0 && $brace_depth === 0) {
           return $labels;
         }
       }
-      elseif (!$alternative && $part === '{') {
+      elseif ($part === '{') {
         $brace_depth++;
       }
-      if (!is_array($tokens[$i]) || $tokens[$i][0] !== T_CASE || (!$alternative && $brace_depth !== 1)) {
+      if (!is_array($tokens[$i]) || $tokens[$i][0] !== T_CASE
+        || ($alternative_depth > 0 && $alternative_depth !== 1)
+        || ($alternative_depth === 1 && $brace_depth !== 0)
+        || ($alternative_depth === 0 && $brace_depth !== 1)) {
         continue;
       }
       $case = '';
@@ -984,6 +1004,31 @@ final class Aculta420DesignFoundationsAnalyzer {
       $labels .= ' ' . $case;
     }
     return $labels;
+  }
+
+  /** Return whether a PHP switch token uses colon/endswitch syntax. */
+  private static function phpSwitchUsesAlternativeSyntax(array $tokens, int $index): bool {
+    $parenthesis = 0;
+    $condition_closed = FALSE;
+    for ($i = $index + 1; isset($tokens[$i]); $i++) {
+      if (is_array($tokens[$i]) && in_array($tokens[$i][0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], TRUE)) {
+        continue;
+      }
+      $part = is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
+      if ($part === '(') {
+        $parenthesis++;
+      }
+      elseif ($part === ')') {
+        $parenthesis--;
+        if ($parenthesis === 0) {
+          $condition_closed = TRUE;
+        }
+      }
+      elseif ($condition_closed) {
+        return $part === ':';
+      }
+    }
+    return FALSE;
   }
 
   private static function readBalancedJsBlock(string $source, int $index): string {

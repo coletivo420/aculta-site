@@ -214,21 +214,23 @@ de caminhos. O contrato de modo é:
 > Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
 
 O scanner de CSS remove comentários antes de inspecionar seletores e reconhece
-atributos de tema dark/light, classes `.dark`/`.light` e variantes explícitas,
-incluindo flags de comparação `i`/`s` em seletores de atributo, além de
-`prefers-color-scheme`. Em `tokens.css`, somente os dois blocos
+atributos de tema dark/light com os operadores CSS `=`, `~=`, `|=`, `^=`,
+`$=` e `*=`, classes `.dark`/`.light` e variantes explícitas, incluindo
+flags de comparação `i`/`s`, além de `prefers-color-scheme`. Em `tokens.css`, somente os dois blocos
 top-level `:root, [data-bs-theme="light"]` e `[data-bs-theme="dark"]` são
 permitidos, e cada bloco pode conter apenas custom properties. Regras ou
 seletores estruturais por modo, inclusive dentro de `tokens.css`, falham.
 
 O scanner Twig verifica condições `if`/`elseif` e ternários em tags `{% ... %}`
 e `{{ ... }}`. Em ternários, somente o predicado antes de `?` determina se há
-uma ramificação por modo; palavras como `dark` apenas nos resultados não são
-consideradas. O scanner PHP usa `token_get_all()` para condições `if`/`elseif`,
-`switch` com `case` nas formas com chaves e `endswitch`, e `match` usando apenas
-condições de arms antes de `=>`; textos nos resultados não são ramificações.
+uma ramificação por modo; parênteses ao redor do ternário não mudam a análise e
+palavras como `dark` apenas nos resultados não são consideradas. O scanner PHP
+usa `token_get_all()` para condições `if`/`elseif`, `switch` com `case` nas
+formas com chaves e `endswitch` aninhado, e `match` usando apenas condições de
+arms antes de `=>`; textos nos resultados não são ramificações.
 comentários são removidos das expressões avaliadas. O scanner JavaScript
-reconhece `if`, `switch`/`case` com parênteses balanceados, ternários,
+reconhece `if` e discriminantes de `switch` com parênteses balanceados,
+`switch`/`case`, ternários,
 alternância de classes/atributos e qualquer escrita em `dataset.theme`,
 `dataset.bsTheme`, `dataset.colorMode` ou `dataset.colorScheme`, mesmo quando o
 valor vem de variável ou função. Seletores de classe também são inspecionados
@@ -236,8 +238,9 @@ dentro de pseudo-classes funcionais como `:where()` e `:is()`.
 Decisões Twig/PHP/JavaScript reconhecem também `colorScheme`/`color_scheme`.
 Em `switch`, a análise considera o discriminante e as expressões dos labels
 `case`, não texto arbitrário nos consequentes; PHP aceita a forma `endswitch`.
-Writes simples e compostos (`=`, `??=`, `||=`, `&&=`) em dataset de modo são
-proibidos.
+Writes simples e compostos (`=`, `??=`, `||=`, `&&=`) em dataset de modo e
+chamadas `setAttribute()` para atributos de modo são proibidos mesmo com valor
+dinâmico. O scanner JavaScript é delimitado e não substitui um parser completo.
 
 | P2 da revisão da PR #80 | Fixture que prova a regressão |
 | --- | --- |
@@ -269,11 +272,14 @@ resolvidos por modo. O contrato enumera tokens de cor ACULTA/Bootstrap e tokens
 RGB, exigindo que cada RGB Bootstrap corresponda à cor companheira; valores
 inválidos (incluindo alpha não numérico), duplicatas, ciclos e referências não
 resolvidas falham.
-Os tokens base de cor Bootstrap também têm fontes semânticas explícitas por
+Os tokens base de cor Bootstrap e a borda translúcida também têm fontes/valores
+aprovados explicitamente por
 modo (por exemplo, primary → `--aculta-green`); mudar simultaneamente a cor e
 seu RGB para outro valor não contorna o gate. Os resultados de `--bs-dark`,
 `--bs-gray`, `--bs-black` e da borda inválida de formulário têm mapeamentos
 específicos de light/dark, registrados no próprio contrato do analisador.
+Comparações de cor normalizam os canais numericamente, portanto `rgb()` e hex
+equivalentes são tratados como a mesma cor.
 Cores de primeiro plano translúcidas são compostas sobre a superfície opaca
 antes da medição WCAG; superfícies de contraste precisam ser opacas. Mappings
 Bootstrap e pares RGB são conferidos separadamente em light e dark. Contrastes
