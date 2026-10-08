@@ -76,13 +76,6 @@ $legacyProceduralFunctions = [
   'aculta_portal_entity_access',
   'aculta_portal_entity_presave',
   'aculta_portal_form_alter',
-  'aculta_portal_change_mail_confirmation_message',
-  'aculta_portal_security_password_redirect',
-  'aculta_portal_security_password_after_build',
-  'aculta_portal_account_photo_redirect',
-  'aculta_portal_address_redirect',
-  'aculta_portal_sync_customer_address_names',
-  'aculta_portal_validate_donation_amount',
 ];
 
 $tokenHooks = $srcRoot . '/Hook/TokenHooks.php';
@@ -130,6 +123,45 @@ $check(
   str_contains($formCallbacksSource, 'function validateActivity('),
   'P3.1 PortalFormCallbacks must provide validateActivity().',
 );
+
+$moduleCallbacksSource = $read($moduleRoot . '/aculta_portal.module');
+$portalHooksSource = $read($srcRoot . '/Hook/PortalHooks.php');
+$legacyFormCallbackNames = [
+  'aculta_portal_change_mail_confirmation_message',
+  'aculta_portal_security_password_redirect',
+  'aculta_portal_security_password_after_build',
+  'aculta_portal_account_photo_redirect',
+  'aculta_portal_address_redirect',
+  'aculta_portal_sync_customer_address_names',
+  'aculta_portal_validate_donation_amount',
+];
+foreach ($legacyFormCallbackNames as $legacyCallback) {
+  $check(
+    !str_contains($moduleCallbacksSource, $legacyCallback)
+      && !str_contains($portalHooksSource, $legacyCallback),
+    'P3.2 legacy form callback must not remain registered: ' . $legacyCallback,
+  );
+}
+$serviceCallbacks = [
+  'changeMailConfirmationMessage',
+  'securityPasswordRedirect',
+  'securityPasswordAfterBuild',
+  'accountPhotoRedirect',
+  'addressRedirect',
+  'syncCustomerAddressNames',
+  'validateDonationAmount',
+];
+foreach ($serviceCallbacks as $methodName) {
+  $check(
+    str_contains($formCallbacksSource, 'function ' . $methodName . '('),
+    'P3.2 PortalFormCallbacks must provide ' . $methodName . '().',
+  );
+  $check(
+    str_contains($moduleCallbacksSource, 'aculta_portal.form_callbacks:' . $methodName)
+      || str_contains($portalHooksSource, 'aculta_portal.form_callbacks:' . $methodName),
+    'P3.2 service callback must be registered in form hooks: ' . $methodName,
+  );
+}
 
 $moduleFile = $moduleRoot . '/aculta_portal.module';
 if (is_file($moduleFile)) {

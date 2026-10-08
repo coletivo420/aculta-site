@@ -1,5 +1,15 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-08 — P3.2: callbacks de Conta/Commerce em serviço
+
+- Migra os sete callbacks procedurais restantes de Form API para `PortalFormCallbacks`: confirmação de e-mail, redirect/after-build de senha, redirects de foto/endereço, sincronização de nomes do endereço Commerce e validação de doação.
+- Atualiza todos os registros em `aculta_portal.module` e `PortalHooks` para o formato `aculta_portal.form_callbacks:method`.
+- Expande a DI do serviço somente com as dependências exigidas pelos callbacks migrados: messenger, current_user, user.data, entity_type.manager e string_translation.
+- Preserva redirects, mensagens, flags de Social Auth, labels/autocomplete de senha, sincronização Profile/Commerce e validação de valor de apoio.
+- Remove sete funções globais; o legado procedural cai de 10 para 3 funções.
+- `hook_form_alter()`, `hook_entity_access()` e `hook_entity_presave()` permanecem procedurais para a fase de DI/OOP do próprio hook.
+- O gate passa a rejeitar nomes legados e exigir cada método/registro de serviço migrado.
+
 ## 2026-10-08 — P3.1: Form API editorial e CallableResolver
 
 - Migra `hook_form_node_form_alter()` para `EditorialHooks::formNodeFormAlter()` com `#[Hook]`.

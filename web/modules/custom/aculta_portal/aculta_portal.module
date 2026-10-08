@@ -82,7 +82,7 @@ function aculta_portal_form_alter(array &$form, FormStateInterface $form_state, 
     $form['account']['current_pass']['#title'] = t('Senha atual');
     $form['account']['current_pass']['#attributes']['autocomplete'] = 'current-password';
     $form['actions']['submit']['#value'] = t('Solicitar alteração de e-mail');
-    $form['#submit'][] = 'aculta_portal_change_mail_confirmation_message';
+    $form['#submit'][] = 'aculta_portal.form_callbacks:changeMailConfirmationMessage';
   }
 
   if ($form_id === 'user_form'
@@ -97,7 +97,7 @@ function aculta_portal_form_alter(array &$form, FormStateInterface $form_state, 
       $form['account']['current_pass']['#attributes']['autocomplete'] = 'current-password';
       $form['account']['pass']['#title'] = t('Nova senha');
       $form['account']['pass']['#attributes']['autocomplete'] = 'new-password';
-      $form['#after_build'][] = 'aculta_portal_security_password_after_build';
+      $form['#after_build'][] = 'aculta_portal.form_callbacks:securityPasswordAfterBuild';
       $form['#attributes']['class'][] = 'aculta-security-password-form';
       $form['actions']['submit']['#value'] = t('Salvar nova senha');
 
@@ -111,14 +111,14 @@ function aculta_portal_form_alter(array &$form, FormStateInterface $form_state, 
           unset($form['account'][$key]);
         }
       }
-      $form['actions']['submit']['#submit'][] = 'aculta_portal_security_password_redirect';
+      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:securityPasswordRedirect';
     }
   }
 
   if (isset($form['commerce_donation_pane']['field_donation_amount'])) {
     // The contrib widget converts an empty custom value to zero while
     // massaging values. Require a real positive custom value server-side.
-    $form['#validate'][] = 'aculta_portal_validate_donation_amount';
+    $form['#validate'][] = 'aculta_portal.form_callbacks:validateDonationAmount';
     $form['commerce_donation_pane']['#title'] = t('Seu apoio');
     $amount_widget = &$form['commerce_donation_pane']['field_donation_amount']['widget'][0]['donation_level'];
     if (isset($amount_widget)) {
@@ -158,95 +158,5 @@ function aculta_portal_form_alter(array &$form, FormStateInterface $form_state, 
     $configuration_form['client_secret']['#default_value'] = '';
     unset($configuration_form['client_secret']['#value']);
     $configuration_form['client_secret']['#attributes']['autocomplete'] = 'new-password';
-  }
-}
-
-/** Replaces Change Mail Page's premature success claim with the confirmed flow. */
-function aculta_portal_change_mail_confirmation_message(array &$form, FormStateInterface $form_state): void {
-  \Drupal::messenger()->deleteByType('status');
-  \Drupal::messenger()->addStatus(t('A solicitação foi registrada. Seu e-mail atual permanece ativo até a confirmação do novo endereço.'));
-  $form_state->setRedirect('aculta_portal.security');
-}
-
-/** Returns the own-account password form to the Portal after saving. */
-function aculta_portal_security_password_redirect(array &$form, FormStateInterface $form_state): void {
-  $uid = \Drupal::currentUser()->id();
-  if ($uid) {
-    \Drupal::service('user.data')->delete('aculta_portal', $uid, 'social_auth_password_unset');
-  }
-  $form_state->setRedirect('aculta_portal.security');
-}
-
-/** Applies accessible autocomplete and labels to Core's password confirm widget. */
-function aculta_portal_security_password_after_build(array $form, FormStateInterface $form_state): array {
-  if (isset($form['account']['pass']['pass1'])) {
-    $form['account']['pass']['pass1']['#title'] = t('Nova senha');
-    $form['account']['pass']['pass1']['#attributes']['autocomplete'] = 'new-password';
-  }
-  if (isset($form['account']['pass']['pass2'])) {
-    $form['account']['pass']['pass2']['#title'] = t('Confirmar nova senha');
-    $form['account']['pass']['pass2']['#attributes']['autocomplete'] = 'new-password';
-  }
-  return $form;
-}
-
-/** Returns the profile-photo form to the account overview after saving. */
-function aculta_portal_account_photo_redirect(array &$form, FormStateInterface $form_state): void {
-  $form_state->setRedirect('aculta_portal.dashboard');
-}
-
-/** Returns a customer Address submission to the nested Portal address route. */
-function aculta_portal_address_redirect(array &$form, FormStateInterface $form_state): void {
-  $form_state->setRedirect('aculta_portal.my_data_address');
-}
-
-/** Keeps the Commerce address-book name prefill in sync with basic Profile data. */
-function aculta_portal_sync_customer_address_names(array &$form, FormStateInterface $form_state): void {
-  $participant = $form_state->getFormObject()->getEntity();
-  if (!$participant instanceof \Drupal\profile\ProfileInterface || $participant->bundle() !== 'participante') {
-    return;
-  }
-  $user = $participant->getOwner();
-  if (!$user) {
-    return;
-  }
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  $customer = $storage->loadByUser($user, 'customer');
-  if (!$customer || $customer->get('address')->isEmpty()) {
-    return;
-  }
-  $address = $customer->get('address')->first();
-  $changed = FALSE;
-  foreach (['given_name' => 'field_first_name', 'family_name' => 'field_last_name'] as $address_key => $profile_field) {
-    $value = (string) ($participant->get($profile_field)->value ?? '');
-    if ($address->get($address_key) !== $value) {
-      $address->set($address_key, $value);
-      $changed = TRUE;
-    }
-  }
-  if ($changed) {
-    $customer->save();
-  }
-}
-
-/** Rejects empty/non-positive custom donation amounts before entity building. */
-function aculta_portal_validate_donation_amount(array &$form, FormStateInterface $form_state): void {
-  $gift_type = $form_state->getValue(['commerce_donation_pane', 'field_gift_type']);
-  $gift_type = is_array($gift_type) ? ($gift_type[0]['value'] ?? $gift_type['value'] ?? reset($gift_type)) : $gift_type;
-  if ($gift_type !== 'single') {
-    $form_state->setErrorByName('commerce_donation_pane][field_gift_type', t('Selecione apoio único.'));
-    return;
-  }
-
-  $amount_values = $form_state->getValue(['commerce_donation_pane', 'field_donation_amount']);
-  $amount_item = is_array($amount_values) ? ($amount_values[0] ?? []) : [];
-  $donation_level = $amount_item['donation_level'] ?? [];
-  if (($donation_level['value'] ?? NULL) !== 'custom_amount') {
-    return;
-  }
-
-  $amount = $donation_level['amount'] ?? NULL;
-  if (!is_numeric($amount) || (float) $amount <= 0) {
-    $form_state->setErrorByName('commerce_donation_pane][field_donation_amount][0][donation_level][amount', t('Informe um valor de apoio maior que zero.'));
   }
 }
