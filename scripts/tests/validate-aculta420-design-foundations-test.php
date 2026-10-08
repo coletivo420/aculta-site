@@ -92,6 +92,7 @@ try {
     ['commented JavaScript switch is ignored', 'js/comments.js', "/* switch (theme) { case 'dark': card.hidden = true; } */\nconst label = 'normal';", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['inline JavaScript comment is ignored', 'js/inline-comment.js', "const enabled = true; // if (theme === 'dark') { localStorage.setItem('x', 'y'); }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['unrelated localStorage use is allowed', 'js/notice-storage.js', "localStorage.setItem('noticeDismissed', '1');", 'DARK JS LAYOUT BEHAVIOR: 0'],
+    ['CSS comments do not count as raw colors', 'css/comment-color.css', '/* legacy fallback was #fff; color: red */', ''],
     ['mode-like words inside a string are not a branch', 'js/string-only-mode.js', "if (label === 'dark theme') { renderLabel(); }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['unrelated Twig conditional text is not a mode branch', 'templates/string-only-mode.html.twig', "{% if label == 'dark theme' %}label{% endif %}", 'DARK TWIG BRANCHES: 0'],
     ['unrelated PHP conditional text is not a mode branch', 'src/StringOnlyMode.php', "<?php if (\$label === 'dark theme') { echo 'label'; }", 'DARK PHP BRANCHES: 0'],
@@ -216,6 +217,9 @@ try {
     ['Twig inline script cannot persist color mode', 'templates/inline-storage.html.twig', "<script>localStorage.setItem('theme', 'dark');</script>", 'Twig inline scripts do not persist or initialize color mode prematurely'],
     ['Twig style block cannot add a mode selector', 'templates/inline-style.html.twig', '<style>[data-bs-theme="dark"] .card { display:none; }</style>', 'Color mode is token-only'],
     ['tokens stylesheet cannot import another stylesheet', 'css/tokens.css', "\n@import url('https://example.invalid/structural.css');\n", 'Token CSS parses within the supported flat-rule subset'],
+    ['modern oklch color literal outside tokens is rejected', 'css/fixtures/oklch.css', '.notice { color: oklch(60% 0.2 120); }', 'CSS literals outside tokens.css need semantic tokens'],
+    ['modern lab color literal outside tokens is rejected', 'css/fixtures/lab.css', '.notice { color: lab(50% 20 30); }', 'CSS literals outside tokens.css need semantic tokens'],
+    ['named color literal outside tokens is rejected', 'css/fixtures/named-color.css', '.notice { color: red; }', 'CSS literals outside tokens.css need semantic tokens'],
   ];
   foreach ($cases as [$name, $relative, $contents, $expected_message]) {
     $fixture_path = $temporary_theme . '/' . $relative;

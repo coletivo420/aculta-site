@@ -122,7 +122,7 @@ foreach ($css_files as $path) {
     continue;
   }
   $relative = substr($path, strlen($theme) + 1);
-  $check(preg_match('/#[0-9a-f]{3,8}\b|\b(?:rgb|rgba|hsl|hsla)\s*\(/i', $source) !== 1, 'CSS literals outside tokens.css need semantic tokens: ' . $relative . '.');
+  $check(!Aculta420DesignFoundationsAnalyzer::hasRawColorLiteral($source), 'CSS literals outside tokens.css need semantic tokens: ' . $relative . '.');
 }
 
 $catch_all = [];

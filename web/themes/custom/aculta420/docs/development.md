@@ -265,6 +265,15 @@ dinâmicos quando aplicável. O scanner também mantém isolados os labels de
 switches aninhados nos dois estilos PHP. O scanner JavaScript é delimitado e
 não substitui um parser completo.
 
+O gate remove comentários CSS antes da checagem de literais. Fora de
+`tokens.css`, rejeita cores hexadecimais e funções CSS de cor (`rgb`, `hsl`,
+`hwb`, `lab`, `lch`, `oklab`, `oklch`, `color()`, `color-mix()` e
+`device-cmyk()`), além de nomes de cores CSS em declarações de propriedades
+que aceitam cor. A lista de propriedades coberta inclui `color`, backgrounds,
+borders, outlines, sombras e `fill`/`stroke`; não é um parser completo de
+valores CSS e não classifica identificadores arbitrários como cores. Fixtures
+cobrem comentários, `oklch()`, `lab()` e nome literal `red`.
+
 | P2 da revisão da PR #80 | Fixture que prova a regressão |
 | --- | --- |
 | P2-01 seletor/regra estrutural em `tokens.css` | `Dark selector in tokens stylesheet`; `Structural declaration inside dark token block` |
@@ -288,6 +297,7 @@ não substitui um parser completo.
 | Revisão PR #83: CSS import e inline style | `tokens stylesheet cannot import another stylesheet`; `Twig style block cannot add a mode selector` |
 | Revisão PR #83: persistence, classes dinâmicas e falsos positivos textuais | fixtures `inline storage`, `dynamic className/classList`, `noticeDismissed` e `string-only mode` |
 | Revisão PR #83: regex URL | `regex URL slashes do not truncate JavaScript if condition` |
+| Revisão PR #83: CSS comentário e sintaxe de cor moderna | fixture positiva `CSS comments do not count as raw colors`; negativas `oklch`, `lab` e nome CSS `red` fora de `tokens.css` |
 
 Também há casos válidos para custom property, comentários, branches não
 relacionados ao modo, e casos inválidos para seletor `.dark`,

@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * Supported CSS is the flat token stylesheet used by ACULTA420: top-level
  * rules, nested selectors/at-rules for mode-selector discovery, custom
- * properties, hex/rgb/rgba colors, and var(--token) aliases without fallbacks.
+ * properties, CSS color functions/named colors, and var(--token) aliases without fallbacks.
  * This is intentionally not a complete CSS, Twig, PHP, or JavaScript parser.
  */
 final class Aculta420DesignFoundationsAnalyzer {
@@ -19,6 +19,32 @@ final class Aculta420DesignFoundationsAnalyzer {
   private const MODE_CLASSES = [
     'dark', 'light', 'dark-theme', 'light-theme', 'theme-dark', 'theme-light',
     'dark-mode', 'light-mode', 'is-dark', 'is-light', 'color-mode-dark', 'color-mode-light',
+  ];
+
+  private const CSS_NAMED_COLORS = [
+    'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque',
+    'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue',
+    'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan',
+    'darkblue', 'darkcyan', 'darkgoldenrod', 'darkgray', 'darkgrey', 'darkgreen',
+    'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkorchid', 'darkred',
+    'darksalmon', 'darkseagreen', 'darkslateblue', 'darkslategray', 'darkslategrey',
+    'darkturquoise', 'darkviolet', 'deeppink', 'deepskyblue', 'dimgray', 'dimgrey',
+    'dodgerblue', 'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro',
+    'ghostwhite', 'gold', 'goldenrod', 'gray', 'grey', 'green', 'greenyellow', 'honeydew',
+    'hotpink', 'indianred', 'indigo', 'ivory', 'khaki', 'lavender', 'lavenderblush',
+    'lawngreen', 'lemonchiffon', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow',
+    'lightgray', 'lightgrey', 'lightgreen', 'lightpink', 'lightsalmon', 'lightseagreen',
+    'lightskyblue', 'lightslategray', 'lightslategrey', 'lightsteelblue', 'lightyellow',
+    'lime', 'limegreen', 'linen', 'magenta', 'maroon', 'mediumaquamarine', 'mediumblue',
+    'mediumorchid', 'mediumpurple', 'mediumseagreen', 'mediumslateblue', 'mediumspringgreen',
+    'mediumturquoise', 'mediumvioletred', 'midnightblue', 'mintcream', 'mistyrose', 'moccasin',
+    'navajowhite', 'navy', 'oldlace', 'olive', 'olivedrab', 'orange', 'orangered', 'orchid',
+    'palegoldenrod', 'palegreen', 'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff',
+    'peru', 'pink', 'plum', 'powderblue', 'purple', 'rebeccapurple', 'red', 'rosybrown',
+    'royalblue', 'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna',
+    'silver', 'skyblue', 'slateblue', 'slategray', 'slategrey', 'snow', 'springgreen',
+    'steelblue', 'tan', 'teal', 'thistle', 'tomato', 'turquoise', 'violet', 'wheat', 'white',
+    'whitesmoke', 'yellow', 'yellowgreen',
   ];
 
   private const REQUIRED_TOKENS = [
@@ -423,6 +449,36 @@ final class Aculta420DesignFoundationsAnalyzer {
     };
     $walk($rules);
     return $count;
+  }
+
+  /** Detect CSS color literals outside the token stylesheet. */
+  public static function hasRawColorLiteral(string $css): bool {
+    $clean = self::stripCssComments($css);
+    if (preg_match('/#[0-9a-f]{3,8}\\b|\\b(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color|color-mix|device-cmyk)\\s*\\(/i', $clean) === 1) {
+      return TRUE;
+    }
+    [$rules] = self::parseCssRules($clean);
+    $color_properties = [
+      'color', 'background', 'background-color', 'background-image', 'border', 'border-top', 'border-right',
+      'border-bottom', 'border-left', 'border-color', 'outline', 'outline-color',
+      'text-decoration-color', 'text-emphasis-color', 'column-rule-color', 'caret-color',
+      'accent-color', 'fill', 'stroke', 'box-shadow', 'text-shadow',
+    ];
+    $contains_named_color = static function (array $nodes) use (&$contains_named_color, $color_properties): bool {
+      foreach ($nodes as $node) {
+        foreach (self::parseDeclarations($node['body']) as $declaration) {
+          if (in_array(strtolower($declaration['name']), $color_properties, TRUE)
+            && preg_match('/(?<![-\\w])(?:' . implode('|', self::CSS_NAMED_COLORS) . ')(?![-\\w])/i', $declaration['value']) === 1) {
+            return TRUE;
+          }
+        }
+        if ($contains_named_color($node['children'])) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    };
+    return $contains_named_color($rules);
   }
 
   public static function countTwigModeBranches(string $source): int {
