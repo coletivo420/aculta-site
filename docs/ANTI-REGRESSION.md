@@ -30,6 +30,8 @@ snapshots de fases e runbooks históricos.
 - subscribers que retargetam redirects antes do Core devem usar prioridade explícita, não empate de priority/module weight;
 - sessão cross-subdomain exige `session.storage.options.cookie_domain` compartilhado por ambiente e `cookie_samesite: Lax` como baseline para preservar retorno OAuth top-level GET;
 - AJAX/fetch do Portal permanece same-origin; CORS não é mecanismo de comunicação entre purposes;
+- checkout e pagamento são centralizados em `main`: `commerce_checkout.*`, `commerce_payment.checkout.*`, `commerce_payment.notify` e `commerce_donation_flow.*` usam a política única `DomainRoutePolicy`; não duplicar checkout por SHOP/COURSES/SUPPORT;
+- catálogos/origem comercial podem permanecer em seus purposes, mas qualquer formulário mutável de checkout/pagamento deve nascer em MAIN; wrong-host mutável falha fechado;
 - navegação GET/HEAD para `/painel-administrativo/**` em purpose secundário é canonicalizada para MAIN via `DomainPurposeManager`; métodos mutáveis em host errado permanecem fail-closed, sem redirect cross-domain;
 - wrong-purpose público/funcional continua 404; canonicalização administrativa não vira redirect genérico de Domain;
 - a exceção `entity.user.edit_form` usada pelo reset one-time do Core em ACCOUNT deve ser preservada nos dois estágios do `DomainPurposeRequestSubscriber` e nunca é interpretada como painel administrativo de ACCOUNT;
