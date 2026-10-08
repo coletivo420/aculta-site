@@ -392,6 +392,20 @@ Integrações modernas com Domain tendem a manter Domain como contexto da camada
 funcional e filtrar/decidir antes da apresentação. Isso reforça nossa regra de
 que Domain Negotiator/entidade/hostname não chegam ao tema.
 
+## Revisão de compatibilidade Drupal 11 → 12 → 13
+
+Revisado em 2026-10-08 contra Core atual:
+
+- hooks OOP em módulos são suportados desde Drupal 11.2 e hooks OOP em temas desde Drupal 11.3; manter `#[Hook]` em `src/Hook/` é o caminho corrente;
+- `template_preprocess()` e `template_preprocess_HOOK()` legados estão deprecated na linha 11.x e removidos no Drupal 12; não reintroduzir callbacks mágicos legados;
+- a ordem documentada do Theme API continua módulo preprocess → theme preprocess, sustentando a ponte Portal → ACULTA420 sem chamada direta entre providers;
+- Render API continua exigindo que cache contexts/tags/max-age permaneçam no render tree e façam bubbling;
+- desde Drupal 11.3, passar a `Renderer::addCacheableDependency()` um objeto que não implemente `CacheableDependencyInterface` é deprecated e o Core anuncia type-hint obrigatório no Drupal 13; `DomainPresentation` implementa explicitamente essa interface;
+- `Element::children()` identifica filhos estruturais do render array, não garante que um filho represente branding visual efetivo. B.3/B.4 portanto preserva `page.header` e detecta explicitamente `system_branding_block` para decidir apenas o fallback de marca;
+- SDC continua reservado para a fase em que existir componente estável: props para dados tipados e slots para renderables. O Portal não instancia provider SDC do tema.
+
+Essas regras são deliberadamente mais estreitas que “funciona no Drupal 11”: evitam APIs já deprecated e preservam o caminho de atualização para Drupal 12/13.
+
 ## Compatibilidade Drupal 11+
 
 Baseline recomendado para esta fronteira:
