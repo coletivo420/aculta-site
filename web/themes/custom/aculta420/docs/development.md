@@ -215,14 +215,18 @@ de caminhos. O contrato de modo é:
 
 O scanner de CSS remove comentários antes de inspecionar seletores e reconhece
 atributos de tema dark/light, classes `.dark`/`.light` e variantes explícitas,
-além de `prefers-color-scheme`. Em `tokens.css`, somente os dois blocos
+incluindo flags de comparação `i`/`s` em seletores de atributo, além de
+`prefers-color-scheme`. Em `tokens.css`, somente os dois blocos
 top-level `:root, [data-bs-theme="light"]` e `[data-bs-theme="dark"]` são
 permitidos, e cada bloco pode conter apenas custom properties. Regras ou
 seletores estruturais por modo, inclusive dentro de `tokens.css`, falham.
 
 O scanner Twig verifica condições `if`/`elseif` e ternários em tags `{% ... %}`
-e `{{ ... }}`. O scanner PHP usa `token_get_all()` para condições `if`/`elseif`,
-`switch` com `case` nas formas com chaves e `endswitch`, e `match` com arms;
+e `{{ ... }}`. Em ternários, somente o predicado antes de `?` determina se há
+uma ramificação por modo; palavras como `dark` apenas nos resultados não são
+consideradas. O scanner PHP usa `token_get_all()` para condições `if`/`elseif`,
+`switch` com `case` nas formas com chaves e `endswitch`, e `match` usando apenas
+condições de arms antes de `=>`; textos nos resultados não são ramificações.
 comentários são removidos das expressões avaliadas. O scanner JavaScript
 reconhece `if`, `switch`/`case` com parênteses balanceados, ternários,
 alternância de classes/atributos e qualquer escrita em `dataset.theme`,
@@ -265,6 +269,11 @@ resolvidos por modo. O contrato enumera tokens de cor ACULTA/Bootstrap e tokens
 RGB, exigindo que cada RGB Bootstrap corresponda à cor companheira; valores
 inválidos (incluindo alpha não numérico), duplicatas, ciclos e referências não
 resolvidas falham.
+Os tokens base de cor Bootstrap também têm fontes semânticas explícitas por
+modo (por exemplo, primary → `--aculta-green`); mudar simultaneamente a cor e
+seu RGB para outro valor não contorna o gate. Os resultados de `--bs-dark`,
+`--bs-gray`, `--bs-black` e da borda inválida de formulário têm mapeamentos
+específicos de light/dark, registrados no próprio contrato do analisador.
 Cores de primeiro plano translúcidas são compostas sobre a superfície opaca
 antes da medição WCAG; superfícies de contraste precisam ser opacas. Mappings
 Bootstrap e pares RGB são conferidos separadamente em light e dark. Contrastes

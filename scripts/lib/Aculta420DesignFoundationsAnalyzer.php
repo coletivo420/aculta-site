@@ -289,24 +289,80 @@ final class Aculta420DesignFoundationsAnalyzer {
     }
 
     $mapping_values = [
+      '--bs-primary' => '--aculta-green',
+      '--bs-secondary' => '--aculta-green-dark',
+      '--bs-success' => '--aculta-green',
+      '--bs-info' => '--aculta-green',
+      '--bs-warning' => '--aculta-yellow',
+      '--bs-danger' => '--aculta-red',
+      '--bs-white' => '--aculta-white',
       '--bs-body-bg' => '--aculta-surface-page',
       '--bs-body-color' => '--aculta-text-primary',
       '--bs-secondary-bg' => '--aculta-surface-raised',
       '--bs-tertiary-bg' => '--aculta-surface-muted',
       '--bs-light' => '--aculta-surface-muted',
+      '--bs-gray' => '--aculta-text-secondary',
+      '--bs-gray-dark' => '--aculta-text-primary',
+      '--bs-gray-100' => '--aculta-surface-muted',
+      '--bs-gray-200' => '--aculta-surface-muted',
+      '--bs-gray-300' => '--aculta-border-default',
+      '--bs-gray-400' => '--aculta-border-strong',
+      '--bs-gray-500' => '--aculta-text-muted',
+      '--bs-gray-600' => '--aculta-text-secondary',
+      '--bs-gray-700' => '--aculta-text-primary',
+      '--bs-gray-800' => '--aculta-text-primary',
+      '--bs-gray-900' => '--aculta-text-primary',
+      '--bs-code-color' => '--aculta-text-primary',
+      '--bs-highlight-color' => '--aculta-text-primary',
+      '--bs-highlight-bg' => 'rgba(242, 202, 54, 0.2)',
+      '--bs-heading-color' => '--aculta-text-primary',
       '--bs-secondary-color' => '--aculta-text-secondary',
       '--bs-tertiary-color' => '--aculta-text-muted',
       '--bs-emphasis-color' => '--aculta-text-primary',
       '--bs-link-color' => '--aculta-link',
       '--bs-link-hover-color' => '--aculta-text-primary',
+      '--bs-focus-ring-color' => '--aculta-focus-ring',
+      '--bs-form-valid-color' => '--aculta-text-primary',
+      '--bs-form-valid-border-color' => '--aculta-border-accent',
+      '--bs-form-invalid-color' => '--aculta-text-primary',
+      '--bs-form-invalid-border-color' => '--aculta-red',
+      '--bs-primary-text-emphasis' => '--aculta-text-primary',
+      '--bs-secondary-text-emphasis' => '--aculta-text-primary',
+      '--bs-success-text-emphasis' => '--aculta-text-primary',
+      '--bs-info-text-emphasis' => '--aculta-text-primary',
+      '--bs-warning-text-emphasis' => '--aculta-text-primary',
+      '--bs-danger-text-emphasis' => '--aculta-text-primary',
+      '--bs-light-text-emphasis' => '--aculta-text-primary',
+      '--bs-dark-text-emphasis' => '--aculta-text-primary',
+      '--bs-primary-bg-subtle' => '--aculta-surface-muted',
+      '--bs-secondary-bg-subtle' => '--aculta-surface-muted',
+      '--bs-success-bg-subtle' => '--aculta-surface-muted',
+      '--bs-info-bg-subtle' => '--aculta-surface-muted',
+      '--bs-warning-bg-subtle' => '--aculta-surface-muted',
+      '--bs-danger-bg-subtle' => '--aculta-surface-muted',
+      '--bs-light-bg-subtle' => '--aculta-surface-raised',
+      '--bs-dark-bg-subtle' => '--aculta-surface-muted',
+      '--bs-primary-border-subtle' => '--aculta-border-accent',
+      '--bs-secondary-border-subtle' => '--aculta-border-default',
+      '--bs-success-border-subtle' => '--aculta-border-accent',
+      '--bs-info-border-subtle' => '--aculta-border-accent',
+      '--bs-warning-border-subtle' => '--aculta-interactive-border',
+      '--bs-danger-border-subtle' => '--aculta-text-accent',
+      '--bs-light-border-subtle' => '--aculta-border-default',
+      '--bs-dark-border-subtle' => '--aculta-border-strong',
     ];
     $bootstrap_results = [];
     foreach (['light' => $light_effective, 'dark' => $dark_effective] as $mode => $effective) {
       $mode_mappings = $mapping_values;
       $mode_mappings['--bs-dark'] = $mode === 'dark' ? '--aculta-surface-page' : '--aculta-green-dark';
+      $mode_mappings['--bs-gray'] = $mode === 'dark' ? '--aculta-text-muted' : '--aculta-text-secondary';
+      $mode_mappings['--bs-black'] = $mode === 'dark' ? '#000000' : '--aculta-green-dark';
+      $mode_mappings['--bs-form-invalid-border-color'] = $mode === 'dark' ? '--aculta-text-accent' : '--aculta-red';
       foreach ($mode_mappings as $bootstrap_token => $source_token) {
         $actual = $resolve($bootstrap_token, $effective);
-        $expected = $resolve($source_token, $effective);
+        $expected = str_starts_with($source_token, '--')
+          ? $resolve($source_token, $effective)
+          : ['value' => $source_token, 'error' => NULL];
         $matches = $actual['error'] === NULL && $expected['error'] === NULL
           && self::sameColor($actual['value'] ?? '', $expected['value'] ?? '');
         $bootstrap_results[$mode][$bootstrap_token] = $matches;
@@ -371,7 +427,8 @@ final class Aculta420DesignFoundationsAnalyzer {
       $expression = trim(($tag[1] ?? '') !== '' ? $tag[1] : ($tag[2] ?? ''));
       $is_branch = preg_match('/^(?:if|elseif)\b/i', $expression) === 1;
       $is_ternary = str_contains($expression, '?') && str_contains($expression, ':');
-      if (($is_branch || $is_ternary) && self::hasModeDecision($expression)) {
+      $decision = $is_ternary ? self::beforeTopLevelTernary($expression) : $expression;
+      if (($is_branch || $is_ternary) && self::hasModeDecision($decision ?? $expression)) {
         $count++;
       }
     }
@@ -391,7 +448,7 @@ final class Aculta420DesignFoundationsAnalyzer {
         $expression .= ' ' . self::readPhpDecisionArms($tokens, $after_condition, TRUE);
       }
       elseif ($token[0] === T_MATCH) {
-        $expression .= ' ' . self::readPhpDecisionArms($tokens, $after_condition);
+        $expression .= ' ' . self::readPhpMatchConditions($tokens, $after_condition);
       }
       if (self::hasModeDecision($expression)) {
         $count++;
@@ -600,7 +657,7 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   private static function containsModeSelector(string $selector): bool {
     return preg_match('/prefers-color-scheme\s*:\s*(?:dark|light)/i', $selector) === 1
-      || preg_match('/\[\s*data-(?:(?:bs-)?theme|color-mode|color-scheme)\s*=\s*(["\']?)(?:dark|light)\1\s*\]/i', $selector) === 1
+      || preg_match('/\[\s*data-(?:(?:bs-)?theme|color-mode|color-scheme)\s*=\s*(["\']?)(?:dark|light)\1(?:\s+[is])?\s*\]/i', $selector) === 1
       || preg_match('/\.(?:dark|light|dark-theme|light-theme|theme-dark|theme-light|dark-mode|light-mode|is-dark|is-light|color-mode-dark|color-mode-light)(?![a-zA-Z0-9_-])/i', $selector) === 1;
   }
 
@@ -724,6 +781,29 @@ final class Aculta420DesignFoundationsAnalyzer {
     ];
   }
 
+  /** Return the predicate of a Twig ternary, excluding its result branches. */
+  private static function beforeTopLevelTernary(string $expression): ?string {
+    $quote = NULL;
+    $paren = $bracket = 0;
+    for ($i = 0, $length = strlen($expression); $i < $length; $i++) {
+      $char = $expression[$i];
+      if ($quote !== NULL) {
+        if ($char === '\\') { $i++; }
+        elseif ($char === $quote) { $quote = NULL; }
+        continue;
+      }
+      if ($char === '"' || $char === "'") { $quote = $char; continue; }
+      if ($char === '(') { $paren++; }
+      elseif ($char === ')') { $paren--; }
+      elseif ($char === '[') { $bracket++; }
+      elseif ($char === ']') { $bracket--; }
+      elseif ($char === '?' && $paren === 0 && $bracket === 0) {
+        return substr($expression, 0, $i);
+      }
+    }
+    return NULL;
+  }
+
   private static function hasModeDecision(string $expression): bool {
     $mode_reference = preg_match('/\$?\b(?:theme|mode|colorMode|color_mode|color-mode|colorScheme|color_scheme|color-scheme|getTheme|getColorMode)\b/i', $expression) === 1;
     $mode_literal = preg_match('/(?:["\'](?:dark|light)["\']|\b(?:dark|light)\b)/i', $expression) === 1;
@@ -792,6 +872,53 @@ final class Aculta420DesignFoundationsAnalyzer {
       $body .= $part;
     }
     return $body;
+  }
+
+  /** Read only PHP match conditions before =>, excluding result expressions. */
+  private static function readPhpMatchConditions(array $tokens, int $index): string {
+    $started = FALSE;
+    $brace = 0;
+    $paren = $bracket = 0;
+    $in_result = FALSE;
+    $candidate = $conditions = '';
+    for ($i = $index; isset($tokens[$i]); $i++) {
+      if (is_array($tokens[$i]) && in_array($tokens[$i][0], [T_COMMENT, T_DOC_COMMENT], TRUE)) {
+        continue;
+      }
+      $token_id = is_array($tokens[$i]) ? $tokens[$i][0] : NULL;
+      $part = is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
+      if (!$started) {
+        if ($part === '{') { $started = TRUE; $brace = 1; }
+        continue;
+      }
+      if ($part === '}' && $paren === 0 && $bracket === 0) {
+        $brace--;
+        if ($brace === 0) { return $conditions . ' ' . $candidate; }
+      }
+      elseif ($part === '{') { $brace++; }
+      elseif ($part === '(') { $paren++; }
+      elseif ($part === ')') { $paren--; }
+      elseif ($part === '[') { $bracket++; }
+      elseif ($part === ']') { $bracket--; }
+      if ($brace !== 1 || $paren !== 0 || $bracket !== 0) {
+        if (!$in_result) { $candidate .= $part; }
+        continue;
+      }
+      if ($token_id === T_DOUBLE_ARROW) {
+        $conditions .= ' ' . $candidate;
+        $candidate = '';
+        $in_result = TRUE;
+      }
+      elseif ($part === ',') {
+        if (!$in_result) { $conditions .= ' ' . $candidate; }
+        $candidate = '';
+        $in_result = FALSE;
+      }
+      elseif (!$in_result) {
+        $candidate .= $part;
+      }
+    }
+    return $conditions . ' ' . $candidate;
   }
 
   /** Read only PHP switch case expressions, excluding consequent statements. */

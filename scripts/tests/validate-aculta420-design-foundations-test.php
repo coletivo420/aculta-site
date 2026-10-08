@@ -64,7 +64,7 @@ try {
   [$baseline_status, $baseline_output] = $run_validator();
   $fixtures++;
   if ($baseline_status !== 0) {
-    $failures[] = 'clean fixture baseline did not pass';
+    $failures[] = 'clean fixture baseline did not pass: ' . trim(preg_replace('/\s+/', ' ', $baseline_output) ?? $baseline_output);
   }
 
   require_once $analyzer;
@@ -98,6 +98,8 @@ try {
     ['PHP switch consequent text is not a case label', 'src/SwitchConsequent.php', "<?php switch (\$theme) { case 'compact': echo 'dark'; break; }", 'DARK PHP BRANCHES: 0'],
     ['JavaScript switch consequent text is not a case label', 'js/switch-consequent.js', "switch (theme) { case 'compact': label.textContent = 'dark'; break; }", 'DARK JS LAYOUT BEHAVIOR: 0'],
     ['Twig ternary on a non-mode value is accepted', 'templates/language-ternary.html.twig', "{% set label = locale == 'dark' ? 'a' : 'b' %}", 'DARK TWIG BRANCHES: 0'],
+    ['Twig ternary result mentioning a mode is not a mode branch', 'templates/result-mode-ternary.html.twig', "{% set label = compact ? 'dark' : 'plain' %}", 'DARK TWIG BRANCHES: 0'],
+    ['PHP match result mentioning a mode is not a mode branch', 'src/MatchResult.php', "<?php \$variant = match (\$density) { 'compact' => 'dark', default => 'plain' };", 'DARK PHP BRANCHES: 0'],
     ['unrelated dataset assignment is accepted', 'js/dataset-status.js', "document.documentElement.dataset.status = 'dark';", 'DARK JS LAYOUT BEHAVIOR: 0'],
   ];
   foreach ($positive_cases as [$name, $relative, $contents, $expected_message]) {
@@ -137,6 +139,7 @@ try {
     ['.dark-theme selector layout rule', 'css/fixtures/dark.css', '.dark-theme .card { padding: 1rem; }', 'Color mode is token-only'],
     ['functional pseudo-class mode selector', 'css/fixtures/dark.css', ':where(.dark) .card { display: none; }', 'Color mode is token-only'],
     ['data-theme selector layout rule', 'css/fixtures/dark.css', '[data-theme="dark"] .card { display: none; }', 'Color mode is token-only'],
+    ['case-insensitive theme attribute selector layout rule', 'css/fixtures/dark-attribute-flag.css', '[data-bs-theme="dark" i] .card { display: none; }', 'Color mode is token-only'],
     ['data-bs-theme selector layout rule', 'css/fixtures/dark.css', '[data-bs-theme="dark"] .card { display: none; }', 'Color mode is token-only'],
     ['light selector layout rule', 'css/fixtures/light.css', '.light-theme .card { padding: 2rem; }', 'Color mode is token-only'],
     ['Twig color-mode branch', 'templates/fixture.html.twig', "{% if theme == 'dark' %}dark markup{% endif %}", 'Twig has no color-mode branch'],
@@ -190,6 +193,24 @@ try {
     }
     unlink($fixture_path);
   }
+
+  // Bootstrap base colors must remain connected to their semantic ACULTA
+  // source even when both a color and its RGB companion are changed together.
+  $bootstrap_mapping_regression = str_replace(
+    ['--bs-primary: var(--aculta-green);', '--bs-primary-rgb: 104, 148, 39;'],
+    ['--bs-primary: #000000;', '--bs-primary-rgb: 0, 0, 0;'],
+    $original_tokens,
+  );
+  if ($bootstrap_mapping_regression === $original_tokens) {
+    throw new RuntimeException('Could not create Bootstrap primary semantic mapping fixture.');
+  }
+  file_put_contents($tokens_path, $bootstrap_mapping_regression);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, 'Light --bs-primary effectively maps')) {
+    $failures[] = 'a coordinated Bootstrap base color and RGB mapping regression was not rejected';
+  }
+  file_put_contents($tokens_path, $original_tokens);
 
   $tokens_path = $temporary_theme . '/css/tokens.css';
   $original_tokens = file_get_contents($tokens_path);
