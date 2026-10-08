@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\EventSubscriber;
 
+use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\Core\Routing\RoutingEvents;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -116,8 +117,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
 
-    foreach ($collection as $route) {
-      if ($route->getOption('_admin_route')) {
+    foreach ($collection as $name => $route) {
+      if ($route->getOption('_admin_route')
+        || DomainRoutePolicy::isCentralPaymentRouteName((string) $name)) {
         $route->setOption('_aculta_domain_purpose', 'main');
       }
     }
