@@ -68,10 +68,11 @@ Não passar entidade `Domain`, storage, services, hostname ou regra de negócio
 para Twig/SDC.
 
 Na 0.2-B.3 o shell atual mantém o `system_branding_block` como caminho primário.
-Se essa região não entregar branding, `page.html.twig` pode apresentar apenas a
-identidade escalar já preparada pelo Portal (`home_url`, `short_title`/`title`,
-`logo_alt`). `purpose` é metadata semântica neutra no header e não autoriza
-branch visual. Regiões renderizáveis do contrato continuam deferidas.
+Se essa região não entregar branding, `ThemeHooks` reduz a identidade preparada
+pelo Portal ao fallback mínimo `{label, home_url}`, com `label = short_title ??
+title`, e `page.html.twig` apenas o apresenta. `purpose` não é emitido no DOM em
+B.3/B.4 e `logo_alt` fica reservado para mídia de branding futura. Regiões
+renderizáveis do contrato continuam deferidas.
 
 ## Branding e fallback
 
