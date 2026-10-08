@@ -118,9 +118,16 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     }
 
     foreach ($collection as $name => $route) {
-      if ($route->getOption('_admin_route')
-        || DomainRoutePolicy::isCentralPaymentRouteName((string) $name)) {
+      if ($route->getOption('_admin_route')) {
         $route->setOption('_aculta_domain_purpose', 'main');
+      }
+      if (DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
+        $route->setOption('_aculta_domain_purpose', 'main');
+        if ($name !== 'commerce_payment.notify') {
+          // Browser navigation may canonicalize to MAIN. Machine-to-machine
+          // notification POSTs must never be redirected between hosts.
+          $route->setOption('_aculta_cross_domain_canonical_purpose', 'main');
+        }
       }
     }
 
