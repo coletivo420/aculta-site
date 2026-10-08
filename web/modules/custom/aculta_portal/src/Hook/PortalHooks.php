@@ -196,7 +196,7 @@ final class PortalHooks {
       }
 
       $routeName = $url->getRouteName();
-      if (DomainRoutePolicy::isCentralPaymentRouteName($routeName)) {
+      if (DomainRoutePolicy::isCentralTransactionRouteName($routeName)) {
         $target = $resolver->routeUrl(
           'main',
           $routeName,
@@ -232,7 +232,7 @@ final class PortalHooks {
         $route = $url->isRouted() ? $url->getRouteName() : NULL;
         $uri = $url->isRouted() ? NULL : $url->getUri();
         $target = NULL;
-        if (is_string($route) && DomainRoutePolicy::isCentralPaymentRouteName($route)) {
+        if (is_string($route) && DomainRoutePolicy::isCentralTransactionRouteName($route)) {
           $target = $resolver->routeUrl('main', $route, $url->getRouteParameters());
           $options = $url->getOptions();
           if ($target instanceof Url && !empty($options['query']) && is_array($options['query'])) {
@@ -530,7 +530,8 @@ final class PortalHooks {
     elseif (str_starts_with((string) $route, 'aculta_portal.') && $route !== 'aculta_portal.support_form') {
       $tags['robots'] = 'noindex, nofollow';
     }
-    elseif (str_starts_with((string) $route, 'commerce_donation_flow.')
+    elseif (str_starts_with((string) $route, 'commerce_cart.')
+      || str_starts_with((string) $route, 'commerce_donation_flow.')
       || str_starts_with((string) $route, 'commerce_checkout.')
       || str_starts_with((string) $route, 'commerce_payment.')
       || str_starts_with((string) $route, 'entity.commerce_order.')) {
