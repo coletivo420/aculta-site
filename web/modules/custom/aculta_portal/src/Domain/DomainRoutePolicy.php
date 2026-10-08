@@ -13,7 +13,8 @@ final class DomainRoutePolicy {
    * Returns TRUE for checkout/payment routes that always belong to MAIN.
    */
   public static function isCentralPaymentRouteName(string $routeName): bool {
-    return str_starts_with($routeName, 'commerce_checkout.')
+    return str_starts_with($routeName, 'commerce_cart.')
+      || str_starts_with($routeName, 'commerce_checkout.')
       || str_starts_with($routeName, 'commerce_payment.checkout.')
       || $routeName === 'commerce_payment.notify'
       || str_starts_with($routeName, 'commerce_donation_flow.');
