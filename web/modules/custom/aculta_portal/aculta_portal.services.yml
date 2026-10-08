@@ -25,7 +25,7 @@ services:
     arguments: ['@current_route_match', '@plugin.manager.menu.link', '@string_translation']
   aculta_portal.breadcrumb_builder:
     class: Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@request_stack', '@title_resolver', '@path.matcher']
+    arguments: ['@aculta_portal.domain_purpose', '@request_stack', '@title_resolver', '@path.matcher', '@string_translation']
     tags:
       - { name: breadcrumb_builder, priority: 100 }
   aculta_portal.domain_route_subscriber:
