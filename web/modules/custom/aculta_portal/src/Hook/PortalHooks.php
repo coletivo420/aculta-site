@@ -197,11 +197,18 @@ final class PortalHooks {
 
       $routeName = $url->getRouteName();
       if (DomainRoutePolicy::isCentralPaymentRouteName($routeName)) {
-        $link['url'] = $resolver->routeUrl(
+        $target = $resolver->routeUrl(
           'main',
           $routeName,
           $url->getRouteParameters(),
-        ) ?? $url;
+        );
+        if ($target instanceof Url) {
+          $options = $url->getOptions();
+          if (!empty($options['query']) && is_array($options['query'])) {
+            $target->setOption('query', $options['query']);
+          }
+          $link['url'] = $target;
+        }
         continue;
       }
 
@@ -227,6 +234,10 @@ final class PortalHooks {
         $target = NULL;
         if (is_string($route) && DomainRoutePolicy::isCentralPaymentRouteName($route)) {
           $target = $resolver->routeUrl('main', $route, $url->getRouteParameters());
+          $options = $url->getOptions();
+          if ($target instanceof Url && !empty($options['query']) && is_array($options['query'])) {
+            $target->setOption('query', $options['query']);
+          }
         }
         elseif (in_array($route, ['user.login', 'user.register', 'user.pass', 'user.logout'], TRUE)) {
           $target = $resolver->routeUrl('account', $route, $url->getRouteParameters());
