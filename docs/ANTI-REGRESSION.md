@@ -14,6 +14,26 @@ snapshots de fases e runbooks históricos.
 - SDC recebe dados preparados; não consulta storage/serviços/entidades diretamente.
 - não criar segunda suíte de design system concorrente ao Bootstrap5 + ACULTA420.
 
+## Padrão Drupal 11+ do Portal
+
+- baseline arquitetural do `aculta_portal`: Drupal Core 11.3+;
+- hooks runtime são OOP `#[Hook]`; `aculta_portal.module` não deve reaparecer;
+- lifecycle/update hooks continuam procedurais somente onde o Core exige;
+- zero service locator `\Drupal::*` em `aculta_portal/src/`; usar DI;
+- callbacks Form API com DI usam `service.id:method` via CallableResolver;
+- subscribers usam tag `event_subscriber`, não `kernel.event_subscriber`;
+- runtime PHP em `src/` usa `strict_types=1`;
+- Entity/Views APIs usam storages/services injetados; não reintroduzir
+  `views_embed_view()`, `Views::getView()`, `\Drupal::entityQuery()` ou
+  static entity load quando existe storage injetável;
+- cacheability/access seguem Render API e devem acompanhar a decisão que os
+  exige;
+- não introduzir API Core já deprecated;
+- qualquer exceção precisa de justificativa documental e cobertura de gate
+  quando puder causar regressão;
+- referência canônica: `docs/portal/DRUPAL-11-STANDARDS.md`;
+- gate obrigatório: `validate-aculta-portal-drupal11.php`.
+
 ## Dependency Injection e hooks
 
 - preferir DI explícita e hooks OOP do Drupal 11 em código novo/refatorado;
