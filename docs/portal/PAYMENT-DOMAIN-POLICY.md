@@ -11,7 +11,7 @@ carrinho, checkout e pagamento Drupal Commerce pertence ao purpose `main`.
 
 ```text
 COURSES → intenção de comprar curso ─┐
-SHOP    → intenção de comprar item  ─┼→ MAIN → checkout → pagamento → conclusão
+SHOP    → intenção de comprar item  ─┼→ MAIN → carrinho → checkout → pagamento → conclusão
 SUPPORT → intenção de apoiar        ─┘
 ```
 
