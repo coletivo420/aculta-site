@@ -80,9 +80,9 @@ final class Aculta420ShellContractAnalyzer {
       'DomainInterface' => '/\bDomainInterface\b/',
       'DomainPurposeManager' => '/\bDomainPurposeManager\b/',
       'Domain negotiator' => '/domain\.negotiator|DomainNegotiator/i',
-      'Portal service' => '/aculta_portal\./',
+      'Portal dependency' => '/aculta_portal(?:\.|\\\\)/',
       'service locator' => '/\\Drupal::(?:service|entityTypeManager|request)\s*\(/',
-      'hostname decision' => '/getHost\s*\(|HTTP_HOST|SERVER_NAME|\.aculta\.org|\.toca\.net\.br/i',
+      'hostname decision' => '/get(?:SchemeAndHttpHost|HttpHost|Host)\s*\(|HTTP_HOST|SERVER_NAME|\baculta\.org\b|\btoca\.net\.br\b/i',
     ];
 
     foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -114,10 +114,13 @@ final class Aculta420ShellContractAnalyzer {
           $findings[] = $label . ' is forbidden in theme runtime source: ' . $relative;
         }
       }
-      if (preg_match(
-        '/purpose[^\n;]{0,80}(?:==|!=|===|!==|match\s*\(|case\s+)[^\n;]{0,80}[\'"](?:wiki|courses|shop|support|account|magazine|main)[\'"]/i',
-        $source,
-      )) {
+      $purposeName = '(?:wiki|courses|shop|support|account|magazine|main)';
+      $purposeComparison = '/(?:'
+        . 'purpose[^\\n;]{0,80}(?:==|!=|===|!==)[^\\n;]{0,80}[\\\'"]' . $purposeName . '[\\\'"]'
+        . '|[\\\'"]' . $purposeName . '[\\\'"][^\\n;]{0,80}(?:==|!=|===|!==)[^\\n;]{0,80}purpose'
+        . '|(?:match|switch)\\s*\\([^)]*purpose[^)]*\\)'
+        . ')/i';
+      if (preg_match($purposeComparison, $source)) {
         $findings[] = 'Concrete purpose branching is forbidden in theme runtime source: ' . $relative;
       }
     }
