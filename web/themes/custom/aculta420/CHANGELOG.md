@@ -1,4 +1,4 @@
-## 0.4.2-dev.2 — Assets visuais Podplant420 (PR #114) — 2026-10-09
+## 0.4.2 — Assets visuais Podplant420 (PR #114) — 2026-10-09
 
 Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um validador offline; sem componente, template, Domain ou Institution Bar alterados). Versão de commit da PR; a versão de merge `0.4.2` será marcada no commit de release antes do merge.
 
