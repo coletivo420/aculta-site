@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.5.0-dev.2 | F1 (modo de cor): modo claro, escuro e automático com contrato do Portal; gate ajustado para o bloco automático e o ramo de contrato | marcada no código; RUNTIME STATUS DEFERRED |
 | 0.5.0-dev.1 | F1 (modo de cor): medição do modo escuro em navegador, pré-requisito atendido; tokens da barra sem alteração | marcada no código |
 | 0.4.5 | fechamento da linha 0.4.x (2026-10-09): 0.4.4 (PR #122), 0.4.5-dev.1 a dev.5 (PRs #124, #129, #130 e o dev.5); DT-T18 pendente, independente do tema | marcada no código (release) |
 | 0.4.5-dev.5 | sitemap do validador de navegador delegado ao `aculta_deployer sitemap`; DT-T18 pendente (independente do tema) | marcada no código |
@@ -99,15 +100,14 @@ Nenhuma destas fases tem versão alvo de 1.0.
   autenticado na camada de conta, e local e sem quebra de cache para anônimo.
 - Pré-requisito: T2 (validação do modo escuro em navegador real).
 
-**Estado (2026-10-09): em avaliação; sem código.** A linha 0.4.x está fechada; a F1 começa depois, em fase própria. Achados:
+**Estado (2026-10-09): implementada no tema (0.5.0-dev.2) e no Portal (0.2.0-dev.17). RUNTIME STATUS: DEFERRED.**
 
-- Já existe: `css/tokens.css` com os blocos `:root, [data-bs-theme="light"]` e `[data-bs-theme="dark"]`, e o contrato de superfície dark validado pelo gate de design. Falta o controle.
-- Não existe: seletor de modo, JavaScript de troca, persistência nem leitura de `prefers-color-scheme`. O gate de design bloqueia esses itens até a fase prevista, então a F1 precisa atualizar o gate junto.
-- Pré-requisito atendido em 0.5.0-dev.1: `scripts/validate-color-mode-browser.mjs` força `data-bs-theme="dark"` e mede contraste WCAG em 8 páginas (desktop e 390 px): 52 medidas, pior caso 8,82:1 (mínimo 4,5:1), sem overflow. A primeira leitura (cerca de 1,2:1 a 1,7:1 no menu e na barra de conta) era artefato de transição CSS, e a medição agora desliga transições antes de ler.
-- Tokens da barra no modo escuro não precisaram de alteração.
-- Persistência para conta: a preferência do usuário autenticado pertence à camada de conta (`aculta_portal`, linha separada). Não há campo nem storage de preferência de aparência. Decisão necessária antes de implementar: onde guardar (campo de usuário ou dados do usuário via API do Core) e como o Portal entrega o modo ao tema pelo contrato neutro, sem o tema ler usuário ou configuração.
-- Anônimo (proposta, não decidida): `localStorage` com try/catch, sem alterar o HTML em cache; o modo seria aplicado por `data-bs-theme` no `<html>`.
-- Próximo passo: autorização explícita do responsável para tocar `web/themes/custom/aculta420/**` e decisão sobre a persistência do usuário autenticado.
+- Decisões do responsável: o controle fica em **Minha Conta > Configurações** (`/configuracoes`, no Portal); a preferência é gravada por usuário no banco (`user.data`); há três estados (claro, escuro, automático); o Portal tem um padrão global do site em `/admin/config/aculta/aparencia`, que vale para visitantes e para quem não escolheu.
+- Portal: `ColorModePreference` resolve o modo e publica o contrato neutro `aculta_color_mode` (`light`, `dark` ou `auto`). O tema não lê usuário nem configuração.
+- Tema: `ThemeHooks::preprocessHtml` grava `data-bs-theme` em `light` ou `dark`. Em `auto` não grava atributo, e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`. O bloco automático espelha o bloco escuro e o gate verifica essa igualdade.
+- Sem JavaScript de modo: nenhuma troca no cliente, nenhum `localStorage`.
+- Medição: `scripts/validate-color-mode-browser.mjs` (52 medidas, pior caso 8,82:1). Teste de CSS com `prefers-color-scheme: dark` em Chromium: automático segue o sistema, `light` vence o sistema, `dark` força o escuro.
+- Pendências: validação no Runtime (Portal + tema) e QA visual das duas telas de configuração. Tokens da barra não mudaram.
 
 ### F2 — Ícones (DT-T13)
 

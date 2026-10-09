@@ -104,6 +104,13 @@ foreach ($runtime_files as $path) {
     $twig_inline_premature_scripts += Aculta420DesignFoundationsAnalyzer::hasTwigEmbeddedPrematureColorModeScript($source) ? 1 : 0;
   }
   elseif (in_array($extension, ['php', 'module', 'inc', 'theme'], TRUE)) {
+    $relative = substr($path, strlen($theme) + 1);
+    if ($relative === 'src/Hook/ThemeHooks.php') {
+      // Único ramo de modo permitido: a aplicação do contrato aculta_color_mode do Portal (preprocess_html).
+      $contract_branches = Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source);
+      $check($contract_branches === 1 && str_contains($source, "'aculta_color_mode'"), 'PHP color-mode branch is only the Portal contract consumer in ThemeHooks.');
+      continue;
+    }
     $dark_php_branches += Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source);
   }
   elseif ($extension === 'js') {

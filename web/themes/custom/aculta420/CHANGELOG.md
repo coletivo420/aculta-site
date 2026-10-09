@@ -1,3 +1,17 @@
+## 0.5.0-dev.2 — F1 (modo de cor): claro, escuro e automático — 2026-10-09
+
+RUNTIME STATUS: DEFERRED (validação no Runtime com o Portal 0.2.0-dev.17 pendente).
+
+Classificação: MINOR da linha 0.5 (F1), com contrato novo do Portal (`aculta_color_mode`).
+
+- `ThemeHooks::preprocessHtml` (`preprocess_html`) aplica `data-bs-theme` em `light` ou `dark`, conforme o contrato do Portal. Em `auto` não grava atributo.
+- `css/tokens.css`: bloco `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`, espelho exato do bloco escuro (copiado por script e verificado pelo gate).
+- Gate `validate-aculta420-design-foundations.php` e analisador: aceitam só esse bloco automático (espelhado) e um único ramo de modo em PHP, o consumo do contrato em `ThemeHooks`. Testes negativos: valor adulterado no bloco automático e `@media` fora do formato são reprovados.
+- Teste de CSS em Chromium (`prefers-color-scheme: dark`, sem atributo, `light` e `dark`): automático segue o sistema; `light` vence o sistema; `dark` força o escuro.
+- Tokens da barra institucional não foram alterados.
+
+Validação: `validate-aculta420-design-foundations.php` PASS (1473 checagens); medição do modo escuro (`validate-color-mode-browser.mjs`) em 0.5.0-dev.1.
+
 ## 0.5.0-dev.1 — F1 (modo de cor): medição do modo escuro — 2026-10-09
 
 Classificação: MINOR da linha 0.5 (F1), commit de medição sem mudança de tokens, componente ou JavaScript de produção.

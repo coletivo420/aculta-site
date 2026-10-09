@@ -191,8 +191,13 @@ final class Aculta420DesignFoundationsAnalyzer {
     $light_rules = [];
     $dark_rules = [];
     $unsupported_token_rules = [];
-    $walk = static function (array $nodes, bool $top_level = TRUE) use (&$walk, &$light_rules, &$dark_rules, &$unsupported_token_rules): void {
+    $auto_rules = [];
+    $walk = static function (array $nodes, bool $top_level = TRUE) use (&$walk, &$light_rules, &$dark_rules, &$auto_rules, &$unsupported_token_rules): void {
       foreach ($nodes as $node) {
+        if ($top_level && self::isAutoModeBlock($node)) {
+          $auto_rules[] = $node['children'][0];
+          continue;
+        }
         $selector = self::normalizeSelector($node['selector']);
         if ($top_level && $selector === self::normalizeSelector(self::LIGHT_SELECTOR)) {
           $light_rules[] = $node;
@@ -239,6 +244,10 @@ final class Aculta420DesignFoundationsAnalyzer {
     };
     $light = $parse_mode($light_rules, 'light');
     $dark = $parse_mode($dark_rules, 'dark');
+    $assert(count($auto_rules) <= 1, 'At most one automatic (prefers-color-scheme) token block exists.');
+    if ($auto_rules !== []) {
+      $assert($parse_mode($auto_rules, 'auto') === $dark, 'Automatic token block mirrors the dark token block exactly.');
+    }
 
     foreach (self::REQUIRED_TOKENS as $token) {
       $assert(array_key_exists($token, $light), $token . ' has a light value.');
@@ -445,6 +454,9 @@ final class Aculta420DesignFoundationsAnalyzer {
     $count = 0;
     $walk = static function (array $nodes, bool $top_level = TRUE) use (&$walk, &$count, $tokens_file): void {
       foreach ($nodes as $node) {
+        if ($tokens_file && $top_level && self::isAutoModeBlock($node)) {
+          continue;
+        }
         if (self::containsModeSelector($node['selector'])) {
           $selector = self::normalizeSelector($node['selector']);
           $allowed = $tokens_file && $top_level
@@ -689,6 +701,20 @@ final class Aculta420DesignFoundationsAnalyzer {
       return TRUE;
     }
     return FALSE;
+  }
+
+  /**
+   * Bloco automático permitido em tokens.css: @media (prefers-color-scheme: dark) com um único
+   * filho :root:not([data-bs-theme="light"]), sem aninhamento. Tem de espelhar o bloco escuro.
+   */
+  public static function isAutoModeBlock(array $node): bool {
+    if (preg_match('/^@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)$/i', trim($node['selector'])) !== 1) {
+      return FALSE;
+    }
+    $children = $node['children'];
+    return count($children) === 1
+      && self::normalizeSelector($children[0]['selector']) === self::normalizeSelector(':root:not([data-bs-theme="light"])')
+      && $children[0]['children'] === [];
   }
 
   private static function normalizeSelector(string $selector): string {
