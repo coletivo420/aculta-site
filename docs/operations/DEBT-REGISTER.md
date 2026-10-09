@@ -31,7 +31,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
 | DT-P01 | Classes de tema (`aculta-*`) em templates do módulo | `templates/aculta-portal-shell.html.twig` e `aculta-portal-photo-editor.html.twig` (14 ocorrências); viola a fronteira do `AGENTS.md` | Média | Não | S1 | Aberta |
-| DT-P02 | Arquivo sem `declare(strict_types=1)` | `src/Hook/PortalHooks.php`; teto registrado no gate | Baixa | Não | S2 | Aberta |
+| DT-P02 | Arquivo sem `declare(strict_types=1)` | `src/Hook/PortalHooks.php` com `declare(strict_types=1)`; gate do Portal PASS (470 checagens) | Baixa | Não | S2 | Resolvida |
 | DT-P03 | Sem testes de Kernel para os serviços P5–P7 | `tests/` tem 7 arquivos unitários e nenhum Kernel; P10-R item "DEFERRED" | Média | Não | S2 | Aberta |
 | DT-P04 | PHP 8.5 não instalado nem testado | `P10-R-FINAL-AUDIT.md` item 4; `composer.json` declara `>=8.3` | Média | Não | S3 | Aberta |
 | DT-P05 | Entrega de e-mail em produção não validada; `smtp.settings` e `system.mail` não importados | `P10-R` seção 10, risco 1 e seção 14 | Alta | Não (depende de deploy) | S3 | Aberta |
@@ -96,3 +96,17 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | --- | --- | --- | --- | --- | --- | --- |
 | DT-G01 | Política "PR por fase" versus a entrega única da P10 | `P10-R` item 8 | Baixa | Decisão registrada pelo responsável | S4 | Decisão registrada |
 | DT-G02 | Regra de versionamento não cobre mudança apenas documental | `versioning.md`, seção "Mudanças apenas documentais" | Baixa | Não | T0 | Resolvida nesta revisão |
+
+## Rodada de saneamento (2026-10-09)
+
+Estado após a rodada. Só o que foi verificado está como resolvido.
+
+- **Resolvida:** DT-P02 (`strict_types` em `PortalHooks.php`); DT-T12 (F1, 0.5.0); DT-T13 parcial (ícones em 0.5.1; busca pelo banco e biblioteca pendentes).
+- **Bloqueio concreto, decisão do responsável:** DT-T10 / DT-T05 / DT-O03. Ambiente novo a partir de `config/sync`: o `site:install --existing-config` falha, e o `config:import` após instalar com o perfil `standard` também. Causa: `cep_autocomplete` (contrib, sem canal de log próprio) referencia `logger.channel.cep_autocomplete`, que só existe quando `aculta_portal` está ativo, e o módulo é ativado no mesmo lote. O Portal declara `cep_autocomplete` como dependência, e nenhuma configuração versionada usa o módulo, mas removê-lo muda o comportamento de CEP em produção. Opções: (a) definir o canal em um arquivo de serviços do site carregado sempre; (b) remover a dependência do Portal, após confirmar que o preenchimento de CEP não é usado; (c) manter e instalar em duas etapas. Recomendação: (a), por não mexer em contrib nem no comportamento.
+- **Pendente de insumo do responsável:** DT-T18 (favicon oficial e credencial de sandbox da gateway). A credencial do Mercado Pago fica adiada a pedido do responsável (DT-P07).
+- **Pendente de decisão de escopo:** DT-P10 (módulos de administração em produção), DT-P12 (escopo da conta), DT-P13 (adoção de busca, engajamento e fórum; a busca já tem decisão pelo banco), DT-P23 (sitemap de apoio: módulo por domínio ou rota técnica), DT-T13 (módulo da biblioteca na F4).
+- **Pendente de autorização explícita:** DT-O01 (apagar 64 branches remotas já mescladas), DT-O02 (regerar o snapshot versionado em `estados/`).
+- **Pendente de ambiente com privilégio:** DT-O04 (diretório de agregados do Drupal com dono `aculta:www-data`), DT-P04 (PHP 8.5 não instalado neste host).
+- **Pendente de operação:** DT-O05 (rotação de credenciais de teste), DT-P05 e DT-O07 (e-mail em produção e drift de `smtp.settings` e `system.mail`, dependem de credenciais SMTP e de deploy).
+- **Pendente de implementação maior:** DT-P01 (classes `aculta-*` no módulo, com ajuste visual), DT-P03 (testes de Kernel para P5–P7), DT-P09 (modelo HTML do webform), DT-P08 (login com CAPTCHA por HTTP), DT-P11, DT-P20 (slugs de rotas de contrib), DT-O06 (teste de conta bloqueada).
+
