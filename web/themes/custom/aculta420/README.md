@@ -112,6 +112,7 @@ Documentos normativos:
 - [Versionamento](docs/versioning.md)
 - [Branding Wiki420](docs/branding-wiki420.md)
 - [Branding Podplant420](docs/branding-podplant420.md)
+- [Branding Baque Sativa](docs/branding-baque-sativa.md)
 - [CHANGELOG](CHANGELOG.md)
 
 ## Regra principal

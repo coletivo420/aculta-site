@@ -129,5 +129,7 @@ Marcações já feitas, por linha:
 | 0.4.2-dev.1 | assets Podplant420 e validador (PR #114) | marcada no código |
 | 0.4.2-dev.2 | handoff Podplant420 fora do tema (PR #114) | marcada no código |
 | 0.4.2 | release da PR #114 (assets Podplant420) | marcada no código; primeira versão do merge |
+| 0.4.3-dev.1 | kit Baque Sativa (PR #115) | marcada no código |
+| 0.4.3 | release da PR #115 (kit Baque Sativa) | marcada no código; primeira versão do merge |
 
 Tags criadas antes desta política: ver a nota em `docs/operations/RELEASES.md`.

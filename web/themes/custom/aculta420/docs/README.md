@@ -13,5 +13,6 @@
 9. [roadmap.md](roadmap.md) — saneamento e features de produto.
 10. [branding-wiki420.md](branding-wiki420.md) — identidade estática e integração da Wiki420.
 11. [branding-podplant420.md](branding-podplant420.md) — identidade estática e política de imagens do Podplant420.
+12. [branding-baque-sativa.md](branding-baque-sativa.md) — kit de logomarcas do Grupo de Percussão Baque Sativa (cards e páginas do grupo; fora do cabeçalho global).
 
 Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de releases: Git e changelog.
