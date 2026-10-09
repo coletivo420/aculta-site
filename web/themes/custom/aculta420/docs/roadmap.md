@@ -41,8 +41,9 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
   rolagem, teclado, reduced motion.
 - Validar o rail com cursos reais (hoje só há um curso publicado).
 - Foco por teclado em janela com foco real, para o anel de foco de tokens.
-- Carrossel: validado em navegador (autoplay, pausa com movimento reduzido, avanço por Enter, foco com contorno). A placement foi restaurada para desativada; reativar depende de decisão do responsável.
-- Rail: validado com clones no DOM. Falta validar com cursos publicados (DT-T05).
+- Carrossel: validado em navegador e reativado na home em 0.4.0-dev.3.
+- Rótulos em inglês corrigidos (DT-T15).
+- Rail: validado com o curso real; falta validar a rolagem com vários cursos (DT-T05).
 - Critério: cada item com captura e medição, sem clones no DOM.
 
 ### T3 — CSS residual dos padrões (DT-T07)

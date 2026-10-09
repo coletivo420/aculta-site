@@ -57,8 +57,8 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-T01 | Documentação dizendo "0.1.0" como versão atual | `README.md`, `docs/README.md`, `docs/features.md`, `design-system.md`, `development.md` e `architecture.md` corrigidos (0.4.0-dev.2) | Média | Não | T0 | Resolvida |
 | DT-T02 | Regra de versão de `info.yml` vs subversões `-dev` não escrita | `aculta420.info.yml` = 0.3.1 com tag `0.4.0-dev.1` | Baixa | Não | T0 | Resolvida nesta revisão (ver `versioning.md`) |
 | DT-T03 | Estruturas internas em rich text (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, CTAs, `aculta-institutional-note`) | decisão em `components.md`: permanecem como conteúdo rico | Média | Decisão registrada | T1 | Decisão registrada |
-| DT-T04 | Carrossel da home não validado em navegador | validado em 0.4.0-dev.2: autoplay, pausa com movimento reduzido, Enter e foco. Placement restaurada para desativada | Média | Sim (reativar na home) | T2 | Resolvida (validação) |
-| DT-T05 | Rail de cursos validado só com clones no DOM | Runtime tem 1 curso publicado; validação com cursos reais exige publicar cursos de teste | Baixa | Sim (publicar curso de teste) | T2 | Aberta |
+| DT-T04 | Carrossel da home não validado em navegador | validado e reativado em 0.4.0-dev.3 (placement `status: true` versionada) | Média | Não | T2 | Resolvida |
+| DT-T05 | Rail de cursos validado só com clones no DOM | validado com o curso real (1 card) em 0.4.0-dev.3; a rolagem com vários cards segue com clones | Baixa | Sim (publicar mais cursos) | T2 | Parcial |
 | DT-T06 | Foco por teclado visível não observado em janela com foco real | Botão Próximo com contorno sólido de 2px confirmado; o Tab no shell segue sem medição com foco real | Média | Não | T2 | Parcial |
 | DT-T07 | CSS residual de cards e hero fora dos SDCs | `institutional.css` e `content.css` com `.aculta-project`, `.aculta-hero` e `.aculta-section-title` | Média | Não | T3 | Aberta |
 | DT-T08 | Validação automatizada de schemas SDC ausente | `scripts/validate-aculta420-sdc-schemas.php`: 7 componentes, 6 chamadas, 98 checagens; reprova variável não declarada (testado com caso negativo) | Média | Não | T4 | Resolvida |
@@ -67,7 +67,8 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-T11 | Skin do card de curso depende de variáveis internas do LMS | `css/components/course-card.css` mapeia `--color-*` do módulo `lms` | Média | Não | T6 | Aberta |
 | DT-T12 | Modo de cor e troca light/dark/auto ausentes | `docs/roadmap.md` antigo, item 0.5 | Baixa | Sim | T7 | Aberta (backlog) |
 | DT-T13 | Ícones, busca, feedback, UI Patterns e biblioteca de componentes sem adoção | `docs/roadmap.md` antigo, itens 0.5–0.8 | Baixa | Sim | T7 | Aberta (backlog) |
-| DT-T15 | Controles e região do carrossel (VVJB) com rótulos em inglês num site pt-BR: "Next Slide", "Previous Slide" e região "Carousel"; o botão de pausa e os pontos já estão em português | Medição em navegador (botões e `vvjb-carousel` com `aria-label`) | Média | Não | T2 | Aberta |
+| DT-T15 | Rótulos em inglês no carrossel e na Wiki ("Next Slide", "Carousel", "Read more", "Skip to main content") | corrigidos em 0.4.0-dev.3: catálogo `translations/aculta420.pt-br.po` e JS do carrossel; medido no DOM | Média | Não | T2 | Resolvida |
+| DT-T16 | Catálogo de tradução do tema precisa ser importado em cada ambiente | `drush locale:import --type=customized --override=none pt-br <arquivo>` (ver `translations/`) | Média | Não | T5 | Aberta |
 | DT-T14 | Foundation de 0.1.0 descrita como "preserva o shell existente" em documentos atuais | `architecture.md` e `development.md` reescritos (0.4.0-dev.2) | Baixa | Não | T0 | Resolvida |
 
 ## Operação e Runtime
