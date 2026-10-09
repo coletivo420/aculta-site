@@ -128,9 +128,13 @@ final class ThemeHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['institutional_home'] = $this->pathMatcher->isFrontPage();
-    $variables['aculta_domain_brand_fallback'] = $this->buildDomainBrandFallback(
-      $variables['domain_presentation']['identity'] ?? NULL,
-    );
+    $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
+    $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $brandMedia : [];
+    // The text fallback is only built when there is no brand media; otherwise the
+    // header would show two home links (image and text) for the same destination.
+    $variables['aculta_domain_brand_fallback'] = $variables['aculta_domain_brand_media'] === []
+      ? $this->buildDomainBrandFallback($variables['domain_presentation']['identity'] ?? NULL)
+      : NULL;
 
     $destinations = [
       'page_title_block' => 'aculta_page_title',
@@ -141,8 +145,6 @@ final class ThemeHooks {
     foreach ($destinations as $destination) {
       $variables[$destination] = [];
     }
-    $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
-    $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $brandMedia : [];
     $variables['aculta_has_system_branding'] = FALSE;
 
     if (!isset($variables['page']['header'])) {
