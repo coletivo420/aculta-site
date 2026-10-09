@@ -519,3 +519,18 @@ Não refatorar partes não relacionadas à tarefa sem necessidade.
 Não criar funcionalidades que não foram solicitadas.
 
 Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alteração destrutiva.
+
+## Indexação e sitemap (política do projeto)
+
+### Política de indexação (decisão do responsável, 2026-10-09)
+
+- **Produção indexável:** todos os domínios e subdomínios de produção (`aculta.org`,
+  `conta.`, `apoio.`, `coletivo420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
+  com `noindex`.
+- **Servidor de testes não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`.
+- **Páginas privadas da conta** continuam com `noindex` em nível de rota (meta `robots` do
+  `aculta_portal`). Essa proteção não é removida pelo deploy.
+- **Quem garante:** o `aculta_deployer` (`robots --env=production|test`, `build` com trava de
+  política). Verificação pós-deploy por host; resultado FAIL bloqueia a publicação.
+- Correção registrada: DEP-0003 (VirtualHost de teste com noindex) permanece bloqueante até o
+  `robots --env=production` passar em todos os hosts.
