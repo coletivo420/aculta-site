@@ -2,6 +2,17 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## 0.4.0-dev.1 — Rail de cursos — 2026-10-09
+
+Classificação (antes de codar, conforme `docs/versioning.md`): componente `experimental` novo e mudança de configuração da view `courses_catalog` → MINOR, linha 0.4.0, subversão `-dev.1`.
+
+- Novo padrão `aculta420:rail` (experimental): região rolável com `scroll-snap`, sem JavaScript, rotulada pelo título da view, foco por teclado com contorno de token (`--aculta-focus-ring`).
+- `views-view-unformatted--courses-catalog.html.twig` envolve as linhas (cards do LMS, sem alteração) no rail.
+- Configuração: `views.view.courses_catalog` passa de `grid_responsive` (3 colunas) para estilo de linhas (`default`). Efeito visível: o catálogo vira uma faixa horizontal.
+- Validado em Chromium com teclas reais: região e rótulo corretos, rolagem com quatro itens (dois clones de teste, só no DOM), foco por teclado com contorno visível, seta direita rola, sem rolagem horizontal da página em 1280 e 390 px.
+- Gates: design-foundations PASS; fixtures 156 e 19 PASS; Foundation PASS (309); shell-contract PASS (9); domain-presentation PASS (127); Portal Drupal 11+ PASS (366); `config:status` só com as exceções já documentadas.
+- Não validado: a rolagem com cursos reais, pois o Runtime tem apenas um curso publicado.
+
 ## 0.3.1 — Patterns SDC (fase parcial da linha 0.4) — 2026-10-09
 
 Versão decidida pelo responsável para esta fase. Pela regra de `docs/versioning.md`, uma entrega com componentes novos seria MINOR; a exceção está registrada na seção "Decisão de versão" do próprio `docs/versioning.md`. Nenhum componente `stable` teve API alterada.

@@ -226,6 +226,7 @@ $expectedTemplates = [
   'node--project--teaser.html.twig',
   'page.html.twig',
   'views-view-unformatted--aculta-projects.html.twig',
+  'views-view-unformatted--courses-catalog.html.twig',
   'views-view-vvjb.html.twig',
 ];
 $actualTemplates = [];
