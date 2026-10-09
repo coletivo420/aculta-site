@@ -242,6 +242,9 @@ $assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers acult
 $componentMetadata = Yaml::parseFile($themeRoot . '/components/content/editorial-card/editorial-card.component.yml');
 $assert(($componentMetadata['status'] ?? NULL) === 'stable', 'Editorial card keeps its documented stable status.');
 $assert(isset($componentMetadata['slots']) && is_array($componentMetadata['slots']), 'Editorial card exposes renderable content as slots.');
+$projectMetadata = Yaml::parseFile($themeRoot . '/components/content/project-card/project-card.component.yml');
+$assert(($projectMetadata['status'] ?? NULL) === 'experimental', 'Project card is experimental until it proves its contract (0.3.0).');
+$assert($sdc->hasDefinition('aculta420:project-card'), 'Drupal discovers aculta420:project-card.');
 
 $twig = \Drupal::service('twig');
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -253,9 +256,10 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
     Yaml::parseFile($file->getPathname());
   }
   if ($extension === 'twig') {
-    $sourceName = $file->getPathname() === $themeRoot . '/components/content/editorial-card/editorial-card.twig'
-      ? 'aculta420:editorial-card'
-      : $file->getFilename();
+    // SDC templates are compiled under their namespaced component id, e.g. aculta420:editorial-card.
+    $componentName = basename($file->getFilename(), '.twig');
+    $isComponent = $file->getPathname() === $themeRoot . '/components/content/' . $componentName . '/' . $componentName . '.twig';
+    $sourceName = $isComponent ? 'aculta420:' . $componentName : $file->getFilename();
     $source = new \Twig\Source(file_get_contents($file->getPathname()), $sourceName, $file->getPathname());
     $twig->compile($twig->parse($twig->tokenize($source)));
   }
