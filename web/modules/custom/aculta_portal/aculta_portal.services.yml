@@ -1,4 +1,7 @@
 services:
+  aculta_portal.registration_terms:
+    class: Drupal\aculta_portal\Account\RegistrationTerms
+    arguments: ['@agreement.handler', '@entity_type.manager']
   aculta_portal.access.email_confirmed:
     class: Drupal\aculta_portal\Access\EmailConfirmedAccessCheck
     arguments: ['@aculta_portal.email_confirmation_policy']
@@ -27,7 +30,7 @@ services:
     arguments: ['@config.factory']
   aculta_portal.form_callbacks:
     class: Drupal\aculta_portal\Form\PortalFormCallbacks
-    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester']
+    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.registration_terms']
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']
