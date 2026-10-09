@@ -141,7 +141,10 @@ nesta correção.
 
 ## Donation Flow
 
-A página institucional de apoio pode permanecer em SUPPORT.
+A página institucional de apoio pode permanecer em SUPPORT. Informado pelo
+responsável: a página de apoio fica a cargo do subdomínio da plataforma de doações
+(`apoio.aculta.toca.net.br` no homelab, `apoio.aculta.org` em produção); o host
+principal não serve a rota de apoio (ver `docs/architecture/multidomain.md`).
 
 Quando Commerce Donation Flow inicia seu fluxo dedicado, suas rotas
 `commerce_donation_flow.*` pertencem a MAIN. Isso evita manter um checkout

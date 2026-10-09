@@ -40,3 +40,18 @@ Canonicals usam produção; aliases Homelab não viram canonical.
 
 Integrações de plataforma, como Google Analytics, devem distinguir
 hostname/purpose sem introduzir snippets específicos em cada tema.
+
+## Página de apoio (SUPPORT)
+
+Informado pelo responsável do projeto: a página de apoio fica a cargo do subdomínio
+da plataforma de doações, purpose `support`. Homelab: `apoio.aculta.toca.net.br`;
+produção: `apoio.aculta.org`.
+
+- O host principal (`main`) não serve a página de apoio. Rotas de apoio no host
+  principal não são referência de validação.
+- A página pertence ao purpose `support`. O fluxo de carrinho, checkout e pagamento
+  continua em `main` (ver `docs/portal/PAYMENT-DOMAIN-POLICY.md`).
+- Rota raiz: `config/sync/domain/apoio_aculta_org/system.site.yml` define `front: /apoie`.
+  Portanto, no host de apoio, `/` e `/apoie` são a mesma página inicial.
+- Grafia da rota: a configuração e o validador de navegador usam `/apoie`; o responsável
+  indicou `/apoio`. Confirmar antes de fixar a rota em validadores.
