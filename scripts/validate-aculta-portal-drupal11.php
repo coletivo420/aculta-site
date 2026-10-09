@@ -98,10 +98,11 @@ $check(
   'Portal subscribers must use the canonical event_subscriber tag; legacy kernel.event_subscriber is not allowed.',
 );
 // DT-P21 adds LmsFriendlyRouteSubscriber (route path for LMS slugs). The count is pinned so
-// that every new subscriber is a deliberate change.
+// that every new subscriber is a deliberate change. 0.2.0-dev.16 adds EmailConfirmationSubscriber
+// (OAuth login and user creation mark the email as confirmed; política de confirmação de e-mail).
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 8,
-  'Portal must register exactly eight canonical event_subscriber tags.',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 9,
+  'Portal must register exactly nine canonical event_subscriber tags.',
 );
 
 $legacyProceduralFunctions = [];

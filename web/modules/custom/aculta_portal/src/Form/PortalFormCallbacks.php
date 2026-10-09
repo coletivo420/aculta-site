@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\aculta_portal\Email\EmailConfirmationRequester;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -31,7 +32,16 @@ final class PortalFormCallbacks {
     private readonly UserAuthenticationInterface $userAuth,
     private readonly UserFloodControlInterface $floodControl,
     private readonly ConfigFactoryInterface $configFactory,
+    private readonly EmailConfirmationRequester $confirmationRequester,
   ) {}
+
+  /** Envia a confirmação de e-mail do cadastro recém-criado (conta ativa, e-mail não confirmado). */
+  public function requestRegistrationConfirmation(array &$form, FormStateInterface $formState): void {
+    $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
+    if ($account instanceof \Drupal\user\UserInterface) {
+      $this->confirmationRequester->request($account);
+    }
+  }
 
   /**
    * Authenticates the login form without disclosing blocked accounts.

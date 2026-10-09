@@ -1,4 +1,21 @@
 services:
+  aculta_portal.access.email_confirmed:
+    class: Drupal\aculta_portal\Access\EmailConfirmedAccessCheck
+    arguments: ['@aculta_portal.email_confirmation_policy']
+  aculta_portal.email_confirmation_notice:
+    class: Drupal\aculta_portal\Account\EmailConfirmationNotice
+    arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@csrf_token', '@string_translation']
+  aculta_portal.email_confirmation_requester:
+    class: Drupal\aculta_portal\Email\EmailConfirmationRequester
+    arguments: ['@email_confirmer', '@entity_type.manager']
+  aculta_portal.email_confirmation_policy:
+    class: Drupal\aculta_portal\Account\EmailConfirmationPolicy
+    arguments: ['@user.data', '@entity_type.manager']
+  aculta_portal.email_confirmation_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\EmailConfirmationSubscriber
+    arguments: ['@aculta_portal.email_confirmation_policy']
+    tags:
+      - { name: event_subscriber }
   aculta_portal.deployer_status_reader:
     class: Drupal\aculta_portal\Deployer\DeployerStatusReader
     arguments: ['%app.root%']
@@ -10,7 +27,7 @@ services:
     arguments: ['@config.factory']
   aculta_portal.form_callbacks:
     class: Drupal\aculta_portal\Form\PortalFormCallbacks
-    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory']
+    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester']
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']

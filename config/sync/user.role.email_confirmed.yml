@@ -1,0 +1,12 @@
+uuid: 0ec68fa3-2c6f-4208-8630-61711376f66e
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - captcha
+id: email_confirmed
+label: 'E-mail confirmado'
+weight: 9
+is_admin: false
+permissions:
+  - 'skip CAPTCHA'

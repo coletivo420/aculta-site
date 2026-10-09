@@ -7,7 +7,6 @@ dependencies:
     - filter.format.webform_default
   module:
     - aculta_portal
-    - captcha
     - commerce_checkout
     - commerce_order
     - commerce_payment
@@ -33,7 +32,6 @@ permissions:
   - 'delete own files'
   - 'delete own social auth profile'
   - 'manage own commerce_payment_method'
-  - 'skip CAPTCHA'
   - 'update own participante profile'
   - 'use text format basic_html'
   - 'use text format webform_default'

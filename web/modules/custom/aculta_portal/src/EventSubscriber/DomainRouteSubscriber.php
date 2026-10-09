@@ -23,6 +23,13 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
 
   /** {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
+    // Política de confirmação de e-mail: cursos e checkout exigem e-mail confirmado.
+    foreach (['lms.course.start', 'lms.group.answer_form', 'commerce_checkout.form', 'commerce_checkout.checkout'] as $name) {
+      if ($route = $collection->get($name)) {
+        $route->setRequirement('_custom_access', 'aculta_portal.access.email_confirmed:access');
+      }
+    }
+
     $pathChanges = [
       'user.login' => '/entrar',
       'user.register' => '/criar-conta',
