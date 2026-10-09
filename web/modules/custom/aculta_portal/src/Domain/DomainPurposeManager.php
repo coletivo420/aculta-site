@@ -50,6 +50,30 @@ final class DomainPurposeManager {
     return $purpose === FALSE ? NULL : $purpose;
   }
 
+  /**
+   * Executa $callback com o Domain do purpose como ativo e restaura o anterior.
+   *
+   * Serve para avaliar acesso no contexto de origem (por exemplo, a elegibilidade
+   * de verbetes da WIKI no sitemap, executado fora do host da WIKI). Não altera a
+   * regra de acesso: apenas muda o contexto em que ela é avaliada.
+   */
+  public function runInPurpose(string $purpose, callable $callback): mixed {
+    $domain = $this->getDomain($purpose);
+    if ($domain === NULL) {
+      return NULL;
+    }
+    $previous = $this->domainNegotiator->getActiveDomain();
+    $this->domainNegotiator->setActiveDomain($domain);
+    try {
+      return $callback();
+    }
+    finally {
+      if ($previous instanceof DomainInterface) {
+        $this->domainNegotiator->setActiveDomain($previous);
+      }
+    }
+  }
+
   /** Returns a Domain entity for a stable purpose. */
   public function getDomain(string $purpose): ?DomainInterface {
     $id = self::DOMAIN_IDS[$purpose] ?? NULL;
