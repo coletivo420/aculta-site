@@ -141,6 +141,8 @@ final class ThemeHooks {
     foreach ($destinations as $destination) {
       $variables[$destination] = [];
     }
+    $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
+    $variables['aculta_domain_brand_media'] = is_array($brandMedia) ? $brandMedia : [];
     $variables['aculta_has_system_branding'] = FALSE;
 
     if (!isset($variables['page']['header'])) {
@@ -159,6 +161,10 @@ final class ThemeHooks {
           : '';
       }
       if ($pluginId === 'system_branding_block') {
+        if ($variables['aculta_domain_brand_media'] !== []) {
+          unset($variables['page']['header'][$key]);
+          continue;
+        }
         $variables['aculta_has_system_branding'] = TRUE;
       }
 
