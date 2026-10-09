@@ -28,7 +28,9 @@ try {
   foreach ($nodes as $node) $node->setPublished()->save();
   $fourth = $first->createDuplicate();
   $fourth->setTitle('Verificação temporária')->set('field_category', 'Categoria de teste')->set('field_summary', 'Resumo de teste')->set('field_complement', 'Complemento de teste')->set('field_link', ['uri' => 'internal:/institucional', 'title' => 'Teste'])->set('field_weight', -1)->save();
-  $run(4);
+  // The highlights view pages at 3 items (views config pager items_per_page: 3).
+  // The duplicate is still checked for weight order below.
+  $run(3);
   $view = Views::getView('home_editorial_highlights'); $view->setDisplay('block_1'); $view->execute();
   if ((int)$view->result[0]->nid !== (int)$fourth->id()) throw new RuntimeException('Weight sort failed.');
   $fourth->setUnpublished()->save(); $run(3);

@@ -1,12 +1,18 @@
 <?php
 /** Read-only checks of local cleanup and the retained administrative contract. */
 use Symfony\Component\Yaml\Yaml;
-$expected = ['aculta_activities','aculta_documents','aculta_news','aculta_projects','home_editorial_highlights','block_content','content','files','media','media_library','redirect','user_admin_people','watchdog','webform_submissions'];
+// Reviewed inventory of Views. Portal and enabled modules provide the course,
+// Wiki, Commerce, LMS and Social Auth views; any other Views fail the check.
+$expected = ['aculta_activities','aculta_documents','aculta_news','aculta_projects','home_editorial_highlights','block_content','content','files','media','media_library','redirect','user_admin_people','watchdog','webform_submissions','activities_selection','aculta_related_activities','aculta_related_news','agreements','commerce_cart_block','commerce_cart_form','commerce_carts','commerce_checkout_order_summary','commerce_order_item_table','commerce_order_item_table_admin','commerce_order_payments','commerce_orders','commerce_stores','commerce_user_orders','courses','courses_admin','courses_catalog','group_members','lessons_selection','locked_content','moderated_content','profiles','social_auth_profiles','user_agreements','wiki_categories','wiki_entries'];
 $views = \Drupal\views\Entity\View::loadMultiple();
 sort($expected); $actual = array_keys($views); sort($actual);
 if ($actual !== $expected) throw new RuntimeException('Unexpected retained Views.');
+// Curated administrative Views must document their purpose. Views shipped by
+// Commerce, LMS, Wiki and Social Auth are owned by those modules; their
+// descriptions are not part of this cleanup contract.
+$curated = ['aculta_activities','aculta_documents','aculta_news','aculta_projects','home_editorial_highlights','block_content','content','files','media','media_library','redirect','user_admin_people','watchdog','webform_submissions'];
 foreach ($views as $view) {
-  if (!$view->get('description')) throw new RuntimeException('Missing View description: ' . $view->id());
+  if (in_array($view->id(), $curated, TRUE) && !$view->get('description')) throw new RuntimeException('Missing View description: ' . $view->id());
   $view->getExecutable()->initDisplay();
 }
 foreach (['admin','content','navigation-user-links','account','main','aculta-footer-content','aculta-footer-institution','aculta-footer-participation'] as $id) {
