@@ -6,7 +6,7 @@ Classificação: PATCH da linha 0.2.0 (correção de caminho público e redireci
 
 - Página pública de apoio em `/apoio` (`aculta_portal.support_form`), grafia confirmada pelo responsável. Hospedada no host SUPPORT, cuja página inicial é `/apoio` (`config/sync/domain/apoio_aculta_org/system.site.yml`).
 - Conta de apoio em `/meu-apoio` (`aculta_portal.support_my`), alinhada a `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Antes ocupava `/apoio`.
-- `/apoie` (caminho antigo) responde 301 para `/apoio` (`aculta_portal.support_legacy`, `SupportController::legacyRedirect`).
+- Sem rota `/apoie`: o caminho antigo não tem mais rota própria. Links de apoio que ainda apontem para `/apoie` são resolvidos para o host SUPPORT pelo hook; o redirecionamento 301 do caminho antigo, se desejado, precisa de decisão e de entidade de redirecionamento no runtime.
 - `PortalHooks` aceita `internal:/apoio` e `internal:/apoie` ao resolver links de apoio para o purpose SUPPORT, para compatibilidade com conteúdo ainda não recarregado.
 - Atualizados: conteúdo da home (`scripts/content/institution/home-content.json`), validador de comércio (prefixo de rota de webhook) e validador de navegador (caminho de apoio; a reescrita de `supportLayout` segue pendente em DT-T18).
 

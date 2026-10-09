@@ -62,15 +62,6 @@ aculta_portal.support_form:
     _title: Apoie a Associação
   requirements:
     _access: 'TRUE'
-aculta_portal.support_legacy:
-  path: /apoie
-  defaults:
-    _controller: '\Drupal\aculta_portal\Support\Controller\SupportController::legacyRedirect'
-    _title: Apoie a Associação
-  requirements:
-    _access: 'TRUE'
-  options:
-    no_cache: true
 aculta_portal.support_settings:
   path: /admin/config/aculta/apoio
   defaults:
