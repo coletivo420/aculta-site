@@ -1,0 +1,21 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Content grid
+status: experimental
+group: Patterns
+description: 'Responsive grid for repeated content items. Two columns by default, as the project list has always used.'
+props:
+  type: object
+  properties:
+    columns:
+      type: integer
+      description: 'Number of columns.'
+      enum: [2, 3]
+      default: 2
+slots:
+  items:
+    title: Items
+    description: 'Rendered items, each one wrapped by the caller.'
+assets:
+  css:
+    component:
+      content-grid.css: {}

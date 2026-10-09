@@ -71,17 +71,6 @@ display:
         type: views_query
         options: {  }
       css_class: aculta-project-list
-      header:
-        area:
-          id: area
-          table: views
-          field: area
-          plugin_id: text
-          empty: false
-          content:
-            value: '<h2 class="aculta-section-title">NOSSOS PROJETOS</h2><p class="aculta-prose">Da percussão ao audiovisual, nossos projetos aproximam pessoas e fortalecem a participação cultural.</p>'
-            format: full_html
-          tokenize: false
       display_extenders: {  }
     cache_metadata:
       max-age: -1

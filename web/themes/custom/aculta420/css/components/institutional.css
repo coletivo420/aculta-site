@@ -23,7 +23,7 @@
 .aculta-main .aculta-areas h3 { font-size: 1.375rem; margin-top: 0; }
 .aculta-project-list { margin-block: var(--aculta-space-section); }
 .aculta-project-list .view-header { margin-bottom: 1.5rem; }
-.aculta-project-list .view-content { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 3rem; }
+/* Project list grid moved to the content-grid pattern (components/patterns/content-grid). */
 .aculta-project-list .views-row { min-width: 0; }
 .aculta-project { height: 100%; padding: 1.5rem; border: 1px solid var(--aculta-border-default); border-top: 3px solid var(--aculta-interactive-active-bg); border-radius: var(--bs-border-radius); background-color: var(--aculta-surface-raised); }
 .aculta-main .aculta-project h3 { margin-block: 0.75rem 1rem; }

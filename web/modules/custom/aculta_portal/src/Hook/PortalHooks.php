@@ -489,6 +489,16 @@ final class PortalHooks {
         'template' => 'aculta-portal-shell',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
+      'aculta_section' => [
+        'variables' => [
+          'section_title' => NULL,
+          'section_heading' => NULL,
+          'section_variant' => 'default',
+          'section_body' => NULL,
+        ],
+        'template' => 'aculta-section',
+        'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
+      ],
       'aculta_portal_photo_editor' => [
         'variables' => [
           'photo' => NULL,

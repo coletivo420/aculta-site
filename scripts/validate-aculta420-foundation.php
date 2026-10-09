@@ -219,11 +219,13 @@ foreach (glob($root . '/config/sync/block.block.aculta_*.yml') ?: [] as $path) {
 $expectedTemplates = [
   'block--block-content--type--aculta-institution.html.twig',
   'block--system-branding-block.html.twig',
+  'aculta-section.html.twig',
   'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
   'node--project--teaser.html.twig',
   'page.html.twig',
+  'views-view-unformatted--aculta-projects.html.twig',
   'views-view-vvjb.html.twig',
 ];
 $actualTemplates = [];
@@ -258,7 +260,7 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
   if ($extension === 'twig') {
     // SDC templates are compiled under their namespaced component id, e.g. aculta420:editorial-card.
     $componentName = basename($file->getFilename(), '.twig');
-    $isComponent = $file->getPathname() === $themeRoot . '/components/content/' . $componentName . '/' . $componentName . '.twig';
+    $isComponent = preg_match('#/components/(content|patterns)/' . preg_quote($componentName, '#') . '/' . preg_quote($componentName, '#') . '\.twig$#', $file->getPathname()) === 1;
     $sourceName = $isComponent ? 'aculta420:' . $componentName : $file->getFilename();
     $source = new \Twig\Source(file_get_contents($file->getPathname()), $sourceName, $file->getPathname());
     $twig->compile($twig->parse($twig->tokenize($source)));

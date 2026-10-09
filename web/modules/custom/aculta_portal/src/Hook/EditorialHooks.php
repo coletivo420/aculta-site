@@ -6,6 +6,9 @@ namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Plugin\metatag\Tag\PostalAddressTag;
+use Drupal\block_content\BlockContentInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -25,6 +28,26 @@ final class EditorialHooks {
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
   ) {}
+
+  /**
+   * Hands editorial basic blocks to the section theme hook.
+   *
+   * The Portal prepares neutral section data (title, sub-heading, variant and
+   * body render array). The theme decides the markup in its aculta-section
+   * template.
+   */
+  #[Hook('entity_view_alter')]
+  public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
+    if (!$entity instanceof BlockContentInterface || $entity->bundle() !== 'basic') {
+      return;
+    }
+    $build['#theme'] = 'aculta_section';
+    $build['#section_title'] = $entity->hasField('field_section_title') ? ($entity->get('field_section_title')->value ?: NULL) : NULL;
+    $build['#section_heading'] = $entity->hasField('field_section_heading') ? ($entity->get('field_section_heading')->value ?: NULL) : NULL;
+    $build['#section_variant'] = $entity->hasField('field_section_variant') ? ($entity->get('field_section_variant')->value ?: 'default') : 'default';
+    $build['#section_body'] = $build['body'] ?? NULL;
+    unset($build['body']);
+  }
 
   /** Preserves punctuation in structured postal addresses. */
   #[Hook('metatag_tags_alter')]

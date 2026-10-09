@@ -3,4 +3,5 @@
   {{ attach_library('aculta420/editorial-carousel') }}
   <span id="vvjb-index-{{ options.unique_id }}" class="visually-hidden">{{ view.getTitle() }}</span>
 {% endif %}
-{{ include('@vvjb/views-view-vvjb.html.twig') }}
+{% set slides %}{{ include('@vvjb/views-view-vvjb.html.twig') }}{% endset %}
+{{ include('aculta420:carousel', { slides: slides }, with_context = false) }}

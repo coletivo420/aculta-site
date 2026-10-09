@@ -133,6 +133,8 @@ mobile/empty/long-title validados.
 
 ## 0.4.0 — Patterns v1
 
+Status: **parcial (0.4.0-dev), em PR.** Ver `docs/components.md` (padrões 0.4) para o que foi migrado e o que ficou pendente.
+
 - content-section;
 - content-grid;
 - hero;

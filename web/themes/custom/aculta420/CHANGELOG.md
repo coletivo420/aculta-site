@@ -2,6 +2,10 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## [Unreleased]
+
+- 0.4.0 (parcial): padrões SDC experimentais `content-section`, `hero`, `content-grid` e `carousel`. Seções editoriais de blocos `basic` agora são campos (`field_section_title`, `field_section_heading`, `field_section_variant`), renderizados pelo template de bloco `block--block-content--type--basic`. O hero da home é campos do nó `page` (`field_hero_*`), injetado por `preprocess_node` sem template de nó. A grade de projetos usa `content-grid`. O carrossel VVJB ganhou o wrapper `carousel`. Títulos de seção usam a barra de título em todas as seções: mudança visual intencional. Seções migradas pela hook de tema `aculta_section` (declarada pelo `aculta_portal`), com barra de título em todas as seções. Cabeçalho de projetos migrado para blocos com visibilidade por purpose (domínio principal, home e /projetos); o Domain Header único não muda, e o cabeçalho de cada subdomínio é um placement. Pendente: rail de cursos. Detalhes em `docs/components.md`.
+
 ## 0.3.0 — Card System v1 — 2026-10-09
 
 - 0.3.0 — Card System v1: novo SDC experimental `aculta420:project-card`, extraído do teaser de projeto com a mesma marcação (`node--project--teaser.html.twig` passa a ser só o presenter). Skin de `lms:course_card` pela `css/components/course-card.css`, com variáveis LMS e botão mapeados para tokens; reduced motion e modo escuro medidos. `editorial-card` sem alteração. Gate de Foundation: discovery e compilação do `project-card` (compilação de SDC agora usa o id do componente) e status `experimental`. Sem product-card, sem variantes e sem abstração de mídia, por falta de consumidor ou duplicação comprovada.
