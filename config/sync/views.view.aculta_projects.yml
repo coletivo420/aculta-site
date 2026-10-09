@@ -5,7 +5,6 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - node.type.project
-    - views.view.aculta_section_header
   module:
     - node
     - user
@@ -72,21 +71,6 @@ display:
         type: views_query
         options: {  }
       css_class: aculta-project-list
-      header:
-        area:
-          id: area
-          table: views
-          field: view
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: view
-          empty: false
-          view_to_insert: 'aculta_section_header:block_1'
-          inherit_arguments: false
-          inherit_exposed_filters: false
-          inherit_pager: false
-          render_pager: false
       display_extenders: {  }
     cache_metadata:
       max-age: -1
