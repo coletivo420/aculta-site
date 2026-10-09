@@ -195,10 +195,8 @@
   }
   .aculta-navbar .nav-link,
   .card,
-  .aculta-project,
   .aculta-editorial-list .views-row,
   .webform-submission-form .form-submit { transition: none; }
   .card:is(:hover, :focus-within),
-  .aculta-project:is(:hover, :focus-within),
   .aculta-editorial-list .views-row:is(:hover, :focus-within) { transform: none; }
 }

@@ -1,0 +1,28 @@
+/* Project card (DT-T07): the article frame set by the presenter node--project--teaser
+   and the inner markup of the project-card SDC. Moved from institutional.css, content.css
+   and drupal-bootstrap.css; the selectors and declarations are unchanged. */
+.aculta-project {
+  height: 100%;
+  padding: 1.5rem;
+  border: 1px solid var(--aculta-border-default);
+  border-top: 3px solid var(--aculta-interactive-active-bg);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-raised);
+  transition: border-color var(--aculta-motion-fast) var(--aculta-ease-standard), box-shadow var(--aculta-motion-fast) var(--aculta-ease-standard), transform var(--aculta-motion-fast) var(--aculta-ease-standard);
+}
+.aculta-project:is(:hover, :focus-within) {
+  border-color: var(--aculta-interactive-active-bg);
+  box-shadow: var(--aculta-shadow-hover);
+  transform: translateY(-2px);
+}
+.aculta-main .aculta-project h3 { margin-block: 0.75rem 1rem; }
+.aculta-project h3 a { color: var(--aculta-text-primary); text-decoration: none; }
+.aculta-project h3 a:is(:hover, :focus-visible) { text-decoration: underline; }
+.aculta-project .aculta-category { font-size: 1rem; letter-spacing: 0.025em; }
+.aculta-project-image { margin-bottom: 1.5rem; }
+.aculta-project-image img { display: block; max-width: 100%; height: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-project { transition: none; }
+  .aculta-project:is(:hover, :focus-within) { transform: none; }
+}
