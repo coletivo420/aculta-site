@@ -1,5 +1,12 @@
 # Changelog — ACULTA Portal
 
+## Documentação — F1 validada no Runtime oficial — 2026-10-09
+
+Mudança apenas documental; a versão vigente segue `0.2.0-dev.18`.
+
+- A F1 (modo de cor) fechou em `0.5.0` do tema (PR #146). O status de Runtime "DEFERRED" das entradas 0.2.0-dev.17 e dev.18 deixa de valer.
+- Validação no Runtime oficial: roteiro automatizado 7/7; HTTP `light`/`dark`/`auto` corretos; escolha da pessoa usuária sobrepõe o padrão do site.
+
 ## 0.2.0-dev.18 — correção do autowire em AppearanceHooks — 2026-10-09
 
 - `AppearanceHooks` importava `Drupal\Core\DependencyInjection\Attribute\Autowire`, que não existe. O atributo era ignorado e o container não montava o hook. Passa a usar `Symfony\Component\DependencyInjection\Attribute\Autowire`, como os demais arquivos do Portal.
