@@ -118,6 +118,12 @@ Pendências desta fase (não fechadas):
 - Página somente leitura no painel do `aculta_portal` e opções de sitemap na visão geral.
 - Declarado como complemento opcional do `aculta_portal`; o Portal não depende dele.
 
+## Fase 10 — Ambiente por função (0.1.8)
+
+**Status: parcialmente implementada.** `environment`, `robots`, `sitemap` e `report` respeitam o ambiente. Pendências:
+1. `build` e `verify` ainda não recebem `--env`; hoje são de produção.
+2. Testes de cada função nos dois estados (fixtures por ambiente), não só o estado atual.
+
 ## Fase 9 — Provisionamento de credenciais em produção (pendente)
 
 **Status: não iniciada.** Decisão do responsável (2026-10-09): em produção as credenciais ficam no banco de dados,

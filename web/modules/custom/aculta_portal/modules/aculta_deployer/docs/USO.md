@@ -66,6 +66,27 @@ Um caminho que responde 404 para o anônimo não tem conteúdo indexável. A che
 esses status para que a lista de caminhos não precise espelhar rotas que não existem em
 produção. Um 200 sem noindex é sempre falha.
 
+## Ambiente do site (0.1.8)
+
+- `$CLI environment` mostra o ambiente atual. `$CLI environment set --to=production` ou `--to=test` grava o ambiente e o
+  endereço do site em `var/deployer/environment.json`. Sem o arquivo, as funções usam `test`.
+- O Portal lê esse arquivo para escolher o conjunto de credenciais obrigatórias.
+
+### Comportamento por função e ambiente
+
+| Função | Teste | Produção | Observação |
+| --- | --- | --- | --- |
+| `environment` | define `test` | define `production` | grava o arquivo neutro |
+| `robots` | confere noindex nos hosts de teste | confere ausência de noindex e `Sitemap:` do índice | `--env` ou arquivo |
+| `sitemap` | confere o índice na base de teste | confere o índice na base de produção | `--env` ou arquivo |
+| `report` | ambiente e endereço de teste | ambiente e endereço de produção | sem rede, sem valores |
+| `build` | não aplicável (gera a saída de produção) | gera a saída de produção | recusa saída dentro do repositório |
+| `verify` | probes do registro (produção) | probes do registro (produção) | somente leitura |
+| `check` | valida o registro e o escopo | valida o registro e o escopo | não depende do ambiente |
+| `boundaries` | independe do ambiente | independe do ambiente | |
+
+Pendente: `build` e `verify` ainda não recebem `--env`; a fase 10 do roadmap trata disso.
+
 ## Painel do Portal (0.1.6)
 
 - `$CLI report` grava `var/deployer/status.json` (ignorado pelo Git). A página `/admin/config/aculta/deployer`

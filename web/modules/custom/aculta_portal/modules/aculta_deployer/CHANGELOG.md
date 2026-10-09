@@ -1,5 +1,13 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.8 — ambiente do site (teste/produção) — 2026-10-09
+
+- Comando `environment [show] | environment set --to=production|test`: grava `var/deployer/environment.json` com o
+  ambiente e o endereço do site (`config/deploy.json`, bloco `environments`). Valor desconhecido é recusado.
+- `robots`, `sitemap` e `report` usam o mesmo ambiente de trabalho: `--env`, senão o arquivo, senão `test`.
+- Relatório do painel inclui ambiente e endereço. O Portal lê o mesmo arquivo para escolher o conjunto de credenciais.
+- Testes: set de produção e teste, recusa e restauração do arquivo real.
+
 ## 0.1.7 — remoção da importação de credenciais; cadastro pelo painel do Portal — 2026-10-09
 
 - Removidos os comandos `secrets check` e `secrets export` e as funções que liam ou gravavam valores de credenciais.

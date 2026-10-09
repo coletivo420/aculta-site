@@ -1,5 +1,12 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.12 — ambiente definido pelo deployer — 2026-10-09
+
+- O gerenciador de credenciais lê `var/deployer/environment.json` antes da configuração local: o ambiente
+  (teste ou produção) é o que o deployer definiu.
+- Painel de status do deployer mostra ambiente e endereço do site.
+- Testes: ambiente do deployer prevalece; arquivo inválido cai para a configuração local.
+
 ## 0.2.0-dev.11 — credenciais do ambiente: cadastro, máscara e revelação — 2026-10-09
 
 - Removida a importação de arquivo (`secrets/import`) e a exclusão segura da origem. O cadastro passa a ser pelo
