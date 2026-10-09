@@ -1,5 +1,9 @@
 # Changelog — ACULTA Portal
 
+## Versionamento por marcação no código, versão vigente 0.1.0 — 2026-10-09
+
+- Política: versão marcada em `aculta_portal.info.yml`; tags Git só sob pedido explícito do responsável (ver `docs/operations/RELEASES.md`).
+
 ## Documentação (sem tag), versão vigente portal-v0.1.0 — 2026-10-09
 - Limpeza documental: removidos P10-R, RELEASE-P10, handoff, HARDENING-P9, matriz P8 e os documentos de produto de Conta, Fórum, Revista, Loja e Wiki. Regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`. Histórico no Git (último commit `9c95420`).
 
