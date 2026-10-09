@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.5.0-dev.1 | F1 (modo de cor): medição do modo escuro em navegador, pré-requisito atendido; tokens da barra sem alteração | marcada no código |
 | 0.4.5 | fechamento da linha 0.4.x (2026-10-09): 0.4.4 (PR #122), 0.4.5-dev.1 a dev.5 (PRs #124, #129, #130 e o dev.5); DT-T18 pendente, independente do tema | marcada no código (release) |
 | 0.4.5-dev.5 | sitemap do validador de navegador delegado ao `aculta_deployer sitemap`; DT-T18 pendente (independente do tema) | marcada no código |
 | 0.4.5-dev.4 | validador de navegador: página de apoio no host SUPPORT (DT-T18) | marcada no código |
@@ -102,7 +103,8 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 - Já existe: `css/tokens.css` com os blocos `:root, [data-bs-theme="light"]` e `[data-bs-theme="dark"]`, e o contrato de superfície dark validado pelo gate de design. Falta o controle.
 - Não existe: seletor de modo, JavaScript de troca, persistência nem leitura de `prefers-color-scheme`. O gate de design bloqueia esses itens até a fase prevista, então a F1 precisa atualizar o gate junto.
-- Pré-requisito não atendido: T2 validou carrossel, rail e foco no modo claro. Nenhuma medição de modo escuro em navegador foi feita. É o primeiro passo da F1.
+- Pré-requisito atendido em 0.5.0-dev.1: `scripts/validate-color-mode-browser.mjs` força `data-bs-theme="dark"` e mede contraste WCAG em 8 páginas (desktop e 390 px): 52 medidas, pior caso 8,82:1 (mínimo 4,5:1), sem overflow. A primeira leitura (cerca de 1,2:1 a 1,7:1 no menu e na barra de conta) era artefato de transição CSS, e a medição agora desliga transições antes de ler.
+- Tokens da barra no modo escuro não precisaram de alteração.
 - Persistência para conta: a preferência do usuário autenticado pertence à camada de conta (`aculta_portal`, linha separada). Não há campo nem storage de preferência de aparência. Decisão necessária antes de implementar: onde guardar (campo de usuário ou dados do usuário via API do Core) e como o Portal entrega o modo ao tema pelo contrato neutro, sem o tema ler usuário ou configuração.
 - Anônimo (proposta, não decidida): `localStorage` com try/catch, sem alterar o HTML em cache; o modo seria aplicado por `data-bs-theme` no `<html>`.
 - Próximo passo: autorização explícita do responsável para tocar `web/themes/custom/aculta420/**` e decisão sobre a persistência do usuário autenticado.

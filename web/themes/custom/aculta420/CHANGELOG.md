@@ -1,3 +1,12 @@
+## 0.5.0-dev.1 — F1 (modo de cor): medição do modo escuro — 2026-10-09
+
+Classificação: MINOR da linha 0.5 (F1), commit de medição sem mudança de tokens, componente ou JavaScript de produção.
+
+- `scripts/validate-color-mode-browser.mjs`: força `data-bs-theme="dark"` e mede contraste WCAG de textos principais, link, menu e barra de conta em `/`, `/institucional`, `/projetos` e `/contato` (desktop e 390 px). Desliga transições antes de ler.
+- Resultado no servidor de testes: 52 medidas, pior caso 8,82:1 (mínimo 4,5:1), sem overflow. Os tokens da barra no modo escuro não precisaram de alteração.
+- Leitura inicial de 1,2:1 a 1,7:1 era artefato de transição CSS; corrigido na medição.
+- Pendências da F1: controle de modo (local na interface, a decidir sem tocar a barra), persistência anônima e persistência para conta (`aculta_portal`, linha separada).
+
 ## 0.4.5 — Fechamento da linha 0.4.x — 2026-10-09
 
 Classificação: fechamento de linha (release). Sem alteração funcional além da marcação; o conteúdo já está em `main`.
