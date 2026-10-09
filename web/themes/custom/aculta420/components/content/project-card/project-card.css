@@ -19,8 +19,25 @@
 .aculta-project h3 a { color: var(--aculta-text-primary); text-decoration: none; }
 .aculta-project h3 a:is(:hover, :focus-visible) { text-decoration: underline; }
 .aculta-project .aculta-category { font-size: 1rem; letter-spacing: 0.025em; }
+.aculta-project { text-align: center; }
+.aculta-project-image { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+.aculta-project-text .aculta-category { display: block; }
+.aculta-project .aculta-editorial-link { display: inline-block; }
 .aculta-project-image { margin-bottom: 1.5rem; }
-.aculta-project-image img { display: block; max-width: 100%; height: auto; }
+/* The card image is a 1:1 frame capped at 16rem (256 css px): the 1x derivative is
+   256 px and the 2x (512 px) source covers retina screens. object-fit: contain keeps
+   every logo whole (no cropping); the muted surface frames transparent art. */
+.aculta-project-image img {
+  display: block;
+  width: 100%;
+  max-width: 16rem;
+  height: auto;
+  margin-inline: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-muted);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .aculta-project { transition: none; }

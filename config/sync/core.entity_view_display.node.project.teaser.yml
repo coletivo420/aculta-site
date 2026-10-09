@@ -28,7 +28,7 @@ dependencies:
     - field.field.node.project.field_summary
     - field.field.node.project.field_territory
     - field.field.node.project.field_work_area
-    - image.style.large
+    - image.style.aculta_card_1x
     - node.type.project
   module:
     - image
@@ -61,7 +61,7 @@ content:
     label: hidden
     settings:
       image_link: ''
-      image_style: large
+      image_style: aculta_card_1x
       image_loading:
         attribute: lazy
     third_party_settings: {  }
