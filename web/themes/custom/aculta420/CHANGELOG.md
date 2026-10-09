@@ -5,6 +5,8 @@ Mudança apenas documental, sem alterar código, assets ou `aculta420.info.yml`.
 - `docs/branding-podplant420.md`: caminhos de `web/stacked/` e `web/horizontal/` escritos por extenso, a partir da raiz do tema.
 - `assets/branding/podplant420/README.md`: referência ao documento de branding corrigida (antes apontava para um diretório inexistente).
 - `assets/branding/baque-sativa/README.md`: seção "Publicação" atualizada para o estado instalado; o texto "destino proposto / PR independente" foi removido.
+- Autoria e licenças dos kits Podplant420 e Baque Sativa registradas como informadas pelo responsável: produção pelo coletivo420 (ACULTA), que detém as licenças.
+- `docs/branding-baque-sativa.md`: contraste medido das variantes (amarelo sobre claro 1,44:1, o que não atende a 3:1) e inspeção ampliada de 64, 96 e 128 px (sem halos; texto ilegível em 64 px). SHAs de merge preenchidos no CHANGELOG das entradas 0.4.2 e 0.4.3.
 
 ## 0.4.3 — Kit de logomarcas Baque Sativa (PR #115) — 2026-10-09
 
@@ -16,7 +18,7 @@ Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um
 - Documentação em `docs/branding-baque-sativa.md`, com índice e README do tema atualizados.
 - Nenhuma mudança em Institution Bar, Domain Header, Domain purpose ou SDC genérico. Nenhum template consome o kit nesta fase.
 
-Validação: PASS no verificador do kit, inspeção visual das duas cores em fundo claro e escuro, sem cortes, halos ou distorção visíveis a 520 px, `git diff --check` limpo e links da documentação conferidos. **Não validado**: gate de Foundation (exige bootstrap Drupal, não executado neste checkout); QA em navegador e runtime Drupal (DEFERRED). SHA do commit na `main`: a preencher no merge.
+Validação: PASS no verificador do kit, inspeção visual das duas cores em fundo claro e escuro, sem cortes, halos ou distorção visíveis a 520 px, `git diff --check` limpo e links da documentação conferidos. **Não validado**: gate de Foundation (exige bootstrap Drupal, não executado neste checkout); QA em navegador e runtime Drupal (DEFERRED). SHA do merge na `main`: b40929e (PR #115).
 
 ## 0.4.2 — Assets visuais Podplant420 (PR #114) — 2026-10-09
 
@@ -31,7 +33,7 @@ Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um
 - Nenhuma mudança em Institution Bar, Domain Header, Domain purpose ou SDC genérico. Nenhuma imagem editorial ou capa foi criada.
 - Versão marcada em `aculta420.info.yml` e na asserção do gate de Foundation.
 
-Validação: PASS nos dois validadores de assets, `git diff --check` limpo e conferência visual de fundo claro e escuro. **Não validado**: gate de Foundation (exige bootstrap Drupal, não executado neste checkout); QA visual em navegador e runtime Drupal (DEFERRED). SHA do commit na `main`: a preencher no merge.
+Validação: PASS nos dois validadores de assets, `git diff --check` limpo e conferência visual de fundo claro e escuro. **Não validado**: gate de Foundation (exige bootstrap Drupal, não executado neste checkout); QA visual em navegador e runtime Drupal (DEFERRED). SHA do merge na `main`: 3fefbca (PR #114).
 
 ## 0.4.1 — T4, T5 e T6: validadores, conteúdo por UUID e skin do LMS sem variáveis internas — 2026-10-09
 
