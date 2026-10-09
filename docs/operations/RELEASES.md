@@ -24,6 +24,16 @@ O tema ACULTA420 usa `aculta420-theme-vX.Y.Z`; regras específicas estão em
 
 Branches devem ser curtas e nascer da `main` atual.
 
+## Subversões do tema
+
+O tema usa subversões `-dev.N` por mudança principal validada, antes da tag final.
+O procedimento completo, incluindo a classificação de cada mudança antes de codar, está
+em [`web/themes/custom/aculta420/docs/versioning.md`](../../web/themes/custom/aculta420/docs/versioning.md).
+
+Mudanças do `aculta_portal` entram no `CHANGELOG.md` do módulo, citando a versão do tema
+em que foram entregues. Não há tag `portal-v*` ainda; a primeira release do Portal ainda
+precisa de decisão do responsável.
+
 ## Gate de release
 
 Antes de tag:
