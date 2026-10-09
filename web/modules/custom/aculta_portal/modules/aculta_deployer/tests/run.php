@@ -227,7 +227,7 @@ $assert($S::parse("SEM_IGUAL\n") === null, 'parse: linha sem "=" é recusada');
 $assert($S::modeProblem(0100600) === null && $S::modeProblem(0100400) === null, 'permissões 0600 e 0400 são aceitas');
 $assert($S::modeProblem(0100640) !== null && $S::modeProblem(0100604) !== null && $S::modeProblem(0100666) !== null, 'grupo ou outros com bits de acesso são recusados');
 $assert($S::isInside('/a/b/web/x', '/a/b/web') && !$S::isInside('/a/bweb/x', '/a/b/web') && $S::isInside('/a/b/web', '/a/b/web'), 'isInside não confunde /a/bweb com /a/b/web');
-$contract = json_decode((string) file_get_contents($toolRoot . '/config/secrets-contract.json'), true);
+$contract = json_decode((string) file_get_contents(dirname($toolRoot, 6) . '/config/secrets-contract.json'), true);
 $assert($S::contractProblems($contract) === [], 'contrato de segredos é válido (nomes, obrigatórios dentro da lista)');
 $doc = (string) file_get_contents(dirname($toolRoot, 6) . '/docs/operations/SECRETS.md');
 $docOk = true;

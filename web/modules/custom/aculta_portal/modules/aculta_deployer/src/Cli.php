@@ -243,7 +243,7 @@ final class Cli {
       $this->err("secrets: ambiente desconhecido: $env");
       return 1;
     }
-    $contract = $this->json($this->toolRoot . '/config/secrets-contract.json');
+    $contract = $this->json($this->repoRoot . '/config/secrets-contract.json');
     if (($problems = Secrets::contractProblems($contract)) !== []) {
       foreach ($problems as $p) {
         $this->err("secrets: contrato inválido: $p");
