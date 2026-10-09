@@ -139,8 +139,8 @@ Detalhes e SHAs em `CHANGELOG.md`; exceção de versão em `docs/versioning.md`.
 
 ## 0.4.0 — Patterns v1
 
-Status: **linha aberta.** Falta rail de cursos e as estruturas internas em rich text.
-Não fechar sem essas decisões. Ver `docs/components.md` (padrões 0.4) para o que foi migrado e o que ficou pendente.
+Status: **linha aberta.** Rail de cursos entregue em `0.4.0-dev.1`. Falta fechar as estruturas internas em rich text.
+Não fechar sem essa decisão. Ver `docs/components.md` (padrões 0.4) para o que foi migrado e o que ficou pendente.
 
 - content-section;
 - content-grid;
