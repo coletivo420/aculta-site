@@ -199,7 +199,7 @@ handlers:
       bcc_options: {  }
       cc_mail: ''
       cc_options: {  }
-      from_mail: 4e20coletivo@gmail.com
+      from_mail: naoresponda@aculta.org
       from_options: {  }
       from_name: 'Associação Cultural Antiproibicionista'
       reply_to: '[webform_submission:values:email:raw]'

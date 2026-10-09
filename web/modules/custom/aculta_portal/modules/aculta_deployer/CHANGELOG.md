@@ -1,5 +1,12 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.10 — verify por ambiente; build somente de produção (fase 10) — 2026-10-09
+
+- `verify` respeita o ambiente (`--env` ou o arquivo): no teste, as sondas e os valores esperados do registro são
+  convertidos para os hosts de teste (`Verify::toTestEnvironment`). Host parecido com produção não é alterado.
+- `build --env=test` é recusado: o build gera somente a saída de produção.
+- Testes: conversão de hosts (canonical e host parecido) e recusa do build de teste.
+
 ## 0.1.9 — remoção da seção de credenciais do relatório — 2026-10-09
 
 - `report` deixa de incluir a situação das credenciais obrigatórias por ambiente, e a opção `--file` sai com ela.

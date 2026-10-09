@@ -107,6 +107,27 @@ final class PortalFormCallbacks {
     $formState->setRedirect('aculta_portal.security');
   }
 
+  /** Valida a senha escolhida no cadastro e guarda-a no form state para gravar depois do salvamento. */
+  public function validateRegistrationPassword(array &$form, FormStateInterface $formState): void {
+    $pass = (string) $formState->getValue('pass');
+    if (mb_strlen($pass) < 8) {
+      $formState->setErrorByName('pass', $this->translation->translate('A senha precisa ter pelo menos 8 caracteres.'));
+      return;
+    }
+    $formState->set('aculta_register_pass', $pass);
+  }
+
+  /** Grava a senha escolhida na conta criada (que segue bloqueada até a confirmação do e-mail). */
+  public function storeRegistrationPassword(array &$form, FormStateInterface $formState): void {
+    $pass = $formState->get('aculta_register_pass');
+    $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
+    if (!is_string($pass) || $pass === '' || !$account instanceof \Drupal\user\UserInterface) {
+      return;
+    }
+    $account->setPassword($pass);
+    $account->save();
+  }
+
   /** Returns the password form to Portal and records a local password. */
   public function securityPasswordRedirect(array &$form, FormStateInterface $formState): void {
     $uid = (int) $this->currentUser->id();

@@ -34,6 +34,19 @@ final class FormHooks {
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
 
+    // Com verificação de e-mail ligada, o Core não mostra senha no cadastro e gera uma. O Portal mostra a senha
+    // escolhida pelo visitante e a grava depois de salvar; a conta continua bloqueada até confirmar o e-mail.
+    if ($formId === 'user_register_form' && !isset($form['account']['pass'])) {
+      $form['account']['pass'] = [
+        '#type' => 'password_confirm',
+        '#required' => TRUE,
+        '#size' => 25,
+        '#description' => $this->translation->translate('Escolha uma senha com pelo menos 8 caracteres. Enviaremos um link para confirmar o seu e-mail.'),
+      ];
+      $form['#validate'][] = 'aculta_portal.form_callbacks:validateRegistrationPassword';
+      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:storeRegistrationPassword';
+    }
+
     if ($formId === 'user_login_form') {
       // Core reports blocked or unactivated accounts before the password check,
       // which discloses that an address is registered. The Portal callback

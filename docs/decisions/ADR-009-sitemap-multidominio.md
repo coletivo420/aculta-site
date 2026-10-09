@@ -102,3 +102,12 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 - **Microfase D (2026-10-09):** política de indexação aceita. Ver `ADR-009-politica-indexacao-0.1.0-D.md`.
 
 - **Deploy só no RC (2026-10-09).** Índice central, `robots.txt` e demais mudanças de descoberta vão para produção somente quando todos os módulos, temas e subtemas estiverem em RC. Até lá, valem como verificação no servidor de testes.
+
+## Estado final da implementação (2026-10-09)
+
+- Microfases A a J concluídas no servidor de testes; submódulo `aculta_portal_sitemap` 0.1.1.
+- Índice central em `/sitemap.xml` com as variantes `main`, `support`, `wiki`, `magazine` e `courses`; `default` desabilitada.
+- Endereço por ambiente: a `base_url` segue o site definido pelo `aculta_deployer` (`environment.json`).
+- Decisão do responsável ainda pendente: indexar `/wiki/verbetes`.
+- Nós de teste 69 e 70 removidos (2026-10-09, autorizado).
+- Produção (RC): DEP-0002 (apoio cross-host) e verificação no Search Console.

@@ -137,6 +137,18 @@ final class Verify {
     return preg_replace('/(^|\.)aculta\.org$/i', '$1aculta.toca.net.br', strtolower($host)) ?? $host;
   }
 
+  /**
+   * Converte um texto (URL de sonda ou valor esperado) do ambiente de produção para o de teste:
+   * cada host "*.aculta.org" vira o equivalente "*.aculta.toca.net.br". Texto sem host de produção não muda.
+   */
+  public static function toTestEnvironment(string $text): string {
+    return preg_replace_callback(
+      '~(https?://)((?:[a-z0-9-]+\.)*aculta\.org)(?=[/"\'\s>?\#]|$)~i',
+      static fn(array $m): string => $m[1] . self::testEquivalent($m[2]),
+      $text,
+    ) ?? $text;
+  }
+
   /** Host (sem porta) de uma URL, em minúsculas, ou null. */
   public static function hostOf(string $url): ?string {
     $host = parse_url($url, PHP_URL_HOST);

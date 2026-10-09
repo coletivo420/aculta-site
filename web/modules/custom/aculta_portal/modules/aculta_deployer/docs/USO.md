@@ -80,12 +80,12 @@ produção. Um 200 sem noindex é sempre falha.
 | `robots` | confere noindex nos hosts de teste | confere ausência de noindex e `Sitemap:` do índice | `--env` ou arquivo |
 | `sitemap` | confere o índice na base de teste | confere o índice na base de produção | `--env` ou arquivo |
 | `report` | ambiente e endereço de teste | ambiente e endereço de produção | sem rede, sem valores |
-| `build` | não aplicável (gera a saída de produção) | gera a saída de produção | recusa saída dentro do repositório |
-| `verify` | probes do registro (produção) | probes do registro (produção) | somente leitura |
+| `build` | recusado (`--env=test`) | gera a saída de produção | recusa saída dentro do repositório |
+| `verify` | probes do registro convertidas para os hosts de teste | probes do registro de produção | somente leitura |
 | `check` | valida o registro e o escopo | valida o registro e o escopo | não depende do ambiente |
 | `boundaries` | independe do ambiente | independe do ambiente | |
 
-Pendente: `build` e `verify` ainda não recebem `--env`; a fase 10 do roadmap trata disso.
+`build` é só de produção. `verify` respeita o ambiente.
 
 ## Painel do Portal (0.1.6)
 
