@@ -12,7 +12,9 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha sem fechamento formal; trabalho entregue em 0.4.0-dev.x, 0.4.1, 0.4.2 e 0.4.3 | marcada no código | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED); fechamento retroativo sem versão 0.4.0 aguarda decisão do responsável |
+| 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.4.5 | fechamento da linha 0.4.x (2026-10-09): 0.4.4 (PR #122), 0.4.5-dev.1 a dev.5 (PRs #124, #129, #130 e o dev.5); DT-T18 pendente, independente do tema | marcada no código (release) |
+| 0.4.5-dev.5 | sitemap do validador de navegador delegado ao `aculta_deployer sitemap`; DT-T18 pendente (independente do tema) | marcada no código |
 | 0.4.5-dev.4 | validador de navegador: página de apoio no host SUPPORT (DT-T18) | marcada no código |
 | 0.4.5-dev.3 | cards de projeto: imagem 256 px com 2x e conteúdo centralizado | marcada no código |
 | 0.4.5-dev.2 | imagem dos cards de projeto e grade responsiva (CSS entregue pela biblioteca global) | marcada no código |
@@ -40,7 +42,7 @@ Estruturas internas permanecem como rich text (ver `components.md`, decisão T1)
 - Decidir, para cada estrutura interna, entre migrar para SDC ou manter como conteúdo rico:
   `aculta-areas`, `aculta-callout`, `aculta-page-intro`, CTAs (`aculta-editorial-link`) e
   `aculta-institutional-note`.
-- Critério: decisão registrada por estrutura; a linha 0.4.0 fecha com `0.4.0` e tag final.
+- Critério (decisão do responsável, 2026-10-09): decisão registrada por estrutura; a linha 0.4.x fecha em `0.4.5` sem versão `0.4.0` retroativa e sem tag. Cumprido.
 
 ### T2 — Validação em navegador (DT-T04, DT-T05, DT-T06) — concluída em 0.4.0-dev.4
 
@@ -67,7 +69,7 @@ Estruturas internas permanecem como rich text (ver `components.md`, decisão T1)
 - Validadores `.mjs` sem porta nem origem fixas: leem `ACULTA_DEVTOOLS_PORT` e `ACULTA_SITE_ORIGIN` por `scripts/lib/browser-env.mjs`. Sem as variáveis, o validador para antes de conectar (DT-T09).
 - Gate `validate-browser-validators.php` reprova endpoint literal nos scripts.
 - Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts. Cumprido.
-- Dívida nova: `validate-institution-browser.mjs` espera `/apoie` no host principal e `aculta_favicon.ico`. A página de apoio fica no host SUPPORT (homelab `apoio.aculta.toca.net.br`; produção `apoio.aculta.org`), na rota `/apoio` (Portal 0.2.0-dev.3). Falta a reescrita de `supportLayout` e o favicon oficial (DT-T18, aberta).
+- Dívida nova: `validate-institution-browser.mjs` espera `/apoie` no host principal e `aculta_favicon.ico`. A página de apoio fica no host SUPPORT (homelab `apoio.aculta.toca.net.br`; produção `apoio.aculta.org`), na rota `/apoio` (Portal 0.2.0-dev.3). Falta a reescrita de `supportLayout` e o favicon oficial (DT-T18, pendente e independente do tema).
 
 ### T5 — Portabilidade do conteúdo (DT-T10, DT-O03) — concluída em 0.4.1, reconstrução em ambiente novo DEFERRED
 
@@ -95,6 +97,15 @@ Nenhuma destas fases tem versão alvo de 1.0.
 - Seleção claro, escuro e automático com `data-bs-theme`; preferência persistente para usuário
   autenticado na camada de conta, e local e sem quebra de cache para anônimo.
 - Pré-requisito: T2 (validação do modo escuro em navegador real).
+
+**Estado (2026-10-09): em avaliação; sem código.** A linha 0.4.x está fechada; a F1 começa depois, em fase própria. Achados:
+
+- Já existe: `css/tokens.css` com os blocos `:root, [data-bs-theme="light"]` e `[data-bs-theme="dark"]`, e o contrato de superfície dark validado pelo gate de design. Falta o controle.
+- Não existe: seletor de modo, JavaScript de troca, persistência nem leitura de `prefers-color-scheme`. O gate de design bloqueia esses itens até a fase prevista, então a F1 precisa atualizar o gate junto.
+- Pré-requisito não atendido: T2 validou carrossel, rail e foco no modo claro. Nenhuma medição de modo escuro em navegador foi feita. É o primeiro passo da F1.
+- Persistência para conta: a preferência do usuário autenticado pertence à camada de conta (`aculta_portal`, linha separada). Não há campo nem storage de preferência de aparência. Decisão necessária antes de implementar: onde guardar (campo de usuário ou dados do usuário via API do Core) e como o Portal entrega o modo ao tema pelo contrato neutro, sem o tema ler usuário ou configuração.
+- Anônimo (proposta, não decidida): `localStorage` com try/catch, sem alterar o HTML em cache; o modo seria aplicado por `data-bs-theme` no `<html>`.
+- Próximo passo: autorização explícita do responsável para tocar `web/themes/custom/aculta420/**` e decisão sobre a persistência do usuário autenticado.
 
 ### F2 — Ícones (DT-T13)
 

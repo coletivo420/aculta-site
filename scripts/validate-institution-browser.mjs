@@ -1,6 +1,10 @@
 import { devtoolsUrl, siteOrigin, supportOrigin } from './lib/browser-env.mjs';
 // Dependency-free Chrome DevTools review. Artifacts stay in ignored tmp/.
 import { writeFile, mkdir } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
 
 const origin = siteOrigin();
 const output = new URL('../tmp/institution-review/', import.meta.url);
@@ -136,14 +140,17 @@ for (const path of ['/institucional', '/transparencia', '/contato']) {
 const official = pages.every(p => p.schema?.name === 'Associação Cultural Antiproibicionista' && p.schema?.taxID === '68.238.467/0001-08' && p.schema?.email === '4e20coletivo@gmail.com' && p.schema?.telephone === '+55 62 9282-0666' && p.schema?.alternateName === 'Coletivo 420' && p.schema?.address?.postalCode === '74705-130' && !p.schema?.sameAs && !p.schema?.logo);
 const contact = pages.find(p => p.path === '/contato');
 const contactValid = !!contact?.address && ['name','email','subject','message'].every(name => contact.contactFields.some(f => f.name === name && f.required));
-const sitemapResponse = await fetch(origin + '/sitemap.xml');
-const sitemapXML = await sitemapResponse.text();
-await writeFile(new URL('sitemap.xml', output), sitemapXML);
-const sitemapUrls = [...sitemapXML.matchAll(/<loc>(.*?)<\/loc>/gs)].map(m => m[1]);
+// Descoberta e sitemaps por ambiente pertencem ao aculta_deployer (fase 7): este validador
+// só registra o resultado. O ambiente vem do host do site.
+const deployerEnv = new URL(origin).hostname.endsWith('aculta.org') ? 'production' : 'test';
+const deployerCli = new URL('../web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer', import.meta.url);
+const sitemapRun = await execFileAsync('php', [deployerCli.pathname, 'sitemap', `--env=${deployerEnv}`])
+  .then(({ stdout }) => ({ code: 0, stdout }), (error) => ({ code: error.code, stdout: error.stdout || '' }));
+await writeFile(new URL('sitemap-deployer.txt', output), sitemapRun.stdout);
 const faviconUrl = await evaluate('document.querySelector("link[rel=icon]")?.getAttribute("href") || ""');
 const faviconResponse = await fetch(origin + faviconUrl);
-const sitemapValid = sitemapResponse.status === 200 && sitemapUrls.every(url => /^https:\/\/([a-z0-9-]+\.)?aculta\.org\//.test(url)) && sitemapUrls.includes('https://aculta.org/contato') && sitemapUrls.includes(supportOrigin() + '/') && !sitemapUrls.some(url => /\/node\/(12|13)(?:$|\/)|\/user|\/apoie\/(webhook|obrigado|pendente|erro)|\/form\/aculta-contact/.test(url));
-await writeFile(new URL('browser-results.json', output), JSON.stringify({viewports:report,pages,internalViewports,official,contactValid,sitemapValid,sitemapUrls,faviconUrl,faviconStatus:faviconResponse.status,supportLayout},null,2));
-console.log(JSON.stringify({viewports:report.map(({headings,...r})=>r), pages:pages.map(({schema,...p})=>({...p,schemaValid:!!schema})),internalViewports,official,contactValid,sitemapValid,sitemapUrls,faviconUrl,faviconStatus:faviconResponse.status,supportLayout},null,2));
+const sitemapValid = sitemapRun.code === 0;
+await writeFile(new URL('browser-results.json', output), JSON.stringify({viewports:report,pages,internalViewports,official,contactValid,sitemapValid,sitemapDeployer:sitemapRun.stdout.trim().split('\n'),faviconUrl,faviconStatus:faviconResponse.status,supportLayout},null,2));
+console.log(JSON.stringify({viewports:report.map(({headings,...r})=>r), pages:pages.map(({schema,...p})=>({...p,schemaValid:!!schema})),internalViewports,official,contactValid,sitemapValid,sitemapDeployer:sitemapRun.stdout.trim().split('\n'),faviconUrl,faviconStatus:faviconResponse.status,supportLayout},null,2));
 socket.close();
 if (!official || !contactValid || !sitemapValid || faviconResponse.status !== 200 || !faviconUrl.includes('aculta420-favicon.ico') || supportLayout.status !== 200 || !supportLayout.actionImmediatelyAfterChoice || (supportLayout.unavailable ? supportLayout.buttonPresent : !supportLayout.buttonAfterChoice) || !supportLayout.duplicateMessageAbsent || supportLayout.canonical !== supportOrigin() + '/' || !supportLayout.openGraph || !supportLayout.schemaTypes.includes('WebPage') || supportLayout.pixVisible || supportLayout.primaryDisabled !== true || report.some(r => r.overflow || r.utility || r.publicAcronym || r.defaultContent || r.h1.length !== 1 || r.projects !== 4 || r.menuLabels.length !== 8 || r.menuContactPath !== '/contato' || !r.cnpj || !r.footerCnpj || parseFloat(r.h1Size) > 54 || r.bodySize !== '16px' || r.slogan !== 'Lutando por um futuro livre da proibição.' || r.projectParagraphCounts.some(n=>n!==1) || (r.toggleVisible && (!r.menuOpened || !r.menuClosedWithEscape))) || pages.some(p => p.status !== 200 || p.h1Count !== 1 || p.defaultContent || !p.description) || internalViewports.some(r=>r.overflow)) process.exitCode = 1;
