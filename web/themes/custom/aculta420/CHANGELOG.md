@@ -2,6 +2,17 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## 0.4.0-dev.5 — T3 concluída: CSS residual dos padrões nos SDCs — 2026-10-09
+
+Classificação: PATCH da linha 0.4.0 (movimentação de CSS sem mudança visual); sem componente stable alterado.
+
+- Hero: `.aculta-hero`, `.aculta-eyebrow`, `h1`, `.aculta-hero-lead` e `.aculta-hero-slogan` em `components/patterns/hero/hero.css`.
+- Título de seção: `.aculta-section-title` em `components/patterns/content-section/content-section.css`, com a regra de 575 px.
+- Card de projeto: moldura `.aculta-project` (presenter) e filhos em `components/content/project-card/project-card.css`, incluindo a redução de movimento.
+- Medição antes/depois: estilo computado idêntico por propriedade em 17 seletores; 14 capturas de tela idênticas byte a byte (1280 e 390 px, páginas `/inicio`, `/institucional`, `/projetos`, `/atividades`, `/noticias`, `/transparencia` e um projeto); foco e movimento reduzido do card idênticos.
+- Os seletores de `.card` continuam em `content.css`; não há SDC de card para eles.
+- Versão marcada em `aculta420.info.yml` e na asserção do gate de Foundation; sem tag.
+
 ## 0.4.0-dev.4 — T2 concluída: rail com cursos reais e foco visível no card — 2026-10-09
 
 Classificação: PATCH da linha 0.4.0 (correção de foco no card do LMS e fechamento da validação em navegador); sem componente stable alterado.
