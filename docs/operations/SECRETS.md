@@ -22,8 +22,8 @@ e CI.
 ## Estado operacional
 
 R0.3.5 versionou o contrato portátil e o loader. Na R0.4, o Homelab passou a
-usar o Secure Bootstrap Adapter: o settings local ignorado carrega
-`/etc/aculta/secrets.env`, e os processos web e Drush usam o mesmo bootstrap.
+usar o Secure Bootstrap Adapter: o settings local ignorado carrega o arquivo de credenciais
+(hoje `secrets/aculta.secrets.env`; antes `/etc/aculta/secrets.env`, histórico), e os processos web e Drush usam o mesmo bootstrap.
 Os campos Google do storage bruto e do Configuration Sync estão vazios; as
 Keys resolvem os valores fora do banco e os Config Overrides preenchem a
 configuração efetiva em memória. Hostinger Web/Cloud e produção ainda não foram
@@ -34,6 +34,17 @@ política e operação. Nenhuma configuração de credencial Turnstile foi
 modificada. O gate completo Portal/Security ainda para em `core.extension`,
 porque o Runtime tem `config_translation` habilitado e o sync não; essa
 diferença permanece fora do escopo e não foi importada nem exportada.
+
+## Arquivo local (0.1.4)
+
+- Caminho no servidor de testes: `secrets/aculta.secrets.env` na raiz do repositório, ignorado pelo Git
+  (`*.secrets.env` e `/secrets/`), fora de `web/`, sem escrita de grupo e sem acesso de outros (ex.: 0600, ou 0640 com ACL de leitura para o processo web). `settings.local.php` aponta para ele por
+  `dirname(DRUPAL_ROOT)`.
+- Migrado de `/etc/aculta/secrets.env` (histórico). A cópia antiga foi removida em 2026-10-09 pelo responsável.
+  Leitura pelo processo web: ACL de leitura para o usuário do PHP-FPM e o `www-data`, e escrita para a pasta.
+- Validação e exportação pós-deploy: `aculta-deployer secrets check|export` (ver USO do deployer).
+  Nomes do contrato: `aculta_deployer/config/secrets-contract.json`. Gate: `tests/run.php` do deployer
+  verifica que todo nome do contrato aparece na tabela deste documento.
 
 ## Variáveis atuais
 
@@ -104,7 +115,7 @@ globalmente.
 `settings.homelab.php` continua local e ignorado pelo Git. O Homelab pode usar
 environment nativo no processo PHP ou o adapter bootstrap apontado pelo próprio
 settings local. Atualmente o Homelab exercita o Secure Bootstrap Adapter por
-meio de `/etc/aculta/secrets.env`; esse caminho está somente no settings local
+meio de `secrets/aculta.secrets.env` (ver "Arquivo local"); esse caminho está somente no settings local
 ignorado e não é uma dependência do Portal ou do tema. A mesma configuração
 bootstrap atende Drush e requests web. Hostinger ainda não foi provisionada.
 
@@ -212,3 +223,18 @@ definido.
 
 Nunca corrigir integração preenchendo secret em config, movendo secret para o
 tema ou hardcoding caminho Homelab/Hostinger no Portal.
+
+## Importação pelo painel (aculta_portal 0.2.0-dev.9)
+
+Fluxo previsto para cada ambiente, sem valores no Git nem no banco:
+
+1. Copie o arquivo `NAME=value` para a pasta de importação (`secrets/import/`, fora de `web/`) com modo 0600 e dono compatível com o processo web.
+2. Em `/admin/config/aculta/segredos` (permissão `administer aculta secrets`), confira o estado de cada variável (✔ presente, ⚠ opcional ausente, ✖ obrigatória ausente) e escolha o arquivo.
+3. Confirme a exclusão da origem. A importação valida o arquivo, grava o arquivo de credenciais de forma atômica (modo 0640 pela ACL de leitura do processo web; a regra recusa escrita de grupo e acesso de outros) e apaga a origem com sobrescrita antes de remover.
+4. O relatório de status do Drupal (`/admin/reports/status`) mostra "Credenciais do ambiente" com aviso enquanto faltarem obrigatórias.
+
+Regras: nenhum valor é exibido, gravado no banco ou escrito em log (só nomes e contagens). Substituir o arquivo atual exige marcar a opção.
+
+Limite da exclusão segura: sobrescrever um arquivo não garante a remoção física dos blocos antigos em sistemas com cópia-na-escrita, journaling ou SSD, nem em snapshots e backups. Por isso a origem deve existir só durante a importação.
+
+Ambiente de teste: `settings.local.php` declara `aculta_secrets_environment = 'test'` (o padrão é `production`).

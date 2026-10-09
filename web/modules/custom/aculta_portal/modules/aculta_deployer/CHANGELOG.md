@@ -1,5 +1,21 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.5 — regra de permissão do arquivo de credenciais — 2026-10-09
+
+- `Secrets::modeProblem()` passa a recusar só escrita de grupo (0020) e acesso de outros (0007). Leitura de grupo
+  (ACL de leitura do processo web, modo 0640) é aceita, alinhada ao loader do Drupal. Aprovada pelo responsável.
+- Testes atualizados: 0640 aceito; 0620, 0664, 0604, 0644 e 0666 recusados.
+
+## 0.1.4 — arquivo local de credenciais e exportação pós-deploy — 2026-10-09
+
+- `src/Secrets.php` e `config/secrets-contract.json` (nomes e ambientes; sem valores).
+- `secrets check [--env] [--file]`: valida o arquivo (permissões 0600, fora de `web/`, ignorado pelo Git
+  quando está no repositório, sintaxe, nomes do contrato e obrigatórios do ambiente). Só imprime nomes.
+- `secrets export --env --out`: grava as variáveis do contrato em arquivo NOVO, 0600, fora do repositório,
+  para importação manual pós-deploy. Não sobrescreve.
+- Testes: parse, permissões, contenção, coerência do contrato com `docs/operations/SECRETS.md`, e a CLI
+  (recusa dentro do repositório, recusa de obrigatórios ausentes, export positivo, sem valores na saída).
+
 ## 0.1.3 — descoberta e sitemaps por ambiente (0.1.0-H) — 2026-10-09
 
 - Comando `sitemap --env=production|test` (GET somente leitura): confere o índice central,

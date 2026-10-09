@@ -1,5 +1,5 @@
 uuid: 4a42c4d2-4bd4-45d4-a4de-50dbc383a841
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -15,7 +15,7 @@ settings:
   allowed_values:
     -
       value: single
-      label: 'Apoio único'
+      label: 'Uma vez'
   allowed_values_function: ''
 module: options
 locked: false

@@ -1,5 +1,5 @@
 uuid: e1b2edc8-35bb-406f-97fe-6f05409845f0
-langcode: en
+langcode: pt-br
 status: true
 dependencies: {  }
 _core:
@@ -12,7 +12,7 @@ settings:
   title: 'Our Agreement'
   checkbox: 'I agree.'
   format: plain_text
-  submit: Submit
+  submit: Enviar
   success: 'Thank you for accepting our agreement.'
   revoked: 'You have successfully revoked your acceptance of our agreement.'
   failure: 'You must accept our agreement to continue.'

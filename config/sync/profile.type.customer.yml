@@ -1,5 +1,5 @@
 uuid: cf5fb672-4be1-444e-a825-c8782e610952
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   enforced:
@@ -11,8 +11,8 @@ third_party_settings:
 _core:
   default_config_hash: I3_fH4tUQVejPgxvJzH1-mGg9A9OaY4Hm5iN2G2Fz20
 id: customer
-label: Customer
-display_label: 'Customer information'
+label: Cliente
+display_label: 'Informação do cliente'
 multiple: true
 registration: false
 roles: {  }

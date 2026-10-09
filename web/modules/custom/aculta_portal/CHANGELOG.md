@@ -1,5 +1,15 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.9 — importação de credenciais pelo painel (ACULTA Secrets Contract) — 2026-10-09
+
+- Painel `/admin/config/aculta/segredos` (permissão `administer aculta secrets`, restrita): mostra cada variável do contrato com ✔ OK / ⚠ Atenção / ✖ Erro (mesma biblioteca e legenda do diagnóstico do Portal). Nunca exibe valores.
+- Importação: lê somente `secrets/import/*.env` (fora de `web/`), valida formato, nomes do contrato e obrigatórios do ambiente, grava o arquivo de credenciais de forma atômica e apaga a origem com sobrescrita (duas passadas) antes de remover. Substituir o arquivo exige confirmação.
+- Relatório de status (`runtime_requirements`): aviso quando faltam obrigatórias, com link para a importação.
+- `aculta_portal.secrets_importer` (DI), `SecretsFormat`, `SecretsRequirementsHook`, `SecretsImportForm`.
+- Testes: 8 casos novos em `SecretsImporterTest` (suíte do Portal: 56 OK).
+- Limite: a sobrescrita não garante remoção física em sistemas com cópia-na-escrita, journaling ou SSD (ver `docs/operations/SECRETS.md`).
+- Regra de permissão do arquivo: recusa escrita de grupo e acesso de outros; leitura de grupo (ACL do processo web, 0640) é aceita. Alinhada ao loader do Drupal (aprovada pelo responsável).
+
 ## 0.2.0-dev.8 — runInPurpose para avaliação de acesso no contexto de origem (0.1.0-F) — 2026-10-09
 
 - `DomainPurposeManager::runInPurpose()`: executa um callback com o Domain do purpose ativo e restaura o anterior.

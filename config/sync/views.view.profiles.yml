@@ -1,5 +1,5 @@
 uuid: f32db31f-3800-4e5b-8afc-04e71f47a8b1
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -7,7 +7,7 @@ dependencies:
 _core:
   default_config_hash: xNZ1q8VAmjQSPC81nqH6taYXfcxsJO5bwHCzv4IMznw
 id: profiles
-label: Profiles
+label: Perfis
 module: views
 description: ''
 tag: ''
@@ -20,7 +20,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: Profiles
+      title: Perfis
       fields:
         rendered_entity:
           id: rendered_entity
@@ -341,7 +341,7 @@ display:
       tags: {  }
   user_page:
     id: user_page
-    display_title: 'User page'
+    display_title: 'Página do usuário'
     display_plugin: embed
     position: 1
     display_options:

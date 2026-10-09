@@ -1,5 +1,5 @@
 uuid: 23bca84b-8929-4f4c-9481-f6de7cad136b
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -96,7 +96,7 @@ display:
           entity_type: commerce_order_item
           entity_field: unit_price
           plugin_id: field
-          label: 'Unit price'
+          label: 'Preço unitário'
           exclude: false
           alter:
             alter_text: false
@@ -162,7 +162,7 @@ display:
           entity_type: commerce_order_item
           entity_field: quantity
           plugin_id: field
-          label: Quantity
+          label: Quantidade
           exclude: false
           alter:
             alter_text: false
@@ -231,7 +231,7 @@ display:
           entity_type: commerce_order_item
           entity_field: total_price
           plugin_id: field
-          label: 'Total price'
+          label: 'Preço total'
           exclude: false
           alter:
             alter_text: false

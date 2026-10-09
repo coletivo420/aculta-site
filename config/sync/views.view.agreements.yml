@@ -1,5 +1,5 @@
 uuid: 7ea5bbb3-1c7e-4087-931c-b16afa87d7eb
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -410,7 +410,7 @@ display:
           exposed: true
           expose:
             operator_id: uid_op
-            label: 'User name'
+            label: 'Nome do usuário'
             description: ''
             use_operator: false
             operator: uid_op

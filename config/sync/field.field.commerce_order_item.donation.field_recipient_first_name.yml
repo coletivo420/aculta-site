@@ -1,5 +1,5 @@
 uuid: a40a0878-b471-4064-823c-316e7a0bdee8
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   config:
@@ -11,7 +11,7 @@ id: commerce_order_item.donation.field_recipient_first_name
 field_name: field_recipient_first_name
 entity_type: commerce_order_item
 bundle: donation
-label: 'First Name'
+label: Nome
 description: ''
 required: false
 translatable: false

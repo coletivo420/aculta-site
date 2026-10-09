@@ -28,6 +28,9 @@
    esses caminhos (`private_probes`) pelo cabeçalho ou pelo meta robots, e aceita 401, 403,
    404 ou 410. Não bloquear esses caminhos no `robots.txt`: um bloqueio impede o crawler de
    ler o noindex.
+11. **Credenciais nunca são impressas nem versionadas.** `secrets check` e `secrets export` mostram só
+   nomes e motivos. O arquivo local fica no repositório apenas como ignorado pelo Git, fora de `web/`, com
+   sem escrita de grupo e sem acesso de outros. `secrets export` grava em arquivo novo fora do repositório e nunca sobrescreve.
 10. **Divergência entre ambientes passa pelo deployer.** Qualquer diferença de host, `base_url`,
    `robots.txt`, sitemap ou noindex entre o servidor de testes e a produção deve ser declarada em
    `config/deploy.json` e conferida por um comando do deployer (`sitemap`, `robots`, `verify`). Não

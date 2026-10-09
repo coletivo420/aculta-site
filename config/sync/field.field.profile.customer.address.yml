@@ -1,5 +1,5 @@
 uuid: f009fc66-9682-4ccc-87b9-62e9706e8f44
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   config:
@@ -13,7 +13,7 @@ id: profile.customer.address
 field_name: address
 entity_type: profile
 bundle: customer
-label: Address
+label: Endereço
 description: ''
 required: true
 translatable: false

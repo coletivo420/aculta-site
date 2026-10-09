@@ -68,8 +68,13 @@ final class DomainPurposeManager {
       return $callback();
     }
     finally {
+      // Sem domínio anterior (ex.: CLI sem negociação), o estado é devolvido à negociação
+      // inicial: getActiveDomain(TRUE) descarta o domínio forçado e negocia de novo.
       if ($previous instanceof DomainInterface) {
         $this->domainNegotiator->setActiveDomain($previous);
+      }
+      else {
+        $this->domainNegotiator->getActiveDomain(TRUE);
       }
     }
   }

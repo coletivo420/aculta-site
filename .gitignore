@@ -28,6 +28,7 @@
 !.env.example
 secrets.env
 *.secrets.env
+/secrets/
 /web/sites/*/settings.hostinger.php
 /web/sites/*/settings.secrets.php
 

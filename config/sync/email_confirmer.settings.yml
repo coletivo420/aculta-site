@@ -1,6 +1,6 @@
 _core:
   default_config_hash: mZPvli4k5ulC_BcD35Yk2c8mlzSa6xwRkustThIT4jk
-langcode: en
+langcode: pt-br
 hash_expiration: 86400
 restrict_same_ip: false
 resendrequest_delay: 900

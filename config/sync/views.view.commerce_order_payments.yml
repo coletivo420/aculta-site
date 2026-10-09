@@ -1,5 +1,5 @@
 uuid: 6ecf1c1a-f389-4d04-848c-5f28f8bfb7c6
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -10,7 +10,7 @@ dependencies:
 _core:
   default_config_hash: XoYKYVaHry7Azb2SNIYd_zjiRRsHx1rhEsdHvtRFNVY
 id: commerce_order_payments
-label: Payments
+label: Pagamentos
 module: views
 description: ''
 tag: ''
@@ -23,7 +23,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: Payments
+      title: Pagamentos
       fields:
         amount__number:
           id: amount__number
@@ -35,7 +35,7 @@ display:
           entity_type: commerce_payment
           entity_field: amount
           plugin_id: field
-          label: Payment
+          label: Pagamento
           exclude: false
           alter:
             alter_text: false
@@ -295,7 +295,7 @@ display:
           entity_type: commerce_payment
           entity_field: state
           plugin_id: field
-          label: State
+          label: Estado
           exclude: false
           alter:
             alter_text: false
@@ -359,7 +359,7 @@ display:
           entity_type: commerce_payment
           entity_field: payment_gateway
           plugin_id: field
-          label: 'Payment gateway'
+          label: 'Gateway de pagamento'
           exclude: false
           alter:
             alter_text: false
@@ -424,7 +424,7 @@ display:
           entity_type: commerce_payment
           entity_field: authorized
           plugin_id: field
-          label: Authorized
+          label: Autorizado
           exclude: false
           alter:
             alter_text: false
@@ -491,7 +491,7 @@ display:
           entity_type: commerce_payment
           entity_field: completed
           plugin_id: field
-          label: Completed
+          label: Concluído
           exclude: false
           alter:
             alter_text: false
@@ -558,7 +558,7 @@ display:
           entity_type: commerce_payment
           entity_field: remote_id
           plugin_id: field
-          label: 'Remote ID'
+          label: 'ID remoto'
           exclude: false
           alter:
             alter_text: false
@@ -887,7 +887,7 @@ display:
       path: admin/commerce/orders/%commerce_order/payments
       menu:
         type: tab
-        title: Payments
+        title: Pagamentos
         description: ''
         weight: 15
         expanded: false
