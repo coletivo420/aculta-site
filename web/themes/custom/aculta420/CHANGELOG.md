@@ -1,3 +1,35 @@
+## 0.5.0-dev.3 — F1 (modo de cor): atributo via b5_theme_mode — 2026-10-09
+
+RUNTIME STATUS: DEFERRED no Runtime oficial. Em cópia isolada do Runtime (com o Portal 0.2.0-dev.18), requisições HTTP anônimas à página inicial confirmaram o atributo nos três padrões do site, e a escolha de uma pessoa usuária sobrepôs o padrão.
+
+Classificação: correção da 0.5.0-dev.2, dentro da linha 0.5 (F1).
+
+- O `html.html.twig` do Bootstrap 5 grava `data-bs-theme` a partir de `b5_theme_mode` e sobrescrevia o atributo que a 0.5.0-dev.2 colocava em `html_attributes`. Resultado: o modo escuro saía `light`. Passa a usar `b5_theme_mode`: `light`, `dark` ou vazio em `auto`.
+- Verificado: site `light` → `"light"`; site `dark` → `"dark"`; site `auto` → `""`; escolha `dark` de usuária com padrão `light` → `"dark"`.
+
+## 0.5.0-dev.2 — F1 (modo de cor): claro, escuro e automático — 2026-10-09
+
+RUNTIME STATUS: DEFERRED (validação no Runtime com o Portal 0.2.0-dev.17 pendente).
+
+Classificação: MINOR da linha 0.5 (F1), com contrato novo do Portal (`aculta_color_mode`).
+
+- `ThemeHooks::preprocessHtml` (`preprocess_html`) aplica `data-bs-theme` em `light` ou `dark`, conforme o contrato do Portal. Em `auto` não grava atributo.
+- `css/tokens.css`: bloco `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`, espelho exato do bloco escuro (copiado por script e verificado pelo gate).
+- Gate `validate-aculta420-design-foundations.php` e analisador: aceitam só esse bloco automático (espelhado) e um único ramo de modo em PHP, o consumo do contrato em `ThemeHooks`. Testes negativos: valor adulterado no bloco automático e `@media` fora do formato são reprovados.
+- Teste de CSS em Chromium (`prefers-color-scheme: dark`, sem atributo, `light` e `dark`): automático segue o sistema; `light` vence o sistema; `dark` força o escuro.
+- Tokens da barra institucional não foram alterados.
+
+Validação: `validate-aculta420-design-foundations.php` PASS (1473 checagens); medição do modo escuro (`validate-color-mode-browser.mjs`) em 0.5.0-dev.1.
+
+## 0.5.0-dev.1 — F1 (modo de cor): medição do modo escuro — 2026-10-09
+
+Classificação: MINOR da linha 0.5 (F1), commit de medição sem mudança de tokens, componente ou JavaScript de produção.
+
+- `scripts/validate-color-mode-browser.mjs`: força `data-bs-theme="dark"` e mede contraste WCAG de textos principais, link, menu e barra de conta em `/`, `/institucional`, `/projetos` e `/contato` (desktop e 390 px). Desliga transições antes de ler.
+- Resultado no servidor de testes: 52 medidas, pior caso 8,82:1 (mínimo 4,5:1), sem overflow. Os tokens da barra no modo escuro não precisaram de alteração.
+- Leitura inicial de 1,2:1 a 1,7:1 era artefato de transição CSS; corrigido na medição.
+- Pendências da F1: controle de modo (local na interface, a decidir sem tocar a barra), persistência anônima e persistência para conta (`aculta_portal`, linha separada).
+
 ## 0.4.5 — Fechamento da linha 0.4.x — 2026-10-09
 
 Classificação: fechamento de linha (release). Sem alteração funcional além da marcação; o conteúdo já está em `main`.
