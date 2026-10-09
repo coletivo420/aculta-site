@@ -10,6 +10,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\user\AccountForm;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -25,6 +26,8 @@ final class FormHooks {
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
+    private readonly \Drupal\aculta_portal\Account\EmailConfirmationPolicy $emailPolicy,
   ) {}
 
   /**
@@ -33,6 +36,8 @@ final class FormHooks {
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
+
+    $this->restrictedFormNotice($form, $formId);
 
     // Com verificação de e-mail ligada, o Core não mostra senha no cadastro e gera uma. O Portal mostra a senha
     // escolhida pelo visitante e a grava depois de salvar; a conta continua bloqueada até confirmar o e-mail.
@@ -160,4 +165,30 @@ final class FormHooks {
     }
   }
 
+
+  /**
+   * Formulários de wiki e de comentários para conta sem e-mail confirmado: mostra o motivo e o caminho
+   * Minha conta > Segurança, e desativa os campos (a escrita já é negada pela checagem de acesso).
+   */
+  private function restrictedFormNotice(array &$form, string $form_id): void {
+    $policy = $this->emailPolicy;
+    $is_wiki = in_array($form_id, ['node_wiki_entry_form', 'node_wiki_entry_edit_form', 'taxonomy_term_wiki_category_form', 'taxonomy_term_wiki_category_edit_form'], TRUE);
+    $is_comment = preg_match('/^comment_.*_form$/', $form_id) === 1;
+    if (!($is_wiki || $is_comment) || $this->currentUser->isAnonymous() || $policy->isConfirmed($this->currentUser)) {
+      return;
+    }
+    $url = Url::fromRoute('aculta_portal.security')->toString();
+    $form['aculta_email_restriction'] = [
+      '#type' => 'container',
+      '#weight' => -100,
+      '#attributes' => ['class' => ['messages', 'messages--error', 'aculta-email-notice'], 'role' => 'alert'],
+      'text' => ['#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Sua conta está bloqueada por não confirmar o e-mail.'), ENT_QUOTES) . '</strong> '
+        . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>'],
+    ];
+    foreach (array_keys($form) as $key) {
+      if (!str_starts_with((string) $key, '#') && $key !== 'aculta_email_restriction') {
+        $form[$key]['#access'] = FALSE;
+      }
+    }
+  }
 }

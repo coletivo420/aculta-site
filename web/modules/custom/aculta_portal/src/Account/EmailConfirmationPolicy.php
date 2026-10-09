@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Account;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserDataInterface;
 
@@ -20,7 +21,13 @@ final class EmailConfirmationPolicy {
 
   private const KEY = 'email_confirmed';
 
-  public function __construct(private readonly UserDataInterface $userData) {}
+  /** Papel dos usuários com e-mail confirmado (pula o CAPTCHA; ver config/sync/user.role.email_confirmed.yml). */
+  public const ROLE = 'email_confirmed';
+
+  public function __construct(
+    private readonly UserDataInterface $userData,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {}
 
   /** Verdadeiro quando o e-mail do usuário foi confirmado. Anônimo nunca é confirmado. */
   public function isConfirmed(AccountInterface $account): bool {
@@ -35,6 +42,7 @@ final class EmailConfirmationPolicy {
   public function markConfirmed(int $uid): void {
     if ($uid > 0) {
       $this->userData->set(self::MODULE, $uid, self::KEY, TRUE);
+      $this->setRole($uid, TRUE);
     }
   }
 
@@ -42,7 +50,18 @@ final class EmailConfirmationPolicy {
   public function markUnconfirmed(int $uid): void {
     if ($uid > 0) {
       $this->userData->delete(self::MODULE, $uid, self::KEY);
+      $this->setRole($uid, FALSE);
     }
+  }
+
+  /** Adiciona ou remove o papel email_confirmed da conta. */
+  private function setRole(int $uid, bool $confirmed): void {
+    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    if (!$account instanceof \Drupal\user\UserInterface || $account->hasRole(self::ROLE) === $confirmed) {
+      return;
+    }
+    $confirmed ? $account->addRole(self::ROLE) : $account->removeRole(self::ROLE);
+    $account->save();
   }
 
 }

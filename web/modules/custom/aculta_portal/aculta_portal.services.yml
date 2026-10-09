@@ -1,4 +1,7 @@
 services:
+  aculta_portal.access.email_confirmed:
+    class: Drupal\aculta_portal\Access\EmailConfirmedAccessCheck
+    arguments: ['@aculta_portal.email_confirmation_policy']
   aculta_portal.email_confirmation_notice:
     class: Drupal\aculta_portal\Account\EmailConfirmationNotice
     arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@csrf_token', '@string_translation']
@@ -7,7 +10,7 @@ services:
     arguments: ['@email_confirmer', '@entity_type.manager']
   aculta_portal.email_confirmation_policy:
     class: Drupal\aculta_portal\Account\EmailConfirmationPolicy
-    arguments: ['@user.data']
+    arguments: ['@user.data', '@entity_type.manager']
   aculta_portal.email_confirmation_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\EmailConfirmationSubscriber
     arguments: ['@aculta_portal.email_confirmation_policy']

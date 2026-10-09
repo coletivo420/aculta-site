@@ -51,12 +51,15 @@ final class EmailConfirmationNotice {
     $token = $this->csrf->get(ltrim($url, '/'));
     $link = '<a href="' . htmlspecialchars($url . '?token=' . $token, ENT_QUOTES) . '">'
       . htmlspecialchars((string) $this->translation->translate('Clique aqui para reenviar a confirmação'), ENT_QUOTES) . '</a>';
+    $detail = $this->routeMatch->getRouteName() === 'aculta_portal.security'
+      ? (string) $this->translation->translate('Sem a confirmação do e-mail, o acesso ao site é restrito: você não pode realizar cursos, editar a wiki, comentar, comprar na loja ou apoiar. Você pode continuar entrando e navegando, e pode solicitar a troca do endereço nesta página.')
+      : (string) $this->translation->translate('Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar.');
     return [
       '#type' => 'container',
       '#weight' => -100,
       '#attributes' => ['class' => ['messages', 'messages--error', 'aculta-email-notice'], 'role' => 'alert'],
       'text' => ['#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Seu e-mail precisa ser confirmado.'), ENT_QUOTES) . '</strong> '
-        . htmlspecialchars((string) $this->translation->translate('Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar.'), ENT_QUOTES) . ' ' . $link . '.</p>'],
+        . htmlspecialchars($detail, ENT_QUOTES) . ' ' . $link . '.</p>'],
     ];
   }
 

@@ -18,6 +18,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class EmailConfirmationAccessHooks {
 
+  /** Entidades de progresso de curso, respostas, pedidos e itens (loja e apoio). */
+  private const BLOCKED_CREATE = ['lms_course_status', 'lms_answer', 'commerce_order', 'commerce_order_item'];
+
   /** Bundles de wiki: verbetes (node) e categorias (taxonomy). */
   private const WIKI = [
     'node' => ['wiki_entry'],
@@ -42,7 +45,7 @@ final class EmailConfirmationAccessHooks {
     if ($account->isAnonymous() || $this->policy->isConfirmed($account)) {
       return FALSE;
     }
-    if ($entityTypeId === 'comment') {
+    if ($entityTypeId === 'comment' || in_array($entityTypeId, self::BLOCKED_CREATE, TRUE)) {
       return TRUE;
     }
     return $bundle !== NULL && in_array($bundle, self::WIKI[$entityTypeId] ?? [], TRUE);
