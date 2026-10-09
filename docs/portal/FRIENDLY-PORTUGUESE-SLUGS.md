@@ -367,6 +367,6 @@ A diretiva obrigatória para agentes está em `AGENTS.md` (seção "URLs e slugs
 
 - reprova segmento numérico ou termo técnico em inglês em rotas customizadas e do tema;
 - para rotas de contrib, usa uma linha de base que só pode diminuir (DT-P20). Rota nova fora dela reprova; rota corrigida sai dela;
-- o caso `/course/1/0/1` é DT-P21: a correção exige um subscriber de rota e um processador de saída no Portal, com slugs derivados do título da lição e da atividade.
+- o caso `/course/1/0/1` foi corrigido em DT-P21 (0.2.0-dev.1): a rota do LMS é `/curso/{curso}/{lição}/{atividade}`, com slugs derivados dos títulos (`src/Lms/`). O Portal substitui a rota contrib e sai da linha de base; a rota numérica antiga responde 404 até a decisão de DT-P22 (301 ou 404).
 
 Exceções permanentes: `/admin`, `/ajax`, `/api`, callbacks técnicos e arquivos `.json`.

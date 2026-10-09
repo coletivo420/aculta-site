@@ -1,5 +1,15 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.1 — 2026-10-09 — LMS com slugs amigáveis (DT-P21)
+
+- Rota `lms.group.answer_form` servida em `/curso/{curso}/{lição}/{atividade}`, com slugs derivados dos títulos do curso, da lição e da atividade (sem campos novos). Posições duplicadas recebem sufixo `-2`, `-3` na ordem armazenada.
+- Código: `src/Lms/LmsFriendlySlugs.php` (derivação e resolução), `LmsFriendlySlugConverter` (conversores de parâmetro), `LmsFriendlyRouteProcessor` (URLs geradas com slugs, com cache de curso e lição) e `EventSubscriber/LmsFriendlyRouteSubscriber.php` (troca de caminho e tipos).
+- A rota numérica antiga `/course/{id}/...` não tem alias e responde 404; redirecionamento pendente (DT-P22).
+- Gate de slugs: `lms.group.answer_form` sai da linha de base DT-P20 (20 rotas) e passa a exigir o caminho do Portal no subscriber.
+- Gate Drupal 11+: contagem de subscribers do Portal ajustada de 7 para 8, com justificativa no próprio gate.
+- Testes: `tests/src/Unit/LmsFriendlySlugsTest.php` (8 casos). Verificação em runtime: slugs geram URLs corretas, conversão reverte às posições, slug inexistente gera 404, slug válido alcança o controle de acesso.
+- Runtime status: código e gates verificados no Homelab; sem captura autenticada do fluxo de atividade (DT-P21 pendente de verificação com aluno).
+
 ## Versionamento por marcação no código, versão vigente 0.1.0 — 2026-10-09
 
 - Política: versão marcada em `aculta_portal.info.yml`; tags Git só sob pedido explícito do responsável (ver `docs/operations/RELEASES.md`).
