@@ -1,6 +1,6 @@
 ## 0.2.0-dev.19 — F3: busca pública pelo índice do Search API no banco — 2026-10-09
 
-RUNTIME STATUS: DEFERRED no Runtime oficial. Em cópia isolada (banco copiado do Runtime), verificados o índice, a página e o autocomplete (ver abaixo).
+RUNTIME STATUS: validada no Runtime oficial (2026-10-09), sem teste humano: `/busca` com resultados, aviso para termo curto e aviso sem resultado; `/busca/sugestoes` com sugestões por prefixo e sem acento; conteúdo não publicado fora dos resultados e das sugestões.
 
 - Dependência nova: `drupal/search_api` ^1.40 (com o submódulo `search_api_db`). Justificativa: decisão do responsável de usar o banco; o Search API dá o índice e a consulta. O `search_api_autocomplete` foi avaliado e descartado: o autocomplete é do Core (`#autocomplete_route_name`), porque o `search_api_autocomplete` atua em formulários de Views, e a busca pública não usa Views.
 - Servidor `aculta_database` (search_api_db, correspondência por prefixo, mínimo de 3 caracteres) e índice `aculta_conteudo` (artigo, projeto, página, atividade e documento; título, corpo, tipo, identificador, status; transliteração para buscar sem acento).
