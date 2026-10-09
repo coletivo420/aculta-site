@@ -89,6 +89,26 @@ Objetivo: fechar o ciclo entre build, deploy e verificação.
 
 Gate de segurança ao fim da fase 5: ver seção "Gate S5".
 
+## Fase 7 — Descoberta e sitemaps por ambiente (0.1.0-H, 0.1.3)
+
+**Status: implementada no código e nos testes; verificação em produção pendente.**
+
+- `sitemap --env=production|test`: índice central, base de cada filho (problema 1) e hosts
+  de conteúdo, que devem pertencer à política de produção e responder (problema 2, cross-host).
+- `robots --env=production`: diretiva `Sitemap:` com o índice de produção e ausência de
+  `Disallow: /` em cada host.
+- `web/robots.txt` anuncia `Sitemap: https://aculta.org/sitemap.xml`.
+- Provisionamento do servidor de testes: `simple_sitemap.settings:base_url` = host de teste no
+  runtime (`drush config:set`, não versionado). A produção usa `https://aculta.org` em `config/sync`.
+
+Pendências desta fase (não fechadas):
+1. Publicar em produção o `robots.txt` com a diretiva `Sitemap:` e confirmar com `robots --env=production`.
+2. Cross-host: `apoio.aculta.org`, `wiki420`, `coletivo420` e `cursos` precisam responder em produção
+   (DEP-0001, DEP-0002 e DEP-0003 no registro). Verificação de propriedade no Search Console é
+   manual e fica fora do deployer (ADR-009).
+3. Decidir a `base_url` de teste de forma permanente (runtime hoje, `settings.local.php` como alternativa).
+4. ~~Revisão do gate S5 para a verificação de descoberta.~~ Feita em 0.1.3 (itens S4 e S5 acima).
+
 ## Fase 6 — Release 0.2.0 (curta)
 
 - Atualizar CHANGELOG, VERSION e `info.yml`; a tag só é criada sob pedido do responsável.
@@ -108,10 +128,10 @@ Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 
 ### Gate S4 (sitemap)
 
-- [ ] Nenhuma rota nova sobrepõe `/sitemap.xml` sem teste de precedência.
-- [ ] O host de apoio é listado somente com URL do próprio host, em produção.
-- [ ] Dependência nova (se houver) justificada e aprovada pelo responsável.
-- [ ] Nenhum vazamento de dados pessoais no sitemap (somente URLs públicas).
+- [x] Nenhuma rota nova sobrepõe `/sitemap.xml` (evidência 0.1.0-G: a única rota é `simple_sitemap.sitemap_default`, que entrega o índice; `/sitemaps/{variant}/sitemap.xml` é a rota de variantes). Precedência confirmada por GET no servidor de testes.
+- [x] O host de apoio aparece somente com URL do próprio host no sitemap de SUPPORT (`https://apoio.aculta.org/`). Verificado no servidor de testes; a verificação em produção depende de DEP-0001/0002.
+- [x] Nenhuma dependência nova: a G e a H usam `simple_sitemap`, `domain` e `domain_config` já presentes no projeto.
+- [x] Nenhum vazamento de dados pessoais: as 18 URLs são de nós publicados com acesso anônimo, raízes de purpose e `/contato` (webform público). Nenhuma rota de conta, admin, carrinho ou checkout aparece.
 
 ### Gate S5 (deploy)
 
@@ -119,6 +139,7 @@ Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 - [x] Relatório de deploy não contém segredos, tokens nem caminhos de servidor (caminhos relativos ao repositório; saída do build não é registrada).
 - [x] Build anterior preservado para rollback (builds nunca sobrescrevem).
 - [x] Verificação pós-deploy compara canonical e sitemap com o registro (`expect`).
+- [x] Comandos `sitemap` e `robots` (0.1.3) são somente leitura: hashes de `registry/` e `config/` iguais antes e depois da execução (verificado em 0.1.3).
 
 ## Riscos abertos
 

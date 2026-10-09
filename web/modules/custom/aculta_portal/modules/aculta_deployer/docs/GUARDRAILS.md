@@ -24,4 +24,13 @@
 9. **Indexação por ambiente.** Produção indexável em todos os domínios e subdomínios;
    servidor de testes com noindex. `build` recusa política de produção com noindex e
    `robots --env=production` deve passar antes de considerar o deploy concluído.
-   Páginas privadas da conta mantêm noindex no Portal.
+   Páginas privadas da conta mantêm noindex no Portal. O `robots --env=production` confere
+   esses caminhos (`private_probes`) pelo cabeçalho ou pelo meta robots, e aceita 401, 403,
+   404 ou 410. Não bloquear esses caminhos no `robots.txt`: um bloqueio impede o crawler de
+   ler o noindex.
+10. **Divergência entre ambientes passa pelo deployer.** Qualquer diferença de host, `base_url`,
+   `robots.txt`, sitemap ou noindex entre o servidor de testes e a produção deve ser declarada em
+   `config/deploy.json` e conferida por um comando do deployer (`sitemap`, `robots`, `verify`). Não
+   se resolve por edição manual sem verificação. Um problema que o deployer não consegue
+   verificar fica registrado em `registry/deploy-registry.json`.
+

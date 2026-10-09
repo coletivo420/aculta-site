@@ -67,6 +67,88 @@ final class Verify {
     return $value !== null && stripos($value, 'noindex') !== false;
   }
 
+  /** Código HTTP da resposta (primeira linha de status), ou null. */
+  public static function statusCode(array $headers): ?int {
+    foreach ($headers as $line) {
+      if (preg_match('#^HTTP/\S+\s+(\d{3})#', trim((string) $line), $m) === 1) {
+        return (int) $m[1];
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Status que não expõe conteúdo indexável: 401/403 (acesso recusado) e
+   * 404/410 (rota inexistente para o anônimo). Usado nos caminhos privados.
+   */
+  public static function isRefusedStatus(?int $status): bool {
+    return in_array($status, [401, 403, 404, 410], true);
+  }
+
+  /**
+   * Valores de <loc> de um sitemap ou índice de sitemaps, ou null se o XML não
+   * for válido. Sem resolução de entidades externas.
+   *
+   * @return string[]|null
+   */
+  public static function xmlLocs(string $xml): ?array {
+    $dom = new \DOMDocument();
+    if (@$dom->loadXML($xml, LIBXML_NONET) !== true) {
+      return null;
+    }
+    $locs = [];
+    foreach ($dom->getElementsByTagName('loc') as $node) {
+      $locs[] = trim($node->textContent);
+    }
+    return $locs;
+  }
+
+  /**
+   * URLs das diretivas "Sitemap:" de um robots.txt (sem diferenciar caixa).
+   *
+   * @return string[]
+   */
+  public static function sitemapDirectives(string $robots): array {
+    $urls = [];
+    foreach (preg_split('/\R/', $robots) ?: [] as $line) {
+      if (preg_match('/^\s*sitemap\s*:\s*(\S+)/i', $line, $m) === 1) {
+        $urls[] = $m[1];
+      }
+    }
+    return $urls;
+  }
+
+  /** Verdadeiro quando o robots.txt bloqueia o site inteiro ("Disallow: /"). */
+  public static function disallowsRoot(string $robots): bool {
+    foreach (preg_split('/\R/', $robots) ?: [] as $line) {
+      if (preg_match('/^\s*disallow\s*:\s*\/\s*(#.*)?$/i', $line) === 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** Host (sem porta) de uma URL, em minúsculas, ou null. */
+  public static function hostOf(string $url): ?string {
+    $host = parse_url($url, PHP_URL_HOST);
+    return is_string($host) ? strtolower($host) : null;
+  }
+
+  /** Verdadeiro quando o HTML declara <meta name="robots"> com noindex. */
+  public static function metaNoindex(string $body): bool {
+    if (preg_match_all('/<meta\s[^>]*>/i', $body, $tags) === 0) {
+      return false;
+    }
+    foreach ($tags[0] as $tag) {
+      if (preg_match('/\sname\s*=\s*["\']robots["\']/i', $tag) === 1
+        && preg_match('/\scontent\s*=\s*["\']([^"\']*)["\']/i', $tag, $c) === 1
+        && self::isNoindex($c[1])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /** GET sem seguir redirecionamentos, com tempo limite e tamanho máximo. */
   public static function fetch(string $url): ?string {
     if (!self::isAllowedUrl($url)) {

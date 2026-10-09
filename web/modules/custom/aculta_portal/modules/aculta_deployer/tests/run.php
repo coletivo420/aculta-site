@@ -190,5 +190,32 @@ $badRobots = ['robots_policy' => ['production' => ['x_robots_tag' => 'noindex']]
 $guard = AcultaDeployer\Verify::isNoindex($badRobots['robots_policy']['production']['x_robots_tag']);
 $assert($guard === true, 'trava de build detecta política de produção com noindex');
 
+$assert(AcultaDeployer\Verify::statusCode(['HTTP/1.1 403 Forbidden', 'Content-Type: text/html']) === 403, 'lê o código HTTP da resposta');
+$assert(AcultaDeployer\Verify::statusCode(['Content-Type: text/html']) === null, 'sem linha de status resulta em null');
+$assert(AcultaDeployer\Verify::metaNoindex('<html><head><meta name="robots" content="noindex" /></head></html>') === true, 'detecta meta robots noindex');
+$assert(AcultaDeployer\Verify::metaNoindex('<meta content="noindex, nofollow" name="ROBOTS">') === true, 'meta robots aceita atributos em outra ordem e caixa');
+$assert(AcultaDeployer\Verify::metaNoindex('<meta name="description" content="noindex">') === false, 'meta de outro nome não conta como robots');
+$assert(AcultaDeployer\Verify::metaNoindex('<html><body>sem meta</body></html>') === false, 'página sem meta robots não é noindex');
+$assert(AcultaDeployer\Verify::isRefusedStatus(404) && AcultaDeployer\Verify::isRefusedStatus(403) && !AcultaDeployer\Verify::isRefusedStatus(200) && !AcultaDeployer\Verify::isRefusedStatus(null), 'status recusado/inexistente aceito; 200 e ausente não');
+$privProbes = $pol['production']['private_probes'] ?? [];
+$assert(count($privProbes) >= 9 && !array_filter($privProbes, static fn($u) => str_contains((string) $u, 'toca.net.br')), 'caminhos privados de produção listados, sem host de teste');
+$assert(in_array('https://conta.aculta.org/entrar', $privProbes, true), 'login (/entrar) está entre os caminhos privados');
+
+$assert(AcultaDeployer\Verify::xmlLocs('<urlset><url><loc>https://aculta.org/a</loc></url><url><loc> https://aculta.org/b </loc></url></urlset>') === ['https://aculta.org/a', 'https://aculta.org/b'], 'lê todos os <loc> e ignora espaços');
+$assert(AcultaDeployer\Verify::xmlLocs('<sitemapindex><sitemap><loc>https://aculta.org/main/sitemap.xml</loc></sitemap></sitemapindex>') === ['https://aculta.org/main/sitemap.xml'], 'lê o índice de sitemaps');
+$assert(AcultaDeployer\Verify::xmlLocs('<broken') === null, 'XML inválido resulta em null');
+$assert(AcultaDeployer\Verify::xmlLocs('<!DOCTYPE x [<!ENTITY e SYSTEM "file:///etc/passwd">]><urlset><url><loc>&e;</loc></url></urlset>') !== ['root:'], 'entidades externas não são resolvidas (XXE)');
+$assert(AcultaDeployer\Verify::sitemapDirectives("User-agent: *\nSitemap: https://aculta.org/sitemap.xml\nsitemap: https://x.org/y.xml\n") === ['https://aculta.org/sitemap.xml', 'https://x.org/y.xml'], 'lê diretivas Sitemap sem diferenciar caixa');
+$assert(AcultaDeployer\Verify::sitemapDirectives("Disallow: /admin/\n") === [], 'robots sem Sitemap não gera diretiva');
+$assert(AcultaDeployer\Verify::disallowsRoot("User-agent: *\nDisallow: /\n") === true, 'detecta Disallow: / (site inteiro bloqueado)');
+$assert(AcultaDeployer\Verify::disallowsRoot("User-agent: *\nDisallow: /admin/\nDisallow:\n") === false, 'Disallow de caminho específico e Disallow vazio não bloqueiam o site');
+$assert(AcultaDeployer\Verify::hostOf('https://APOIO.aculta.org/x?y=1') === 'apoio.aculta.org', 'hostOf normaliza a caixa e ignora caminho e query');
+$sm = $config['sitemap'] ?? [];
+$assert(AcultaDeployer\Verify::hostOf($sm['production']['index_url'] ?? '') === AcultaDeployer\Verify::hostOf($sm['production']['index_base'] ?? '1'), 'índice de produção está na base de produção');
+$assert(AcultaDeployer\Verify::hostOf($sm['test']['index_url'] ?? '') === AcultaDeployer\Verify::hostOf($sm['test']['index_base'] ?? '1') && !str_contains((string) ($sm['production']['index_url'] ?? ''), 'toca.net.br'), 'índice de teste na base de teste; produção sem host de teste');
+$robotsWeb = (string) file_get_contents(dirname(__DIR__, 6) . '/robots.txt');
+$assert(in_array($sm['production']['index_url'] ?? '', AcultaDeployer\Verify::sitemapDirectives($robotsWeb), true), 'web/robots.txt anuncia o índice de produção (mesma URL da política)');
+$assert(!AcultaDeployer\Verify::disallowsRoot($robotsWeb), 'web/robots.txt não bloqueia o site inteiro');
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

@@ -534,3 +534,12 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
   política). Verificação pós-deploy por host; resultado FAIL bloqueia a publicação.
 - Correção registrada: DEP-0003 (VirtualHost de teste com noindex) permanece bloqueante até o
   `robots --env=production` passar em todos os hosts.
+- **Divergência entre ambientes passa pelo `aculta_deployer`.** Qualquer diferença de host,
+  `base_url` do `simple_sitemap`, `robots.txt`, diretiva `Sitemap:`, sitemap ou noindex entre o
+  servidor de testes e a produção deve ser declarada em `config/deploy.json` e verificada por um
+  comando da ferramenta (`sitemap`, `robots`, `verify`). Não corrija por edição manual sem
+  verificação. Se a ferramenta ainda não verifica um caso, registre-o no roadmap do deployer
+  (`web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md`) e no
+  `registry/deploy-registry.json`, em vez de deixar a divergência só na documentação.
+- O `aculta_deployer` está em desenvolvimento (0.1.x). O roadmap dele é `docs/PLANEJAMENTO.md`.
+  Mudanças de descoberta e sitemap por ambiente pertencem à fase 7 desse roadmap.

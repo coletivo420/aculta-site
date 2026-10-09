@@ -1,5 +1,31 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.3 — descoberta e sitemaps por ambiente (0.1.0-H) — 2026-10-09
+
+- Comando `sitemap --env=production|test` (GET somente leitura): confere o índice central,
+  a base de cada filho (problema 1: base de teste em produção ou o inverso) e os hosts das URLs
+  de conteúdo, que devem pertencer à política de produção e responder (problema 2: cross-host,
+  por exemplo `apoio.aculta.org`).
+- `robots --env=production` passa a conferir o `robots.txt` de cada host: diretiva `Sitemap:`
+  apontando para o índice de produção e ausência de `Disallow: /`.
+- `web/robots.txt` anuncia `Sitemap: https://aculta.org/sitemap.xml`.
+- `config/deploy.json` ganha o bloco `sitemap` por ambiente (`index_url` e `index_base`).
+- Helpers em `Verify`: `xmlLocs()` (sem entidades externas), `sitemapDirectives()`,
+  `disallowsRoot()` e `hostOf()`.
+- Testes: 15 asserções novas (XML, XXE, diretivas, host e coerência com `web/robots.txt`).
+
+## 0.1.2 — verificação de caminhos privados e meta robots — 2026-10-09
+
+- `robots --env=production` passa a conferir os caminhos privados (`private_probes` em
+  `config/deploy.json`): conta, login, painel, carrinho e checkout.
+- Caminho privado passa quando tem noindex no cabeçalho ou em `<meta name="robots">`, ou
+  responde 401, 403, 404 ou 410. Um 200 sem noindex falha.
+- `Verify::metaNoindex()`, `Verify::statusCode()` e `Verify::isRefusedStatus()` adicionados.
+- Testes: asserções de meta robots, status e lista de caminhos privados de produção.
+- Documentação em `docs/USO.md` e `docs/GUARDRAILS.md` (motivo da checagem de meta e de 404/410).
+- Pendência fora deste submódulo: o Portal não emite `noindex` em `/entrar` (rota
+  `user.login`); a regra em `PortalHooks` cobre só rotas `aculta_portal.*`.
+
 ## 0.1.1 — política de indexação por ambiente — 2026-10-09
 
 - Comando `robots --env=production|test` (GET somente leitura) por host.
