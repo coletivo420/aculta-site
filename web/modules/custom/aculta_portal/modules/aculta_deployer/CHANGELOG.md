@@ -1,5 +1,11 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.5 — regra de permissão do arquivo de credenciais — 2026-10-09
+
+- `Secrets::modeProblem()` passa a recusar só escrita de grupo (0020) e acesso de outros (0007). Leitura de grupo
+  (ACL de leitura do processo web, modo 0640) é aceita, alinhada ao loader do Drupal. Aprovada pelo responsável.
+- Testes atualizados: 0640 aceito; 0620, 0664, 0604, 0644 e 0666 recusados.
+
 ## 0.1.4 — arquivo local de credenciais e exportação pós-deploy — 2026-10-09
 
 - `src/Secrets.php` e `config/secrets-contract.json` (nomes e ambientes; sem valores).

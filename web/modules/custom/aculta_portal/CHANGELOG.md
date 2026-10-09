@@ -8,7 +8,7 @@
 - `aculta_portal.secrets_importer` (DI), `SecretsFormat`, `SecretsRequirementsHook`, `SecretsImportForm`.
 - Testes: 8 casos novos em `SecretsImporterTest` (suíte do Portal: 56 OK).
 - Limite: a sobrescrita não garante remoção física em sistemas com cópia-na-escrita, journaling ou SSD (ver `docs/operations/SECRETS.md`).
-- Pendência: regra de permissão do arquivo (ACL de leitura para o processo web gera modo 0640; decisão do responsável).
+- Regra de permissão do arquivo: recusa escrita de grupo e acesso de outros; leitura de grupo (ACL do processo web, 0640) é aceita. Alinhada ao loader do Drupal (aprovada pelo responsável).
 
 ## 0.2.0-dev.8 — runInPurpose para avaliação de acesso no contexto de origem (0.1.0-F) — 2026-10-09
 

@@ -38,7 +38,7 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 ## Arquivo local (0.1.4)
 
 - Caminho no servidor de testes: `secrets/aculta.secrets.env` na raiz do repositório, ignorado pelo Git
-  (`*.secrets.env` e `/secrets/`), fora de `web/`, modo 0600. `settings.local.php` aponta para ele por
+  (`*.secrets.env` e `/secrets/`), fora de `web/`, sem escrita de grupo e sem acesso de outros (ex.: 0600, ou 0640 com ACL de leitura para o processo web). `settings.local.php` aponta para ele por
   `dirname(DRUPAL_ROOT)`.
 - Migrado de `/etc/aculta/secrets.env`. O arquivo antigo precisa ser removido por quem tem root:
   `sudo rm /etc/aculta/secrets.env`. O processo de deploy não tem permissão de escrita nesse diretório.
@@ -230,7 +230,7 @@ Fluxo previsto para cada ambiente, sem valores no Git nem no banco:
 
 1. Copie o arquivo `NAME=value` para a pasta de importação (`secrets/import/`, fora de `web/`) com modo 0600 e dono compatível com o processo web.
 2. Em `/admin/config/aculta/segredos` (permissão `administer aculta secrets`), confira o estado de cada variável (✔ presente, ⚠ opcional ausente, ✖ obrigatória ausente) e escolha o arquivo.
-3. Confirme a exclusão da origem. A importação valida o arquivo, grava o arquivo de credenciais de forma atômica (0600 ou 0640 pela ACL do processo web) e apaga a origem com sobrescrita antes de remover.
+3. Confirme a exclusão da origem. A importação valida o arquivo, grava o arquivo de credenciais de forma atômica (modo 0640 pela ACL de leitura do processo web; a regra recusa escrita de grupo e acesso de outros) e apaga a origem com sobrescrita antes de remover.
 4. O relatório de status do Drupal (`/admin/reports/status`) mostra "Credenciais do ambiente" com aviso enquanto faltarem obrigatórias.
 
 Regras: nenhum valor é exibido, gravado no banco ou escrito em log (só nomes e contagens). Substituir o arquivo atual exige marcar a opção.

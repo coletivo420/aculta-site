@@ -225,7 +225,9 @@ $assert($S::parse("# comentário\n\nGOOGLE_OAUTH_CLIENT_ID=abc\nSMTP2GO_PASSWORD
 $assert($S::parse("minuscula=1\n") === null, 'parse: nome em minúsculas é recusado');
 $assert($S::parse("SEM_IGUAL\n") === null, 'parse: linha sem "=" é recusada');
 $assert($S::modeProblem(0100600) === null && $S::modeProblem(0100400) === null, 'permissões 0600 e 0400 são aceitas');
-$assert($S::modeProblem(0100640) !== null && $S::modeProblem(0100604) !== null && $S::modeProblem(0100666) !== null, 'grupo ou outros com bits de acesso são recusados');
+$assert($S::modeProblem(0100640) === null, 'leitura de grupo (ACL do processo web, 0640) é aceita');
+$assert($S::modeProblem(0100620) !== null && $S::modeProblem(0100664) !== null, 'escrita de grupo é recusada');
+$assert($S::modeProblem(0100604) !== null && $S::modeProblem(0100666) !== null && $S::modeProblem(0100644) !== null, 'acesso de outros é recusado');
 $assert($S::isInside('/a/b/web/x', '/a/b/web') && !$S::isInside('/a/bweb/x', '/a/b/web') && $S::isInside('/a/b/web', '/a/b/web'), 'isInside não confunde /a/bweb com /a/b/web');
 $contract = json_decode((string) file_get_contents(dirname($toolRoot, 6) . '/config/secrets-contract.json'), true);
 $assert($S::contractProblems($contract) === [], 'contrato de segredos é válido (nomes, obrigatórios dentro da lista)');

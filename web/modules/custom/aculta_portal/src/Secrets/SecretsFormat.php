@@ -61,9 +61,16 @@ final class SecretsFormat {
     return $names;
   }
 
-  /** Mensagem se há bits de acesso para grupo ou outros (exigido: 0600 ou mais restrito). */
+  /**
+   * Regra de permissão do arquivo de credenciais (alinhada ao loader do Drupal):
+   * recusa escrita de grupo (0020) e qualquer acesso de outros (0007). Leitura de grupo é
+   * permitida, porque o processo web lê o arquivo por ACL de leitura.
+   */
   public static function modeProblem(int $perms): ?string {
-    return ($perms & 0077) !== 0 ? 'permissões amplas demais (exigido: 0600)' : NULL;
+    if (($perms & 0020) !== 0) {
+      return 'escrita de grupo (exigido: sem escrita para grupo e sem acesso para outros)';
+    }
+    return ($perms & 0007) !== 0 ? 'acesso de outros (exigido: sem acesso para outros)' : NULL;
   }
 
   /** Verdadeiro se $path está dentro de $dir (ambos resolvidos com realpath). */

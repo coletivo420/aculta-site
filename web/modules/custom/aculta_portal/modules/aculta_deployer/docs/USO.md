@@ -69,7 +69,7 @@ produção. Um 200 sem noindex é sempre falha.
 ## Credenciais locais (0.1.4)
 
 - Arquivo padrão: `secrets/aculta.secrets.env` na raiz do repositório (ignorado pelo Git; fora de `web/`;
-  modo 0600). O Drupal o lê por `settings.local.php` (`aculta_secrets_file`).
+  sem escrita de grupo e sem acesso de outros: 0600, ou 0640 com ACL de leitura para o processo web). O Drupal o lê por `settings.local.php` (`aculta_secrets_file`).
 - `$CLI secrets check --env=test` e `--env=production`: valida o arquivo. Mostra só nomes e motivos.
 - `$CLI secrets export --env=production --out=/caminho/novo.env`: grava as variáveis do contrato em um arquivo
   novo, 0600, fora do repositório. Depois de cada deploy, copie esse arquivo para o ambiente de produção

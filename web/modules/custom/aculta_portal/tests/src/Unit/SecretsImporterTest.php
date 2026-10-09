@@ -49,7 +49,11 @@ final class SecretsImporterTest extends UnitTestCase {
 
   public function testModeProblemFlagsOtherAndGroupWriteAccess(): void {
     $this->assertNull(SecretsFormat::modeProblem(0100600));
+    // Leitura de grupo (ACL do processo web) é aceita; escrita de grupo e acesso de outros não.
+    $this->assertNull(SecretsFormat::modeProblem(0100640));
+    $this->assertNotNull(SecretsFormat::modeProblem(0100620));
     $this->assertNotNull(SecretsFormat::modeProblem(0100604));
+    $this->assertNotNull(SecretsFormat::modeProblem(0100666));
   }
 
   public function testImportRefusesExistingStoreWithoutOverwrite(): void {
