@@ -1,6 +1,6 @@
 # Shell multidomínio — direção arquitetural
 
-Status: **0.2-A e 0.2-B concluídas; 0.2-C implementada em branch; 0.2-D a 0.2-F planejadas**.
+Status: **linha 0.2.0 concluída em 2026-10-09** (0.2-A a 0.2-F); 0.3.0 é a próxima.
 
 Este documento fixa a direção do shell público. A 0.1.0 preserva a arquitetura
 e o shell existente; 0.2-A prepara tokens; as etapas 0.2-B a 0.2-F entregam o
@@ -184,14 +184,13 @@ uma fase posterior.
 - 0.2-A — Semantic Foundations;
 - 0.2-B — Domain Presentation Contract;
 - 0.2-C — Institution Bar;
-- 0.2-D — Domain Header (implementada em branch empilhada);
-- 0.2-E — Mobile/Sticky Shell (implementada em branch empilhada);
+- 0.2-D — Domain Header (PR #93);
+- 0.2-E — Mobile/Sticky Shell (PR #94);
 - 0.2-E — Mobile/Sticky Shell;
 - 0.2-F — Design B QA.
 
-Estado atual: 0.2-A e 0.2-B concluídas na `main`; 0.2-C (Institution Bar) e
-0.2-D (Domain Header) implementadas em branches empilhadas, com visual QA DEFERRED
-para 0.2-F. 0.2-E (sticky/mobile) também está implementada em branch empilhada.
+Estado atual: linha 0.2.0 concluída. 0.2-A e 0.2-B estão na `main`; 0.2-C a 0.2-F
+estão em PRs empilhadas (#92 a #95). QA em navegador em `docs/design-b-qa.md`.
 
 ### Institution Bar (0.2-C)
 

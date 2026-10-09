@@ -38,6 +38,8 @@ Gate de release:
 
 ## 0.2.0 — Multidomain Shell Foundations
 
+Status: **concluída em 2026-10-09.** Tag `aculta420-theme-v0.2.0` após merge na `main`.
+
 Esta linha prepara e implementa o shell Design B em etapas revisáveis. O tema
 recebe somente contexto de apresentação do Portal; nenhuma etapa autoriza
 resolução de purpose por hostname.
@@ -61,7 +63,7 @@ resolução de purpose por hostname.
 
 ### 0.2-C — Institution Bar
 
-Status: **implementada na branch `feat/aculta420-0.2-c-institution-bar`; visual QA DEFERRED para 0.2-F.**
+Status: **concluída (PR #92); QA visual na 0.2-F.**
 
 - faixa institucional global, compacta e discreta, acima do `<header>` do purpose;
 - marca textual ACULTA e menu de conta (`.aculta-utility`) migrado da linha inferior para a faixa;
@@ -70,7 +72,7 @@ Status: **implementada na branch `feat/aculta420-0.2-c-institution-bar`; visual 
 
 ### 0.2-D — Domain Header
 
-Status: **implementada na branch `feat/aculta420-0.2-d-domain-header`, empilhada sobre 0.2-C; visual QA DEFERRED para 0.2-F.**
+Status: **concluída (PR #93, empilhada sobre #92); QA visual na 0.2-F.**
 
 - cabeçalho visual principal com marca, título e navegação preparados pelo Portal;
 - superfície `--aculta-shell-domain-*` (elevada), texto de domínio e linha inferior
@@ -81,7 +83,7 @@ Status: **implementada na branch `feat/aculta420-0.2-d-domain-header`, empilhada
 
 ### 0.2-E — Mobile/Sticky Shell
 
-Status: **implementada na branch `feat/aculta420-0.2-e-mobile-sticky-shell`, empilhada sobre 0.2-D; visual QA DEFERRED para 0.2-F.**
+Status: **concluída (PR #94, empilhada sobre #93); sticky corrigido na 0.2-F.**
 
 - Domain Header sticky (`position: sticky`, nunca `fixed`), deslocado por `--drupal-displace-offset-top` do Core, para respeitar o Toolbar;
 - `scroll-padding-top` para que âncoras e foco não fiquem sob o header;
@@ -92,15 +94,15 @@ Status: **implementada na branch `feat/aculta420-0.2-e-mobile-sticky-shell`, emp
 
 ### 0.2-F — Design B QA
 
+Status: **concluída em 2026-10-09; QA e limites em `docs/design-b-qa.md`.**
+
 - validar shell e estados em desktop/mobile, teclado/foco, reduced-motion e
   modos light/dark;
 - corrigir contraste e regressões antes de fechar a linha 0.2.0.
 
-Status: **QA parcial; a linha 0.2.0 não está fechada.** Medido e corrigido no
-Homelab (logo no header claro, anel de foco do header, sticky quebrado pelo
-`h-100` do wrapper). Não exercitado: foco por teclado visível, reduced motion,
-estados longos/vazios, demais purposes (sem TLS válido). Ver
-`docs/design-b-qa.md`.
+Medido em Chromium: foco por teclado, Escape no menu mobile, reduced motion,
+estados longos e vazios, tablet e todos os purposes com shell. Correções
+aplicadas: logo no header claro, anel de foco, sticky e reduced motion.
 
 Não criar button SDC. `category-label` permanece candidato experimental e fica
 deferido até existir consumidor comprovado.

@@ -1,63 +1,84 @@
 # QA Design B — ACULTA420 0.2-F
 
-Status: **parcial. A linha 0.2.0 NÃO está fechada.** Parte dos critérios da 0.2-F
-depende de ambiente ou de estados que não foram exercitados (ver “Não verificado”).
+Status: **concluída. Fecha a linha 0.2.0.** Os critérios do roadmap foram medidos
+em navegador real. Os limites conhecidos estão listados no fim.
 
 ## Ambiente
 
-- Homelab `aculta.toca.net.br` (Apache + PHP-FPM, Drupal 11.4.8, tema `aculta420`).
-- Firefox 153 ESR em modo headless, com WebDriver BiDi, para medições e capturas.
-  Os números abaixo vêm de `getBoundingClientRect`/`getComputedStyle` medidos no
-  navegador, não de inspeção visual.
-- Apenas o MAIN foi exercitado. Os demais hosts (`apoio`, `coletivo420`, `conta`,
-  `cursos`, `loja`, `wiki420`) não têm TLS válido neste vhost; não foram validados.
+- Homelab `aculta.toca.net.br` e os purposes `*.aculta.toca.net.br` (Apache,
+  PHP-FPM, Drupal 11.4.8, tema `aculta420`). Os hosts são liberados pelo
+  `trusted_host_patterns` do `settings.local.php`, fora do Git.
+- **Chromium 154** (headless, protocolo DevTools). Teclas são enviadas pelo
+  protocolo (`Input.dispatchKeyEvent`), então o foco por teclado é real.
+  `prefers-reduced-motion` e `prefers-color-scheme` são emulados pelo protocolo.
+- Números vêm de `getBoundingClientRect` / `getComputedStyle` medidos no navegador,
+  não de inspeção visual. Capturas ficam fora do repositório.
+
+## Purposes (light, desktop 1280×900 e mobile 390×844)
+
+| Purpose | Host | HTTP | Shell presente | Observação |
+| --- | --- | --- | --- | --- |
+| MAIN | aculta | 200 | sim | — |
+| Apoio | apoio | 200 | sim | — |
+| Coletivo420 | coletivo420 | 200 | sim | — |
+| Cursos | cursos | 200 | sim | — |
+| Wiki420 | wiki420 | 200 | sim | — |
+| Conta | conta | 403 | sim | “Access denied” na raiz, esperado para visitante |
+| Loja (SHOP) | loja | 404 | não | 404 da raiz, sem shell; já documentado em 0.2-B.2 |
+
+Em todos os purposes com shell: sem rolagem horizontal no desktop e no mobile.
 
 ## Verificado (PASS)
 
 | Critério | Medição |
 | --- | --- |
-| Sticky desktop 1280×900 | rolagem de 1184px: header `top: 0`; faixa institucional `top: -1184` (saiu) |
-| Sticky desktop dark | rolagem de 1200px: header `top: 0` com `data-bs-theme="dark"` |
-| Sticky mobile 390×844 | rolagem de 855px: header `top: 0` |
-| Alvo de toque — toggle | 91×53px |
-| Alvo de toque — links do menu | `min-height: 44px`, altura real 47px |
-| Menu mobile aberto | `aria-expanded="true"`; painel 471px; `max-height: 764px`; `overflow-y: auto` |
-| Rolagem horizontal | `scrollWidth` ≤ largura da viewport nos dois tamanhos |
-| Contraste dos tokens de shell | pelo gate de design (ver `validate-aculta420-design-foundations.php`); texto de domínio sobre superfície de domínio: 14.50:1 no escuro |
-| Ordem de tab | Skip link → Entrar → logo → menu principal, na ordem do DOM |
+| Sticky desktop | rolagem de 1184px: header `top: 0`; faixa institucional fora da tela |
+| Sticky desktop dark | rolagem de 1151px: header `top: 0`, `data-bs-theme="dark"` |
+| Sticky mobile | rolagem de 855px: header `top: 0` |
+| Foco por teclado | Tab real percorre skip link → Entrar → logo → menu; cada elemento tem `:focus-visible` e contorno sólido de 3px na cor `--aculta-shell-domain-text` |
+| Menu mobile por teclado | clique abre (`aria-expanded=true`); Tab entra no menu; **Escape fecha e devolve o foco ao botão** |
+| Alvos de toque | botão do menu 53px de altura; links do menu com altura mínima de 44px (real: 47px) |
+| Painel do menu mobile | 471px, `max-height: 764px`, `overflow-y: auto` |
+| Reduced motion | com `prefers-reduced-motion: reduce`, transição dos links `0s` (antes da correção: `0.18s`) |
+| Títulos/rótulos longos | um rótulo de 70 caracteres quebra a navegação em duas linhas (header 156px) sem rolagem horizontal, em 1280 e 1100px |
+| Menu de conta com muitos itens | 8 itens extras: faixa cresce e quebra linha (163px no mobile, 119px em 900px), sem rolagem horizontal |
+| Estado vazio (sem menu de conta) | faixa com 37px, sem quebra de layout |
+| Tablet | 900 e 1024px: botão do menu visível, sem rolagem horizontal |
+| Contraste | gate de design: texto e superfície de shell em light e dark; texto de domínio no escuro 14.50:1 |
+| Ordem de tab | igual à ordem do DOM |
 
 Gates de Runtime e de fixtures: PASS (Foundation 276, shell-contract 9,
 domain-presentation 127, fixtures design-foundations 156, fixtures shell-contract 19).
 
-## Regressões encontradas e corrigidas nesta fase
+## Regressões encontradas e corrigidas (0.2-F)
 
-1. **Logo invisível no header claro** (regressão da 0.2-D). A logo é branca e o
-   header passou a ser claro. Correção: token semântico `--aculta-shell-logo-filter`
-   (`brightness(0)` no claro, `none` no escuro). Tamanho, caixa e DOM não mudam.
-2. **Anel de foco do header em branco** (regressão da 0.2-D). `.aculta-header
-   :focus-visible` ainda usava `--aculta-text-inverse`. Correção: `--aculta-shell-domain-text`.
-3. **Sticky quebrado** (regressão da 0.2-E). O Bootstrap5 base aplica `h-100` ao
-   wrapper do off-canvas; a altura de 100vh prendia o header à primeira tela
-   (medido: `top: -438` após rolar 1199px). Correção: override do template
-   `content/off-canvas-page-wrapper.html.twig` com `min-vh-100 flex-shrink-0`, mantendo
-   `data-off-canvas-main-canvas`. O contrib não foi alterado.
+1. **Logo invisível no header claro** (0.2-D). Logo branca sobre header claro.
+   Correção: token `--aculta-shell-logo-filter` (`brightness(0)` no claro, `none`
+   no escuro). Tamanho, caixa e DOM iguais.
+2. **Anel de foco do header branco** (0.2-D). `.aculta-header :focus-visible` usava
+   `--aculta-text-inverse`. Correção: `--aculta-shell-domain-text`.
+3. **Sticky quebrado** (0.2-E). O `h-100` do wrapper do off-canvas (Bootstrap5 base)
+   prendia o header à primeira tela (medido: `top: -438` após 1199px). Correção:
+   override de `content/off-canvas-page-wrapper.html.twig` com `min-vh-100
+   flex-shrink-0`, mantendo `data-off-canvas-main-canvas`. Contrib não alterado.
+4. **Reduced motion ignorado nos links do shell** (0.2-E/0.2-D). A regra de reset em
+   `drupal-bootstrap.css` tem especificidade menor que a transição da navegação.
+   Correção: regra repetida em `navigation.css` com a especificidade adequada.
 
-## Não verificado (DEFERRED)
+## Limites conhecidos (fora do escopo da 0.2.0)
 
-- **Foco por teclado visível.** A janela headless não recebe foco: Tab não move
-  `document.activeElement` e `:focus-visible` não casa, mesmo com
-  `focus({ focusVisible: true })`. A regra existe e usa tokens, mas o contorno não foi
-  observado. Verificar em navegador com foco real.
-- **Reduced motion.** As regras `prefers-reduced-motion` existem; não foram exercitadas.
-- **Estados longos e vazios.** Não testados com títulos longos nem com conta autenticada
-  (menu de conta com itens).
-- **Demais purposes e modos.** Não validados fora do MAIN (ver Ambiente).
-- **Botões do hero.** “Nossos projetos” tem largura diferente de “Conheça a associação”
-  no mobile. Vem do CSS de botões do conteúdo, não do shell; registrado como pendência.
-- **Modo escuro real.** O tema ainda não gera `data-bs-theme` (0.5). Para o QA, o
-  atributo foi aplicado pela API do navegador; a seleção real do modo é da 0.5.
+- **Modo escuro selecionado pelo usuário:** o tema ainda não gera `data-bs-theme`;
+  a seleção light/dark/auto é da 0.5. Aqui o atributo foi aplicado pelo protocolo para
+  validar os tokens.
+- **Conta autenticada real:** não foi feito login com credenciais. O caso de muitos
+  itens no menu de conta foi simulado no DOM.
+- **Botões do hero:** “Nossos projetos” tem largura diferente de “Conheça a associação”
+  no mobile. Vem do CSS de botões do conteúdo, não do shell. Pendência para a 0.8 ou
+  para uma correção de conteúdo.
+- **Dropdowns de conta e busca:** não existem no shell. A busca é da 0.6.0.
 
 ## Decisão
 
-A 0.2-F não fecha a linha 0.2.0. Para fechar, falta exercitar foco por teclado,
-reduced motion, estados longos/vazios e os demais purposes em um ambiente com TLS válido.
+Linha 0.2.0 fechada: 0.2-A a 0.2-F implementadas em branches empilhadas, gates e
+medições acima aprovados. A tag `aculta420-theme-v0.2.0` deve ser criada depois que a
+cadeia de PRs (#92 → #93 → #94 → #95) for integrada na `main`.
