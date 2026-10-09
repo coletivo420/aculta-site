@@ -1,4 +1,4 @@
-import { devtoolsUrl, siteOrigin } from './lib/browser-env.mjs';
+import { devtoolsUrl, siteOrigin, supportOrigin } from './lib/browser-env.mjs';
 // Dependency-free Chrome DevTools review. Artifacts stay in ignored tmp/.
 import { writeFile, mkdir } from 'node:fs/promises';
 
@@ -92,10 +92,14 @@ const pages = await evaluate(`(async () => {
   }
   return results;
 })()`);
+await call('Page.navigate', { url: supportOrigin() + '/' });
+for (let attempt = 0; attempt < 100; attempt++) {
+  if (await evaluate('document.readyState === "complete" && location.origin === ' + JSON.stringify(supportOrigin()))) break;
+  await new Promise(resolve => setTimeout(resolve, 200));
+}
 const supportLayout = await evaluate(`(async () => {
-  const response = await fetch('/apoio');
-  const html = await response.text();
-  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const doc = document;
+  const status = doc.querySelector('.aculta-support') ? 200 : 404;
   const form = doc.querySelector('.aculta-support');
   const choice = form?.querySelector('fieldset');
   const actions = form?.querySelector('.form-actions');
@@ -104,10 +108,11 @@ const supportLayout = await evaluate(`(async () => {
   const pix = form?.querySelector('[data-aculta-pix], .aculta-pix');
   const graph = [...doc.querySelectorAll('script[type="application/ld+json"]')].flatMap(script => { const schema=JSON.parse(script.textContent); return schema['@graph'] || [schema]; });
   const canonical = doc.querySelector('link[rel="canonical"]')?.href || '';
-  return {status: response.status, choice: !!choice, actionImmediatelyAfterChoice: !!choice && choice.nextElementSibling === actions,
+  return {status, choice: !!choice, actionImmediatelyAfterChoice: !!choice && choice.nextElementSibling === actions,
     buttonAfterChoice: !!choice && !!button && choice.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING,
     pixVisible: !!pix, primaryDisabled: button?.disabled ?? null,
     duplicateMessageAbsent: !form?.textContent.includes('Para contribuir, fale com a Associação'),
+    unavailable: /temporariamente indisponível/.test(form?.textContent || ''), buttonPresent: !!button,
     canonical, openGraph: doc.querySelector('meta[property="og:title"]')?.content || '',
     schemaTypes: graph.map(item => item['@type']),
     order: [...(form?.children || [])].map(element => element.className || element.tagName)};
@@ -137,8 +142,8 @@ await writeFile(new URL('sitemap.xml', output), sitemapXML);
 const sitemapUrls = [...sitemapXML.matchAll(/<loc>(.*?)<\/loc>/gs)].map(m => m[1]);
 const faviconUrl = await evaluate('document.querySelector("link[rel=icon]")?.getAttribute("href") || ""');
 const faviconResponse = await fetch(origin + faviconUrl);
-const sitemapValid = sitemapResponse.status === 200 && sitemapUrls.every(url => url.startsWith('https://aculta.org/')) && sitemapUrls.includes('https://aculta.org/contato') && sitemapUrls.includes('https://aculta.org/apoio') && !sitemapUrls.some(url => /\/node\/(12|13)(?:$|\/)|\/user|\/apoie\/(webhook|obrigado|pendente|erro)|\/form\/aculta-contact/.test(url));
+const sitemapValid = sitemapResponse.status === 200 && sitemapUrls.every(url => /^https:\/\/([a-z0-9-]+\.)?aculta\.org\//.test(url)) && sitemapUrls.includes('https://aculta.org/contato') && sitemapUrls.includes(supportOrigin() + '/') && !sitemapUrls.some(url => /\/node\/(12|13)(?:$|\/)|\/user|\/apoie\/(webhook|obrigado|pendente|erro)|\/form\/aculta-contact/.test(url));
 await writeFile(new URL('browser-results.json', output), JSON.stringify({viewports:report,pages,internalViewports,official,contactValid,sitemapValid,sitemapUrls,faviconUrl,faviconStatus:faviconResponse.status,supportLayout},null,2));
 console.log(JSON.stringify({viewports:report.map(({headings,...r})=>r), pages:pages.map(({schema,...p})=>({...p,schemaValid:!!schema})),internalViewports,official,contactValid,sitemapValid,sitemapUrls,faviconUrl,faviconStatus:faviconResponse.status,supportLayout},null,2));
 socket.close();
-if (!official || !contactValid || !sitemapValid || faviconResponse.status !== 200 || !faviconUrl.includes('aculta420-favicon.ico') || supportLayout.status !== 200 || !supportLayout.actionImmediatelyAfterChoice || !supportLayout.buttonAfterChoice || !supportLayout.duplicateMessageAbsent || supportLayout.canonical !== 'https://aculta.org/apoio' || !supportLayout.openGraph || !supportLayout.schemaTypes.includes('WebPage') || supportLayout.pixVisible || supportLayout.primaryDisabled !== true || report.some(r => r.overflow || r.utility || r.publicAcronym || r.defaultContent || r.h1.length !== 1 || r.projects !== 4 || r.menuLabels.length !== 8 || r.menuContactPath !== '/contato' || !r.cnpj || !r.footerCnpj || parseFloat(r.h1Size) > 54 || r.bodySize !== '16px' || r.slogan !== 'Lutando por um futuro livre da proibição.' || r.projectParagraphCounts.some(n=>n!==1) || (r.toggleVisible && (!r.menuOpened || !r.menuClosedWithEscape))) || pages.some(p => p.status !== 200 || p.h1Count !== 1 || p.defaultContent || !p.description) || internalViewports.some(r=>r.overflow)) process.exitCode = 1;
+if (!official || !contactValid || !sitemapValid || faviconResponse.status !== 200 || !faviconUrl.includes('aculta420-favicon.ico') || supportLayout.status !== 200 || !supportLayout.actionImmediatelyAfterChoice || (supportLayout.unavailable ? supportLayout.buttonPresent : !supportLayout.buttonAfterChoice) || !supportLayout.duplicateMessageAbsent || supportLayout.canonical !== supportOrigin() + '/' || !supportLayout.openGraph || !supportLayout.schemaTypes.includes('WebPage') || supportLayout.pixVisible || supportLayout.primaryDisabled !== true || report.some(r => r.overflow || r.utility || r.publicAcronym || r.defaultContent || r.h1.length !== 1 || r.projects !== 4 || r.menuLabels.length !== 8 || r.menuContactPath !== '/contato' || !r.cnpj || !r.footerCnpj || parseFloat(r.h1Size) > 54 || r.bodySize !== '16px' || r.slogan !== 'Lutando por um futuro livre da proibição.' || r.projectParagraphCounts.some(n=>n!==1) || (r.toggleVisible && (!r.menuOpened || !r.menuClosedWithEscape))) || pages.some(p => p.status !== 200 || p.h1Count !== 1 || p.defaultContent || !p.description) || internalViewports.some(r=>r.overflow)) process.exitCode = 1;
