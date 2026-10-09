@@ -18,6 +18,21 @@ O VirtualHost do Homelab deve apontar o DocumentRoot para `web/`, preservar o
 `.htaccess` fornecido pelo Drupal e permitir as diretivas necessárias ao
 Drupal.
 
+## Servidor de testes
+
+`*.aculta.toca.net.br` é o **servidor de testes** do projeto. Neste documento ele
+aparece como Homelab; os dois termos designam o mesmo ambiente.
+
+- Hosts: `aculta.toca.net.br` (MAIN), `apoio.aculta.toca.net.br` (SUPPORT) e os
+  demais purposes conforme `docs/architecture/multidomain.md`.
+- Não é produção: nenhum dado de produção deve ser usado nele sem decisão do
+  responsável.
+
+Testes locais em máquina de desenvolvimento (por exemplo, navegador headless
+apontado para `127.0.0.1` com resolução de host própria) simulam o servidor de
+testes, mas não são o servidor de testes. Resultados desses testes devem ser
+registrados como tal.
+
 ## Produção
 
 Hostinger, Apache, PHP, MariaDB e hosts `*.aculta.org`.
