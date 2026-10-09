@@ -3,6 +3,7 @@
 Este changelog versiona o tema/design system ACULTA420.
 
 ## Documentação (sem tag), versão vigente 0.3.1 — 2026-10-09
+- Limpeza documental: removidos `design-b-qa.md` e `features.md` (histórico no Git, último commit `9c95420`); índices reescritos; referências corrigidas. Regras que sobreviveram ficam em `docs/portal/GUARDRAILS.md` e nos guardrails do tema.
 
 - Revisão documental: registro único de dívidas (`docs/operations/DEBT-REGISTER.md`), roadmap reescrito em saneamento antes de features, sem plano de 1.0.
 - Versões obsoletas corrigidas em `README.md`, `docs/README.md` e `docs/features.md`. Regra de mudança apenas documental em `docs/versioning.md`.
