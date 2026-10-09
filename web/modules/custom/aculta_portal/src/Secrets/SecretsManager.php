@@ -43,6 +43,12 @@ final class SecretsManager {
 
   /** Ambiente do contrato (production|test). Padrão: production. */
   public function environment(): string {
+    // O ambiente definido pelo deployer (arquivo neutro) tem precedência sobre a configuração local.
+    $file = dirname($this->appRoot) . '/var/deployer/environment.json';
+    $data = is_file($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
+    if (is_array($data) && ($data['schema'] ?? NULL) === 1 && in_array($data['environment'] ?? NULL, ['production', 'test'], TRUE)) {
+      return (string) $data['environment'];
+    }
     $env = (string) $this->settings->get('aculta_secrets_environment', 'production');
     return in_array($env, ['production', 'test'], TRUE) ? $env : 'production';
   }

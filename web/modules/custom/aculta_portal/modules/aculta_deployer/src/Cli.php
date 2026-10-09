@@ -33,6 +33,7 @@ final class Cli {
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
       'report' => $this->report($options),
+      'environment' => $this->environment((string) ($argv[2] ?? ''), $options),
       default => $this->help(),
     };
   }
@@ -102,7 +103,7 @@ final class Cli {
    * @param array<string, string|bool> $o
    */
   private function robots(array $o): int {
-    $env = is_string($o['env'] ?? null) ? $o['env'] : 'production';
+    $env = $this->activeEnvironment($o);
     $policy = $this->json($this->toolRoot . '/config/deploy.json')['robots_policy'][$env] ?? null;
     if ($policy === null) {
       $this->err("robots: ambiente desconhecido: $env");
@@ -168,7 +169,7 @@ final class Cli {
    * @param array<string, string|bool> $o
    */
   private function sitemap(array $o): int {
-    $env = is_string($o['env'] ?? null) ? $o['env'] : 'production';
+    $env = $this->activeEnvironment($o);
     $cfg = $this->json($this->toolRoot . '/config/deploy.json');
     $policy = $cfg['sitemap'][$env] ?? null;
     if ($policy === null) {
@@ -226,6 +227,85 @@ final class Cli {
   }
 
   /**
+   * Ambiente ativo, lido do arquivo neutro var/deployer/environment.json. Retorna NULL se ainda não foi definido.
+   *
+   * @return array{environment: string, site: string, changed_at: string}|null
+   */
+  private function currentEnvironment(): ?array {
+    $file = $this->repoRoot . '/var/deployer/environment.json';
+    $data = is_file($file) ? json_decode((string) file_get_contents($file), true) : null;
+    return is_array($data) && ($data['schema'] ?? null) === 1 && isset($data['environment'], $data['site'], $data['changed_at'])
+      ? ['environment' => (string) $data['environment'], 'site' => (string) $data['site'], 'changed_at' => (string) $data['changed_at']]
+      : null;
+  }
+
+  /**
+   * Ambiente de trabalho de uma função: --env explícito; senão o ambiente definido em
+   * var/deployer/environment.json; senão "test" (estado seguro). Valor inválido vira "test"
+   * e a função informa o ambiente usado.
+   *
+   * @param array<string, string|bool> $o
+   */
+  private function activeEnvironment(array $o): string {
+    $sites = $this->json($this->toolRoot . '/config/deploy.json')['environments'] ?? [];
+    if (is_string($o['env'] ?? null) && isset($sites[$o['env']])) {
+      return (string) $o['env'];
+    }
+    $current = $this->currentEnvironment();
+    return $current !== null && isset($sites[$current['environment']]) ? $current['environment'] : 'test';
+  }
+
+  /**
+   * Ambiente do site: "environment" mostra o atual; "environment set --to=production|test" grava o
+   * ambiente e o endereço do site em var/deployer/environment.json. O Portal lê esse arquivo para
+   * escolher o conjunto de chaves (o deployer determina qual conjunto usar).
+   *
+   * @param array<string, string|bool> $o
+   */
+  private function environment(string $sub, array $o): int {
+    if ($sub === '' || $sub === 'show') {
+      $current = $this->currentEnvironment();
+      $this->say($current === null
+        ? 'environment: não definido (o Portal usa a configuração local)'
+        : sprintf('environment: %s — %s (definido em %s)', $current['environment'], $current['site'], $current['changed_at']));
+      return 0;
+    }
+    if ($sub !== 'set') {
+      $this->err('uso: environment [show] | environment set --to=production|test');
+      return 1;
+    }
+    $to = is_string($o['to'] ?? null) ? $o['to'] : '';
+    $sites = $this->json($this->toolRoot . '/config/deploy.json')['environments'] ?? [];
+    if (!isset($sites[$to])) {
+      $this->err('environment: ambiente desconhecido: ' . $to);
+      return 1;
+    }
+    $dir = $this->repoRoot . '/var/deployer';
+    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+      $this->err('environment: não foi possível criar var/deployer');
+      return 1;
+    }
+    $data = ['schema' => 1, 'environment' => $to, 'site' => (string) $sites[$to]['site'], 'changed_at' => gmdate('c')];
+    $target = $dir . '/environment.json';
+    $temp = $dir . '/.environment-' . bin2hex(random_bytes(6)) . '.tmp';
+    $fh = @fopen($temp, 'xb');
+    if ($fh === false) {
+      $this->err('environment: não foi possível gravar');
+      return 1;
+    }
+    chmod($temp, 0640);
+    fwrite($fh, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    fclose($fh);
+    if (!rename($temp, $target)) {
+      @unlink($temp);
+      $this->err('environment: falha ao publicar');
+      return 1;
+    }
+    $this->say("environment: definido como {$to} — {$data['site']}");
+    return 0;
+  }
+
+  /**
    * Relatório neutro para o painel do ACULTA Portal (var/deployer/status.json). Contém só nomes,
    * contagens e estados: nunca valores de credenciais. Não faz rede; sitemap e robots são comandos
    * próprios e não entram no relatório.
@@ -270,6 +350,7 @@ final class Cli {
         ], $open),
       ],
       'secrets' => ['file_present' => $values !== null, 'environments' => $environments],
+      'environment' => $this->currentEnvironment(),
       'not_included' => ['network' => 'execute aculta-deployer sitemap e robots', 'values' => 'nunca incluídos'],
     ];
     $dir = dirname($out);
@@ -585,6 +666,7 @@ Uso:
   aculta-deployer register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]
   aculta-deployer build --out=DIR [--allow-open-blocking]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
+  aculta-deployer environment [show] | environment set --to=production|test  define o ambiente do site (e o endereço) lido pelo Portal
   aculta-deployer report [--out=PATH] [--file=PATH]  relatório neutro para o painel do Portal (sem valores)
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version

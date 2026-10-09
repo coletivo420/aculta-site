@@ -67,5 +67,13 @@
       "index_base": "https://aculta.toca.net.br",
       "note": "Índice no servidor de testes. Os filhos continuam com URLs canônicas de produção (noindex no servidor de testes)."
     }
+  },
+  "environments": {
+    "production": {
+      "site": "https://aculta.org"
+    },
+    "test": {
+      "site": "https://aculta.toca.net.br"
+    }
   }
 }

@@ -77,6 +77,17 @@ final class SecretsManagerTest extends UnitTestCase {
     $this->assertFileDoesNotExist($this->store());
   }
 
+  public function testEnvironmentFromDeployerOverridesLocalSetting(): void {
+    $this->assertSame('test', $this->manager()->environment());
+    mkdir($this->base . '/var/deployer', 0700, TRUE);
+    file_put_contents($this->base . '/var/deployer/environment.json', json_encode(['schema' => 1, 'environment' => 'production', 'site' => 'https://aculta.org', 'changed_at' => 'x']));
+    $this->assertSame('production', $this->manager()->environment());
+    file_put_contents($this->base . '/var/deployer/environment.json', 'não é json');
+    $this->assertSame('test', $this->manager()->environment());
+    @unlink($this->base . '/var/deployer/environment.json');
+    @rmdir($this->base . '/var/deployer');
+  }
+
   private function manager(string $storage = 'file'): SecretsManager {
     $keys = $this->createMock(KeyRepositoryInterface::class);
     $logger = $this->createMock(LoggerChannelInterface::class);

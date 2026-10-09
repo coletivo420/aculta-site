@@ -33,7 +33,19 @@ final class DeployerStatusController extends ControllerBase {
       ];
       return $build;
     }
-    $build['intro'] = ['#plain_text' => $this->t('Relatório gerado em @at por @tool. Mostra nomes e estados; valores de credenciais nunca são exibidos.', ['@at' => (string) ($data['generated_at'] ?? '—'), '@tool' => (string) ($data['tool'] ?? '—')])];
+    $env = $data['environment'] ?? NULL;
+    $build['identity'] = [
+      '#type' => 'table',
+      '#header' => [$this->t('Ambiente'), $this->t('Endereço do site'), $this->t('Relatório gerado em'), $this->t('Ferramenta')],
+      '#rows' => [[
+        ['data' => ['#plain_text' => is_array($env) ? (string) ($env['environment'] ?? '—') : $this->t('não definido')]],
+        ['data' => ['#plain_text' => is_array($env) ? (string) ($env['site'] ?? '—') : '—']],
+        ['data' => ['#plain_text' => (string) ($data['generated_at'] ?? '—')]],
+        ['data' => ['#plain_text' => (string) ($data['tool'] ?? '—')]],
+      ]],
+      '#attributes' => ['class' => ['aculta-portal-requirements']],
+    ];
+    $build['intro'] = ['#plain_text' => $this->t('Mostra nomes e estados; valores de credenciais nunca são exibidos.')];
     $build['legend'] = $this->legend();
 
     $boundaryOk = ($data['boundaries']['ok'] ?? FALSE) === TRUE;
