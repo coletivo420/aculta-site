@@ -136,3 +136,9 @@ Pontos reconhecidos pelo revisor e não tratados por decisão de escopo:
 - **Auditoria P10-R:** concluída para o que é verificável no Homelab.
 - **Homologação total:** **não declarada**. Bloqueadores: importação e teste de e-mail em produção; PHP 8.5; decisão sobre enumeração no cadastro; rotação da credencial exposta.
 - **Recomendação:** aprovar esta PR de encerramento para revisão. O merge não deve ser feito antes de as decisões 1–4 estarem registradas pelo responsável.
+
+## 14. Decisões registradas antes do merge
+- **E-mail em produção:** não pronto; será validado após o deploy. O cadastro público aberto depende dessa validação: enquanto não houver envio confirmado, novas contas não recebem confirmação.
+- **Enumeração no cadastro:** mantida a mensagem do Core ("The email address … is already taken."). Risco aceito pelo responsável; CAPTCHA permanece como mitigação contra automação.
+- **Credencial root exposta:** rotacionada pelo responsável (informado em 2026-10-09).
+- **PHP 8.5:** dispensado nesta entrega; permanece como pendência de homologação.
