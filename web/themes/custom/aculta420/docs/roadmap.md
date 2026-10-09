@@ -109,7 +109,7 @@ deferido até existir consumidor comprovado.
 
 ## 0.3.0 — Card System v1
 
-Status: **implementada em PR; aguardando merge.** Ver `docs/components.md`.
+Status: **concluída em 2026-10-09.** Tag `aculta420-theme-v0.3.0` após merge na `main`. Ver `docs/components.md`.
 
 - project-card: SDC experimental extraído do teaser, com DOM idêntico ao anterior; medido sem mídia, com título longo, em escuro, mobile e reduced motion;
 - course-card: apresentação do `lms:course_card` (LMS dono de dados e marcação) pela skin do tema; sem SDC paralelo;
