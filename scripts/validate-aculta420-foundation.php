@@ -219,6 +219,7 @@ foreach (glob($root . '/config/sync/block.block.aculta_*.yml') ?: [] as $path) {
 $expectedTemplates = [
   'block--block-content--type--aculta-institution.html.twig',
   'block--system-branding-block.html.twig',
+  'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
   'node--project--teaser.html.twig',
