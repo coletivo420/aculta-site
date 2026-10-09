@@ -46,6 +46,10 @@ final class FormHooks {
       $form['#validate'][] = 'aculta_portal.form_callbacks:validateRegistrationPassword';
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:storeRegistrationPassword';
     }
+    // Cadastro: a conta fica ativa e o e-mail só é confirmado pelo link enviado (política de confirmação).
+    if ($formId === 'user_register_form') {
+      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:requestRegistrationConfirmation';
+    }
 
     if ($formId === 'user_login_form') {
       // Core reports blocked or unactivated accounts before the password check,

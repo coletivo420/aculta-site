@@ -84,6 +84,8 @@ final class PortalHooks {
     private readonly AuthIntegrationManager $authIntegrationManager,
     #[Autowire(service: 'aculta_portal.account_shell_builder')]
     private readonly AccountShellBuilder $accountShellBuilder,
+    #[Autowire(service: 'aculta_portal.email_confirmation_notice')]
+    private readonly \Drupal\aculta_portal\Account\EmailConfirmationNotice $emailConfirmationNotice,
     #[Autowire(service: 'aculta_portal.breadcrumb_builder')]
     private readonly AcultaBreadcrumbBuilder $breadcrumbBuilder,
     #[Autowire(service: 'aculta_portal.presentation.domain')]
@@ -126,6 +128,15 @@ final class PortalHooks {
       && isset($variables['page']['header'])
       && is_array($variables['page']['header'])) {
       $this->removeHeaderBlockByPlugin($variables['page']['header'], 'page_title_block');
+    }
+
+    // Aviso de e-mail não confirmado em "Minha conta" (não descartável): acima do conteúdo da página.
+    if (($notice = $this->emailConfirmationNotice->build()) !== NULL && isset($variables['page']['content'])) {
+      $variables['page']['content'] = [
+        '#type' => 'container',
+        'aculta_email_notice' => $notice,
+        'body' => $variables['page']['content'],
+      ];
     }
   }
 

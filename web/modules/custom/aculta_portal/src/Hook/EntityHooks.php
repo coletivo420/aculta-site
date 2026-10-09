@@ -27,6 +27,8 @@ final class EntityHooks {
     private readonly CurrentRouteMatch $routeMatch,
     #[Autowire(service: 'request_stack')]
     private readonly RequestStack $requestStack,
+    #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
+    private readonly \Drupal\aculta_portal\Account\EmailConfirmationPolicy $emailPolicy,
   ) {}
 
   /**
@@ -38,6 +40,14 @@ final class EntityHooks {
     $operation,
     AccountInterface $account,
   ): AccessResultInterface {
+    // Política de confirmação de e-mail: escrita na wiki e em comentários exige e-mail confirmado.
+    if (in_array($operation, ['update', 'delete'], TRUE) && !$account->isAnonymous() && !$this->emailPolicy->isConfirmed($account)
+      && (($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'wiki_entry')
+        || ($entity->getEntityTypeId() === 'taxonomy_term' && $entity->bundle() === 'wiki_category')
+        || $entity->getEntityTypeId() === 'comment')) {
+      return AccessResult::forbidden('E-mail não confirmado.')->addCacheContexts(['user'])->cachePerUser();
+    }
+
     $wikiEntity = ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'wiki_entry')
       || ($entity->getEntityTypeId() === 'taxonomy_term' && $entity->bundle() === 'wiki_category');
     if ($wikiEntity && $this->domainPurposeManager->getCurrentPurpose() !== 'wiki') {

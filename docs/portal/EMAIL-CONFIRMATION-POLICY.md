@@ -39,6 +39,9 @@ pelo Portal (flag por usuário, por exemplo em `user.data` do módulo `aculta_po
 
 Esta política não restringe leitura pública da wiki nem páginas institucionais.
 
+**Troca de e-mail não é bloqueio.** Quem não confirmou o e-mail pode solicitar a troca de endereço em "Segurança"
+(e reenviar a confirmação). A regra de escrita bloqueia apenas wiki, comentários, cursos, loja e apoio.
+
 ## 6. Decisões do responsável (pendentes)
 
 1. **Contas existentes:** consideradas confirmadas (recomendado) ou precisam confirmar agora?

@@ -30,7 +30,7 @@ final class EntityAccessCrossUserTest extends UnitTestCase {
     // DomainPurposeManager is final and is not reached for user entities; it is
     // built without its constructor so the Domain branch stays untouched.
     $domain = (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor();
-    return new EntityHooks($domain, $routeMatch, new RequestStack());
+    return new EntityHooks($domain, $routeMatch, new RequestStack(), new \Drupal\aculta_portal\Account\EmailConfirmationPolicy($this->createMock(\Drupal\user\UserDataInterface::class)));
   }
 
   private function userEntity(int $uid): EntityInterface {
