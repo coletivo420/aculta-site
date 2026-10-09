@@ -102,7 +102,6 @@ Comece por [docs/README.md](docs/README.md).
 Documentos normativos:
 
 - [Arquitetura](docs/architecture.md)
-- [Features atuais](docs/features.md)
 - [Design system](docs/design-system.md)
 - [Shell multidomínio](docs/shell.md)
 - [Componentes](docs/components.md)

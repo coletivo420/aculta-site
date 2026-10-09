@@ -1,109 +1,40 @@
-# Mapa da documentação
+# Documentação do ACULTA
 
-Esta é a entrada canônica da documentação técnica da plataforma.
+Documentação normativa do projeto. Só guardrails e referências vigentes: regras que bloqueiam
+regressão, políticas e procedimentos de operação. Histórico de fases, relatórios e planos
+concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION.md)).
 
-A organização prioriza **estado atual, contratos e runbooks duráveis**.
-Snapshots de PR/fase, SHAs e logs pertencem ao Git/GitHub.
+## Começar
 
-## Por onde começar
+- [AGENTS.md](../AGENTS.md) — instruções para agentes e humanos (raiz do repositório).
+- [DOCUMENTATION.md](DOCUMENTATION.md) — política desta documentação: o que é guardrail e o que sai.
+- [operations/DEBT-REGISTER.md](operations/DEBT-REGISTER.md) — dívidas e pendências, com evidência.
 
-| Preciso entender... | Referência |
-| --- | --- |
-| arquitetura geral | [architecture/overview.md](architecture/overview.md) |
-| ownership de dados | [architecture/data-ownership.md](architecture/data-ownership.md) |
-| multidomínio | [architecture/multidomain.md](architecture/multidomain.md) |
-| ambientes | [architecture/environments.md](architecture/environments.md) |
-| regras que não podem regredir | [ANTI-REGRESSION.md](ANTI-REGRESSION.md) |
-| política de documentação | [DOCUMENTATION.md](DOCUMENTATION.md) |
-| módulos Drupal | [modules/README.md](modules/README.md) |
-| integrações | [integrations/README.md](integrations/README.md) |
-| ACULTA Portal | [portal/README.md](portal/README.md) |
-| padrão Drupal 11+ do Portal | [portal/DRUPAL-11-STANDARDS.md](portal/DRUPAL-11-STANDARDS.md) |
-| roadmap do Portal | [portal/ROADMAP.md](portal/ROADMAP.md) |
-| operação/testes/releases | [operations/README.md](operations/README.md) |
-| deployment | [operations/DEPLOYMENT.md](operations/DEPLOYMENT.md) |
-| scripts institucionais | [../scripts/institution/README.md](../scripts/institution/README.md) |
-| decisões arquiteturais | [decisions/](decisions/) |
-| ACULTA420 | [../web/themes/custom/aculta420/README.md](../web/themes/custom/aculta420/README.md) |
-| roadmap ACULTA420 | [../web/themes/custom/aculta420/docs/roadmap.md](../web/themes/custom/aculta420/docs/roadmap.md) |
-| shell multidomínio ACULTA420 | [../web/themes/custom/aculta420/docs/shell.md](../web/themes/custom/aculta420/docs/shell.md) |
-| fronteira Domain → Portal → ACULTA420 | [portal/DOMAIN-PRESENTATION-CONTRACT.md](portal/DOMAIN-PRESENTATION-CONTRACT.md) |
-| política do domínio administrativo central | [portal/ADMIN-DOMAIN-POLICY.md](portal/ADMIN-DOMAIN-POLICY.md) |
-| requests/redirects cross-domain | [portal/CROSS-DOMAIN-REQUEST-POLICY.md](portal/CROSS-DOMAIN-REQUEST-POLICY.md) |
-| checkout/pagamentos centralizados em MAIN | [portal/PAYMENT-DOMAIN-POLICY.md](portal/PAYMENT-DOMAIN-POLICY.md) |
-| Homelab | [../scripts/homelab/README.md](../scripts/homelab/README.md) |
-| Estados SQLite | [../estados/README.md](../estados/README.md) |
+## Arquitetura e decisões
 
-## Camadas
+- [architecture/overview.md](architecture/overview.md) — camadas Core → Portal → tema → Bootstrap.
+- [architecture/multidomain.md](architecture/multidomain.md) — purposes, hosts e cookie compartilhado.
+- [architecture/environments.md](architecture/environments.md) — Homelab e produção; Apache como baseline.
+- [architecture/data-ownership.md](architecture/data-ownership.md) — quem é dono de cada dado.
+- [decisions/](decisions/) — ADRs vigentes.
 
-```text
-architecture/   modelo estrutural e ownership
-decisions/      ADRs
-modules/        inventário Core/contrib
-integrations/   integrações externas/sensíveis
-portal/         contratos e produto aculta_portal
-operations/     testes, hardening e releases
-ACULTA420/      apresentação e Component Design System
-```
+## Módulos e integrações
 
-## Conta e autenticação
+- [modules/README.md](modules/README.md) — referência canônica dos módulos e das regras anti-regressão.
+- [ANTI-REGRESSION.md](ANTI-REGRESSION.md) — camadas de anti-regressão.
+- [integrations/README.md](integrations/README.md) — integrações externas: autenticação, CAPTCHA e Google.
 
-- [Módulos de autenticação](modules/AUTHENTICATION.md)
-- [Comportamento de autenticação](integrations/AUTHENTICATION.md)
-- [Google OAuth](integrations/GOOGLE.md)
-- [CAPTCHA / Turnstile](integrations/CAPTCHA.md)
-- [Conta, AJAX e Views](modules/ACCOUNT-UI.md)
-- [Apresentação da Conta](portal/ACCOUNT-PRESENTATION-MODEL.md)
-- [Matriz SDC/AJAX](portal/ACCOUNT-SDC-AJAX.md)
+## Portal
 
-## Domain e URLs
+- [portal/README.md](portal/README.md) — índice do Portal.
+- [portal/DRUPAL-11-STANDARDS.md](portal/DRUPAL-11-STANDARDS.md) — padrão obrigatório Drupal 11+ para código.
+- [portal/GUARDRAILS.md](portal/GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki e Conta.
+- [portal/ROADMAP.md](portal/ROADMAP.md) — saneamento e, depois, features de produto.
 
-- [Multidomínio](architecture/multidomain.md)
-- [Domain/SEO](modules/DOMAIN-SEO.md)
-- [Slugs públicos](portal/FRIENDLY-PORTUGUESE-SLUGS.md)
+## Tema
 
-## Conteúdo e produto
-
-- [Wiki420](portal/WIKI.md)
-- [Revista](portal/MAGAZINE.md)
-- [Loja](portal/SHOP.md)
-- [Fórum](portal/FORUM.md)
-- [Editorial e mídia](modules/EDITORIAL-MEDIA.md)
-- [LMS / Group](modules/LMS-GROUP.md)
-- [Commerce](modules/COMMERCE.md)
-
-## UI e tema
-
-- [Integração Portal ↔ ACULTA420](portal/COMPONENT-DESIGN-SYSTEM.md)
-- [Tema ACULTA420](../web/themes/custom/aculta420/README.md)
-- [Arquitetura ACULTA420](../web/themes/custom/aculta420/docs/architecture.md)
-- [Shell multidomínio ACULTA420](../web/themes/custom/aculta420/docs/shell.md)
-- [Componentes ACULTA420](../web/themes/custom/aculta420/docs/components.md)
-- [Desenvolvimento ACULTA420](../web/themes/custom/aculta420/docs/development.md)
+- [../web/themes/custom/aculta420/docs/README.md](../web/themes/custom/aculta420/docs/README.md) — índice do ACULTA420.
 
 ## Operação
 
-- [Testes](operations/TESTING.md)
-- [Hardening](operations/HARDENING.md)
-- [Releases](operations/RELEASES.md)
-- [Deployment](operations/DEPLOYMENT.md)
-- [Homelab](../scripts/homelab/README.md)
-
-## Decisões
-
-- [ADR-001 — Tema versus Portal](decisions/ADR-001-theme-vs-portal.md)
-- [ADR-002 — Domain purposes](decisions/ADR-002-domain-purposes.md)
-- [ADR-003 — Sessão compartilhada](decisions/ADR-003-shared-session.md)
-- [ADR-004 — SQLite](decisions/ADR-004-sqlite-development.md)
-- [ADR-005 — LMS como fonte de verdade](decisions/ADR-005-lms-integration.md)
-- [ADR-006 — Apache](decisions/ADR-006-web-servers.md)
-- [ADR-007 — ACULTA420 Component Design System](decisions/ADR-007-bootstrap-component-design-system.md)
-- [ADR-008 — ACULTA420 como nova fundação](decisions/ADR-008-aculta420-theme-foundation.md)
-
-## Regra documental
-
-Mudanças de arquitetura, módulo, integração, tema ou comportamento devem atualizar
-a documentação canônica correspondente na mesma alteração.
-
-Não criar novo snapshot de fase como fonte de verdade. Ver
-[DOCUMENTATION.md](DOCUMENTATION.md).
+- [operations/README.md](operations/README.md) — testes, releases, segredos, deploy e dados de teste.

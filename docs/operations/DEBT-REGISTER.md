@@ -6,6 +6,18 @@ Este é o registro único de dívidas históricas e pendências de desenvolvimen
 (`docs/portal/ROADMAP.md` e `web/themes/custom/aculta420/docs/roadmap.md`) planejam as
 fases de saneamento a partir daqui. Não há item de lançamento de versão 1.0 neste registro.
 
+## Documentos removidos (limpeza de 2026-10-09)
+
+Evidências citadas abaixo como "P10-R", "RELEASE-P10", "HANDOFF", "HARDENING-P9",
+"DEPRECATION-MATRIX-P8" e os documentos de produto (Fórum, Revista, Loja, Wiki, Conta) foram
+removidos do working tree. O último commit em que existem é `9c95420`. Para ler um deles:
+
+```sh
+git show 9c95420:docs/portal/P10-R-FINAL-AUDIT.md
+```
+
+As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
+
 ## Como ler
 
 - **Evidência:** comando, arquivo ou gate que comprova o estado. Item sem evidência não entra.
