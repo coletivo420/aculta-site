@@ -115,6 +115,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
     }
+    if ($route = $collection->get('aculta_portal.search')) {
+      $route->setOption('_aculta_domain_purpose', 'main');
+    }
     if ($route = $collection->get('aculta_portal.support_form')) {
       $route->setOption('_aculta_domain_purpose', 'support');
     }

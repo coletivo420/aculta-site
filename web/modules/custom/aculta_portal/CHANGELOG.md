@@ -1,3 +1,15 @@
+## 0.2.0-dev.19 — F3: busca pública pelo índice do Search API no banco — 2026-10-09
+
+RUNTIME STATUS: validada no Runtime oficial (2026-10-09), sem teste humano: `/busca` com resultados, aviso para termo curto e aviso sem resultado; `/busca/sugestoes` com sugestões por prefixo e sem acento; conteúdo não publicado fora dos resultados e das sugestões.
+
+- Dependência nova: `drupal/search_api` ^1.40 (com o submódulo `search_api_db`). Justificativa: decisão do responsável de usar o banco; o Search API dá o índice e a consulta. O `search_api_autocomplete` foi avaliado e descartado: o autocomplete é do Core (`#autocomplete_route_name`), porque o `search_api_autocomplete` atua em formulários de Views, e a busca pública não usa Views.
+- Servidor `aculta_database` (search_api_db, correspondência por prefixo, mínimo de 3 caracteres) e índice `aculta_conteudo` (artigo, projeto, página, atividade e documento; título, corpo, tipo, identificador, status; transliteração para buscar sem acento).
+- Página `/busca` (domínio principal): resultados só para conteúdo que a pessoa pode ver (checagem de acesso por nó); avisos por Messenger para termo curto e para busca sem resultado.
+- Sugestões `/busca/sugestoes` para o campo de busca (autocomplete do Core), com o mesmo índice e o mesmo controle de acesso.
+- `web/robots.txt` protegido do scaffold do Composer (`[web-root]/robots.txt: false`): antes, qualquer `composer install` apagava a linha de Sitemap do projeto. Verificado.
+- Verificado em cópia isolada: consulta com resultado (7 itens para "projeto"), aviso para termo curto, aviso sem resultado, sugestões por prefixo e sem acento ("transparencia" → "Transparência").
+- Pendências: `content_access` no índice (hoje o controle de acesso é feito por nó na página); testes de Kernel da busca; QA visual.
+
 # Changelog — ACULTA Portal
 
 ## Documentação — F1 validada no Runtime oficial — 2026-10-09
