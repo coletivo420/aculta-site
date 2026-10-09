@@ -184,13 +184,13 @@ uma fase posterior.
 - 0.2-A — Semantic Foundations;
 - 0.2-B — Domain Presentation Contract;
 - 0.2-C — Institution Bar;
-- 0.2-D — Domain Header;
+- 0.2-D — Domain Header (implementada em branch empilhada);
 - 0.2-E — Mobile/Sticky Shell;
 - 0.2-F — Design B QA.
 
-Estado atual: 0.2-A e 0.2-B concluídas na `main`; 0.2-C (Institution Bar)
-implementada na branch de fase, com visual QA DEFERRED para 0.2-F. Domain Header
-(0.2-D) e sticky/mobile (0.2-E) ainda não existem.
+Estado atual: 0.2-A e 0.2-B concluídas na `main`; 0.2-C (Institution Bar) e
+0.2-D (Domain Header) implementadas em branches empilhadas, com visual QA DEFERRED
+para 0.2-F. Sticky/mobile (0.2-E) ainda não existe.
 
 ### Institution Bar (0.2-C)
 
@@ -201,6 +201,16 @@ div.aculta-institution-bar            (faixa institucional, não é landmark)
     div.aculta-utility                menu de conta, quando existir
 header.aculta-header                  Domain Header de purpose (0.2-D)
 ```
+
+### Domain Header (0.2-D)
+
+- o `<header class="aculta-header">` é o único banner da página e usa
+  `--aculta-shell-domain-bg` / `--aculta-shell-domain-text`, com linha inferior
+  `--aculta-border-accent`;
+- a navegação herda a superfície do header, sem fundo verde próprio; o item ativo
+  mantém `--aculta-interactive-active-*`;
+- o template não ganhou ramificação por purpose: a variação continua vindo de dados
+  preparados pelo Portal.
 
 - o `<div>` evita um segundo landmark `banner`; o `<header>` do purpose continua
   sendo o único banner da página;
