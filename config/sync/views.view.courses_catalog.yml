@@ -77,11 +77,11 @@ display:
           plugin_id: boolean
           value: '1'
       style:
-        type: grid_responsive
+        type: default
         options:
-          columns: 3
-          cell_min_width: 250
-          grid_gutter: 20
+          row_class: ''
+          default_row_class: true
+          uses_fields: false
       row:
         type: course_card_row
         options:
