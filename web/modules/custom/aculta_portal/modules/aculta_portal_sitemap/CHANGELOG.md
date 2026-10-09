@@ -4,7 +4,7 @@
 
 - `web/robots.txt` anuncia `Sitemap: https://aculta.org/sitemap.xml` (índice central). Não há Disallow de purpose públicos.
 - Verificação da descoberta no `aculta_deployer` 0.1.3: `robots --env=production` (diretiva Sitemap e ausência de `Disallow: /`) e `sitemap --env=production|test`.
-- Pendências: publicar o robots.txt em produção; cross-host (apoio, wiki420, coletivo420, cursos) só responde após DEP-0001/0002/0003; verificação no Search Console fora do código.
+- Pendências: deploy no RC (todos os módulos, temas e subtemas), não antes; cross-host (apoio, wiki420, coletivo420, cursos) só responde após DEP-0001/0002/0003; verificação no Search Console fora do código.
 
 ## 0.1.0-G — índice central e promoção de /sitemap.xml — 2026-10-09
 

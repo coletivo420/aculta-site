@@ -102,7 +102,7 @@ Gate de segurança ao fim da fase 5: ver seção "Gate S5".
   runtime (`drush config:set`, não versionado). A produção usa `https://aculta.org` em `config/sync`.
 
 Pendências desta fase (não fechadas):
-1. Publicar em produção o `robots.txt` com a diretiva `Sitemap:` e confirmar com `robots --env=production`.
+1. Deploy no RC (todos os módulos, temas e subtemas). Só então: `robots --env=production` e `sitemap --env=production` como verificação pós-deploy. Até lá, o deploy não é executado.
 2. Cross-host: `apoio.aculta.org`, `wiki420`, `coletivo420` e `cursos` precisam responder em produção
    (DEP-0001, DEP-0002 e DEP-0003 no registro). Verificação de propriedade no Search Console é
    manual e fica fora do deployer (ADR-009).
