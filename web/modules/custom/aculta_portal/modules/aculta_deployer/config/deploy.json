@@ -14,5 +14,9 @@
       "comment": "Host de teste (*.aculta.toca.net.br) para produção (*.aculta.org). Preserva o prefixo do subdomínio."
     }
   ],
-  "blocking_kinds": ["canonical", "sitemap"]
+  "blocking_kinds": [
+    "canonical",
+    "sitemap"
+  ],
+  "max_bytes": 2097152
 }

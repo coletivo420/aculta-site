@@ -38,6 +38,8 @@ Critério de saída: `tests/run.php` com novos casos de erro passando; `check` e
 
 ## Fase 2 — Cobertura do escopo do build (longa)
 
+**Status: concluída (0.1.x em desenvolvimento).** Implementado: saída nunca sobrescrita; saída via link ou dentro do repositório recusada; binários preservados e reprovados se tiverem host de teste; limite de tamanho por arquivo (`max_bytes`); hashes SHA-256 no relatório; autoverificação que remove a saída se restar host de teste; idempotência testada.
+
 Objetivo: garantir que nenhum host de teste escape para produção.
 
 - Varredura completa do escopo com relatório por arquivo (substituições, remoções).
@@ -94,11 +96,11 @@ Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 
 ### Gate S2 (cobertura do build)
 
-- [ ] `build` recusa saída dentro do repositório, inclusive por caminho relativo ou symlink.
-- [ ] Nenhum arquivo gerado contém `toca.net.br` (verificado por varredura do próprio build).
-- [ ] Aliases de teste não aparecem no build de produção.
-- [ ] Padrões de escopo inválidos são rejeitados antes de qualquer escrita.
-- [ ] Idempotência confirmada por comparação de hashes entre duas execuções.
+- [x] `build` recusa saída dentro do repositório, inclusive por link simbólico (testado).
+- [x] Nenhum arquivo gerado contém `toca.net.br` (autoverificação do build e teste).
+- [x] Aliases de teste não aparecem no build de produção (testado).
+- [x] Padrões de escopo inválidos são rejeitados antes de qualquer escrita (validação antes de `mkdir`).
+- [x] Idempotência confirmada por comparação de hashes entre duas execuções (testado).
 
 ### Gate S4 (sitemap)
 

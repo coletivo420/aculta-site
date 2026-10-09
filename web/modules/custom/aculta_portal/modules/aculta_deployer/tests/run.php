@@ -97,5 +97,46 @@ $assert((new Registry($corrupt))->entries()[0]['id'] === 'DEP-0001', 'registro g
 array_map('unlink', glob($tmpDir . '/*') ?: []);
 @rmdir($tmpDir);
 
+// Fase 2: cobertura e segurança do build (executa a CLI real em diretórios temporários).
+$base = sys_get_temp_dir() . '/aculta-deployer-p2-' . getmypid();
+@mkdir($base);
+$cli = new AcultaDeployer\Cli($toolRoot);
+$quiet = static function (callable $fn): int {
+  ob_start();
+  try {
+    return $fn();
+  } finally {
+    ob_end_clean();
+  }
+};
+$rc1 = $quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/a', '--allow-open-blocking']));
+$rc2 = $quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/b', '--allow-open-blocking']));
+$assert($rc1 === 0 && $rc2 === 0, 'build de ensaio gera saída em dois diretórios novos');
+$ra = json_decode((string) file_get_contents($base . '/a/deploy-report.json'), true);
+$rb = json_decode((string) file_get_contents($base . '/b/deploy-report.json'), true);
+$assert($ra['files'] === $rb['files'] && $ra['dropped'] === $rb['dropped'], 'build é idempotente: hashes e remoções iguais');
+$leak = false;
+foreach ($ra['files'] as $f) {
+  if (str_contains((string) file_get_contents($base . '/a/' . $f['path']), 'toca.net.br')) {
+    $leak = true;
+  }
+}
+$assert(!$leak, 'nenhum arquivo gerado contém host de teste');
+$assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/a', '--allow-open-blocking'])) === 1, 'build não sobrescreve saída existente');
+$assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . dirname($toolRoot) . '/dentro-do-repo', '--allow-open-blocking'])) === 1, 'build recusa saída dentro do repositório');
+@symlink($repo . '/config', $base . '/link-para-repo');
+$assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/link-para-repo/saida', '--allow-open-blocking'])) === 1, 'build recusa saída por link simbólico para o repositório');
+$assert($quiet(fn() => $cli->run(['x', 'build', '--out=' . $base . '/c'])) === 2, 'build com entradas bloqueantes exige --allow-open-blocking');
+// Limpeza.
+foreach (['a', 'b'] as $d) {
+  $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base . '/' . $d, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+  foreach ($it as $f) {
+    $f->isDir() ? rmdir($f->getPathname()) : unlink($f->getPathname());
+  }
+  rmdir($base . '/' . $d);
+}
+@unlink($base . '/link-para-repo');
+@rmdir($base);
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

@@ -126,8 +126,20 @@ final class Cli {
       return 1;
     }
     $outAbs = $this->absolute($out);
-    if (str_starts_with($outAbs . '/', $this->repoRoot . '/')) {
-      $this->err('build: o diretório de saída não pode ficar dentro do repositório');
+    // Resolve symlinks do ancestral existente antes de comparar com o repositório.
+    $probe = $outAbs;
+    while (!file_exists($probe) && dirname($probe) !== $probe) {
+      $probe = dirname($probe);
+    }
+    $real = realpath($probe) ?: $probe;
+    $repoReal = realpath($this->repoRoot) ?: $this->repoRoot;
+    if ($real === $repoReal || str_starts_with($real . '/', $repoReal . '/')) {
+      $this->err('build: o diretório de saída não pode ficar dentro do repositório (inclusive via link)');
+      return 1;
+    }
+    // Nunca sobrescreve: cada build vai para um diretório novo, preservando o anterior.
+    if (file_exists($outAbs) && (!is_dir($outAbs) || count(scandir($outAbs)) > 2)) {
+      $this->err('build: o diretório de saída já existe e não está vazio; use um diretório novo (builds anteriores são preservados)');
       return 1;
     }
     $blocking = $this->registry()->openBlocking();
@@ -143,25 +155,71 @@ final class Cli {
       $this->err('build: configuração de escopo inválida; rode check para detalhes');
       return 1;
     }
-    $report = ['tool' => 'aculta-deployer ' . self::VERSION, 'target' => 'production', 'files' => [], 'dropped' => [], 'replacements' => 0];
-    foreach ($this->scopeFiles() as $rel) {
-      if ($transform->isDropped($rel)) {
-        $report['dropped'][] = $rel;
-        continue;
+    $maxBytes = (int) ($this->json($this->toolRoot . '/config/deploy.json')['max_bytes'] ?? 2097152);
+    $report = ['tool' => 'aculta-deployer ' . self::VERSION, 'target' => 'production', 'files' => [], 'dropped' => [], 'skipped_binary' => [], 'replacements' => 0];
+    if (!is_dir($outAbs) && !mkdir($outAbs, 0775, true)) {
+      $this->err('build: não foi possível criar o diretório de saída');
+      return 1;
+    }
+    try {
+      foreach ($this->scopeFiles() as $rel) {
+        if ($transform->isDropped($rel)) {
+          $report['dropped'][] = $rel;
+          continue;
+        }
+        $src = $this->repoRoot . '/' . $rel;
+        if (filesize($src) > $maxBytes) {
+          throw new \RuntimeException("arquivo acima do limite de $maxBytes bytes: $rel");
+        }
+        $raw = (string) file_get_contents($src);
+        if (str_contains($raw, "\0")) {
+          // Binário: não é reescrito. Se contiver host de teste, o build falha.
+          if ($transform->countTestHosts($raw) > 0) {
+            throw new \RuntimeException("binário com host de teste no escopo: $rel");
+          }
+          $content = $raw;
+          $count = 0;
+          $report['skipped_binary'][] = $rel;
+        } else {
+          [$content, $count] = $transform->applyHosts($raw);
+        }
+        $target = $outAbs . '/' . $rel;
+        if (!is_dir(dirname($target)) && !mkdir(dirname($target), 0775, true)) {
+          throw new \RuntimeException("não foi possível criar diretório para $rel");
+        }
+        file_put_contents($target, $content);
+        $report['files'][] = ['path' => $rel, 'replacements' => $count, 'sha256' => hash('sha256', $content)];
+        $report['replacements'] += $count;
       }
-      [$content, $count] = $transform->applyHosts((string) file_get_contents($this->repoRoot . '/' . $rel));
-      $target = $outAbs . '/' . $rel;
-      if (!is_dir(dirname($target))) {
-        mkdir(dirname($target), 0775, true);
+      // Autoverificação: nenhum host de teste pode restar nos arquivos gerados.
+      foreach ($report['files'] as $f) {
+        if (in_array($f['path'], $report['skipped_binary'], true)) {
+          continue;
+        }
+        if ($transform->countTestHosts((string) file_get_contents($outAbs . '/' . $f['path'])) > 0) {
+          throw new \RuntimeException('host de teste restou no arquivo gerado: ' . $f['path']);
+        }
       }
-      file_put_contents($target, $content);
-      $report['files'][] = ['path' => $rel, 'replacements' => $count];
-      $report['replacements'] += $count;
+    } catch (\RuntimeException $e) {
+      $this->removeTree($outAbs);
+      $this->err('build: ' . $e->getMessage() . ' (saída removida)');
+      return 1;
     }
     file_put_contents($outAbs . '/deploy-report.json', json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
-    $this->say(sprintf('build: %d arquivos gravados, %d removidos, %d substituições de host em %s',
-      count($report['files']), count($report['dropped']), $report['replacements'], $out));
+    $this->say(sprintf('build: %d arquivos gravados, %d removidos, %d binários preservados, %d substituições de host em %s',
+      count($report['files']), count($report['dropped']), count($report['skipped_binary']), $report['replacements'], $out));
     return 0;
+  }
+
+  private function removeTree(string $dir): void {
+    if (!is_dir($dir)) {
+      return;
+    }
+    $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+    foreach ($it as $f) {
+      $f->isDir() && !$f->isLink() ? rmdir($f->getPathname()) : unlink($f->getPathname());
+    }
+    rmdir($dir);
   }
 
   /** @return string[] */
@@ -188,7 +246,7 @@ final class Cli {
       }
       $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($abs, \FilesystemIterator::SKIP_DOTS));
       foreach ($it as $f) {
-        if ($f->isFile()) {
+        if ($f->isFile() && !$f->isLink()) {
           $rel = ltrim(str_replace($this->repoRoot, '', $f->getPathname()), '/');
           if ($this->transform()->inScope($rel)) {
             $files[] = $rel;
