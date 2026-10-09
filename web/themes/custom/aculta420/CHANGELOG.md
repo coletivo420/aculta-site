@@ -8,6 +8,23 @@ Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um
 - Nenhum template consome o kit. A arte de projeto pertence à Media Library (`field_image`).
 
 Validação: verificador PASS; fidelidade dos derivados medida (PSNR 25,6 a 38,8 dB contra o original reduzido) e inspeção visual sem perda de texto. **Não validado**: gates de runtime (nenhum consumidor); QA em navegador (DEFERRED). **Pendente**: autoria e licença, confirmadas pelo responsável antes de publicação. SHA do merge na `main`: a preencher no merge.
+## 0.4.4-dev.1 — Gates executados no runtime e correção do gate institucional — 2026-10-09
+
+Classificação: PATCH da linha 0.4.x (correção de gate de verificação; sem componente, template, Domain ou cabeçalho alterados).
+
+- Gate `validate-institution.php`: a home (nó 1) é validada pelo título do hero (`field_hero_title`), porque seu conteúdo público está nos campos de hero e nos blocos `home_*` de `home-content.json`, e não no corpo. Os demais nós continuam exigindo corpo. Os nove blocos `home_*` e `institution_data` existem no runtime.
+
+Execução no runtime pelo Drush (`drush scr`, bootstrap do Drupal neste checkout):
+
+- PASS: `validate-aculta420-foundation.php` (309 checagens, inclui a versão 0.4.4-dev.1).
+- PASS: `validate-aculta420-shell-contract.php` (9 checagens).
+- PASS: `validate-domain-presentation-contract.php` (127 checagens).
+- PASS: `validate-home-carousel.php` com `--uri=http://localhost` (registro temporário revertido).
+- PASS: `validate-institution.php` (após a correção acima; Twig e YAML do tema).
+- PENDING: `validate-final-contact.php`. O formulário é protegido por Turnstile, que rejeita envio automatizado por desenho; o teste exige uma exceção de CAPTCHA aprovada só para teste. O Drush reporta código 1 para o código 2 do script, que significa pendente.
+- DEFERRED: `validate-final-sitemap.php`. Espera URLs `https://aculta.org/`; neste ambiente o domínio principal é `aculta.toca.net.br` e o Drupal gera `http://localhost`. Precisa ser executado com o host canônico do ambiente, ou o gate precisa aceitar o host do ambiente.
+
+Validação: os gates acima. **Não validado**: `validate-institution-browser.mjs` (DT-T18, reescrita pendente) e QA em navegador.
 
 ## 0.4.3 — Revisão documental dos kits de logos (sem alteração de versão)
 

@@ -12,8 +12,9 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta; PR #113 em `0.4.1` (T2 a T6), pronta para merge | marcada no código | Patterns v1; T2 a T6 concluídas (T5 com reconstrução em ambiente novo DEFERRED); falta fechar T1 |
+| 0.4.0 | linha sem fechamento formal; trabalho entregue em 0.4.0-dev.x, 0.4.1, 0.4.2 e 0.4.3 | marcada no código | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED); fechamento retroativo sem versão 0.4.0 aguarda decisão do responsável |
 | 0.4.5-dev.1 | kit de artes Bloco Sativa 420 (sem consumidor de template; autoria e licença pendentes) | marcada no código | Kit validado offline; QA em navegador DEFERRED |
+| 0.4.4-dev.1 | gates executados no runtime e correção do gate institucional | marcada no código |
 | 0.4.3 | PR #115 mesclada (kit Baque Sativa; sem consumidor de template) | marcada no código | Kit validado offline; QA visual e runtime DEFERRED |
 | 0.4.2 | PR #114 mesclada (assets Podplant420; handoff fora do tema, sem consumidor de template) | marcada no código | Assets de identidade Podplant420 validados offline; QA visual e runtime DEFERRED |
 
@@ -31,7 +32,7 @@ Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica
 
 ### T1 — Fechar a linha 0.4.0 (DT-T03) — decisão registrada em 0.4.0-dev.2
 
-Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4.0 fecha quando T2 e T3 forem concluídas.
+Estruturas internas permanecem como rich text (ver `components.md`, decisão T1). T2 e T3 foram concluídas em 0.4.0-dev.4 e 0.4.0-dev.5, então a condição de fechamento da linha está cumprida. Como o tema já está em 0.4.3, fechar a linha com a versão `0.4.0` seria um retrocesso de versão; o fechamento sem versão retroativa depende de decisão do responsável.
 
 - Decidir, para cada estrutura interna, entre migrar para SDC ou manter como conteúdo rico:
   `aculta-areas`, `aculta-callout`, `aculta-page-intro`, CTAs (`aculta-editorial-link`) e
@@ -63,7 +64,7 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
 - Validadores `.mjs` sem porta nem origem fixas: leem `ACULTA_DEVTOOLS_PORT` e `ACULTA_SITE_ORIGIN` por `scripts/lib/browser-env.mjs`. Sem as variáveis, o validador para antes de conectar (DT-T09).
 - Gate `validate-browser-validators.php` reprova endpoint literal nos scripts.
 - Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts. Cumprido.
-- Dívida nova: `validate-institution-browser.mjs` espera `/apoie` e `aculta_favicon.ico`, que o runtime atual não serve (DT-T18).
+- Dívida nova: `validate-institution-browser.mjs` espera `/apoie` no host principal e `aculta_favicon.ico`. A página de apoio fica no host SUPPORT (homelab `apoio.aculta.toca.net.br`; produção `apoio.aculta.org`), na rota `/apoio` (Portal 0.2.0-dev.3). Falta a reescrita de `supportLayout` e o favicon oficial (DT-T18, aberta).
 
 ### T5 — Portabilidade do conteúdo (DT-T10, DT-O03) — concluída em 0.4.1, reconstrução em ambiente novo DEFERRED
 

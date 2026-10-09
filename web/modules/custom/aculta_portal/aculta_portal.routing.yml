@@ -56,7 +56,7 @@ aculta_portal.account_courses:
     _aculta_domain_purpose: account
 
 aculta_portal.support_form:
-  path: /apoie
+  path: /apoio
   defaults:
     _form: '\Drupal\aculta_portal\Support\Form\SupportForm'
     _title: Apoie a Associação
@@ -84,7 +84,7 @@ aculta_portal.requirements:
   requirements:
     _permission: administer site configuration
 aculta_portal.support_my:
-  path: /apoio
+  path: /meu-apoio
   defaults:
     _controller: '\Drupal\aculta_portal\Support\Controller\SupportController::mySupport'
     _title: Meu Apoio
