@@ -354,7 +354,12 @@ final class Cli {
         $lines[] = $name . '=' . $values[$name];
       }
     }
-    $target = $dirReal . DIRECTORY_SEPARATOR . basename($out);
+    $leaf = basename($out);
+    if ($leaf === '' || $leaf === '.' || $leaf === '..') {
+      $this->err('secrets export: o destino precisa ser um nome de arquivo, não um diretório');
+      return 1;
+    }
+    $target = $dirReal . DIRECTORY_SEPARATOR . $leaf;
     $fh = @fopen($target, 'xb');
     if ($fh === false) {
       $this->err('secrets export: não foi possível criar o destino');

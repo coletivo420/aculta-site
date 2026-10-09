@@ -22,8 +22,8 @@ e CI.
 ## Estado operacional
 
 R0.3.5 versionou o contrato portátil e o loader. Na R0.4, o Homelab passou a
-usar o Secure Bootstrap Adapter: o settings local ignorado carrega
-`/etc/aculta/secrets.env`, e os processos web e Drush usam o mesmo bootstrap.
+usar o Secure Bootstrap Adapter: o settings local ignorado carrega o arquivo de credenciais
+(hoje `secrets/aculta.secrets.env`; antes `/etc/aculta/secrets.env`, histórico), e os processos web e Drush usam o mesmo bootstrap.
 Os campos Google do storage bruto e do Configuration Sync estão vazios; as
 Keys resolvem os valores fora do banco e os Config Overrides preenchem a
 configuração efetiva em memória. Hostinger Web/Cloud e produção ainda não foram
@@ -40,8 +40,8 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 - Caminho no servidor de testes: `secrets/aculta.secrets.env` na raiz do repositório, ignorado pelo Git
   (`*.secrets.env` e `/secrets/`), fora de `web/`, sem escrita de grupo e sem acesso de outros (ex.: 0600, ou 0640 com ACL de leitura para o processo web). `settings.local.php` aponta para ele por
   `dirname(DRUPAL_ROOT)`.
-- Migrado de `/etc/aculta/secrets.env`. O arquivo antigo precisa ser removido por quem tem root:
-  `sudo rm /etc/aculta/secrets.env`. O processo de deploy não tem permissão de escrita nesse diretório.
+- Migrado de `/etc/aculta/secrets.env` (histórico). A cópia antiga foi removida em 2026-10-09 pelo responsável.
+  Leitura pelo processo web: ACL de leitura para o usuário do PHP-FPM e o `www-data`, e escrita para a pasta.
 - Validação e exportação pós-deploy: `aculta-deployer secrets check|export` (ver USO do deployer).
   Nomes do contrato: `aculta_deployer/config/secrets-contract.json`. Gate: `tests/run.php` do deployer
   verifica que todo nome do contrato aparece na tabela deste documento.
@@ -115,7 +115,7 @@ globalmente.
 `settings.homelab.php` continua local e ignorado pelo Git. O Homelab pode usar
 environment nativo no processo PHP ou o adapter bootstrap apontado pelo próprio
 settings local. Atualmente o Homelab exercita o Secure Bootstrap Adapter por
-meio de `/etc/aculta/secrets.env`; esse caminho está somente no settings local
+meio de `secrets/aculta.secrets.env` (ver "Arquivo local"); esse caminho está somente no settings local
 ignorado e não é uma dependência do Portal ou do tema. A mesma configuração
 bootstrap atende Drush e requests web. Hostinger ainda não foi provisionada.
 

@@ -249,6 +249,8 @@ exec($cli . ' secrets check --env=test --file=' . escapeshellarg(dirname($toolRo
 exec($cli . ' secrets export --env=production --out=' . escapeshellarg($outFile) . ' 2>&1', $o3, $rc3);
 $assert($rc3 !== 0 && !file_exists($outFile), 'export recusa quando faltam obrigatórios do ambiente (produção)');
 @unlink($outFile); @rmdir($outDir);
+$exp = exec($cli . ' secrets export --env=production --out=' . escapeshellarg(sys_get_temp_dir() . '/..') . ' 2>&1', $o6, $rc6);
+$assert($rc6 !== 0, 'export recusa destino que termina em ".." (não é um arquivo)');
 $fakeDir = sys_get_temp_dir() . '/aculta-secrets-ok-' . getmypid();
 @mkdir($fakeDir, 0700);
 $fakeIn = $fakeDir . '/entrada.secrets.env';

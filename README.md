@@ -27,7 +27,7 @@ Plataforma Drupal 11 multidomínio da Associação Cultural Antiproibicionista.
 - [aculta_deployer](web/modules/custom/aculta_portal/modules/aculta_deployer/README.md)
   — submódulo do `aculta_portal` que troca hosts de teste por produção no build de
   deploy, verifica `robots`, sitemaps e caminhos privados por ambiente, e mantém o
-  registro de correções de deploy. Versão 0.1.3, não habilitado no Drupal; CLI
+  registro de correções de deploy. Versão 0.1.5, não habilitado no Drupal; CLI
   standalone em `bin/aculta-deployer`.
 
 ## Arquitetura

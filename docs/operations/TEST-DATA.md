@@ -22,8 +22,8 @@ Arquivo local, fora do repositório:
 ```
 
 - Senhas aleatórias, geradas uma vez pelo seed.
-- Não são credenciais de integração. Por isso não passam pelo Drupal Key nem por
-  `/etc/aculta/secrets.env`, que ficam reservados a integrações (ver
+- Não são credenciais de integração. Por isso não passam pelo Drupal Key nem pelo
+  arquivo `secrets/aculta.secrets.env`, que ficam reservados a integrações (ver
   `SECRETS.md`).
 - Nunca copiar para `settings*.php`, configuração exportada, issue, PR ou chat.
 - Login de teste: `https://aculta.toca.net.br/entrar`.
