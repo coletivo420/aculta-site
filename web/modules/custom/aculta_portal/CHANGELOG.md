@@ -1,5 +1,23 @@
 # Changelog — ACULTA Portal
 
+## portal-v0.1.0 — 2026-10-09 — primeira release rastreada
+
+Primeira versão do Portal com tag. Consolida as fases P0–P10 da modernização Drupal 11+ (PR #90) e a auditoria P10-R (PR #91), mais as correções posteriores de domínio, autenticação, CAPTCHA e a hook de seções do tema 0.3.1.
+
+Escopo incluído:
+
+- Domain Presentation Builder e contrato neutro para o tema (0.2-B).
+- Políticas de domínio administrativo, checkout e pagamento no purpose main.
+- Fronteira de autenticação e CAPTCHA (Turnstile como provider único).
+- Hook de tema `aculta_section` para seções editoriais (tema 0.3.1).
+- Testes unitários do Portal e gate Drupal 11+ (366 checks).
+
+Exceções conhecidas no gate de release:
+
+- `smtp.settings` e `system.mail` ficam fora da comparação com o Runtime (sem credenciais no ambiente local). Os valores versionados são afirmados pelo validador.
+- `composer validate` emite avisos de versão exata para `tabby/tabby` e `tippyjs/tippyjs`; não são erros.
+- O webform envia via SMTP sem o template HTML; diferença registrada na P10-R.
+
 ## 2026-10-09 — Hook de tema para seções (entregue no tema 0.3.1)
 
 - `PortalHooks::theme()` declara `aculta_section` (variáveis `section_title`, `section_heading`, `section_variant`, `section_body`). O template do módulo é um fallback neutro, sem classes de tema; o tema sobrescreve.
