@@ -17,7 +17,6 @@ dependencies:
     - field.field.node.article.field_related_activity
     - field.field.node.article.field_subtitle
     - field.field.node.article.field_summary
-    - field.field.node.article.field_tags
     - node.type.article
   module:
     - text
@@ -52,5 +51,4 @@ hidden:
   field_related_activity: true
   field_subtitle: true
   field_summary: true
-  field_tags: true
   langcode: true

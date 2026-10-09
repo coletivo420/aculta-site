@@ -20,6 +20,8 @@ $assert(!$differences, 'Active configuration matches config/sync (all collection
 $versioned_mail = $sync->read('smtp.settings');
 $assert(($versioned_mail['smtp_on'] ?? FALSE) === TRUE, 'Versioned SMTP is enabled (smtp.settings smtp_on).');
 $assert(($sync->read('system.mail')['interface']['default'] ?? NULL) === 'SMTPMailSystem', 'Versioned default mailer is SMTPMailSystem.');
+$assert(($sync->read('system.mail')['interface']['webform'] ?? NULL) === 'SMTPMailSystem', 'Versioned webform mailer is SMTPMailSystem.');
+$assert(($versioned_mail['smtp_allowhtml'] ?? FALSE) === TRUE, 'Versioned SMTP allows HTML (webform notifications).');
 $manifest = ['note' => 'Content is NOT included in config export. Preserve IDs/UUIDs during the separately planned secure migration; this is an inventory, not a database dump.', 'entities' => []];
 foreach (['node', 'block_content', 'menu_link_content', 'path_alias', 'redirect', 'media', 'file'] as $type) {
   foreach (\Drupal::entityTypeManager()->getStorage($type)->loadMultiple() as $entity) $manifest['entities'][$type][] = ['id' => $entity->id(), 'uuid' => $entity->uuid(), 'bundle' => $entity->bundle(), 'label' => $entity->label(), 'published' => $entity instanceof \Drupal\Core\Entity\EntityPublishedInterface ? $entity->isPublished() : NULL];

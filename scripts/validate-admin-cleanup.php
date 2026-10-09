@@ -42,9 +42,9 @@ echo "Editorial entity counts preserved; configuration dependencies intact; $cou
 $switcher = \Drupal::service('account_switcher');
 $switcher->switchTo(\Drupal\user\Entity\User::load(1));
 try {
-  foreach (['/admin/content','/admin/content/block','/admin/content/media','/admin/content/files','/admin/people','/admin/reports/dblog','/admin/config/search/redirect','/admin/structure/webform','/admin/structure/views','/admin/structure/menu'] as $path) {
-    $routes = \Drupal::service('router.route_provider')->getRoutesByPattern($path);
-    if (!$routes->count()) throw new RuntimeException('Required administrative route missing: ' . $path);
+  // Checked by stable route name: admin paths are localized (e.g. /painel-administrativo/conteudo).
+  foreach (['system.admin_content','entity.block_content.collection','entity.media.collection','view.files.page_1','entity.user.collection','dblog.overview','redirect.list','entity.webform.collection','entity.view.collection','entity.menu.collection'] as $routeName) {
+    if (!\Drupal::service('router.route_provider')->getRoutesByNames([$routeName])) throw new RuntimeException('Required administrative route missing: ' . $routeName);
   }
 } finally {$switcher->switchBack();}
 $changes = ['changed' => [], 'deleted' => []];
