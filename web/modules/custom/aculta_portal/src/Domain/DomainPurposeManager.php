@@ -50,6 +50,30 @@ final class DomainPurposeManager {
     return $purpose === FALSE ? NULL : $purpose;
   }
 
+  /**
+   * Executa $callback com o Domain do purpose como ativo e restaura o anterior.
+   *
+   * Serve para avaliar acesso no contexto de origem (por exemplo, a elegibilidade
+   * de verbetes da WIKI no sitemap, executado fora do host da WIKI). Não altera a
+   * regra de acesso: apenas muda o contexto em que ela é avaliada.
+   */
+  public function runInPurpose(string $purpose, callable $callback): mixed {
+    $domain = $this->getDomain($purpose);
+    if ($domain === NULL) {
+      return NULL;
+    }
+    $previous = $this->domainNegotiator->getActiveDomain();
+    $this->domainNegotiator->setActiveDomain($domain);
+    try {
+      return $callback();
+    }
+    finally {
+      if ($previous instanceof DomainInterface) {
+        $this->domainNegotiator->setActiveDomain($previous);
+      }
+    }
+  }
+
   /** Returns a Domain entity for a stable purpose. */
   public function getDomain(string $purpose): ?DomainInterface {
     $id = self::DOMAIN_IDS[$purpose] ?? NULL;
@@ -110,6 +134,31 @@ final class DomainPurposeManager {
   }
 
   /** Generates a same-application path on a purpose domain. */
+  /**
+   * Absolute canonical URL for a path on a purpose host, always on the
+   * production hostname from the domain record (never an alias).
+   */
+  public function canonicalPathUrl(string $purpose, string $path): ?Url {
+    if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+      return NULL;
+    }
+    $domainId = self::DOMAIN_IDS[$purpose] ?? NULL;
+    $domain = $this->getDomain($purpose);
+    if ($domainId === NULL || !$domain) {
+      return NULL;
+    }
+    $config = $this->configFactory->get('domain.record.' . $domainId);
+    $hostname = $config->get('hostname');
+    if (!is_string($hostname) || $hostname === '') {
+      return NULL;
+    }
+    $domain = clone $domain;
+    $domain->setHostname($hostname);
+    $domain->set('scheme', $config->get('scheme') ?: 'https');
+    $domain->setPath();
+    return Url::fromUri(rtrim($domain->getPath(), '/') . $path);
+  }
+
   public function pathUrl(string $purpose, string $path): ?Url {
     if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
       return NULL;

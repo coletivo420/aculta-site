@@ -31,6 +31,32 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 final class PortalHooks {
 
+  /**
+   * Entradas públicas de purpose, indexáveis e fora do noindex padrão do Portal.
+   * Rotas `aculta_portal.*` não listadas aqui recebem noindex.
+   */
+  /** Rotas de autenticação e conta do Core (user.*), sempre com noindex. */
+  private const AUTH_ROUTES = [
+    'user.login',
+    'user.login_status.http',
+    'user.logout',
+    'user.logout.confirm',
+    'user.logout.http',
+    'user.register',
+    'user.pass',
+    'user.reset',
+    'user.reset.form',
+    'user.reset.login',
+    'user.edit',
+    'user.page',
+  ];
+
+  private const PUBLIC_PORTAL_ROUTES = [
+    'aculta_portal.support_form',
+    'aculta_portal.wiki_home',
+    'aculta_portal.courses_home',
+  ];
+
   public function __construct(
     #[Autowire(service: 'current_route_match')]
     private readonly CurrentRouteMatch $routeMatch,
@@ -535,7 +561,14 @@ final class PortalHooks {
         'schema_web_page_url' => $supportUrl,
       ]);
     }
-    elseif (str_starts_with((string) $route, 'aculta_portal.') && $route !== 'aculta_portal.support_form') {
+    elseif (str_starts_with((string) $route, 'aculta_portal.') && !in_array($route, self::PUBLIC_PORTAL_ROUTES, TRUE)) {
+      // Rotas privadas da conta, painel e busca: noindex. As entradas públicas
+      // de cada purpose estão em PUBLIC_PORTAL_ROUTES e são indexáveis.
+      $tags['robots'] = 'noindex, nofollow';
+    }
+    elseif (in_array($route, self::AUTH_ROUTES, TRUE)) {
+      // Login, cadastro, saída e recuperação de senha do Core: fluxos de conta,
+      // sem conteúdo para indexação.
       $tags['robots'] = 'noindex, nofollow';
     }
     elseif (DomainRoutePolicy::isTransactionalSeoRouteName((string) $route)) {

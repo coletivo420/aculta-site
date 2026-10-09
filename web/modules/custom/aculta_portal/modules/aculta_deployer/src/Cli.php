@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.1';
+  public const VERSION = '0.1.3';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -31,6 +31,7 @@ final class Cli {
       'build' => $this->build($options),
       'verify' => $this->verify(),
       'robots' => $this->robots($options),
+      'sitemap' => $this->sitemap($options),
       default => $this->help(),
     };
   }
@@ -120,7 +121,104 @@ final class Cli {
       $this->say(sprintf('%s %s: X-Robots-Tag=%s', $ok ? 'PASS' : 'FAIL', $url, $value ?? '(ausente)'));
       $code = $ok ? $code : 1;
     }
+    if ($env === 'production') {
+      $indexUrl = (string) ($this->json($this->toolRoot . '/config/deploy.json')['sitemap']['production']['index_url'] ?? '');
+      foreach ($policy['hosts'] as $url) {
+        $res = Verify::fetchWithHeaders(rtrim((string) $url, '/') . '/robots.txt');
+        if ($res === null || Verify::statusCode($res['headers']) !== 200) {
+          $this->say("FAIL $url robots.txt: sem resposta 200");
+          $code = 1;
+          continue;
+        }
+        $advertised = in_array($indexUrl, Verify::sitemapDirectives($res['body']), true);
+        $blocked = Verify::disallowsRoot($res['body']);
+        $ok = $advertised && !$blocked;
+        $this->say(sprintf('%s %s robots.txt: Sitemap=%s, Disallow: / %s', $ok ? 'PASS' : 'FAIL', $url, $advertised ? 'índice' : 'ausente', $blocked ? 'presente' : 'ausente'));
+        $code = $ok ? $code : 1;
+      }
+    }
+    foreach ($policy['private_probes'] ?? [] as $url) {
+      $res = Verify::fetchWithHeaders((string) $url);
+      if ($res === null) {
+        $this->say("FAIL $url: sem resposta (caminho privado)");
+        $code = 1;
+        continue;
+      }
+      $value = Verify::robotsHeader($res['headers']);
+      $status = Verify::statusCode($res['headers']);
+      $meta = Verify::metaNoindex($res['body']);
+      // Privado: noindex no cabeçalho ou no HTML, ou status que não expõe conteúdo.
+      $ok = Verify::isNoindex($value) || $meta || Verify::isRefusedStatus($status);
+      $this->say(sprintf('%s %s (privado): status=%s X-Robots-Tag=%s meta=%s',
+        $ok ? 'PASS' : 'FAIL', $url, $status ?? '?', $value ?? '(ausente)', $meta ? 'noindex' : 'ausente'));
+      $code = $ok ? $code : 1;
+    }
     $this->say("robots ($env): " . ($code === 0 ? 'PASS' : 'FAIL'));
+    return $code;
+  }
+
+  /**
+   * Descoberta e sitemaps por ambiente (GET somente leitura):
+   * 1) o índice responde e cada filho está na base do ambiente (sem host de teste
+   *    em produção, e sem host de produção no servidor de testes além do canônico);
+   * 2) as URLs dos filhos pertencem aos hosts de produção da política e esses hosts
+   *    respondem (cross-host, por exemplo apoio.aculta.org).
+   *
+   * @param array<string, string|bool> $o
+   */
+  private function sitemap(array $o): int {
+    $env = is_string($o['env'] ?? null) ? $o['env'] : 'production';
+    $cfg = $this->json($this->toolRoot . '/config/deploy.json');
+    $policy = $cfg['sitemap'][$env] ?? null;
+    if ($policy === null) {
+      $this->err("sitemap: ambiente desconhecido: $env");
+      return 1;
+    }
+    $allowed = [];
+    foreach ($cfg['robots_policy']['production']['hosts'] ?? [] as $url) {
+      $allowed[] = Verify::hostOf((string) $url);
+    }
+    $base = Verify::hostOf((string) $policy['index_base']);
+    $code = 0;
+    $index = Verify::fetchWithHeaders((string) $policy['index_url']);
+    $indexLocs = $index === null ? null : Verify::xmlLocs($index['body']);
+    if ($indexLocs === null || $indexLocs === []) {
+      $this->say("FAIL {$policy['index_url']}: índice ausente, sem resposta ou sem <loc>");
+      $this->say("sitemap ($env): FAIL");
+      return 1;
+    }
+    $this->say("PASS {$policy['index_url']}: índice com " . count($indexLocs) . ' sitemap(s)');
+    $contentHosts = [];
+    foreach ($indexLocs as $child) {
+      $sameBase = Verify::hostOf($child) === $base;
+      if (!$sameBase) {
+        $code = 1;
+      }
+      $this->say(sprintf('%s índice aponta para %s (base do ambiente: %s)', $sameBase ? 'PASS' : 'FAIL', $child, $base));
+      $res = Verify::fetchWithHeaders($child);
+      $locs = $res === null || Verify::statusCode($res['headers']) !== 200 ? null : Verify::xmlLocs($res['body']);
+      if ($locs === null || $locs === []) {
+        $this->say("FAIL $child: filho sem resposta 200 ou sem <loc>");
+        $code = 1;
+        continue;
+      }
+      foreach ($locs as $u) {
+        $h = Verify::hostOf($u);
+        if ($h !== null && !in_array($h, $allowed, true)) {
+          $this->say("FAIL $u: host fora da política de produção");
+          $code = 1;
+        }
+        $contentHosts[$h] = true;
+      }
+      $this->say(sprintf('PASS %s: %d URL(s) de conteúdo', $child, count($locs)));
+    }
+    foreach (array_keys($contentHosts) as $h) {
+      $probe = Verify::fetchWithHeaders("https://$h/");
+      $ok = $probe !== null && (Verify::statusCode($probe['headers']) ?? 500) < 400;
+      $this->say(sprintf('%s host de conteúdo %s responde %s', $ok ? 'PASS' : 'FAIL', $h, $probe === null ? 'sem resposta' : (string) Verify::statusCode($probe['headers'])));
+      $code = $ok ? $code : 1;
+    }
+    $this->say("sitemap ($env): " . ($code === 0 ? 'PASS' : 'FAIL'));
     return $code;
   }
 
@@ -413,7 +511,8 @@ Uso:
   aculta-deployer list                 lista as correções de deploy registradas
   aculta-deployer register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]
   aculta-deployer build --out=DIR [--allow-open-blocking]
-  aculta-deployer robots [--env=production|test]  GET somente leitura: confere X-Robots-Tag por host
+  aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
+  aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version
 
 Códigos de saída: 0 sucesso; 1 erro de uso, validação ou fronteira; 2 bloqueado (entrada bloqueante aberta).
