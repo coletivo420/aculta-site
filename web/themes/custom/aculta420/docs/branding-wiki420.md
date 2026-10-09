@@ -35,17 +35,18 @@ Não entram: 240w e 320w (sem consumidor), o globo de 180 px (a tabela de aplica
 - O Portal (`DomainPresentationBuilder`) escolhe a identidade Wiki pelo purpose `wiki`. Só nesse purpose monta `regions.brand_media` como render array `image` com `srcset` (480/720/960 px) e `sizes="18rem"`, `loading="eager"` e `fetchpriority="high"`.
 - O tema consome `domain_presentation.regions.brand_media` em `ThemeHooks::preprocessPage()` e renderiza o link para `domain_presentation.identity.home_url`. Não inspeciona hostname, Domain ID ou purpose.
 - Se o arquivo de 960 px não existir, o Portal não produz `brand_media`, e o branding textual anterior continua.
-- Quando há `brand_media`, o bloco `system_branding_block` é removido do cabeçalho; não há duplicidade. Nos demais purposes `brand_media` é nulo e o branding ACULTA permanece.
+- Quando há `brand_media`, o bloco `system_branding_block` é removido do cabeçalho e o fallback textual não é montado (`ThemeHooks::preprocessPage()`); o cabeçalho tem um único link para a home. Nos demais purposes `brand_media` é nulo e o branding ACULTA permanece.
 - A URL é pública (`base:`), não caminho físico.
 - Cacheability: a presentation já carrega o cache de Domain; o Portal a anexa à página.
 - Limite conhecido: o Portal conhece o caminho de `assets/branding/wiki420/web` no tema. A escolha de identidade é do Portal, mas a localização do arquivo é do tema; o acoplamento fica registrado para uma fase que defina um contrato de assets.
 
 ## Verificação (Homelab, 0.4.0-dev.6)
 
-- Wiki (`wiki420.aculta.toca.net.br`): imagem com `srcset` no HTML. Chromium escolheu 480w em 1× e 720w em 2× (`sizes` de 288 px).
-- Cabeçalho: altura 159 px no desktop e 141 px no mobile, igual nos modos claro e escuro. Menu no mesmo lugar (312 px em 1280). Sem rolagem horizontal em 1280, 820 e 390 px.
+- Wiki (`wiki420.aculta.toca.net.br`): imagem com `srcset` no HTML; em 1× o Chromium carregou a variante de 480 px. A escolha em 2× não foi verificada no DOM.
+- Um único link para a home no cabeçalho (fallback textual removido quando há marca).
+- Cabeçalho: 159 px no desktop (1280 px, modo claro) contra 139 px na principal, +20 px; 141 px no mobile (390 px). Sem rolagem horizontal em 1280 e 390 px. Modo escuro: mesmos tokens e estrutura; altura não medida separadamente.
 - Modo escuro: a marca fica legível sobre o carvão. Não houve transformação de cor. Razão de contraste não medida (risco residual).
-- Isolamento de cache (anônimo, ordens diferentes, MISS e HIT): a Wiki sempre mostra a logo, a principal nunca.
+- Isolamento de cache: requisições anônimas alternadas Wiki/principal em duas rodadas; a Wiki sempre mostra a logo, a principal nunca.
 - Limitação: o zoom de 200% foi representado por largura de 390 e 820 px; não foi testado com zoom real do navegador.
 
 ## Regras

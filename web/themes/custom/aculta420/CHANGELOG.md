@@ -4,7 +4,8 @@ Classificação: MINOR da linha 0.4.0 (novo asset de identidade e apresentação
 
 - Assets versionados em `assets/branding/wiki420/web/` (horizontal 480/720/960 WebP, empilhada 256/512 WebP, globo 32/48/96/192/512 PNG) e `source/` (masters 960 PNG e 512 PNG).
 - Cabeçalho da Wiki420 com `srcset` (480/720/960 px) e `sizes="18rem"`; carregamento eager e `fetchpriority=high`. Integração via `brand_media` do Portal; o tema não inspeciona purpose nem hostname.
-- Verificação: altura do cabeçalho igual nos modos claro e escuro (159/141 px), sem overflow horizontal em 1280/820/390 px, cache isolado entre Wiki e principal nas duas ordens de aquecimento.
+- Correção: com `brand_media`, o fallback textual não é montado (decisão no pré-processamento de `ThemeHooks`, template inalterado). Antes havia dois links para a home no cabeçalho da Wiki.
+- Verificação: no desktop (1280 px, modo claro) o cabeçalho mede 159 px contra 139 px na principal, ou seja, +20 px de altura; em 390 px, 141 px. Sem overflow horizontal em 1280 e 390 px. Respostas alternadas Wiki/principal (duas rodadas) sem vazamento de marca.
 - Limites: masters são derivados (originais não vieram no pacote); razão de contraste da marca no modo escuro não medida; zoom real não testado; o Portal conhece o caminho dos assets (ver `docs/branding-wiki420.md`).
 
 ## 0.4.0-dev.5 — T3 concluída: CSS residual dos padrões nos SDCs — 2026-10-09
