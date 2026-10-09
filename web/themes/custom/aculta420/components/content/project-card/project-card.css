@@ -20,7 +20,17 @@
 .aculta-project h3 a:is(:hover, :focus-visible) { text-decoration: underline; }
 .aculta-project .aculta-category { font-size: 1rem; letter-spacing: 0.025em; }
 .aculta-project-image { margin-bottom: 1.5rem; }
-.aculta-project-image img { display: block; max-width: 100%; height: auto; }
+/* The card image fills the card width at a 1:1 frame. object-fit: contain keeps
+   every logo whole (no cropping); the muted surface frames transparent art. */
+.aculta-project-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-muted);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .aculta-project { transition: none; }
