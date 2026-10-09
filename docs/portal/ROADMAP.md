@@ -24,7 +24,8 @@ Core Drupal 11.3+ com verificação de APIs no Core instalado; preferir prática
 | P7 | Subscribers, serviços, multidomínio | Concluída e verificada no Homelab; sobreposição de `entity.user.edit_form` mantida por defesa em profundidade |
 | P8 | Deprecações e prontidão D12/D13 | Revisada estaticamente; 0 achados em código; pendências de Composer (`require.php`, `composer/semver`) e PHP 8.5 |
 | P9 | Hardening, segurança, documentação e gates | Revisada e verificada; rollback de código documentado em `HARDENING-P9.md` |
-| P10 | Codex/Homelab, homologação, correções e merge | Executada; não mesclar até decidir drift de config, testes do módulo, PHP 8.5 e política de PR (ver `RELEASE-P10.md`) |
+| P10 | Codex/Homelab, homologação, correções e merge | Executada. PR #90 integrada à `main` (merge `dd5c8a4`). Auditoria pós-merge P10-R em `P10-R-FINAL-AUDIT.md` |
+| P10-R | Auditoria pós-merge e encerramento | Em branch `audit/aculta-portal-p10-r-final`; pendências classificadas em `P10-R-FINAL-AUDIT.md` |
 
 Na P1 havia 18 funções runtime procedurais no `.module`; após P4, zero e arquivo removido. Lifecycle procedural exigido pelo Core é exceção legítima. Testes completos em runtime ainda NÃO foram executados.
 
@@ -41,7 +42,7 @@ Portabilidade, conversão, migração e compatibilidade entre motores SQLite/Mar
 ### P5.1 — concluída
 `src/Support/Form/SupportForm.php`: troca de `PaymentGateway::load()` por `EntityTypeManagerInterface` e de `\\Drupal::service('plugin.manager.block')` por `BlockManagerInterface`; strict_types, gate e changelog. Commit `75362a35c14156be9274ed1a29181e71a7bcf6e6`. Mantido fail-closed e Commerce Donation Flow; homologação runtime pendente.
 
-### P5.2-A — Cursos (PRÓXIMA)
+### P5.2-A — Cursos (concluída, commit `76439ca`)
 `src/Controller/CoursesController.php`: avaliar `views_embed_view('courses_catalog', 'block_1')` e confirmar a API do Core instalado; quando suportado, trocar por render element `#type => 'view'`. Preservar View/display, argumentos, empty state, cache, access, pager, filtros, attachments. Não pré-renderizar HTML ou introduzir fábrica de Views sem necessidade. Atualizar gate, changelog e docs no mesmo commit; smoke Homelab pendente.
 
 ### P5.2-B — Wiki420

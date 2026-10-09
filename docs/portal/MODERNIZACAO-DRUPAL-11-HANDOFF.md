@@ -2,23 +2,26 @@
 
 ## Identificação
 Repositório: coletivo420/aculta-site.
-Branch: refactor/aculta-portal-p1-drupal11-standards.
-PR: https://github.com/coletivo420/aculta-site/pull/90.
-HEAD anterior à atualização documental: 75362a35c14156be9274ed1a29181e71a7bcf6e6.
-Verificar HEAD e main novamente ao retomar.
+Branch de origem: refactor/aculta-portal-p1-drupal11-standards (integrada).
+PR: https://github.com/coletivo420/aculta-site/pull/90 — **integrada à `main`** pelo merge `dd5c8a4`.
+Auditoria pós-merge: branch `audit/aculta-portal-p10-r-final` (ver `P10-R-FINAL-AUDIT.md`).
+Verificar HEAD e `origin/main` antes de retomar.
 
 ## Leia primeiro
-- [Roadmap completo P0–P10 e P5.x](ROADMAP.md)
+- [Roadmap completo P0–P10 e P10-R](ROADMAP.md)
 - [Normas obrigatórias Drupal 11+](DRUPAL-11-STANDARDS.md)
-- [Arquitetura](ARCHITECTURE.md)
-- [Fontes de verdade](SOURCE-OF-TRUTH.md)
+- [Auditoria final P10-R](P10-R-FINAL-AUDIT.md)
+- [Homologação P10](RELEASE-P10.md) e [Hardening P9](HARDENING-P9.md)
 - [Changelog](../../web/modules/custom/aculta_portal/CHANGELOG.md)
 
 ## Estado das fases
-P0–P4 com revisões estáticas concluídas. Hooks runtime procedurais foram substituídos por OOP e o arquivo .module vazio foi removido. P5.1 concluída: SupportForm com EntityTypeManager e BlockManager injetados, mantendo fail-closed Commerce. P5.2-A é a próxima etapa. P5.2-B, demais P5, P6–P10 ainda pendentes.
+P0–P10 concluídas e integradas à `main`. P5.2-A concluída (`76439ca`). A próxima etapa não é uma fase de modernização: é a auditoria P10-R e as decisões pendentes listadas em `P10-R-FINAL-AUDIT.md` (PHP 8.5, sincronização de configuração em produção, cadastro e entrega de e-mail em produção, política de enumeração no cadastro, rotação de credencial exposta).
 
-## Próxima execução P5.2-A
-Auditar CoursesController.php, views_embed_view('courses_catalog', 'block_1') e definição real da View. Confirmar API Core instalada e, se equivalente, preferir render element Views nativo. Preservar display, argumentos, access, cache, pager, filtros, attachments e empty state. Atualizar gate, docs, changelog e PR; parar após esta subfase.
+## Estado de validação
+- Gate `validate-aculta-portal-drupal11.php`: PASS. Suíte PHPUnit do módulo: PASS (Unit).
+- Testes de Kernel (serviços P5–P7 com banco): pendentes.
+- PHP 8.5: não executado (Homelab tem 8.4.26).
+- Produção: configuração, SMTP e cadastro dependem de importação e teste de e-mail pelo responsável.
 
 ## P5-extra-1 — separação DBTNG-2
 
