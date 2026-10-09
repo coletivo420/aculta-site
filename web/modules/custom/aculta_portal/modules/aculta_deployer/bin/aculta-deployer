@@ -8,4 +8,10 @@ $toolRoot = dirname(__DIR__);
 foreach (['Registry', 'Transform', 'Boundary', 'Cli'] as $class) {
   require_once $toolRoot . '/src/' . $class . '.php';
 }
-exit((new AcultaDeployer\Cli($toolRoot))->run($argv));
+try {
+  exit((new AcultaDeployer\Cli($toolRoot))->run($argv));
+} catch (\Throwable $e) {
+  // Sem stack trace na saída: a mensagem basta para o operador.
+  fwrite(STDERR, 'aculta-deployer: ' . get_class($e) . ': ' . $e->getMessage() . "\n");
+  exit(1);
+}

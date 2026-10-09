@@ -74,5 +74,28 @@ file_put_contents($probe, "<?php \$x = '" . $needle . "service';\n");
 $assert(count((new Boundary($repo, $toolRoot, $rules))->check()) >= 1, 'dependência de Drupal no código da ferramenta é detectada');
 unlink($probe);
 
+// Fase 1: configuração, registro corrompido e escrita atômica.
+$bad = new Transform(['scope' => ['(unclosed'], 'drop' => [], 'host_rules' => []]);
+$assert(count($bad->validate()) >= 2, 'configuração com regex inválido e sem host_rules é reprovada');
+$assert((new Transform($config))->validate() === [], 'configuração atual é válida');
+$tmpDir = sys_get_temp_dir() . '/aculta-deployer-p1-' . getmypid();
+@mkdir($tmpDir);
+$corrupt = $tmpDir . '/reg.json';
+file_put_contents($corrupt, '{not json');
+$threw = false;
+try {
+  new Registry($corrupt);
+} catch (\JsonException) {
+  $threw = true;
+}
+$assert($threw, 'registro com JSON corrompido gera erro explícito');
+file_put_contents($corrupt, json_encode(['schema' => 1, 'entries' => []]));
+$reg2 = new Registry($corrupt);
+$reg2->add(['kind' => 'other', 'page' => 'p', 'current' => 'c', 'expected_production' => 'e', 'reason' => 'r', 'owner' => 'o']);
+$assert(!file_exists($corrupt . '.tmp-' . getmypid()), 'gravação atômica não deixa arquivo temporário');
+$assert((new Registry($corrupt))->entries()[0]['id'] === 'DEP-0001', 'registro gravado é relido com o id criado');
+array_map('unlink', glob($tmpDir . '/*') ?: []);
+@rmdir($tmpDir);
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

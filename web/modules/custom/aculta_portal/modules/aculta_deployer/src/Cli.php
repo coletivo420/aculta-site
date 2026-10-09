@@ -47,6 +47,10 @@ final class Cli {
       $code = 1;
     }
     $transform = $this->transform();
+    foreach ($transform->validate() as $e) {
+      $this->err("configuração: $e");
+      $code = 1;
+    }
     $stats = $this->scan($transform);
     $this->say(sprintf('escopo: %d arquivos; %d com host de teste; %d removidos no build de produção',
       $stats['scope'], $stats['with_test_host'], $stats['dropped']));
@@ -135,6 +139,10 @@ final class Cli {
       return 2;
     }
     $transform = $this->transform();
+    if ($transform->validate() !== []) {
+      $this->err('build: configuração de escopo inválida; rode check para detalhes');
+      return 1;
+    }
     $report = ['tool' => 'aculta-deployer ' . self::VERSION, 'target' => 'production', 'files' => [], 'dropped' => [], 'replacements' => 0];
     foreach ($this->scopeFiles() as $rel) {
       if ($transform->isDropped($rel)) {
@@ -250,6 +258,8 @@ Uso:
   aculta-deployer register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]
   aculta-deployer build --out=DIR [--allow-open-blocking]
   aculta-deployer version
+
+Códigos de saída: 0 sucesso; 1 erro de uso, validação ou fronteira; 2 bloqueado (entrada bloqueante aberta).
 
 Guia completo: o submódulo aculta_deployer/docs/USO.md
 TXT . "\n", ['{version}' => self::VERSION]);

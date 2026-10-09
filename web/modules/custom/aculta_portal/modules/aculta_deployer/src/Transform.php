@@ -13,6 +13,33 @@ final class Transform {
   /** @param array<string, mixed> $config Conteúdo de config/deploy.json. */
   public function __construct(private readonly array $config) {}
 
+  /** @return string[] Erros de configuração; vazio quando o escopo é válido. */
+  public function validate(): array {
+    $errors = [];
+    foreach (['scope', 'drop'] as $key) {
+      if (!isset($this->config[$key]) || !is_array($this->config[$key])) {
+        $errors[] = "deploy.json: lista \"$key\" ausente";
+        continue;
+      }
+      foreach ($this->config[$key] as $pattern) {
+        if (!is_string($pattern) || @preg_match('#' . $pattern . '#', '') === false) {
+          $errors[] = "deploy.json: padrão inválido em \"$key\": " . json_encode($pattern);
+        }
+      }
+    }
+    if (empty($this->config['host_rules']) || !is_array($this->config['host_rules'])) {
+      $errors[] = 'deploy.json: host_rules ausente';
+    }
+    foreach ($this->config['host_rules'] ?? [] as $i => $rule) {
+      foreach (['from', 'to'] as $f) {
+        if (!isset($rule[$f]) || !is_string($rule[$f]) || $rule[$f] === '') {
+          $errors[] = "deploy.json: host_rules[$i] sem \"$f\"";
+        }
+      }
+    }
+    return $errors;
+  }
+
   public function inScope(string $relPath): bool {
     foreach ($this->config['scope'] as $pattern) {
       if (preg_match('#' . $pattern . '#', $relPath) === 1) {

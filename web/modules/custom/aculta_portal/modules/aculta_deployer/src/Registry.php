@@ -70,6 +70,28 @@ final class Registry {
     return array_values(array_filter($this->open(), static fn(array $e): bool => ($e['blocking'] ?? false) === true));
   }
 
+  /**
+   * Grava o registro de forma atômica: escreve em arquivo temporário, sincroniza
+   * e renomeia. Um bloqueio exclusivo (.lock) impede gravações concorrentes.
+   */
+  public function save(): void {
+    $lock = fopen($this->path . '.lock', 'c');
+    if ($lock === false || !flock($lock, LOCK_EX)) {
+      throw new \RuntimeException('Não foi possível obter o bloqueio do registro.');
+    }
+    try {
+      $json = json_encode(['schema' => 1, 'entries' => $this->entries], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
+      $tmp = $this->path . '.tmp-' . getmypid();
+      if (file_put_contents($tmp, $json) === false || !rename($tmp, $this->path)) {
+        @unlink($tmp);
+        throw new \RuntimeException('Falha ao gravar o registro.');
+      }
+    } finally {
+      flock($lock, LOCK_UN);
+      fclose($lock);
+    }
+  }
+
   /** Acrescenta uma entrada e grava o arquivo. Retorna o id criado. */
   public function add(array $fields): string {
     $max = 0;
@@ -83,7 +105,7 @@ final class Registry {
       array_pop($this->entries);
       throw new \InvalidArgumentException(implode('; ', $errors));
     }
-    file_put_contents($this->path, json_encode(['schema' => 1, 'entries' => $this->entries], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+    $this->save();
     return $fields['id'];
   }
 
