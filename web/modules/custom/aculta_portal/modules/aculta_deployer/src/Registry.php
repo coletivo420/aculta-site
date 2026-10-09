@@ -92,6 +92,48 @@ final class Registry {
     }
   }
 
+  /**
+   * Importa vários achados de uma vez, tudo ou nada: se qualquer achado for
+   * inválido, nada é gravado. Campos desconhecidos são descartados.
+   *
+   * @param array<int, array<string, mixed>> $findings
+   * @return string[] Ids criados.
+   */
+  public function addMany(array $findings): array {
+    $backup = $this->entries;
+    $ids = [];
+    foreach ($findings as $i => $f) {
+      if (!is_array($f)) {
+        $this->entries = $backup;
+        throw new \InvalidArgumentException("achado #" . ($i + 1) . " não é um objeto");
+      }
+      $max = 0;
+      foreach ($this->entries as $e) {
+        $max = max($max, (int) substr((string) $e['id'], 4));
+      }
+      $entry = ['id' => sprintf('DEP-%04d', $max + 1)] + [
+        'kind' => $f['kind'] ?? null,
+        'status' => 'open',
+        'blocking' => (bool) ($f['blocking'] ?? false),
+        'page' => $f['page'] ?? null,
+        'current' => $f['current'] ?? null,
+        'expected_production' => $f['expected_production'] ?? null,
+        'reason' => $f['reason'] ?? null,
+        'owner' => $f['owner'] ?? null,
+        'decision' => 'pendente',
+      ];
+      $this->entries[] = $entry;
+      $ids[] = $entry['id'];
+    }
+    $errors = $this->validate();
+    if ($errors !== []) {
+      $this->entries = $backup;
+      throw new \InvalidArgumentException(implode('; ', $errors));
+    }
+    $this->save();
+    return $ids;
+  }
+
   /** Acrescenta uma entrada e grava o arquivo. Retorna o id criado. */
   public function add(array $fields): string {
     $max = 0;

@@ -93,6 +93,9 @@ final class Cli {
 
   /** @param array<string, string|bool> $o */
   private function register(array $o): int {
+    if (isset($o['from-json'])) {
+      return $this->importFindings((string) $o['from-json']);
+    }
     $required = ['kind', 'page', 'current', 'expected', 'reason', 'owner'];
     foreach ($required as $k) {
       if (!isset($o[$k]) || $o[$k] === true || trim((string) $o[$k]) === '') {
@@ -115,6 +118,36 @@ final class Cli {
       return 1;
     }
     $this->say("registrado: $id");
+    return 0;
+  }
+
+  /** Fase 3: importa achados de um JSON (lista de objetos), tudo ou nada. */
+  private function importFindings(string $path): int {
+    if ($path === '' || !is_file($path) || is_link($path)) {
+      $this->err('register: --from-json precisa apontar para um arquivo regular');
+      return 1;
+    }
+    if (filesize($path) > 262144) {
+      $this->err('register: arquivo de achados acima de 256 KiB');
+      return 1;
+    }
+    try {
+      $findings = json_decode((string) file_get_contents($path), true, 64, JSON_THROW_ON_ERROR);
+    } catch (\JsonException) {
+      $this->err('register: JSON de achados inválido');
+      return 1;
+    }
+    if (!is_array($findings) || !array_is_list($findings)) {
+      $this->err('register: o arquivo deve conter uma lista de achados');
+      return 1;
+    }
+    try {
+      $ids = $this->registry()->addMany($findings);
+    } catch (\InvalidArgumentException $e) {
+      $this->err('register: nenhum achado foi gravado: ' . $e->getMessage());
+      return 1;
+    }
+    $this->say('importados: ' . implode(', ', $ids));
     return 0;
   }
 

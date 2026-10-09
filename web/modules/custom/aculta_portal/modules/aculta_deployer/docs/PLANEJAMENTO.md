@@ -52,6 +52,8 @@ Gate de segurança ao fim da fase 2: ver seção "Gate S2".
 
 ## Fase 3 — Integração com os validadores (curta)
 
+**Status: concluída.** Implementado: `register --from-json=ARQUIVO` com importação tudo ou nada, limite de 256 KiB, campos extras descartados e recusa de achado sem `page`, `current` ou `expected_production`.
+
 Objetivo: transformar achados do validador em entradas do registro, sem escrita direta.
 
 - `register --from-json=ARQUIVO`: importa achados de um JSON gerado pelo validador de

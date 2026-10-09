@@ -138,5 +138,26 @@ foreach (['a', 'b'] as $d) {
 @unlink($base . '/link-para-repo');
 @rmdir($base);
 
+// Fase 3: importação de achados (tudo ou nada).
+$regFile = sys_get_temp_dir() . '/aculta-deployer-p3-' . getmypid() . '.json';
+file_put_contents($regFile, json_encode(['schema' => 1, 'entries' => []]));
+$good = [
+  ['kind' => 'other', 'page' => 'p1', 'current' => 'c', 'expected_production' => 'e', 'reason' => 'r', 'owner' => 'o', 'extra' => 'ignorado'],
+  ['kind' => 'link', 'page' => 'p2', 'current' => 'c', 'expected_production' => 'e', 'reason' => 'r', 'owner' => 'o'],
+];
+$gReg = new Registry($regFile);
+$ids = $gReg->addMany($good);
+$assert($ids === ['DEP-0001', 'DEP-0002'] && !array_key_exists('extra', (new Registry($regFile))->entries()[0]), 'importação grava achados válidos e descarta campos extras');
+$badFindings = [$good[0], ['kind' => 'canonical', 'page' => 'p3']];
+$before = file_get_contents($regFile);
+$threwBad = false;
+try {
+  (new Registry($regFile))->addMany($badFindings);
+} catch (\InvalidArgumentException) {
+  $threwBad = true;
+}
+$assert($threwBad && file_get_contents($regFile) === $before, 'importação com um achado inválido não grava nada');
+unlink($regFile);
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);
