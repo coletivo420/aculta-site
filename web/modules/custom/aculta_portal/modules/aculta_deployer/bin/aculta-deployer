@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+// Ponto de entrada da ferramenta. Standalone: não carrega Drupal, Drush nem vendor.
+$toolRoot = dirname(__DIR__);
+foreach (['Registry', 'Transform', 'Boundary', 'Cli'] as $class) {
+  require_once $toolRoot . '/src/' . $class . '.php';
+}
+exit((new AcultaDeployer\Cli($toolRoot))->run($argv));

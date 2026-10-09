@@ -1,0 +1,18 @@
+{
+  "tool": "aculta-deployer",
+  "scope": [
+    "^config/sync/(.+/)?[^/]+\\.yml$",
+    "^scripts/content/.+\\.json$"
+  ],
+  "drop": [
+    "^config/sync/domain_alias\\.alias\\..*_(toca_net_br|test_8080)\\.yml$"
+  ],
+  "host_rules": [
+    {
+      "from": "aculta.toca.net.br",
+      "to": "aculta.org",
+      "comment": "Host de teste (*.aculta.toca.net.br) para produção (*.aculta.org). Preserva o prefixo do subdomínio."
+    }
+  ],
+  "blocking_kinds": ["canonical", "sitemap"]
+}

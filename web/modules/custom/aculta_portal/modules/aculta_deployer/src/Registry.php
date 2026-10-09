@@ -1,0 +1,90 @@
+<?php
+
+declare(strict_types=1);
+
+namespace AcultaDeployer;
+
+/**
+ * Registro de correções de deploy (canônicos, sitemap e páginas que apontam
+ * para produção). Fonte única: registry/deploy-registry.json.
+ */
+final class Registry {
+
+  public const KINDS = ['canonical', 'sitemap', 'link', 'redirect', 'other'];
+  public const STATUSES = ['open', 'resolved'];
+
+  /** @var array<int, array<string, mixed>> */
+  private array $entries;
+
+  public function __construct(private readonly string $path) {
+    $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+    if (($data['schema'] ?? null) !== 1 || !is_array($data['entries'] ?? null)) {
+      throw new \RuntimeException('Registro inválido: schema 1 com lista "entries" é obrigatório.');
+    }
+    $this->entries = $data['entries'];
+  }
+
+  /** @return array<int, array<string, mixed>> */
+  public function entries(): array {
+    return $this->entries;
+  }
+
+  /** @return string[] Erros de validação; vazio quando o registro está correto. */
+  public function validate(): array {
+    $errors = [];
+    $ids = [];
+    foreach ($this->entries as $i => $e) {
+      $where = 'entrada #' . ($i + 1) . ' (' . ($e['id'] ?? '?') . ')';
+      foreach (['id', 'kind', 'status', 'page', 'current', 'expected_production', 'reason', 'owner', 'decision'] as $field) {
+        if (!isset($e[$field]) || trim((string) $e[$field]) === '') {
+          $errors[] = "$where: campo obrigatório ausente: $field";
+        }
+      }
+      if (isset($e['id']) && preg_match('/^DEP-\d{4}$/', (string) $e['id']) !== 1) {
+        $errors[] = "$where: id deve seguir DEP-NNNN";
+      }
+      if (isset($e['id']) && in_array($e['id'], $ids, true)) {
+        $errors[] = "$where: id duplicado";
+      }
+      $ids[] = $e['id'] ?? null;
+      if (isset($e['kind']) && !in_array($e['kind'], self::KINDS, true)) {
+        $errors[] = "$where: kind inválido: {$e['kind']}";
+      }
+      if (isset($e['status']) && !in_array($e['status'], self::STATUSES, true)) {
+        $errors[] = "$where: status inválido: {$e['status']}";
+      }
+      if (isset($e['blocking']) && !is_bool($e['blocking'])) {
+        $errors[] = "$where: blocking deve ser booleano";
+      }
+    }
+    return $errors;
+  }
+
+  /** @return array<int, array<string, mixed>> Entradas abertas. */
+  public function open(): array {
+    return array_values(array_filter($this->entries, static fn(array $e): bool => ($e['status'] ?? '') === 'open'));
+  }
+
+  /** @return array<int, array<string, mixed>> Entradas abertas e bloqueantes. */
+  public function openBlocking(): array {
+    return array_values(array_filter($this->open(), static fn(array $e): bool => ($e['blocking'] ?? false) === true));
+  }
+
+  /** Acrescenta uma entrada e grava o arquivo. Retorna o id criado. */
+  public function add(array $fields): string {
+    $max = 0;
+    foreach ($this->entries as $e) {
+      $max = max($max, (int) substr((string) $e['id'], 4));
+    }
+    $fields = ['id' => sprintf('DEP-%04d', $max + 1)] + $fields + ['status' => 'open', 'blocking' => false, 'decision' => 'pendente'];
+    $this->entries[] = $fields;
+    $errors = $this->validate();
+    if ($errors !== []) {
+      array_pop($this->entries);
+      throw new \InvalidArgumentException(implode('; ', $errors));
+    }
+    file_put_contents($this->path, json_encode(['schema' => 1, 'entries' => $this->entries], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+    return $fields['id'];
+  }
+
+}
