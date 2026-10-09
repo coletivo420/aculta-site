@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.5.0-dev.3 | F1 (modo de cor): atributo aplicado via `b5_theme_mode` (o Bootstrap 5 sobrescrevia `html_attributes`); verificado por requisição HTTP em cópia isolada do Runtime | marcada no código; RUNTIME STATUS DEFERRED |
 | 0.5.0-dev.2 | F1 (modo de cor): modo claro, escuro e automático com contrato do Portal; gate ajustado para o bloco automático e o ramo de contrato | marcada no código; RUNTIME STATUS DEFERRED |
 | 0.5.0-dev.1 | F1 (modo de cor): medição do modo escuro em navegador, pré-requisito atendido; tokens da barra sem alteração | marcada no código |
 | 0.4.5 | fechamento da linha 0.4.x (2026-10-09): 0.4.4 (PR #122), 0.4.5-dev.1 a dev.5 (PRs #124, #129, #130 e o dev.5); DT-T18 pendente, independente do tema | marcada no código (release) |
@@ -104,7 +105,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 - Decisões do responsável: o controle fica em **Minha Conta > Configurações** (`/configuracoes`, no Portal); a preferência é gravada por usuário no banco (`user.data`); há três estados (claro, escuro, automático); o Portal tem um padrão global do site em `/admin/config/aculta/aparencia`, que vale para visitantes e para quem não escolheu.
 - Portal: `ColorModePreference` resolve o modo e publica o contrato neutro `aculta_color_mode` (`light`, `dark` ou `auto`). O tema não lê usuário nem configuração.
-- Tema: `ThemeHooks::preprocessHtml` grava `data-bs-theme` em `light` ou `dark`. Em `auto` não grava atributo, e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`. O bloco automático espelha o bloco escuro e o gate verifica essa igualdade.
+- Tema: `ThemeHooks::preprocessHtml` define `b5_theme_mode` (`light`, `dark`, ou vazio em `auto`). O `html.html.twig` do Bootstrap 5 grava `data-bs-theme` a partir dessa variável e sobrescreve qualquer atributo em `html_attributes`. Em `auto` o atributo fica vazio e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`. O bloco automático espelha o bloco escuro e o gate verifica essa igualdade.
 - Sem JavaScript de modo: nenhuma troca no cliente, nenhum `localStorage`.
 - Medição: `scripts/validate-color-mode-browser.mjs` (52 medidas, pior caso 8,82:1). Teste de CSS com `prefers-color-scheme: dark` em Chromium: automático segue o sistema, `light` vence o sistema, `dark` força o escuro.
 - Pendências: validação no Runtime (Portal + tema) e QA visual das duas telas de configuração. Tokens da barra não mudaram.

@@ -1,3 +1,12 @@
+## 0.5.0-dev.3 — F1 (modo de cor): atributo via b5_theme_mode — 2026-10-09
+
+RUNTIME STATUS: DEFERRED no Runtime oficial. Em cópia isolada do Runtime (com o Portal 0.2.0-dev.18), requisições HTTP anônimas à página inicial confirmaram o atributo nos três padrões do site, e a escolha de uma pessoa usuária sobrepôs o padrão.
+
+Classificação: correção da 0.5.0-dev.2, dentro da linha 0.5 (F1).
+
+- O `html.html.twig` do Bootstrap 5 grava `data-bs-theme` a partir de `b5_theme_mode` e sobrescrevia o atributo que a 0.5.0-dev.2 colocava em `html_attributes`. Resultado: o modo escuro saía `light`. Passa a usar `b5_theme_mode`: `light`, `dark` ou vazio em `auto`.
+- Verificado: site `light` → `"light"`; site `dark` → `"dark"`; site `auto` → `""`; escolha `dark` de usuária com padrão `light` → `"dark"`.
+
 ## 0.5.0-dev.2 — F1 (modo de cor): claro, escuro e automático — 2026-10-09
 
 RUNTIME STATUS: DEFERRED (validação no Runtime com o Portal 0.2.0-dev.17 pendente).

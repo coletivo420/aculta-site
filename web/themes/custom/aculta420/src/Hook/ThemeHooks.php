@@ -245,14 +245,19 @@ final class ThemeHooks {
 
   /**
    * Aplica o modo de cor que o Portal resolveu (contrato aculta_color_mode: light, dark ou auto).
-   * Em auto não grava atributo: o bloco prefers-color-scheme de tokens.css decide.
+   *
+   * O html.html.twig do Bootstrap 5 grava data-bs-theme a partir de b5_theme_mode, e sobrescreve
+   * qualquer atributo colocado em html_attributes. Por isso o modo entra por essa variável. Em auto
+   * o valor fica vazio: o atributo não é "light", e o bloco prefers-color-scheme de tokens.css decide.
    */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
     $mode = $variables['aculta_color_mode'] ?? 'light';
-    if (in_array($mode, ['light', 'dark'], TRUE)) {
-      $variables['html_attributes']->setAttribute('data-bs-theme', $mode);
-    }
+    $variables['b5_theme_mode'] = match ($mode) {
+      'dark' => 'dark',
+      'auto' => '',
+      default => 'light',
+    };
   }
 
 }

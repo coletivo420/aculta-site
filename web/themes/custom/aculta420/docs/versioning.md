@@ -135,6 +135,7 @@ Marcações já feitas, por linha:
 | 0.4.5-dev.2 | imagem dos cards de projeto e grade responsiva | marcada no código |
 | 0.4.5-dev.3 | cards de projeto: imagem 256 px com 2x e conteúdo centralizado | marcada no código |
 | 0.4.5-dev.4 | validador de navegador: página de apoio no host SUPPORT | marcada no código; merge `0.4.5` pendente |
+| 0.5.0-dev.3 | F1 (modo de cor): atributo via b5_theme_mode | marcada no código; RUNTIME STATUS DEFERRED |
 | 0.5.0-dev.2 | F1 (modo de cor): modo claro, escuro e automático | marcada no código; RUNTIME STATUS DEFERRED |
 | 0.5.0-dev.1 | F1 (modo de cor): medição do modo escuro em navegador | marcada no código |
 | 0.4.5 | fechamento da linha 0.4.x (2026-10-09) | marcada no código (release); sem tag |
