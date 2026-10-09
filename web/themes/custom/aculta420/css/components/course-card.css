@@ -24,6 +24,14 @@
   border-color: var(--aculta-interactive-active-bg);
   box-shadow: var(--aculta-shadow-hover);
 }
+/* The yellow border alone is about 1.6:1 on light surfaces (WCAG 1.4.11 needs 3:1).
+   The token is dark green in light mode and yellow in dark mode, so the ring keeps contrast.
+   The selector mirrors the LMS rule (lms/components/course_card) with a higher specificity
+   so the theme owns the colour without editing contrib. */
+.aculta-main .lms-course-card:has(.lms-course-card__title a:focus-visible) {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
 .aculta-main .lms-course-card__overlay,
 .aculta-main .lms-course-card:is(:hover, :focus-within) .lms-course-card__overlay {
   background-color: var(--aculta-surface-raised);
