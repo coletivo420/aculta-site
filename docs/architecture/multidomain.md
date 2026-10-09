@@ -51,5 +51,7 @@ produção: `apoio.aculta.org`.
   principal não são referência de validação.
 - A página pertence ao purpose `support`. O fluxo de carrinho, checkout e pagamento
   continua em `main` (ver `docs/portal/PAYMENT-DOMAIN-POLICY.md`).
-- Grafia da rota: a documentação do tema e o validador de navegador usam `/apoie`; o
-  responsável indicou `/apoio`. Confirmar a grafia antes de fixar a rota em validadores.
+- Rota raiz: `config/sync/domain/apoio_aculta_org/system.site.yml` define `front: /apoie`.
+  Portanto, no host de apoio, `/` e `/apoie` são a mesma página inicial.
+- Grafia da rota: a configuração e o validador de navegador usam `/apoie`; o responsável
+  indicou `/apoio`. Confirmar antes de fixar a rota em validadores.
