@@ -27,13 +27,13 @@ Os derivados mantêm a proporção do original. Não há corte nem redimensionam
 
 | Arquivo | Dimensões | Bytes |
 | --- | --- | ---: |
-| `horizontal-640w.webp` | 640 × 213 | 62.460 |
-| `horizontal-960w.webp` | 960 × 320 | 116.128 |
-| `horizontal-1280w.webp` | 1280 × 426 | 178.348 |
-| `horizontal-2048w.webp` | 2048 × 682 | 322.212 |
-| `square-256w.webp` | 256 × 256 | 25.648 |
-| `square-512w.webp` | 512 × 512 | 62.654 |
-| `square-1024w.webp` | 1024 × 1024 | 142.474 |
+| `web/horizontal/bloco-sativa420-horizontal-640w.webp` | 640 × 213 | 62.460 |
+| `web/horizontal/bloco-sativa420-horizontal-960w.webp` | 960 × 320 | 116.128 |
+| `web/horizontal/bloco-sativa420-horizontal-1280w.webp` | 1280 × 426 | 178.348 |
+| `web/horizontal/bloco-sativa420-horizontal-2048w.webp` | 2048 × 682 | 322.212 |
+| `web/square/bloco-sativa420-square-256w.webp` | 256 × 256 | 25.648 |
+| `web/square/bloco-sativa420-square-512w.webp` | 512 × 512 | 62.654 |
+| `web/square/bloco-sativa420-square-1024w.webp` | 1024 × 1024 | 142.474 |
 
 Originais PNG (2,76 MB horizontal e 2,04 MB quadrado) não devem ser servidos em páginas. Servem apenas como fonte.
 
