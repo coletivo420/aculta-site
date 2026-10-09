@@ -54,4 +54,16 @@ produção: `apoio.aculta.org`.
 - Rota raiz: `config/sync/domain/apoio_aculta_org/system.site.yml` define `front: /apoio`.
   Portanto, no host de apoio, `/` e `/apoio` são a mesma página inicial.
 - Grafia da rota: `/apoio`, confirmada pelo responsável. `/apoie` é o caminho antigo e responde 301.
-  A conta de apoio fica em `/meu-apoio`.
+
+### Regras de apoio (decisão do responsável)
+
+1. **Tudo que é apoio é resolvido no host SUPPORT** (plataforma de doações). A página pública
+   de apoio é somente `/apoio` nesse host; em outros hosts a rota não existe como página pública.
+2. **Referências a apoio são encaminhadas para o host SUPPORT.** Links internos para `/apoio` e
+   `/apoie` são resolvidos pelo Portal para o host SUPPORT (`PortalHooks`), em qualquer host.
+3. **As doações e o histórico ficam em Minha Conta > Meu apoio.** É a seção `aculta_portal.support_my`
+   do shell da conta, no mesmo padrão de `/dados`, `/conexoes` e `/meus-cursos`. Não é uma página
+   pública de apoio e não é destino de links de divulgação.
+4. **Não existe uma segunda página de apoio.** Formulário, Pix e checkout do apoio pertencem ao
+   host SUPPORT e ao fluxo de pagamento (ver `docs/portal/PAYMENT-DOMAIN-POLICY.md`).
+5. `/apoie` é apenas redirecionamento 301 para `/apoio`.

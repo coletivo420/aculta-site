@@ -136,7 +136,7 @@ URLs humanas devem usar vocabulário de apoio/doação, por exemplo:
 - páginas de confirmação/status com nomes compreensíveis quando não forem
   endpoints técnicos do Commerce.
 
-Registro de decisão: a página pública de apoio é `/apoio`, grafia confirmada pelo responsável. `/meu-apoio` é a conta de apoio, e `/apoie` (caminho antigo) responde 301 para `/apoio`.
+Registro de decisão: a página pública de apoio é `/apoio`, grafia confirmada pelo responsável, e existe somente no host SUPPORT. O histórico de doações é a seção Minha Conta > Meu apoio (`/meu-apoio`, padrão das seções de conta como `/meus-cursos`). `/apoie` (caminho antigo) responde 301 para `/apoio`. Todo link de apoio é encaminhado ao host SUPPORT (ver `docs/architecture/multidomain.md`, "Regras de apoio").
 
 Checkout, payment callbacks e webhooks permanecem sob APIs upstream.
 
