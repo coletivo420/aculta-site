@@ -1,9 +1,4 @@
 /* Institutional composition: content lives in nodes, blocks and Views. */
-.aculta-hero { padding-block: clamp(0.75rem, 2vw, 1.5rem) clamp(1.25rem, 2.5vw, 2rem); border-bottom: 1px solid var(--aculta-border-default); }
-.aculta-eyebrow { font: 600 0.875rem/1.6 var(--aculta-font-body); letter-spacing: 0.08em; }
-.aculta-hero h1 { max-width: 22ch; margin-block: 0 1.5rem; }
-.aculta-hero-lead, .aculta-hero-slogan { max-width: 60ch; font-size: 1.125rem; line-height: 1.55; }
-.aculta-hero-slogan { font-weight: 500; }
 .aculta-actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; margin-top: 1.25rem; }
 .aculta-actions .btn-primary { color: var(--aculta-interactive-text); background: var(--aculta-interactive-bg); border: 1px solid var(--aculta-interactive-border); }
 .aculta-actions .btn-outline-primary { color: var(--aculta-text-primary); background: transparent; border: 2px solid var(--aculta-border-strong); }
@@ -25,13 +20,6 @@
 .aculta-project-list .view-header { margin-bottom: 1.5rem; }
 /* Project list grid moved to the content-grid pattern (components/patterns/content-grid). */
 .aculta-project-list .views-row { min-width: 0; }
-.aculta-project { height: 100%; padding: 1.5rem; border: 1px solid var(--aculta-border-default); border-top: 3px solid var(--aculta-interactive-active-bg); border-radius: var(--bs-border-radius); background-color: var(--aculta-surface-raised); }
-.aculta-main .aculta-project h3 { margin-block: 0.75rem 1rem; }
-.aculta-project h3 a { color: var(--aculta-text-primary); text-decoration: none; }
-.aculta-project h3 a:is(:hover, :focus-visible) { text-decoration: underline; }
-.aculta-project .aculta-category { font-size: 1rem; letter-spacing: 0.025em; }
-.aculta-project-image { margin-bottom: 1.5rem; }
-.aculta-project-image img { display: block; max-width: 100%; height: auto; }
 .aculta-editorial-link { display: inline-block; padding-block: 0.5rem; font-family: var(--aculta-font-display); font-size: 1.25rem; font-weight: 600; }
 .aculta-city { padding: clamp(1.5rem, 4vw, 3rem); color: var(--aculta-text-inverse); background: var(--aculta-green-dark); }
 .aculta-city h2 { color: inherit; }

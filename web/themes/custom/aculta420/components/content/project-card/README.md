@@ -17,7 +17,7 @@ Não há props, JavaScript, storage, consulta de serviços, Commerce ou LMS.
 ## Diferenças conhecidas em relação ao teaser anterior
 
 - o `title_attributes` do Drupal não é repassado ao `<h3>`, porque o teaser não usa contextual links nem Layout Builder;
-- o CSS do card continua em `css/components/institutional.css` e `content.css`. Consolidar essas propriedades num arquivo do SDC fica para uma fase que mexa no visual do card.
+- o CSS do card está em `project-card.css`, ao lado do componente (DT-T07, 0.4.0-dev.5). Inclui a moldura `.aculta-project` aplicada pelo presenter, o título, a categoria e a imagem; as declarações não mudaram.
 
 ## Pendente antes de `stable`
 

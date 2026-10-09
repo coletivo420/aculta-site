@@ -12,7 +12,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta, marcada em `0.4.0-dev.4` | marcada no código | Patterns v1; T2 concluída; falta T3 (CSS residual) |
+| 0.4.0 | linha aberta, marcada em `0.4.0-dev.5` | marcada no código | Patterns v1; T2 e T3 concluídas; falta fechar T1 (decisões de estruturas internas) |
 
 Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
 `aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.
@@ -46,11 +46,13 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
 - Rótulos em inglês corrigidos (DT-T15) em 0.4.0-dev.3.
 - Critério cumprido: cada item com medição registrada no changelog, sem clones no DOM.
 
-### T3 — CSS residual dos padrões (DT-T07)
+### T3 — CSS residual dos padrões (DT-T07) — concluída em 0.4.0-dev.5
 
-- Mover a visual de `.aculta-project`, `.aculta-hero` e `.aculta-section-title` para os SDCs,
-  ou registrar por que ficam globais.
-- Critério: nenhum seletor de padrão migrado fica sem dono; visual idêntico medido em captura.
+- `.aculta-hero` e `.aculta-eyebrow` saíram de `institutional.css` para `components/patterns/hero/hero.css`.
+- `.aculta-section-title` saiu de `content.css` para `components/patterns/content-section/content-section.css`.
+- `.aculta-project` (moldura do presenter) e seus filhos saíram de `institutional.css`, `content.css` e `drupal-bootstrap.css` para `components/content/project-card/project-card.css`.
+- Medição antes/depois: estilo computado idêntico por propriedade em 17 seletores de controle e padrão; 14 capturas de tela idênticas byte a byte (1280 e 390 px, 7 páginas); foco e movimento reduzido do card idênticos.
+- Os seletores compartilhados por `.card` continuam globais em `content.css`, porque ainda não têm consumidor de SDC.
 
 ### T4 — Validação automatizada (DT-T08, DT-T09) — schemas concluídos em 0.4.0-dev.2
 
