@@ -185,12 +185,13 @@ uma fase posterior.
 - 0.2-B — Domain Presentation Contract;
 - 0.2-C — Institution Bar;
 - 0.2-D — Domain Header (implementada em branch empilhada);
+- 0.2-E — Mobile/Sticky Shell (implementada em branch empilhada);
 - 0.2-E — Mobile/Sticky Shell;
 - 0.2-F — Design B QA.
 
 Estado atual: 0.2-A e 0.2-B concluídas na `main`; 0.2-C (Institution Bar) e
 0.2-D (Domain Header) implementadas em branches empilhadas, com visual QA DEFERRED
-para 0.2-F. Sticky/mobile (0.2-E) ainda não existe.
+para 0.2-F. 0.2-E (sticky/mobile) também está implementada em branch empilhada.
 
 ### Institution Bar (0.2-C)
 

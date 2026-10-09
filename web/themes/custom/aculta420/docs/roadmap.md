@@ -81,9 +81,14 @@ Status: **implementada na branch `feat/aculta420-0.2-d-domain-header`, empilhada
 
 ### 0.2-E — Mobile/Sticky Shell
 
-- adaptação mobile e comportamento sticky;
-- revisão de navegação, account dropdown e search trigger;
-- reutilizar Bootstrap Collapse/Offcanvas conforme o contrato validado.
+Status: **implementada na branch `feat/aculta420-0.2-e-mobile-sticky-shell`, empilhada sobre 0.2-D; visual QA DEFERRED para 0.2-F.**
+
+- Domain Header sticky (`position: sticky`, nunca `fixed`), deslocado por `--drupal-displace-offset-top` do Core, para respeitar o Toolbar;
+- `scroll-padding-top` para que âncoras e foco não fiquem sob o header;
+- alvos de toque de 44px em toggle, links de menu e conta;
+- menu expandido no mobile rola dentro de sua área, sem ultrapassar a viewport;
+- reaproveita o Collapse do Bootstrap e o `navigation.js` existente (Escape e foco); não há segunda engine;
+- account dropdown e search trigger não foram criados: o shell atual não tem dropdown de conta nem busca; a busca é da 0.6.0.
 
 ### 0.2-F — Design B QA
 
