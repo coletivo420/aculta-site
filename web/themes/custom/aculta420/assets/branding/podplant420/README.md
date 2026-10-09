@@ -1,37 +1,14 @@
-# Podplant420 branding assets
+# Podplant420 — arquivos estáticos de branding
 
-Static Podplant420 branding approved for use by the ACULTA420 theme.
+Este diretório contém **4 originais recebidos** em `source/originais/`, **4 masters raster derivados** em `source/masters/` e **14 arquivos WebP** de distribuição em `web/`.
 
-## Identity variants
+- `on-dark`: letras claras, para superfícies escuras.
+- `on-light`: letras escuras, para superfícies claras.
+- `stacked`: composição quadrada com áreas transparentes internas intencionais.
+- `horizontal`: composição recortada, preservando proporção e sem remodelar a identidade.
 
-| Variant | Intended surface |
-| --- | --- |
-| `stacked-on-dark` | Light mark on dark surfaces |
-| `stacked-on-light` | Dark mark on light surfaces |
-| `horizontal-on-dark` | Horizontal light mark on dark surfaces |
-| `horizontal-on-light` | Horizontal dark mark on light surfaces |
+`asset-inventory.json` registra hashes SHA-256, dimensões, alfa e peso por arquivo. Os PNGs em `source/originais/` foram copiados sem edição; os PNGs em `source/masters/` são **derivados de trabalho, não os originais**.
 
-Runtime WebP derivatives are deliberately small and canonical:
+Use `web/` apenas onde existir consumidor real. Não introduzir assets em Domain Header, Institution Bar, nem filtrar/recolorir as marcas. Não usar estas logomarcas como favicon global. A escolha claro/escuro pertence à camada de apresentação consumidora, mantendo mesmo tamanho/layout.
 
-- stacked: 128, 256 and 512 px;
-- horizontal: 240 and 480 px.
-
-The complete delivery package also preserves larger raster derivatives for future consumers. They are not duplicated in the theme until a real consumer requires them.
-
-## Usage
-
-These assets are suitable for project cards, podcast showcases, editorial sections, listings, project pages, footers, promotional pieces and external-link integrations.
-
-They are **not** a main-header identity in this task. Do not alter the Institution Bar or Domain Header, do not create a Podplant420 Domain purpose, and do not hard-code Podplant420 behavior into generic SDC components. Consumers must receive the image through props, slots or render arrays prepared by the appropriate layer.
-
-No CSS filter may recolor the logo. Do not redraw or auto-vectorize raster originals.
-
-## Editorial media
-
-Episode art, guest photos, covers, thumbnails and other managed content do not belong in this directory. Use Drupal Media/File API, Image Styles and Responsive Image for those assets.
-
-## Icons
-
-No icon-only mark was derived because no independently approved icon source was supplied. Cropping a symbol out of the logo would modify the approved identity.
-
-See `source/README.md` and `../../../docs/branding-podplant420.md` for provenance, accessibility and anti-regression rules.
+Leia `../../../docs/branding-podplant420.md` (a partir deste diretório, consultar documentação no diretório `aculta420/docs`).

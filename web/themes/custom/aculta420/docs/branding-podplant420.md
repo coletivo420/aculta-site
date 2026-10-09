@@ -1,150 +1,47 @@
-# Branding Podplant420
+# Podplant420 — Política de assets visuais (ACULTA420)
 
-Este documento define o uso dos assets visuais do **Podplant420** no ACULTA420. O escopo é identidade estática do projeto; capas de episódios, convidados, thumbnails, fotografias e demais imagens editoriais continuam pertencendo ao conteúdo gerenciado pelo Drupal.
+Status: **pacote preparado offline; integração e testes de runtime ainda não realizados**. Abertura de PR delegada ao agente homelab. Esta inclusão de arquivos, por si, **não altera templates, cabeçalhos nem Domain**.
 
-## 1. Identidade e variantes
+## Origem e propriedade
 
-Quatro identidades são preservadas, sem redesenho ou mudança de cores:
+Quatro PNG RGBA de 1024×1024 foram fornecidos diretamente pelo responsável do projeto em 2026-10-09: Branco Quadrado, Preto Quadrado, branco retângulo, Preto retângulo. O responsável deve confirmar internamente a política de licenciamento/créditos públicos antes de redistribuição externa. Não houve busca ou geração de novas marcas. O ZIP `podplant420-logomarcas.zip` mencionado nas instruções não estava disponível nesta sessão; foram utilizadas **as quatro imagens anexadas**, e os derivados aqui empacotados. A identidade de marca não foi redesenhada.
 
-| Variante | Superfície recomendada |
-| --- | --- |
-| `stacked-on-dark` | marca clara em superfície escura |
-| `stacked-on-light` | marca escura em superfície clara |
-| `horizontal-on-dark` | composição horizontal clara em superfície escura |
-| `horizontal-on-light` | composição horizontal escura em superfície clara |
+## Estrutura e variantes
 
-Não aplicar filtros CSS para inverter, recolorir ou alterar a identidade.
+`assets/branding/podplant420/source/originais/`: originais PNG anexados, intocados. `source/masters/`: 4 PNG raster derivados que servem de fonte aos arquivos web (512×512 quadrado; 960×396/397 horizontal). `web/stacked/`: WebP RGBA 128, 256 e 512 px, em on-dark/on-light. `web/horizontal/`: WebP RGBA 240, 480, 720 e 960 px, em on-dark/on-light. Total: **22 imagens** (4 originais + 4 masters + 14 web). Inventário detalhado com SHA-256 em `asset-inventory.json`.
 
-## 2. Origem
+| Família | Variantes | Usos previstos |
+| --- | --- | --- |
+| `stacked-on-dark` | WebP 128/256/512 | cards, thumbnails de identidade sobre fundo escuro |
+| `stacked-on-light` | WebP 128/256/512 | cards sobre superfície clara |
+| `horizontal-on-dark` | WebP 240/480/720/960 | vitrines, seções e chamadas largas sobre escuro |
+| `horizontal-on-light` | WebP 240/480/720/960 | vitrines, seções e chamadas largas sobre claro |
 
-A preparação partiu de quatro PNGs RGBA de 1024 x 1024 fornecidos para esta tarefa: duas composições empilhadas e duas horizontais, cada uma com variante para superfície clara ou escura. O briefing menciona um `podplant420-logomarcas.zip`, mas o arquivo ZIP de origem não foi recebido separadamente nesta execução; os quatro PNGs anexados foram inspecionados diretamente.
+O sufixo `w` significa largura de arquivo, não densidade do dispositivo. Conservar a proporção intrínseca da composição (`object-fit: contain`; não esticar, cortar elementos da logo ou adicionar fundo opaco). O logo quadrado contém margens compositivas; não gerar favicon nem ícone isolado sem aprovação de identidade e consumidor.
 
-Os arquivos foram fornecidos como material aprovado pelo responsável do projeto. A cadeia jurídica de autoria/licenciamento não foi auditada de forma independente. Novos assets devem registrar origem, autorização/licença e finalidade.
+## Responsividade, acessibilidade e cor
 
-## 3. Nomenclatura
+Oferecer `srcset`/`sizes` somente em um consumidor real e contextualizado; deixar o navegador decidir resolução. Evitar preload e `fetchpriority=high` em cards/itens fora do LCP. Usar `loading=lazy` fora da região crítica, dimensões explícitas ou `aspect-ratio` para prevenir CLS. Definir `alt` contextual, por exemplo `Podplant420` quando a imagem agrega identificação; usar `alt=""` se o link ou título adjacente já nomear o projeto e a marca for decorativa. Não duplicar rótulos para leitor de tela. Registrar crédito/licença em Media para conteúdo editorial, não em markup improvisado.
 
-O padrão é:
+`on-dark` é a marca **clara** para fundo escuro, `on-light` a marca **escura** para fundo claro. Não usar CSS `filter` ou recolorir a arte, inclusive o caule verde. Em light/dark, manter posição, fonte, tamanhos e alinhamento; apenas a escolha da variante pode mudar pelo estado semântico do consumidor. Validar legibilidade em fundos reais do design system. Não declarar contraste numérico sem medir.
 
-`podplant420-<layout>-on-<surface>-<width>w.<ext>`
+## Drupal 11+ e arquitetura
 
-Exemplos:
+Branding estático institucional permanece no tema; episódios, vídeos, convidados e thumbnails de conteúdo pertencem a Media/File API, com Image Styles e Responsive Image, alt, licença, origem e cache tags adequadas. Não criar catálogo editorial JSON, módulo novo, ou centenas de binários dentro do tema. O Portal prepara render arrays para SDCs neutros; componentes consomem props/slots sem branching por hostname/Domain purpose. Não tocar em Institution Bar/Domain Header e não criar purpose Podplant420 nesta fase.
 
-- `podplant420-stacked-on-dark-256w.webp`;
-- `podplant420-horizontal-on-light-480w.webp`.
+## Cache e operação
 
-`on-dark` e `on-light` descrevem a superfície de destino, não um modo de cor global.
+Assets estáticos versionados: fingerprint/revisão de deploy e caching HTTP ordinário do servidor, sem cache invalidation manual para imagens imutáveis; quando substituir um asset, atualizar nome/URL ou política de cache. Em conteúdo dinâmico, cache tags/contexts/max-age vêm das entidades/Render API; não perder cacheability no presenter. Nenhuma carga global de library se não houver consumidor.
 
-## 4. Estrutura
+## Anti-regressão e validação
 
-```text
-assets/branding/podplant420/
-├── README.md
-├── source/
-│   └── README.md
-└── web/
-    ├── stacked/
-    └── horizontal/
-```
+- Preserve quatro originais (compare SHA-256 com manifesto); não reprocessar imagens já aprovadas sem defeito reproduzível.
+- Verificar integridade de decodificação, transparência, dimensões, proporção, peso e inexistência de duplicatas byte a byte.
+- Não introduzir SVG falso, CSS de inversão de marca, URLs absolutas, layout diferente por modo de cor, dependência no cabeçalho ou caminhos locais de trabalho.
+- Não declarar screenshot, runtime Drupal, gates PHP/Twig/SDC ou contrastes como PASS se não executados no homelab.
+- O pacote inclui um validador local em `scripts/verify-podplant420-assets.py`; rodá-lo antes da PR.
+- Ao integrar, atualizar README/índice e CHANGELOG **sem alterar versão do tema unicamente por estes assets** sem conferir a política vigente em `docs/versioning.md`.
 
-O diretório `source/` documenta os originais e o tratamento, mas não duplica masters grandes sem consumidor. O pacote de handoff preserva os originais/derivados completos fora do runtime do tema.
+## Necessidades editoriais ainda não atendidas
 
-Não existe `icons/` nesta entrega: nenhum ícone isolado foi fornecido e recortar um símbolo da composição seria criar uma variante não aprovada.
-
-## 5. Formatos
-
-- distribuição no tema: WebP com transparência;
-- fonte fornecida: PNG RGBA;
-- SVG: não produzido, porque a origem é raster;
-- filtros de cor: proibidos para a marca.
-
-## 6. Dimensões
-
-Variantes canônicas versionadas no tema:
-
-| Layout | Largura | Dimensão |
-| --- | ---: | --- |
-| stacked | 128 | 128 x 128 |
-| stacked | 256 | 256 x 256 |
-| stacked | 512 | 512 x 512 |
-| horizontal-on-dark | 240 | 240 x 99 |
-| horizontal-on-dark | 480 | 480 x 198 |
-| horizontal-on-light | 240 | 240 x 99 |
-| horizontal-on-light | 480 | 480 x 199 |
-
-O pacote de handoff também contém derivados horizontais de 720 e 960 px e masters raster normalizados. Eles não são duplicados no runtime enquanto não houver consumidor que precise dessas resoluções.
-
-Nas horizontais, somente o excesso de canvas transparente foi removido, com margem de segurança; a proporção do desenho foi mantida.
-
-## 7. Aplicações recomendadas
-
-Uso previsto:
-
-- cards de projetos;
-- vitrines de podcast;
-- seções editoriais;
-- listagens e grids;
-- página do projeto;
-- rodapé;
-- peças promocionais;
-- links externos e integrações visuais.
-
-O Podplant420 **não** é identidade do cabeçalho principal nesta tarefa. Não modificar Institution Bar ou Domain Header, e não criar Domain purpose específico sem decisão arquitetural posterior.
-
-## 8. Superfícies claras e escuras
-
-Selecionar sempre a arte correspondente à superfície onde a marca será renderizada. A escolha deve ser feita pelo consumidor/contexto de apresentação, não por filtro CSS e não por lógica Podplant420 dentro de SDC genérico.
-
-Uma futura integração com color mode deve trocar o asset explicitamente no presenter/Render API, preservando o mesmo espaço e a mesma semântica do componente.
-
-## 9. Acessibilidade
-
-- imagem informativa: usar texto alternativo contextual e conciso;
-- marca dentro de link: o link precisa de nome acessível inequívoco, sem repetir texto desnecessariamente;
-- marca puramente decorativa ao lado de texto equivalente: `alt=""`;
-- não codificar informação apenas pela diferença claro/escuro;
-- não reduzir a marca até perder legibilidade.
-
-Créditos, licença e origem pertencem aos metadados do conteúdo quando a imagem vier da Media API.
-
-## 10. Responsividade
-
-SDCs e presenters genéricos recebem a imagem por props/slots ou render arrays. Não criar branches Podplant420 dentro de componentes genéricos.
-
-Quando houver consumidor real, preferir `srcset`/`sizes` ou Responsive Image conforme o contexto. Os assets 128/256/512 e 240/480 cobrem os usos estáticos atuais previstos; ampliar o conjunto somente com requisito medido.
-
-## 11. Cache
-
-Assets estáticos do tema são versionados pelo deploy e podem usar cache HTTP/CDN de longa duração conforme a política global do site. Mudanças de conteúdo da marca exigem novo arquivo/commit e invalidação normal do deploy.
-
-Imagens editoriais dinâmicas devem usar Media/File API, Image Styles, Responsive Image e Render API, preservando Cacheability Metadata. Não servir catálogo editorial por JSON paralelo e não contornar os caches do Drupal.
-
-## 12. Política para futuras imagens
-
-Capas de episódios, convidados, fotografias, vídeos e thumbnails devem ser entidades Media/arquivos gerenciados pelo Drupal. Preservar, quando aplicável:
-
-- texto alternativo;
-- crédito;
-- licença;
-- origem;
-- dimensões;
-- proporção;
-- descrição.
-
-Não armazenar centenas de capas no tema. Não criar módulo custom apenas para servir imagens.
-
-## 13. Regras anti-regressão
-
-1. Não redesenhar, esticar, recolorir, filtrar ou auto-vetorizar a marca.
-2. Não usar Podplant420 no Institution Bar ou Domain Header sem decisão específica.
-3. Não criar Domain purpose Podplant420 por conveniência visual.
-4. Não adicionar condição por hostname/purpose no tema para escolher esta marca.
-5. Não introduzir lógica Podplant420 em SDC genérico; dados entram por contrato de apresentação.
-6. Não transformar assets editoriais em catálogo estático do tema ou JSON paralelo.
-7. Não gerar dezenas de derivados físicos de conteúdo; usar Image Styles/Responsive Image.
-8. Não criar ícone recortado sem fonte/aprovação própria.
-9. Não adicionar caminhos absolutos.
-10. Não declarar QA visual ou Drupal runtime como aprovado sem execução real.
-
-## Estado da integração
-
-Nesta entrega não foi identificado consumidor runtime concreto que justificasse alterar Twig, SDC, Institution Bar, Domain Header ou Portal. Portanto, a mudança fica deliberadamente restrita a assets, documentação e gate determinístico. A integração deve ocorrer apenas quando um componente/presenter real consumir a marca.
+Não foram fornecidas capas de episódios, imagens de convidados, screenshots, artes de divulgação ou thumbnails de vídeos. Criar registros de pendência no fluxo editorial em vez de gerar imagens fictícias. Confirmar licença e créditos com o responsável.
