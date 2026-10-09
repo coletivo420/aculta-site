@@ -3,7 +3,11 @@
 Submódulo do `aculta_portal` que integra o sitemap multidomínio da plataforma (linha 0.1.x,
 ADR-009 em `docs/decisions/`).
 
-## Estado (microfase 0.1.0-G: índice central e promoção de /sitemap.xml)
+## Estado (0.1.1: sitemap multidomínio completo no servidor de testes)
+
+- Endereço por ambiente: a `base_url` segue o site definido pelo ACULTA Deployer (`var/deployer/environment.json`).
+
+## Detalhes da microfase 0.1.0-G (índice central e promoção de /sitemap.xml)
 
 - Variante `index` habilitada; `default_variant = index`, então `/sitemap.xml` entrega o índice.
 - Índice lista as variantes por purpose: main, support, wiki, magazine e courses (URLs `/<variante>/sitemap.xml`,
