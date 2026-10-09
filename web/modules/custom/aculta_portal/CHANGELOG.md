@@ -1,5 +1,15 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.6 — Esqueleto do submódulo aculta_portal_sitemap (0.1.0-B) — 2026-10-09
+
+Classificação: PATCH da linha 0.2.0 (estrutura opt-in; sem rotas, serviços ou hooks; sem alteração de comportamento).
+
+- Adiciona `modules/aculta_portal_sitemap` (0.1.0-B): metadados e dependências declaradas (`aculta_portal`, `simple_sitemap`, `domain`). Descoberto e não habilitado.
+- Simulação de habilitação (`pm:enable --simulate`) resolve as dependências sem alterar o banco.
+- Referência na documentação do Portal (`docs/portal/README.md`) para ADR-009.
+
+Validação: gates do Portal (ver PR). **Não validado**: habilitação real do submódulo (não habilitado nesta versão).
+
 ## 0.2.0-dev.5 — Submódulo aculta_deployer 0.1.0 — 2026-10-09
 
 Classificação: PATCH da linha 0.2.0 (ferramenta de deploy em submódulo; o Portal não muda comportamento).
