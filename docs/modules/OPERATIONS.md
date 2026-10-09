@@ -23,7 +23,7 @@ Turnstile é o único challenge CAPTCHA do projeto e falha fechado.
 
 ## Internacionalização
 
-Language e Locale estão ativos. `config_translation` está em integração no PR #63.
+Language e Locale estão ativos. `config_translation` está ativo na `main` (ver `config/sync/core.extension.yml`).
 
 ## Ambientes
 

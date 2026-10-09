@@ -4,7 +4,7 @@
 plataforma Drupal da Associação Cultural Antiproibicionista.
 
 - machine name: `aculta420`;
-- versão: **0.1.0**;
+- versão: **0.3.1** (última release; subversões `-dev` em `docs/roadmap.md`);
 - Drupal: `^11`;
 - base theme: `bootstrap5`;
 - Bootstrap fixado pelo projeto: `4.0.8`;

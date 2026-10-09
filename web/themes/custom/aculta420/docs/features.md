@@ -1,4 +1,4 @@
-# Features atuais — 0.1.0
+# Features atuais — 0.3.1
 
 ## Foundations
 

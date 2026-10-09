@@ -2,6 +2,11 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## Documentação (sem tag), versão vigente 0.3.1 — 2026-10-09
+
+- Revisão documental: registro único de dívidas (`docs/operations/DEBT-REGISTER.md`), roadmap reescrito em saneamento antes de features, sem plano de 1.0.
+- Versões obsoletas corrigidas em `README.md`, `docs/README.md` e `docs/features.md`. Regra de mudança apenas documental em `docs/versioning.md`.
+
 ## 0.4.0-dev.1 — Rail de cursos — 2026-10-09
 
 Classificação (antes de codar, conforme `docs/versioning.md`): componente `experimental` novo e mudança de configuração da view `courses_catalog` → MINOR, linha 0.4.0, subversão `-dev.1`.

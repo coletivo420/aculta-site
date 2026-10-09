@@ -1,4 +1,4 @@
-# Documentação ACULTA420 0.1.0
+# Documentação ACULTA420
 
 Esta pasta contém a documentação normativa do tema e design system.
 
