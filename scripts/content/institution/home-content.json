@@ -5,7 +5,7 @@
             "uuid": "1a8bd16f-d4ea-4770-91a6-726332a65247",
             "info": "Fortaleça nossos projetos — Home",
             "body": {
-                "value": "<div class=\"aculta-prose\"><p>Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.<\/p><p><a class=\"aculta-editorial-link\" href=\"\/apoio\">APOIE A ASSOCIAÇÃO<\/a><\/p><\/div>",
+                "value": "<div class=\"aculta-prose\"><p>Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.<\/p><\/div>",
                 "format": "full_html"
             },
             "fields": {
