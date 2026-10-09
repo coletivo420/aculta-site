@@ -1,6 +1,6 @@
 uuid: 05f6710d-6ad4-472e-9132-6797c494c77c
 langcode: pt-br
-status: false
+status: true
 dependencies:
   config:
     - views.view.home_editorial_highlights
