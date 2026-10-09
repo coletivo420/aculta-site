@@ -95,3 +95,8 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 - ADR-006 (servidores web), ADR-008 (fundação do tema).
 - `docs/portal/DRUPAL-11-STANDARDS.md`, `docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`.
 - Inventário da microfase A: `docs/decisions/ADR-009-inventario-0.1.0-A.md`.
+
+## Decisões posteriores
+
+- **Microfase C (2026-10-09):** `domain_simple_sitemap` 3.0.0-rc3 não adotado. Adaptador mínimo em `aculta_portal_sitemap` aprovado pelo responsável. Ver `ADR-009-avaliacao-domain-simple-sitemap-0.1.0-C.md`.
+- **Microfase D (2026-10-09):** política de indexação aceita. Ver `ADR-009-politica-indexacao-0.1.0-D.md`.
