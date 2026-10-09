@@ -24,7 +24,7 @@ Core Drupal 11.3+ com verificação de APIs no Core instalado; preferir prática
 | P7 | Subscribers, serviços, multidomínio | Concluída e verificada no Homelab; sobreposição de `entity.user.edit_form` mantida por defesa em profundidade |
 | P8 | Deprecações e prontidão D12/D13 | Revisada estaticamente; 0 achados em código; pendências de Composer (`require.php`, `composer/semver`) e PHP 8.5 |
 | P9 | Hardening, segurança, documentação e gates | Revisada e verificada; rollback de código documentado em `HARDENING-P9.md` |
-| P10 | Codex/Homelab, homologação, correções e merge | Planejada |
+| P10 | Codex/Homelab, homologação, correções e merge | Executada; não mesclar até decidir drift de config, testes do módulo, PHP 8.5 e política de PR (ver `RELEASE-P10.md`) |
 
 Na P1 havia 18 funções runtime procedurais no `.module`; após P4, zero e arquivo removido. Lifecycle procedural exigido pelo Core é exceção legítima. Testes completos em runtime ainda NÃO foram executados.
 
