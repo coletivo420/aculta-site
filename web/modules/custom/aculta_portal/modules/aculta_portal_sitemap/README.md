@@ -38,6 +38,10 @@ ADR-009 em `docs/decisions/`).
 
 `aculta_portal` (serviço `aculta_portal.domain_purpose`), `simple_sitemap` 4.x e `domain`.
 
-## Próximas microfases
+## Homologação (0.1.0-J)
 
-- G: índice central e promoção controlada de `/sitemap.xml`.
+- `tests/homologacao-url-site.sh [CICLOS] [IP]`: regressão de cache por `url.site` no servidor de testes (PASS).
+
+## Próximas etapas
+
+- Deploy: somente no RC de todos os módulos, temas e subtemas.

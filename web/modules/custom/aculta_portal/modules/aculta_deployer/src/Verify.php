@@ -128,6 +128,15 @@ final class Verify {
     return false;
   }
 
+  /**
+   * Equivalente de teste de um host de produção: aculta.org -> aculta.toca.net.br,
+   * preservando o subdomínio (apoio.aculta.org -> apoio.aculta.toca.net.br). Só troca
+   * o sufixo exato, então evil-aculta.org não vira host de teste.
+   */
+  public static function testEquivalent(string $host): string {
+    return preg_replace('/(^|\.)aculta\.org$/i', '$1aculta.toca.net.br', strtolower($host)) ?? $host;
+  }
+
   /** Host (sem porta) de uma URL, em minúsculas, ou null. */
   public static function hostOf(string $url): ?string {
     $host = parse_url($url, PHP_URL_HOST);

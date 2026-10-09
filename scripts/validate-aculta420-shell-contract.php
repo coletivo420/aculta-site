@@ -37,6 +37,7 @@ require_once $hookPath;
 $hooks = new \Drupal\aculta420\Hook\ThemeHooks(
   \Drupal::service('path.matcher'),
   \Drupal::service('config.factory'),
+  \Drupal::service('entity_type.manager'),
 );
 
 $complete = [

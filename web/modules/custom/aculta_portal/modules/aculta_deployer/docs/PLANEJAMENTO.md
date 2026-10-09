@@ -9,6 +9,7 @@ anterior com pendência de segurança aberta.
 ## Premissas
 
 - A ferramenta é standalone: sem Drupal, Drush ou vendor (ver `ARQUITETURA.md`).
+- **Deploy:** o deploy para produção só acontece quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` atualiza o código do repositório, mas não publica nada no Hostinger. Até o RC, as verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
 - O build de produção nunca grava dentro do repositório.
 - Correções que o código não resolve são registradas em `registry/deploy-registry.json`.
 - Segredos não entram no build nem no registro (ver `GUARDRAILS.md`).
@@ -102,7 +103,7 @@ Gate de segurança ao fim da fase 5: ver seção "Gate S5".
   runtime (`drush config:set`, não versionado). A produção usa `https://aculta.org` em `config/sync`.
 
 Pendências desta fase (não fechadas):
-1. Publicar em produção o `robots.txt` com a diretiva `Sitemap:` e confirmar com `robots --env=production`.
+1. Deploy no RC (todos os módulos, temas e subtemas). Só então: `robots --env=production` e `sitemap --env=production` como verificação pós-deploy. Até lá, o deploy não é executado.
 2. Cross-host: `apoio.aculta.org`, `wiki420`, `coletivo420` e `cursos` precisam responder em produção
    (DEP-0001, DEP-0002 e DEP-0003 no registro). Verificação de propriedade no Search Console é
    manual e fica fora do deployer (ADR-009).
@@ -112,6 +113,7 @@ Pendências desta fase (não fechadas):
 ## Fase 6 — Release 0.2.0 (curta)
 
 - Atualizar CHANGELOG, VERSION e `info.yml`; a tag só é criada sob pedido do responsável.
+- Esta fase é o gate de RC do deployer. O deploy de produção acontece depois do RC de todos os módulos, temas e subtemas.
 - Revisão final da documentação e das fronteiras.
 
 ## Gates de segurança

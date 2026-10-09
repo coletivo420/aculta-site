@@ -22,6 +22,7 @@
   responde 401, 403, 404 ou 410. Um 200 sem noindex falha.
 - `Verify::metaNoindex()`, `Verify::statusCode()` e `Verify::isRefusedStatus()` adicionados.
 - Testes: asserções de meta robots, status e lista de caminhos privados de produção.
+- `sitemap --env=test` verifica os hosts de conteúdo pelo equivalente de teste (`apoio.aculta.toca.net.br`), sem depender de produção: PASS no servidor de testes.
 - Documentação em `docs/USO.md` e `docs/GUARDRAILS.md` (motivo da checagem de meta e de 404/410).
 - Pendência fora deste submódulo: o Portal não emite `noindex` em `/entrar` (rota
   `user.login`); a regra em `PortalHooks` cobre só rotas `aculta_portal.*`.
