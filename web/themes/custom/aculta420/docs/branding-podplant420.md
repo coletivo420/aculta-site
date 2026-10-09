@@ -4,7 +4,7 @@ Status: **assets integrados e validados offline** (SHA-256, decodificação, tra
 
 ## Origem e propriedade
 
-Quatro PNG RGBA de 1024×1024 foram fornecidos diretamente pelo responsável do projeto em 2026-10-09: Branco Quadrado, Preto Quadrado, branco retângulo, Preto retângulo. O responsável deve confirmar internamente a política de licenciamento/créditos públicos antes de redistribuição externa. Não houve busca ou geração de novas marcas. O ZIP `podplant420-logomarcas.zip` mencionado nas instruções não estava disponível nesta sessão; foram utilizadas **as quatro imagens anexadas**, e os derivados aqui empacotados. A identidade de marca não foi redesenhada.
+Quatro PNG RGBA de 1024×1024 foram fornecidos diretamente pelo responsável do projeto em 2026-10-09: Branco Quadrado, Preto Quadrado, branco retângulo, Preto retângulo. Autoria e licenças: as artes são produzidas pelo coletivo420 (ACULTA), que detém as licenças de uso, conforme informado pelo responsável do projeto em 2026-10-09. Não houve busca ou geração de novas marcas. O ZIP `podplant420-logomarcas.zip` mencionado nas instruções não estava disponível nesta sessão; foram utilizadas **as quatro imagens anexadas**, e os derivados aqui empacotados. A identidade de marca não foi redesenhada.
 
 ## Estrutura e variantes
 

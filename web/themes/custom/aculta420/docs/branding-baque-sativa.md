@@ -11,7 +11,7 @@ Este kit reúne as logomarcas do **Grupo de Percussão Baque Sativa** para uso e
 - Artes oficiais recebidas pelo responsável do projeto: texto **amarelo** e texto **vermelho**.
 - Ambas são verticais, com fundo transparente. O desenho original (percussionista, tambor, correntes e lettering) foi preservado.
 - Os originais têm 1024 × 1024 px, em PNG RGBA. Estão em `source/` e não devem ser alterados.
-- Licença e direitos de uso não foram auditados neste repositório. Novos usos externos exigem confirmação do responsável.
+- Autoria e licenças: as artes são produzidas pelo coletivo420 (ACULTA), que detém as licenças de uso, conforme informado pelo responsável do projeto.
 
 ## Variantes
 
