@@ -100,3 +100,5 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 
 - **Microfase C (2026-10-09):** `domain_simple_sitemap` 3.0.0-rc3 não adotado. Adaptador mínimo em `aculta_portal_sitemap` aprovado pelo responsável. Ver `ADR-009-avaliacao-domain-simple-sitemap-0.1.0-C.md`.
 - **Microfase D (2026-10-09):** política de indexação aceita. Ver `ADR-009-politica-indexacao-0.1.0-D.md`.
+
+- **Deploy só no RC (2026-10-09).** Índice central, `robots.txt` e demais mudanças de descoberta vão para produção somente quando todos os módulos, temas e subtemas estiverem em RC. Até lá, valem como verificação no servidor de testes.

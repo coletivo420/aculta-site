@@ -534,6 +534,7 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
   política). Verificação pós-deploy por host; resultado FAIL bloqueia a publicação.
 - Correção registrada: DEP-0003 (VirtualHost de teste com noindex) permanece bloqueante até o
   `robots --env=production` passar em todos os hosts.
+- **Deploy (decisão do responsável, 2026-10-09):** o deploy para produção só acontece quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` atualiza o código do repositório, mas não publica nada no Hostinger. Até o RC, as verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
 - **Divergência entre ambientes passa pelo `aculta_deployer`.** Qualquer diferença de host,
   `base_url` do `simple_sitemap`, `robots.txt`, diretiva `Sitemap:`, sitemap ou noindex entre o
   servidor de testes e a produção deve ser declarada em `config/deploy.json` e verificada por um

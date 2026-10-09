@@ -1,5 +1,12 @@
 # Changelog — ACULTA Portal Sitemap
 
+## 0.1.0-I/J — documentação consolidada e homologação url.site — 2026-10-09
+
+- I: ADR-009 com a regra de deploy só no RC; `README.md` e `docs/operations` alinhados (DEPLOYMENT, RELEASES, AGENTS, deployer).
+- J: `tests/homologacao-url-site.sh` alterna seis hosts por cinco ciclos (raiz e `/entrar`) e compara título, canonical e meta robots com a linha de base. Resultado no servidor de testes: PASS (sem vazamento de cache entre hosts). Expectativas de robots conferidas: WIKI, CURSOS e APOIO sem noindex; `/entrar` com noindex.
+- Limite da J: no servidor de testes, o canonical de `aculta.toca.net.br` e de `apoio` aponta para o host de teste, e o de WIKI, CURSOS e MAGAZINE para produção. É estável entre ciclos (não é cache), e em produção o host da requisição é o canônico. Recomenda-se revisar na homologação do RC.
+- Deploy: somente no RC de todos os módulos, temas e subtemas.
+
 ## 0.1.0-H — descoberta: robots.txt e índice no ambiente — 2026-10-09
 
 - `web/robots.txt` anuncia `Sitemap: https://aculta.org/sitemap.xml` (índice central). Não há Disallow de purpose públicos.
