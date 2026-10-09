@@ -49,7 +49,8 @@ Status: **auditoria concluída; homologação total NÃO declarada.** Existem bl
 - `composer/semver: ^3.4` declarado (uso direto em `PortalRequirementsController`); travado em 3.4.4; nenhuma mudança de versão.
 - `require.php: >=8.3` (ver A.2).
 - `scaffold.file-mapping` exclui `[project-root]/.gitattributes`: o scaffolding do Core sobrescrevia o arquivo com regras que removiam entradas do projeto durante `composer update`.
-- `drupal/core-dev: 11.4.8` (dev), necessário para PHPUnit 11 com o bootstrap do Core. Impacto medido com `--with-all-dependencies --dry-run`: 85 pacotes de desenvolvimento novos, 0 atualizações e 1 downgrade (`sebastian/diff` 7.0.1 → 6.0.2, dentro de `^4 || ^5 || ^6 || ^7` do Core). Verificado que nenhum código de runtime usa `sebastian/diff`.
+- `drupal/core-dev: 11.4.8` (dev), necessário para PHPUnit 11 com o bootstrap do Core. Impacto medido com `--with-all-dependencies --dry-run`: 85 pacotes de desenvolvimento novos, 0 atualizações e 1 downgrade (`sebastian/diff` 7.0.1 → 6.0.2, dentro de `^4 || ^5 || ^6 || ^7` do Core). **Correção:** o Core usa `sebastian/diff` em runtime (`Drupal\Component\Diff`, usado pelas telas de diferença de configuração). Verificado após a revisão: o diff de configuração renderiza adições, remoções e contexto corretamente com 6.0.2 (`/painel-administrativo/configuracoes/development/configuration/sync/diff/...`). A mensagem do commit `4bf6b89` afirma o contrário; não foi reescrita por se tratar de branch já publicada.
+- Produção deve instalar com `composer install --no-dev`: `drupal/core-dev` e as dependências de teste não são necessários em runtime.
 - `composer validate`: válido com avisos pré-existentes sobre pins exatos em bibliotecas de frontend; não alterado (política de dependências, fora do escopo).
 - `composer audit`: nenhum advisory. `composer check-platform-reqs`: PHP 8.4.26 e extensões OK.
 
@@ -67,7 +68,7 @@ Status: **auditoria concluída; homologação total NÃO declarada.** Existem bl
 - Limites: as classes de Kernel dos serviços P5–P7 (`AccountCoursesManager`, `SupportController`) e o fluxo de Domain com banco exigem `SIMPLETEST_DB` e não foram executados. Não há PASS declarado para eles.
 
 ## 8. B Segurança
-- **B.1 enumeração (login):** o Core informava "não foi ativado ou está bloqueado" antes da verificação de senha para contas existentes. Corrigido com `validateLoginAuthentication`. Verificado pela cadeia real de validação, em transação revertida, com três estados (inexistente, bloqueada, ativa com senha errada): as três respostas são idênticas.
+- **B.1 enumeração (login):** o Core informava "não foi ativado ou está bloqueado" antes da verificação de senha para contas existentes. Corrigido com `validateLoginAuthentication`. Verificado pela cadeia real de validação, em transação revertida, com três estados (inexistente, bloqueada, ativa com senha errada): as três respostas são idênticas. **Paridade de flood por IP:** após a revisão independente, a conta bloqueada também passa pela verificação de flood por IP do Core, com a mesma condição (nome e senha não vazios). Verificado com `ip_limit` reduzido a 0 dentro de transação revertida: os três estados retornam `flood_control_triggered = ip`, sem mensagem distinta. O valor original (50) foi confirmado no banco após a reversão.
 - **B.1 enumeração (reset):** coberta pelo módulo contrib `username_enumeration_prevention`, habilitado e verificado.
 - **B.1 enumeração (cadastro):** o Core responde "The email address … is already taken." Com cadastro aberto, isso permite descobrir se um endereço tem conta. **Risco residual aceito até decisão do responsável.** Opções: (a) manter a mensagem e confiar no CAPTCHA contra automação; (b) resposta genérica com e-mail ao titular, que exige novo fluxo. Não implementado.
 - **B.2 credenciais:** varredura do HEAD: nenhum literal de credencial em código ou configuração. Histórico verificado em etapa anterior: nenhum padrão de credencial. Cópias do banco do Runtime em `~/` contêm hashes de senha de contas de teste; remover quando não forem mais necessárias.
@@ -113,7 +114,23 @@ Status: **auditoria concluída; homologação total NÃO declarada.** Existem bl
 5. Criar testes de Kernel para os serviços P5–P7 quando houver banco de teste disponível.
 
 ## 12. Revisão independente
-REVIEW_PLACEHOLDER
+Revisão independente (agente com modelo de maior capacidade, somente leitura) sobre `a946880`, `4bf6b89` e `e1516df`. Sem achados CRITICAL ou HIGH.
+
+| Sev. | Achado | Situação |
+| --- | --- | --- |
+| MEDIUM | Com o limite de flood por IP atingido, a conta bloqueada não recebia a resposta de flood do Core, o que criava um oráculo de enumeração | **Corrigido** (paridade com o Core); verificado ao vivo e em teste unitário |
+| LOW | Troca do validador do login podia falhar em silêncio se o nome mudasse | **Corrigido**: o callback sempre fica presente, uma vez; testes de troca |
+| LOW | Callback não verificava o tipo do formulário | **Corrigido**: só autentica com `UserLoginForm` |
+| LOW | Teste de conta bloqueada não verificava ausência de erro e de estado | **Corrigido**: asserções de `setErrorByName` e `set` |
+| LOW | Teste de webhook sem caso positivo; teste forjado usava timestamp fora da tolerância | **Corrigido**: caso assinado válido aceito; forjado com timestamp atual rejeitado pelo HMAC |
+| INFO | Afirmação sobre `sebastian/diff` incorreta | **Corrigido na documentação** (ver A.3); verificado no diff de configuração |
+
+Mutações adicionais (paridade de flood, desvio do bloqueio, remoção do fallback da troca e webhook que aceita tudo) falham os testes correspondentes.
+
+Pontos reconhecidos pelo revisor e não tratados por decisão de escopo:
+- Diferença de tempo de resposta entre conta bloqueada e desconhecida: hipótese, não medida. O maior sinal de tempo (hash de senha de conta ativa) já existia no Core.
+- Eficácia do Turnstile contra enumeração em produção: hipótese, não verificada.
+- Enumeração pelo cadastro (ver B.1): decisão pendente.
 
 ## 13. Prontidão para encerramento
 - **Auditoria P10-R:** concluída para o que é verificável no Homelab.

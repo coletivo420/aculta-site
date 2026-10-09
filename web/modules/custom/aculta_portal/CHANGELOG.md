@@ -22,6 +22,15 @@
 - **`validate-final-contact`:** PENDENTE (mensagem `PENDING:`, saída 2; o Drush reporta 1 para qualquer saída diferente de zero).
 - Ajustes de `validate-portal-commerce-security` e `validate-final-drupal` para o novo conjunto de chaves.
 
+## 2026-10-09 — P10-R: correções da revisão independente
+
+- Login: a conta bloqueada agora passa pelo mesmo controle de flood por IP do Core (mesma condição e mesmo resultado). Sem essa paridade, um IP que atingisse o limite revelaria contas bloqueadas. Verificado com `ip_limit` reduzido a 0 em transação revertida: os três estados retornam `flood_control_triggered = ip`.
+- Login: o callback só autentica quando o objeto do formulário é `UserLoginForm`.
+- Login: a troca do validador é sempre aplicada exatamente uma vez (substitui o do Core ou o coloca primeiro), para que uma mudança de nome nunca restaure o vazamento em silêncio.
+- Testes: asserções de estado (sem erro e sem `set`) para conta bloqueada; caso positivo de assinatura do webhook; assinatura forjada com timestamp atual (o teste anterior dependia da tolerância de timestamp). Suíte: 40 testes PASS; quatro mutações nas proteções falham os testes.
+- Documentação: o uso de `sebastian/diff` pelo Core em runtime estava omitido na auditoria; corrigido. O diff de configuração foi verificado no navegador do Homelab.
+- Permissão de leitura: o diretório `config/sync` (criado pela exportação) não era legível pelo usuário do servidor web, e a tela de diferença de configuração retornava 500. Concedida leitura (`u:aculta:rX`, com entrada padrão) apenas em `config/sync`, nos arquivos do próprio repositório. Nenhum segredo está nesse diretório.
+
 ## 2026-10-09 — P10-R: auditoria pós-merge
 
 - **A.1 Configuração:** drift atual limitado a `smtp.settings` e `system.mail` (intencional, específico do ambiente). Sem objetos apenas no sync nem apenas no banco. Sem segredos literais em `config/sync`. Domain aliases com `environment: homelab/local` versionados; efeito em produção depende do nome de ambiente de produção (verificar). Módulos de administração ativos (`views_ui`, `field_ui`, `help`, `update`, `dblog`) — avaliar desativação em produção.
