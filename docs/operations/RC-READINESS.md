@@ -40,21 +40,11 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 
 ## Pendências que impedem o RC do projeto
 
-1. **Drift de configuração**: `drush config:status` lista 95 itens. A maior parte é anterior a esta
-   sessão (Commerce, formulários, campos). Só `simple_sitemap.settings` é intencional e de
-   runtime: `base_url` = host de teste. Exige decisão de release sobre a baseline de configuração
-   (TESTING.md: "não usar `cex` em massa").
-2. **Produção (DEP-0001, DEP-0002, DEP-0003)**: os hosts `*.aculta.org` de apoio, wiki, coletivo420 e
-   cursos não respondem a partir do Homelab; o `verify` do deployer marca essas entradas como FAIL.
-   Só fecham no RC/deploy.
-3. **Canonical no servidor de testes (achado da fase J)**: o canonical de `aculta.toca.net.br` e de
-   `apoio` aponta para o host de teste; o de WIKI, CURSOS e MAGAZINE aponta para produção. É estável
-   (não é cache) e em produção o host da requisição é o canônico. Revisar no RC.
-4. **Ambiente PHP**: o runtime local é PHP 8.4.26; o AGENTS.md exige PHP 8.5. Os testes não
-   dependem de recursos específicos, mas a bateria deve ser repetida em 8.5 antes do RC.
-5. **Search Console**: verificação de propriedade dos hosts é manual e fica fora do código (ADR-009).
-6. **Decisões do responsável**: `base_url` de teste permanente (runtime ou `settings.local.php`);
-   `/wiki/verbetes` no sitemap ou não; remoção dos nós de teste 69 e 70 (despublicados).
+1. **Drift de configuração (resolvido em 2026-10-09)**: novo baseline (95 arquivos de idioma e
+   tradução, sem host de teste e sem credencial). Ficam fora do baseline por serem de ambiente:
+   `simple_sitemap.settings` (`base_url` de teste no runtime) e `smtp.settings` (no runtime de teste,
+   o SMTP está ligado; `smtp_allowhtml` ainda difere do baseline). Classificação em
+   [Baseline de configuração](#baseline-de-configuração-2026-10-09).
 
 ## Estado por componente
 
@@ -77,3 +67,16 @@ php web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php
 cd web/modules/custom/aculta_portal/modules/aculta_deployer && php bin/aculta-deployer sitemap --env=test && php bin/aculta-deployer robots --env=test
 web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/homologacao-url-site.sh 5
 ```
+
+## Baseline de configuração (2026-10-09)
+
+- Método: export do runtime para pasta temporária fora do repositório; comparação com `config/sync`
+  por parser YAML (estrutura, ignorando `langcode` e `_core`).
+- Classificação: 906 arquivos iguais; 63 só de `langcode`; 32 de tradução (copiados); `smtp.settings`
+  (estrutural, fora do baseline); `simple_sitemap.settings` (host de teste, fora do baseline).
+- Varredura antes do commit: nenhum host de teste novo em `config/sync`; nenhum valor de credencial.
+- SMTP no servidor de testes: ativado no runtime (`smtp.settings:smtp_on = true`, 2026-10-09). As
+  credenciais `SMTP2GO_USERNAME` e `SMTP2GO_PASSWORD` **não** estão em `/etc/aculta/secrets.env`;
+  sem elas, o envio autenticado falha. Provisionar no ambiente, nunca no Git.
+- Não exportado: `.htaccess` e as coleções `domain.*` (não vêm do export padrão).
+
