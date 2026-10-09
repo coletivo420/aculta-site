@@ -1,3 +1,12 @@
+## 0.4.0-dev.7 — T4 concluída: validadores de navegador sem endpoint fixo — 2026-10-09
+
+Classificação: PATCH da linha 0.4.0 (ferramentas de validação; sem mudança de tema visível); sem componente stable alterado.
+
+- Os oito validadores `scripts/*.mjs` deixaram de fixar a porta DevTools (9223) e a origem (`localhost:8080`). Lêem `ACULTA_DEVTOOLS_PORT` e `ACULTA_SITE_ORIGIN` por `scripts/lib/browser-env.mjs` e param antes de conectar quando elas não existem (DT-T09).
+- Novo gate `scripts/validate-browser-validators.php`: 19 checagens; reprova endpoint literal e validador que fala com o navegador sem o helper. Caso negativo verificado.
+- Execução real: `validate-institution-browser.mjs` conectou ao Chromium (porta 9333) e leu o site pela origem informada. O validador reprovou por expectativas de conteúdo antigas (`/apoie`, `aculta_favicon.ico`), registradas como DT-T18; não é falha da porta.
+- Versão marcada em `aculta420.info.yml` e na asserção do gate de Foundation; sem tag.
+
 ## 0.4.0-dev.6 — Logomarca Wiki420 no Domain Header (PR #112) — 2026-10-09
 
 Classificação: MINOR da linha 0.4.0 (novo asset de identidade e apresentação por purpose); sem componente stable alterado.

@@ -12,7 +12,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta, marcada em `0.4.0-dev.6` | marcada no código | Patterns v1; T2 e T3 concluídas; falta fechar T1 (decisões de estruturas internas) |
+| 0.4.0 | linha aberta, marcada em `0.4.0-dev.7` | marcada no código | Patterns v1; T2, T3 e T4 concluídas; falta fechar T1 (decisões de estruturas internas) |
 
 Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
 `aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.
@@ -54,11 +54,13 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
 - Medição antes/depois: estilo computado idêntico por propriedade em 17 seletores de controle e padrão; 14 capturas de tela idênticas byte a byte (1280 e 390 px, 7 páginas); foco e movimento reduzido do card idênticos.
 - Os seletores compartilhados por `.card` continuam globais em `content.css`, porque ainda não têm consumidor de SDC.
 
-### T4 — Validação automatizada (DT-T08, DT-T09) — schemas concluídos em 0.4.0-dev.2
+### T4 — Validação automatizada (DT-T08, DT-T09) — concluída em 0.4.0-dev.7
 
-- Validar schemas dos SDCs contra os props e slots usados nos templates.
-- Parametrizar a porta DevTools dos validadores `.mjs` (hoje fixa em 9223).
-- Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts.
+- Schemas dos SDCs validados contra props e slots usados nos templates (`validate-aculta420-sdc-schemas.php`, DT-T08).
+- Validadores `.mjs` sem porta nem origem fixas: leem `ACULTA_DEVTOOLS_PORT` e `ACULTA_SITE_ORIGIN` por `scripts/lib/browser-env.mjs`. Sem as variáveis, o validador para antes de conectar (DT-T09).
+- Gate `validate-browser-validators.php` reprova endpoint literal nos scripts.
+- Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts. Cumprido.
+- Dívida nova: `validate-institution-browser.mjs` espera `/apoie` e `aculta_favicon.ico`, que o runtime atual não serve (DT-T18).
 
 ### T5 — Portabilidade do conteúdo (DT-T10, DT-O03)
 
