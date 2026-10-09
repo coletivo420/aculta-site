@@ -66,4 +66,4 @@ produção: `apoio.aculta.org`.
    pública de apoio e não é destino de links de divulgação.
 4. **Não existe uma segunda página de apoio.** Formulário, Pix e checkout do apoio pertencem ao
    host SUPPORT e ao fluxo de pagamento (ver `docs/portal/PAYMENT-DOMAIN-POLICY.md`).
-5. Não existem outras rotas de apoio. `/apoie` não tem rota própria; links antigos são resolvidos para o host SUPPORT pelo Portal, e o redirecionamento 301 do caminho antigo depende de decisão e de entidade de redirecionamento no runtime.
+5. Não existem outras rotas de apoio. `/apoie` não tem rota própria e não há redirecionamento: o site está em desenvolvimento. Links de apoio no código são resolvidos para o host SUPPORT pelo Portal.
