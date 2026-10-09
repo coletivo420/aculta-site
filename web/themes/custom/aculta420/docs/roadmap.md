@@ -131,9 +131,16 @@ Itens originais da fase:
 Gate: editorial/project/course sem regra de negócio no componente e com estados
 mobile/empty/long-title validados.
 
+## 0.3.1 — Patterns SDC (fase parcial da 0.4)
+
+Status: **concluída como 0.3.1, versão decidida pelo responsável.** Padrões SDC
+experimentais, campos e placements de seção e hero, cabeçalho de projetos por purpose.
+Detalhes e SHAs em `CHANGELOG.md`; exceção de versão em `docs/versioning.md`.
+
 ## 0.4.0 — Patterns v1
 
-Status: **parcial (0.4.0-dev), em PR.** Ver `docs/components.md` (padrões 0.4) para o que foi migrado e o que ficou pendente.
+Status: **linha aberta.** Falta rail de cursos e as estruturas internas em rich text.
+Não fechar sem essas decisões. Ver `docs/components.md` (padrões 0.4) para o que foi migrado e o que ficou pendente.
 
 - content-section;
 - content-grid;

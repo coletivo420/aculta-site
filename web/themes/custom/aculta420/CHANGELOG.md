@@ -2,9 +2,23 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
-## [Unreleased]
+## 0.3.1 — Patterns SDC (fase parcial da linha 0.4) — 2026-10-09
 
-- 0.4.0 (parcial): padrões SDC experimentais `content-section`, `hero`, `content-grid` e `carousel`. Seções editoriais de blocos `basic` agora são campos (`field_section_title`, `field_section_heading`, `field_section_variant`), renderizados pelo template de bloco `block--block-content--type--basic`. O hero da home é campos do nó `page` (`field_hero_*`), injetado por `preprocess_node` sem template de nó. A grade de projetos usa `content-grid`. O carrossel VVJB ganhou o wrapper `carousel`. Títulos de seção usam a barra de título em todas as seções: mudança visual intencional. Seções migradas pela hook de tema `aculta_section` (declarada pelo `aculta_portal`), com barra de título em todas as seções. Cabeçalho de projetos migrado para blocos com visibilidade por purpose (domínio principal, home e /projetos); o Domain Header único não muda, e o cabeçalho de cada subdomínio é um placement. Pendente: rail de cursos. Detalhes em `docs/components.md`.
+Versão decidida pelo responsável para esta fase. Pela regra de `docs/versioning.md`, uma entrega com componentes novos seria MINOR; a exceção está registrada na seção "Decisão de versão" do próprio `docs/versioning.md`. Nenhum componente `stable` teve API alterada.
+
+Mudanças principais, em ordem (SHA na `main`):
+
+- **Padrões SDC experimentais** `content-section`, `hero`, `content-grid` e `carousel` (`d865502`).
+- **Campos e placement de seção e hero**: `field_section_title`, `field_section_heading`, `field_section_variant` em `basic`; `field_hero_*` em `page`; placement `aculta_home_mission` separado de "Quem somos" (`db0ac93`).
+- **Hook de tema `aculta_section`** declarada pelo `aculta_portal` (`PortalHooks::theme()`) e entregue por `EditorialHooks::entityViewAlter()`; template `aculta-section.html.twig` do tema (`1645359`, `ae94114`).
+- **Cabeçalho de projetos por purpose**: dois placements (`aculta_projects_header_home` e `aculta_projects_header_page`) com `aculta_domain_purpose = main`; removido da view (`939eab9`, `7618eba`).
+- Títulos de seção usam a barra de título em todas as seções (mudança visual aprovada). Cabeçalho único do Domain Header inalterado.
+
+Validação do estado final (`a286db2`): gates de design, fixtures, Foundation (309 checks), shell-contract, domain-presentation e Portal Drupal 11+ (366) passam; HTTP da home, de `/projetos` e de `cursos` conferido.
+
+Não validado: carrossel em navegador (view da home desativada no Runtime); rail de cursos (não criado).
+
+Pendente para a linha 0.4.0: rail de cursos e estruturas internas em rich text.
 
 ## 0.3.0 — Card System v1 — 2026-10-09
 
