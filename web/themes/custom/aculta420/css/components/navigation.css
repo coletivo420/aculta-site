@@ -1,11 +1,11 @@
-/* 6. Navigation: header and menu share the exact institutional green. */
+/* 6. Navigation: inherits the Domain Header surface; only semantic shell tokens. */
 .aculta-navbar {
-  background-color: var(--aculta-green);
-  --bs-navbar-color: var(--aculta-text-inverse);
-  --bs-navbar-hover-color: var(--aculta-text-inverse);
-  --bs-navbar-active-color: var(--aculta-text-inverse);
-  --bs-navbar-brand-color: var(--aculta-text-inverse);
-  --bs-navbar-brand-hover-color: var(--aculta-text-inverse);
+  background-color: transparent;
+  --bs-navbar-color: var(--aculta-shell-domain-text);
+  --bs-navbar-hover-color: var(--aculta-shell-domain-text);
+  --bs-navbar-active-color: var(--aculta-shell-domain-text);
+  --bs-navbar-brand-color: var(--aculta-shell-domain-text);
+  --bs-navbar-brand-hover-color: var(--aculta-shell-domain-text);
   --bs-navbar-toggler-border-color: var(--aculta-text-inverse);
   --bs-navbar-padding-y: clamp(1rem, 2vw, 1.5rem);
   font-family: var(--aculta-font-display);
@@ -14,11 +14,11 @@
 }
 .aculta-navbar > .container { gap: 1rem 2rem; }
 .aculta-navbar .region-primary-menu { width: 100%; }
-.aculta-navbar .navbar-nav { gap: clamp(0.75rem, 1.45vw, 1.25rem); padding-inline: 0; background-color: var(--aculta-green); }
-.aculta-navbar .nav.navbar-nav { --bs-nav-link-color: var(--aculta-text-inverse); --bs-nav-link-hover-color: var(--aculta-text-inverse); }
+.aculta-navbar .navbar-nav { gap: clamp(0.75rem, 1.45vw, 1.25rem); padding-inline: 0; background-color: transparent; }
+.aculta-navbar .nav.navbar-nav { --bs-nav-link-color: var(--aculta-shell-domain-text); --bs-nav-link-hover-color: var(--aculta-shell-domain-text); }
 .aculta-navbar .navbar-nav .nav-link { padding: 0.5rem 0.4rem; white-space: nowrap; border-radius: 0.1875rem; text-decoration-thickness: 1px; text-underline-offset: 0.28em; transition: color var(--aculta-motion-fast) var(--aculta-ease-standard), background-color var(--aculta-motion-fast) var(--aculta-ease-standard), text-decoration-color var(--aculta-motion-fast) var(--aculta-ease-standard); }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link {
-  color: var(--aculta-text-inverse);
+  color: var(--aculta-shell-domain-text);
   background-color: transparent;
   text-decoration: none;
 }
@@ -43,7 +43,7 @@
   text-decoration-color: var(--aculta-interactive-active-text);
 }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link:focus-visible {
-  outline: 3px solid var(--aculta-text-inverse);
+  outline: 3px solid var(--aculta-shell-domain-text);
   outline-offset: 3px;
 }
 .aculta-navbar .navbar-nav > .nav-item > .nav-link.is-active:focus-visible,
