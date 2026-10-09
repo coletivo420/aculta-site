@@ -50,13 +50,18 @@ Antes de codar, anotar a versão alvo e a subversão prevista para cada mudança
 
 ## Versão sequencial por merge (vigente a partir de 0.4.1)
 
-- Cada PR mesclada na `main` que muda o tema ou o Portal recebe a próxima versão da sequência
-  da linha: `0.4.1`, `0.4.2`, `0.4.3` e assim por diante.
-- A PR já traz esse número nos marcadores (`info.yml`, CHANGELOG, roadmap e gate de Foundation).
-  Não há `-dev.N` intermediário entre a abertura e o merge.
-- O número é conferido contra a `main` antes do merge. Se outra PR mesclar antes, a PR seguinte
-  é renumerada para o próximo número livre.
+Duas sequências, com papéis distintos:
+
+- **`-dev.N` nomeia commits.** Enquanto a PR está aberta, cada commit que altera a versão marcada
+  usa `<linha>-dev.N`, com N crescendo a cada commit da PR: `0.4.1-dev.1`, `0.4.1-dev.2`, ...
+- **`0.4.X` nomeia merges.** Cada PR mesclada na `main` recebe a próxima versão da sequência da
+  linha: `0.4.1`, `0.4.2`, `0.4.3` e assim por diante.
+- A versão final (`0.4.X`, sem `-dev`) é marcada por um commit de release feito imediatamente antes
+  do merge. Esse commit é o único que remove o `-dev` e fecha a versão da PR.
+- O número `0.4.X` é conferido contra a `main` antes do release. Se outra PR mesclar antes, a PR
+  seguinte é renumerada para o próximo número livre.
 - A primeira versão sob esta regra é `0.4.1`, porque a última mesclada é `0.4.0-dev.6` (PR #112).
+  Commits anteriores desta PR (`0.4.0-dev.7`, `0.4.0-dev.8`) ficam no histórico como estão.
 - Documentação sem código não avança a versão (ver "Mudanças apenas documentais").
 - A classificação MINOR ou MAJOR continua sendo decisão do responsável e aparece no CHANGELOG;
   a sequência avança o PATCH dentro da linha.

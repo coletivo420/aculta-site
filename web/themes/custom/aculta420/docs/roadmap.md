@@ -12,7 +12,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta; última versão marcada `0.4.1` (T2 a T6) | marcada no código | Patterns v1; T2 a T6 concluídas (T5 com reconstrução em ambiente novo DEFERRED); falta fechar T1 |
+| 0.4.0 | linha aberta; PR #113 em `0.4.1-dev.1`, merge previsto como `0.4.1` (T2 a T6) | marcada no código | Patterns v1; T2 a T6 concluídas (T5 com reconstrução em ambiente novo DEFERRED); falta fechar T1 |
 
 Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
 `aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.
@@ -70,7 +70,7 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
 - DEFERRED: reconstrução completa num ambiente novo. O único snapshot em `estados/` é de 2026-10-04 e não tem os campos de seção nem do hero; a verificação exige importar a configuração num ambiente de teste, o que fica para uma tarefa autorizada.
 - Critério parcial: versionado e verificável; reconstrução em ambiente novo pendente.
 
-### T6 — Dependência do LMS (DT-T11) — concluída em 0.4.1
+### T6 — Dependência do LMS (DT-T11) — concluída na PR #113 (merge 0.4.1)
 
 - A skin do `lms:course_card` não define nem consome mais as variáveis `--color-*` do módulo. Propriedades com tokens ACULTA, mesmos seletores e cascata.
 - Medição: sem diferença de estilo computado no catálogo (padrão e foco, 1280 e 390 px); capturas idênticas.
