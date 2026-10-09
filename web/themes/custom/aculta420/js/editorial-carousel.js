@@ -42,6 +42,11 @@
         // Keep it paused after keyboard interaction until the visitor presses Play.
         // This also avoids resuming a deliberately paused or reduced-motion carousel.
       });
+      // The VVJB template hard-codes the region name in English. Translate it here
+      // so the accessible name matches the site language; the label is in the locale.
+      once('aculta-editorial-label', '.view-home-editorial-highlights vvjb-carousel[aria-label="Carousel"]', context).forEach((carousel) => {
+        carousel.setAttribute('aria-label', Drupal.t('Carousel'));
+      });
     },
   };
 })(Drupal, once);
