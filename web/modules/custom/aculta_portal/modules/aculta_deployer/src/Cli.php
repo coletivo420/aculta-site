@@ -302,7 +302,8 @@ final class Cli {
       return 1;
     }
     $this->say("environment: definido como {$to} — {$data['site']}");
-    return 0;
+    // O painel lê o relatório: atualiza-o para refletir o ambiente recém-definido.
+    return $this->report([]);
   }
 
   /**
