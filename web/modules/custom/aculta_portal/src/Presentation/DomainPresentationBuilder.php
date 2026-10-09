@@ -100,7 +100,7 @@ final class DomainPresentationBuilder {
           '#uri' => Url::fromUri('base:' . $relativeLogo)->toString(),
           '#alt' => $title,
           '#width' => 960,
-          '#height' => 328,
+          '#height' => 307,
           '#attributes' => ['class' => ['aculta-domain-brand-image']],
         ];
       }
