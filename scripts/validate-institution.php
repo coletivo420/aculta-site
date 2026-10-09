@@ -47,7 +47,12 @@ foreach ($state['nodes'] as $key => $id) {
     echo 'CNPJ document: unpublished draft, no invented download.' . PHP_EOL;
     continue;
   }
-  if (!$node || !$node->isPublished() || $node->get('body')->isEmpty()) {
+  // The home composes its public content from hero fields and the home_* blocks
+  // (home-content.json), so its body is intentionally empty.
+  $has_content = $key === 'home'
+    ? $node && !$node->get('field_hero_title')->isEmpty()
+    : $node && !$node->get('body')->isEmpty();
+  if (!$node || !$node->isPublished() || !$has_content) {
     throw new RuntimeException('Missing public content: ' . $key);
   }
   echo 'Content OK: ' . $key . ' / ' . $node->toUrl()->toString() . PHP_EOL;
