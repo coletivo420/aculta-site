@@ -72,7 +72,9 @@ foi conferido contra o original antes da gravação.
 
 Pendências da 0.4, registradas para decisão:
 
-- **Cabeçalho da lista de projetos** (`views.view.aculta_projects`, header em texto): não migrado. A área Entity do Views renderiza a entidade sem template de tema, porque o Core não registra a hook `block_content` para o tema. Para migrar, é preciso um template por hook de módulo (`aculta_portal`) ou posicionar o bloco como placement.
+- **Seções editoriais** agora são renderizadas pela hook de tema `aculta_section`, declarada pelo `aculta_portal` (`PortalHooks::theme()`). O `EditorialHooks::entityViewAlter()` entrega título, subtítulo, variante e corpo para blocos `basic`. O template `aculta-section.html.twig` do tema monta o `content-section`; o template do módulo é só um fallback neutro.
+- **Cabeçalho de projetos** é um bloco `basic` ("Cabeçalho — Nossos projetos") ligado à lista pela área View do Views, através da view auxiliar `aculta_section_header` (filtro por rótulo). A área Entity do Core não renderiza `block_content` neste ambiente, porque o plugin derivado por tipo não é registrado.
+- **Cabeçalho por domínio**: hoje todos os domínios usam o mesmo cabeçalho. Variar por purpose exige que o Portal entregue o bloco de cabeçalho pela preparação de apresentação; ainda não foi implementado.
 - **Carrossel**: o wrapper foi migrado, mas a view da home está desativada no Runtime, então não foi visto em navegador.
 - **Estruturas internas** (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, `aculta-editorial-link`, `aculta-institutional-note`) continuam em rich text dentro do corpo.
 - **Rail de cursos**: não criado, porque exigiria mudar a view `courses_catalog`.

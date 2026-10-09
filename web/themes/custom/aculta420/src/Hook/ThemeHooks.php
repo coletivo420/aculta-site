@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420\Hook;
 
-use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Link;
@@ -37,17 +36,6 @@ final class ThemeHooks {
       $variables['options']['show_play_pause'] = FALSE;
       $variables['options']['show_progress_bar'] = FALSE;
       $variables['options']['show_page_counter'] = FALSE;
-    }
-  }
-
-  /**
-   * Exposes the basic block entity to the editorial section block template.
-   */
-  #[Hook('preprocess_block')]
-  public function preprocessBlock(array &$variables): void {
-    $entity = $variables['elements']['content']['#block_content'] ?? NULL;
-    if ($entity instanceof BlockContentInterface && $entity->bundle() === 'basic') {
-      $variables['section_entity'] = $entity;
     }
   }
 

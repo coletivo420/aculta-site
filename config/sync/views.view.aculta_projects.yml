@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - node.type.project
+    - views.view.aculta_section_header
   module:
     - node
     - user
@@ -75,13 +76,17 @@ display:
         area:
           id: area
           table: views
-          field: area
-          plugin_id: text
+          field: view
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: view
           empty: false
-          content:
-            value: '<h2 class="aculta-section-title">NOSSOS PROJETOS</h2><p class="aculta-prose">Da percussão ao audiovisual, nossos projetos aproximam pessoas e fortalecem a participação cultural.</p>'
-            format: full_html
-          tokenize: false
+          view_to_insert: 'aculta_section_header:block_1'
+          inherit_arguments: false
+          inherit_exposed_filters: false
+          inherit_pager: false
+          render_pager: false
       display_extenders: {  }
     cache_metadata:
       max-age: -1

@@ -1,0 +1,84 @@
+uuid: 0722314c-96fd-4850-acae-f5cf624098bf
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.basic
+  module:
+    - block_content
+id: aculta_section_header
+label: 'Cabeçalho de seção (ACULTA)'
+module: views
+description: ''
+tag: ''
+base_table: block_content_field_data
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Cabeçalho de seção'
+      fields: {  }
+      pager:
+        type: none
+        options:
+          offset: 0
+          items_per_page: 1
+      access:
+        type: none
+      cache:
+        type: tag
+      sorts: {  }
+      arguments: {  }
+      filters:
+        type:
+          id: type
+          table: block_content_field_data
+          field: type
+          plugin_id: bundle
+          value:
+            basic: basic
+        id:
+          id: info
+          table: block_content_field_data
+          field: info
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: string
+          operator: '='
+          value: 'Cabeçalho — Nossos projetos'
+          group: 1
+          exposed: false
+          expose:
+            operator: ''
+      style:
+        type: default
+      row:
+        type: 'entity:block_content'
+        options:
+          view_mode: default
+      query:
+        type: views_query
+      relationships: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+      tags: {  }
+  block_1:
+    id: block_1
+    display_title: Bloco
+    display_plugin: block
+    position: 1
+    display_options:
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+      tags: {  }
