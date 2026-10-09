@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.8';
+  public const VERSION = '0.1.9';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -302,7 +302,8 @@ final class Cli {
       return 1;
     }
     $this->say("environment: definido como {$to} — {$data['site']}");
-    return 0;
+    // O painel lê o relatório: atualiza-o para refletir o ambiente recém-definido.
+    return $this->report([]);
   }
 
   /**
@@ -314,26 +315,9 @@ final class Cli {
    */
   private function report(array $o): int {
     $out = is_string($o['out'] ?? null) ? $o['out'] : $this->repoRoot . '/var/deployer/status.json';
-    $file = is_string($o['file'] ?? null) ? $o['file'] : $this->repoRoot . '/secrets/aculta.secrets.env';
     $registry = $this->registry();
     $open = $registry->open();
     $boundary = $this->boundaryViolations();
-    $contract = $this->json($this->repoRoot . '/config/secrets-contract.json');
-    $values = is_file($file) && is_readable($file) ? Secrets::parse((string) file_get_contents($file)) : null;
-    $environments = [];
-    foreach (['production', 'test'] as $env) {
-      $present = [];
-      $missing = [];
-      foreach (Secrets::requiredNames($contract, $env) as $name) {
-        if (isset($values[$name]) && $values[$name] !== '') {
-          $present[] = $name;
-        }
-        else {
-          $missing[] = $name;
-        }
-      }
-      $environments[$env] = ['present' => $present, 'missing' => $missing];
-    }
     $report = [
       'schema' => 1,
       'tool' => 'aculta-deployer ' . self::VERSION,
@@ -349,7 +333,6 @@ final class Cli {
           'current' => (string) ($e['current'] ?? ''),
         ], $open),
       ],
-      'secrets' => ['file_present' => $values !== null, 'environments' => $environments],
       'environment' => $this->currentEnvironment(),
       'not_included' => ['network' => 'execute aculta-deployer sitemap e robots', 'values' => 'nunca incluídos'],
     ];
@@ -667,7 +650,7 @@ Uso:
   aculta-deployer build --out=DIR [--allow-open-blocking]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
   aculta-deployer environment [show] | environment set --to=production|test  define o ambiente do site (e o endereço) lido pelo Portal
-  aculta-deployer report [--out=PATH] [--file=PATH]  relatório neutro para o painel do Portal (sem valores)
+  aculta-deployer report [--out=PATH]  relatório neutro para o painel do Portal (sem valores)
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version
 

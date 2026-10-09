@@ -219,34 +219,24 @@ $robotsWeb = (string) file_get_contents(dirname(__DIR__, 6) . '/robots.txt');
 $assert(in_array($sm['production']['index_url'] ?? '', AcultaDeployer\Verify::sitemapDirectives($robotsWeb), true), 'web/robots.txt anuncia o índice de produção (mesma URL da política)');
 $assert(!AcultaDeployer\Verify::disallowsRoot($robotsWeb), 'web/robots.txt não bloqueia o site inteiro');
 
-require_once $toolRoot . '/src/Secrets.php';
-$S = AcultaDeployer\Secrets::class;
-$assert($S::parse("# comentário\n\nGOOGLE_OAUTH_CLIENT_ID=abc\nSMTP2GO_PASSWORD=x=y=z\n") === ['GOOGLE_OAUTH_CLIENT_ID' => 'abc', 'SMTP2GO_PASSWORD' => 'x=y=z'], 'parse: ignora comentários e linhas vazias; valor literal com "="');
-$assert($S::parse("minuscula=1\n") === null, 'parse: nome em minúsculas é recusado');
-$assert($S::parse("SEM_IGUAL\n") === null, 'parse: linha sem "=" é recusada');
 $contract = json_decode((string) file_get_contents(dirname($toolRoot, 6) . '/config/secrets-contract.json'), true);
 $doc = (string) file_get_contents(dirname($toolRoot, 6) . '/docs/operations/SECRETS.md');
 $docOk = true;
-foreach ($S::allowedNames($contract) as $n) { if (!str_contains($doc, '`' . $n . '`')) { $docOk = false; } }
+foreach (array_column($contract['variables'], 'name') as $n) { if (!str_contains($doc, '`' . $n . '`')) { $docOk = false; } }
 $assert($docOk, 'todo nome do contrato aparece na tabela de SECRETS.md (gate anti-regressão do contrato)');
-$assert(array_diff($S::requiredNames($contract, 'production'), $S::allowedNames($contract)) === [], 'obrigatórios de produção estão no contrato');
+$requiredProd = array_column(array_filter($contract['variables'], static fn($v) => in_array('production', $v['required_in'], true)), 'name');
+$assert(array_diff($requiredProd, array_column($contract['variables'], 'name')) === [], 'obrigatórios de produção estão no contrato');
 $cli = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($toolRoot . '/bin/aculta-deployer');
 $rfDir = sys_get_temp_dir() . '/aculta-report-' . getmypid();
 @mkdir($rfDir, 0700);
-$rfIn = $rfDir . '/entrada.env';
-file_put_contents($rfIn, "GOOGLE_OAUTH_CLIENT_ID=valor-falso-id-123\nSMTP2GO_PASSWORD=valor-falso-senha-456\n");
-chmod($rfIn, 0600);
 $rfOut = $rfDir . '/status.json';
-exec($cli . ' report --file=' . escapeshellarg($rfIn) . ' --out=' . escapeshellarg($rfOut) . ' 2>&1', $o7, $rc7);
+exec($cli . ' report --out=' . escapeshellarg($rfOut) . ' 2>&1', $o7, $rc7);
 $rfText = is_file($rfOut) ? (string) file_get_contents($rfOut) : '';
 $rfData = json_decode($rfText, true);
 $assert($rc7 === 0 && is_array($rfData) && ($rfData['schema'] ?? null) === 1, 'report grava JSON com esquema 1');
-$assert(!str_contains($rfText, 'valor-falso-id-123') && !str_contains($rfText, 'valor-falso-senha-456'), 'report não contém valores de credenciais');
-$assert(in_array('GOOGLE_OAUTH_CLIENT_ID', $rfData['secrets']['environments']['test']['present'] ?? [], true) && in_array('SMTP2GO_USERNAME', $rfData['secrets']['environments']['test']['missing'] ?? [], true), 'report lista presentes e ausentes só por nome');
-$assert(!str_contains(implode("\n", $o7), 'valor-falso'), 'saída do report não exibe valores');
-$o8 = []; exec($cli . ' report --file=' . escapeshellarg($rfIn) . ' --out=' . escapeshellarg($rfOut) . ' 2>&1', $o8, $rc8);
+$o8 = []; exec($cli . ' report --out=' . escapeshellarg($rfOut) . ' 2>&1', $o8, $rc8);
 $assert($rc8 === 0, 'report sobrescreve o próprio relatório (publicação atômica)');
-@unlink($rfIn); @unlink($rfOut); @rmdir($rfDir);
+@unlink($rfOut); @rmdir($rfDir);
 
 // Fronteira: pasta de leitura neutra do Portal pode citar a ferramenta, mas não executá-la.
 $bRoot = sys_get_temp_dir() . '/aculta-boundary-' . getmypid();

@@ -82,34 +82,6 @@ final class DeployerStatusController extends ControllerBase {
       '#attributes' => ['class' => ['aculta-portal-requirements']],
     ];
 
-    $secretRows = [];
-    foreach (($data['secrets']['environments'] ?? []) as $env => $info) {
-      foreach ($info['present'] ?? [] as $name) {
-        $secretRows[] = [
-          ['data' => ['#plain_text' => (string) $env]],
-          ['data' => ['#plain_text' => (string) $name]],
-          $this->statusCell('ok', $this->t('Presente')),
-        ];
-      }
-      foreach ($info['missing'] ?? [] as $name) {
-        $secretRows[] = [
-          ['data' => ['#plain_text' => (string) $env]],
-          ['data' => ['#plain_text' => (string) $name]],
-          $this->statusCell('error', $this->t('Obrigatória ausente')),
-        ];
-      }
-    }
-    $build['secrets'] = [
-      '#type' => 'table',
-      '#caption' => $this->t('Credenciais obrigatórias por ambiente (nomes e estados)'),
-      '#header' => [$this->t('Ambiente'), $this->t('Variável'), $this->t('Status')],
-      '#rows' => $secretRows,
-      '#empty' => $this->t('Nenhuma credencial no contrato.'),
-      '#attributes' => ['class' => ['aculta-portal-requirements']],
-    ];
-    if (($data['secrets']['file_present'] ?? FALSE) !== TRUE) {
-      $build['secrets_file'] = ['#markup' => '<p>' . $this->t('Arquivo de credenciais não encontrado pela ferramenta.') . '</p>'];
-    }
     $build['links'] = [
       '#type' => 'container',
       'import' => ['#type' => 'link', '#title' => $this->t('Credenciais do ambiente'), '#url' => Url::fromRoute('aculta_portal.secrets_import')],
