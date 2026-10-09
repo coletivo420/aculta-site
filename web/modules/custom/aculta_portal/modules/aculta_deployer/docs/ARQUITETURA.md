@@ -8,6 +8,8 @@
 | `src/Cli.php` | Comandos: `check`, `boundaries`, `list`, `register`, `build`, `version`. |
 | `src/Transform.php` | Escopo, remoção de aliases de teste e substituição de host. |
 | `src/Registry.php` | Leitura, validação e gravação de `registry/deploy-registry.json`. |
+| `src/Secrets.php` | Lógica do arquivo local de credenciais: parse NAME=value, permissões, contenção e contrato. |
+| `config/secrets-contract.json` | Nomes de variáveis e ambientes obrigatórios (sem valores). Espelha `docs/operations/SECRETS.md`. |
 | `src/Boundary.php` | Verificação de fronteiras, com regras em `config/boundary.json`. |
 | `config/deploy.json` | Escopo, aliases removidos e regras de host. |
 | `registry/deploy-registry.json` | Correções de deploy abertas e resolvidas. |

@@ -5,7 +5,7 @@ Submódulo do `aculta_portal`. Ferramenta de deploy que troca os hosts de teste
 produção, e mantém o registro das correções de deploy que o código não pode
 resolver sozinho (canonicals e sitemap).
 
-- Versão: 0.1.3 (ver `VERSION` e `CHANGELOG.md`).
+- Versão: 0.1.4 (ver `VERSION` e `CHANGELOG.md`).
 - Estado no Drupal: descoberto, **não habilitado**. A ferramenta não precisa de
   Drupal para rodar; a CLI é standalone.
 - CLI: `bin/aculta-deployer`. Não usa Drush, serviços Drupal ou vendor.

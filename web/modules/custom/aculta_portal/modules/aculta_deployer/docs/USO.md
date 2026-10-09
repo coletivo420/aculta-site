@@ -66,6 +66,16 @@ Um caminho que responde 404 para o anônimo não tem conteúdo indexável. A che
 esses status para que a lista de caminhos não precise espelhar rotas que não existem em
 produção. Um 200 sem noindex é sempre falha.
 
+## Credenciais locais (0.1.4)
+
+- Arquivo padrão: `secrets/aculta.secrets.env` na raiz do repositório (ignorado pelo Git; fora de `web/`;
+  modo 0600). O Drupal o lê por `settings.local.php` (`aculta_secrets_file`).
+- `$CLI secrets check --env=test` e `--env=production`: valida o arquivo. Mostra só nomes e motivos.
+- `$CLI secrets export --env=production --out=/caminho/novo.env`: grava as variáveis do contrato em um arquivo
+  novo, 0600, fora do repositório. Depois de cada deploy, copie esse arquivo para o ambiente de produção
+  pelo canal aprovado e importe as variáveis no ambiente do processo web. A ferramenta não envia nada.
+- Credenciais ausentes no ambiente aparecem como FAIL com o nome da variável. O valor nunca é exibido.
+
 ## Descoberta e sitemaps (0.1.3)
 
 - `$CLI sitemap --env=production`: GET no índice (`sitemap.production.index_url`), nos filhos
