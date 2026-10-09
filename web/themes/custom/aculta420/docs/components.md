@@ -70,11 +70,11 @@ Ao migrar, o HTML antigo das seções (`section.aculta-editorial-section`) passo
 estrutura de campos. O texto rico interno permaneceu no corpo, e o texto de cada seção
 foi conferido contra o original antes da gravação.
 
-Pendências da 0.4, registradas para decisão:
+Pendências da 0.4:
 
 - **Seções editoriais** agora são renderizadas pela hook de tema `aculta_section`, declarada pelo `aculta_portal` (`PortalHooks::theme()`). O `EditorialHooks::entityViewAlter()` entrega título, subtítulo, variante e corpo para blocos `basic`. O template `aculta-section.html.twig` do tema monta o `content-section`; o template do módulo é só um fallback neutro.
-- **Cabeçalho de projetos** é um bloco `basic` ("Cabeçalho — Nossos projetos") ligado à lista pela área View do Views, através da view auxiliar `aculta_section_header` (filtro por rótulo). A área Entity do Core não renderiza `block_content` neste ambiente, porque o plugin derivado por tipo não é registrado.
-- **Cabeçalho por domínio**: hoje todos os domínios usam o mesmo cabeçalho. Variar por purpose exige que o Portal entregue o bloco de cabeçalho pela preparação de apresentação; ainda não foi implementado.
+- **Cabeçalho de projetos** é um bloco `basic` ("Cabeçalho — Nossos projetos") posicionado por visibilidade de purpose: `aculta_projects_header_home` em `<front>` e `aculta_projects_header_page` em `/projetos`, ambos com `aculta_domain_purpose = main`. A view de projetos não tem mais cabeçalho próprio. Nenhum ramo por purpose existe no tema.
+- **Cabeçalho por domínio** segue a prática do projeto: o Domain Header é único para todos os domínios. Cada seção de subdomínio é um bloco com visibilidade `aculta_domain_purpose`, configurado por placement; o tema apenas apresenta o bloco. Um novo subdomínio recebe seu próprio placement, sem mudança de código.
 - **Carrossel**: o wrapper foi migrado, mas a view da home está desativada no Runtime, então não foi visto em navegador.
 - **Estruturas internas** (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, `aculta-editorial-link`, `aculta-institutional-note`) continuam em rich text dentro do corpo.
 - **Rail de cursos**: não criado, porque exigiria mudar a view `courses_catalog`.
