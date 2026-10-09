@@ -40,6 +40,13 @@ Document root do Drupal:
 
 web/
 
+## Ambientes
+
+- `*.aculta.toca.net.br` é o **servidor de testes** (Homelab). Nos documentos de arquitetura aparece como Homelab; os dois termos designam o mesmo ambiente.
+- `*.aculta.org` é **produção**.
+- Não inventar ambientes, hosts ou nomes de servidor. Use somente os definidos em `docs/architecture/environments.md` e `docs/architecture/multidomain.md`.
+- Testes locais em `127.0.0.1` com resolução de host própria simulam o servidor de testes, mas não são o servidor de testes; registre-os como tal.
+
 ## Estrutura do desenvolvimento customizado
 
 Tema customizado:
