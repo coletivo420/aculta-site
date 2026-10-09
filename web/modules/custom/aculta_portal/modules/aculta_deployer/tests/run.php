@@ -266,5 +266,12 @@ $envTest = json_decode((string) file_get_contents($envFile), true);
 $assert($erc3 === 0 && ($envTest['site'] ?? null) === 'https://aculta.toca.net.br', 'environment set test grava o endereço de teste');
 if ($envBefore === null) { @unlink($envFile); } else { file_put_contents($envFile, $envBefore); }
 
+// Verify no ambiente de teste: hosts de produção viram os de teste; host parecido não muda.
+$assert(AcultaDeployer\Verify::toTestEnvironment('<link rel="canonical" href="https://apoio.aculta.org/">') === '<link rel="canonical" href="https://apoio.aculta.toca.net.br/">', 'verify teste: canonical de produção vira o host de teste');
+$assert(AcultaDeployer\Verify::toTestEnvironment('https://evil-aculta.org/ https://aculta.org/x') === 'https://evil-aculta.org/ https://aculta.toca.net.br/x', 'verify teste: host parecido com produção não é alterado');
+// build é só de produção: --env=test é recusado sem gerar saída.
+exec($cli . ' build --env=test --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);
+$assert($brc1 !== 0, 'build recusa --env=test (saída só de produção)');
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

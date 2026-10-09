@@ -120,9 +120,10 @@ Pendências desta fase (não fechadas):
 
 ## Fase 10 — Ambiente por função (0.1.8)
 
-**Status: parcialmente implementada.** `environment`, `robots`, `sitemap` e `report` respeitam o ambiente. Pendências:
-1. `build` e `verify` ainda não recebem `--env`; hoje são de produção.
-2. Testes de cada função nos dois estados (fixtures por ambiente), não só o estado atual.
+**Status: implementada para as funções com comportamento por ambiente.** `environment`, `robots`, `sitemap`, `report` e
+`verify` respeitam o ambiente; `build` recusa `--env=test`. Pendências:
+1. Testes de `robots` e `sitemap` nos dois estados com servidor local (hoje exigem rede).
+2. Entradas do registro com expectativa própria por ambiente, para que o canonical de teste (divergente) tenha um valor esperado.
 
 ## Fase 9 — Provisionamento de credenciais em produção (pendente)
 

@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.9';
+  public const VERSION = '0.1.10';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -29,7 +29,7 @@ final class Cli {
       'list' => $this->list(),
       'register' => $this->register($options),
       'build' => $this->build($options),
-      'verify' => $this->verify(),
+      'verify' => $this->verify($options),
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
       'report' => $this->report($options),
@@ -360,7 +360,9 @@ final class Cli {
   }
 
   /** Fase 5: GET somente leitura nas entradas com probe e expect. */
-  private function verify(): int {
+  /** @param array<string, string|bool> $o */
+  private function verify(array $o): int {
+    $env = $this->activeEnvironment($o);
     $code = 0;
     $checked = 0;
     foreach ($this->registry()->entries() as $e) {
@@ -368,16 +370,19 @@ final class Cli {
         continue;
       }
       $checked++;
-      $body = Verify::fetch((string) $e['probe']);
+      // Sondas e valores esperados são de produção; no teste viram os equivalentes de teste.
+      $probe = $env === 'test' ? Verify::toTestEnvironment((string) $e['probe']) : (string) $e['probe'];
+      $expect = $env === 'test' ? Verify::toTestEnvironment((string) $e['expect']) : (string) $e['expect'];
+      $body = Verify::fetch($probe);
       if ($body === null) {
-        $this->say("FAIL {$e['id']}: não foi possível ler {$e['probe']} (URL inválida ou sem resposta)");
+        $this->say("FAIL {$e['id']}: não foi possível ler {$probe} (URL inválida ou sem resposta)");
         $code = 1;
         continue;
       }
-      if (Verify::evaluate($body, (string) $e['expect'])) {
-        $this->say("PASS {$e['id']}: {$e['probe']} contém o valor esperado");
+      if (Verify::evaluate($body, $expect)) {
+        $this->say("PASS {$e['id']}: {$probe} contém o valor esperado ({$env})");
       } else {
-        $this->say("FAIL {$e['id']}: {$e['probe']} não contém o valor esperado");
+        $this->say("FAIL {$e['id']}: {$probe} não contém o valor esperado ({$env})");
         $code = 1;
       }
     }
@@ -447,6 +452,10 @@ final class Cli {
 
   /** @param array<string, string|bool> $o */
   private function build(array $o): int {
+    if (is_string($o['env'] ?? null) && $o['env'] !== 'production') {
+      $this->err('build: gera somente a saída de produção; use --env=production ou omita a opção');
+      return 1;
+    }
     $out = $o['out'] ?? null;
     if (!is_string($out) || $out === '') {
       $this->err('build: --out=DIR é obrigatório');
