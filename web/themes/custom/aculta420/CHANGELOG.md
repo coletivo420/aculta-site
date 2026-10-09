@@ -2,6 +2,15 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## 0.4.0-dev.4 — T2 concluída: rail com cursos reais e foco visível no card — 2026-10-09
+
+Classificação: PATCH da linha 0.4.0 (correção de foco no card do LMS e fechamento da validação em navegador); sem componente stable alterado.
+
+- Rail (DT-T05) validado com quatro cursos reais publicados, temporários e removidos após a medição. Em 1280 px a rolagem por seta moveu 151 px; em 390 px, 310 px; a página não rolou horizontalmente; Tab alcança cada card.
+- Foco (DT-T06) medido com foco real (Chromium headless com `Emulation.setFocusEmulationEnabled`). Shell e rail com contorno sólido de 3px. O card do LMS (`lms:course_card`) tinha só a troca de borda para amarelo, cerca de 1,6:1 sobre superfície clara, abaixo dos 3:1 da WCAG 1.4.11. A correção está em `css/components/course-card.css`: anel de 3px com `--aculta-focus-ring` (claro: verde escuro; escuro: amarelo). O seletor espelha o do LMS com maior especificidade, sem editar o contrib.
+- Ordem de Tab medida a partir do topo: cabeçalho, depois o rail como parada própria, depois os cards.
+- Versão marcada em `aculta420.info.yml` e na asserção do gate de Foundation; sem tag.
+
 ## 0.4.0-dev.3 — T2 concluída, rótulos em pt-BR e curso de introdução — 2026-10-09
 
 Classificação: MINOR da linha 0.4.0 (JavaScript do carrossel, catálogo de tradução do tema e conteúdo do LMS); sem componente stable alterado.

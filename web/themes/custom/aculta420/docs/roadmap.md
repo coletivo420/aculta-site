@@ -12,7 +12,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta, marcada em `0.4.0-dev.1` | marcada no código | Patterns v1; falta fechar estruturas internas |
+| 0.4.0 | linha aberta, marcada em `0.4.0-dev.4` | marcada no código | Patterns v1; T2 concluída; falta T3 (CSS residual) |
 
 Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
 `aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.
@@ -35,16 +35,16 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
   `aculta-institutional-note`.
 - Critério: decisão registrada por estrutura; a linha 0.4.0 fecha com `0.4.0` e tag final.
 
-### T2 — Validação em navegador (DT-T04, DT-T05, DT-T06) — carrossel validado; rail com cursos reais pendente
+### T2 — Validação em navegador (DT-T04, DT-T05, DT-T06) — concluída em 0.4.0-dev.4
 
-- Ativar a view do carrossel no Runtime (ou criar um bloco de teste) e validar em navegador:
-  rolagem, teclado, reduced motion.
-- Validar o rail com cursos reais (hoje só há um curso publicado).
-- Foco por teclado em janela com foco real, para o anel de foco de tokens.
-- Carrossel: validado em navegador e reativado na home em 0.4.0-dev.3.
-- Rótulos em inglês corrigidos (DT-T15).
-- Rail: validado com o curso real; falta validar a rolagem com vários cursos (DT-T05).
-- Critério: cada item com captura e medição, sem clones no DOM.
+- Carrossel validado em navegador e reativado na home em 0.4.0-dev.3 (DT-T04).
+- Rail validado com quatro cursos reais publicados em 0.4.0-dev.4 (DT-T05): rolagem por teclado,
+  sem rolagem horizontal da página e todos os cards alcançáveis por Tab. Os cursos de teste foram
+  removidos após a medição.
+- Foco por teclado medido com foco real (DT-T06): o card do LMS tinha só a borda amarela, com cerca
+  de 1,6:1 sobre superfície clara; recebeu anel com `--aculta-focus-ring`.
+- Rótulos em inglês corrigidos (DT-T15) em 0.4.0-dev.3.
+- Critério cumprido: cada item com medição registrada no changelog, sem clones no DOM.
 
 ### T3 — CSS residual dos padrões (DT-T07)
 
