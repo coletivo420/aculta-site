@@ -1,6 +1,6 @@
 # Shell multidomínio — direção arquitetural
 
-Status: **planejado para 0.2-B a 0.2-F; tokens preparados em 0.2-A**.
+Status: **0.2-A e 0.2-B concluídas; 0.2-C implementada em branch; 0.2-D a 0.2-F planejadas**.
 
 Este documento fixa a direção do shell público. A 0.1.0 preserva a arquitetura
 e o shell existente; 0.2-A prepara tokens; as etapas 0.2-B a 0.2-F entregam o
@@ -188,8 +188,25 @@ uma fase posterior.
 - 0.2-E — Mobile/Sticky Shell;
 - 0.2-F — Design B QA.
 
-Somente 0.2-A está em execução neste incremento; nenhuma faixa do shell ou
-seleção de branding é implementada aqui.
+Estado atual: 0.2-A e 0.2-B concluídas na `main`; 0.2-C (Institution Bar)
+implementada na branch de fase, com visual QA DEFERRED para 0.2-F. Domain Header
+(0.2-D) e sticky/mobile (0.2-E) ainda não existem.
+
+### Institution Bar (0.2-C)
+
+```text
+div.aculta-institution-bar            (faixa institucional, não é landmark)
+  .container > .aculta-institution-bar__inner
+    p.aculta-institution-bar__brand   ACULTA + nome completo (oculto < 576px)
+    div.aculta-utility                menu de conta, quando existir
+header.aculta-header                  Domain Header de purpose (0.2-D)
+```
+
+- o `<div>` evita um segundo landmark `banner`; o `<header>` do purpose continua
+  sendo o único banner da página;
+- a marca não é link: a URL de MAIN deve vir do Portal, sem derivar por hostname;
+- `regions.actions` e `regions.navigation` seguem sem consumidor até que o Portal
+  os prepare; quando isso ocorrer, a faixa os consumirá como render arrays.
 
 ## Sticky e mobile
 
