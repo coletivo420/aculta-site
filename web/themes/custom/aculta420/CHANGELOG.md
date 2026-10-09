@@ -1,3 +1,27 @@
+## 0.4.1 — T4, T5 e T6: validadores, conteúdo por UUID e skin do LMS sem variáveis internas — 2026-10-09
+
+Classificação: PATCH da linha 0.4.0 (ferramentas, portabilidade e correção de acoplamento; sem mudança visual). Primeira versão marcada pela regra sequencial por merge (`docs/versioning.md`). Sem componente stable alterado.
+
+**T4 — validadores de navegador (DT-T09)**
+- Os oito validadores `scripts/*.mjs` deixaram de fixar a porta DevTools (9223) e a origem (`localhost:8080`). Lêem `ACULTA_DEVTOOLS_PORT` e `ACULTA_SITE_ORIGIN` por `scripts/lib/browser-env.mjs` e param antes de conectar quando elas não existem.
+- Gate `validate-browser-validators.php`: 19 checagens; reprova endpoint literal. Caso negativo verificado.
+- Execução real: `validate-institution-browser.mjs` conectou ao Chromium e leu o site. Saiu com código 1 pelas expectativas de conteúdo antigas (DT-T18), não pela porta.
+
+**T5 — conteúdo da home por UUID (DT-T10, DT-O03 parcial)**
+- `scripts/content/institution/home-content.json` declara 13 blocos `basic` (seções, missão, cabeçalho de projetos) e o hero do nó 1, por UUID. Exportador somente leitura e loader idempotente, em dry-run por padrão (`ACULTA_APPLY=1` grava).
+- Gate `validate-institution-content.php`: 39 checagens; o JSON cobre todo UUID das colocações `aculta_home_*` e `aculta_projects_header_*`.
+- Dry-run no Runtime: 14 entidades sem diferença. Teste negativo: alteração do slogan detectada.
+- DEFERRED: reconstrução completa em ambiente novo; o snapshot em `estados/` é anterior aos campos de seção e do hero.
+
+**T6 — skin do LMS sem variáveis internas (DT-T11)**
+- `course-card.css` deixou de definir e de consumir as variáveis `--color-*` do LMS. As propriedades usam tokens ACULTA diretamente, nos mesmos seletores e com a mesma ordem de cascata.
+- Medição antes/depois no catálogo: 12 elementos (estado padrão e foco, 1280 e 390 px) sem diferença de estilo computado; capturas idênticas byte a byte.
+- Cores de status do LMS (sucesso, informação, aviso, erro, neutro) continuam sendo o fallback do próprio módulo; o tema não as define. Decisão registrada.
+- Gate `validate-lms-skin.php`: 10 checagens. Fixa a versão do LMS revisada (1.2.3); um upgrade reprova até a skin e a captura de referência serem revisadas. Caso negativo e simulação de upgrade verificados.
+- Limite: estados de status (atividade, avaliação, continuar, reiniciar) não aparecem para visitante anônimo e não foram medidos.
+
+- Versão marcada em `aculta420.info.yml` e na asserção do gate de Foundation; sem tag.
+
 ## 0.4.0-dev.6 — Logomarca Wiki420 no Domain Header (PR #112) — 2026-10-09
 
 Classificação: MINOR da linha 0.4.0 (novo asset de identidade e apresentação por purpose); sem componente stable alterado.

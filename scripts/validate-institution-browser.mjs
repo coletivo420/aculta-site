@@ -1,10 +1,11 @@
+import { devtoolsUrl, siteOrigin } from './lib/browser-env.mjs';
 // Dependency-free Chrome DevTools review. Artifacts stay in ignored tmp/.
 import { writeFile, mkdir } from 'node:fs/promises';
 
-const origin = 'http://localhost:8080';
+const origin = siteOrigin();
 const output = new URL('../tmp/institution-review/', import.meta.url);
 await mkdir(output, { recursive: true });
-const targets = await (await fetch('http://localhost:9223/json')).json();
+const targets = await (await fetch(devtoolsUrl('/json'))).json();
 const target = targets.find((item) => item.type === 'page');
 const socket = new WebSocket(target.webSocketDebuggerUrl);
 await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = reject; });

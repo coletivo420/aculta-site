@@ -486,7 +486,7 @@ O versionamento controla as mudanças e os avanços no código. Não criar tags 
 Antes de codar qualquer mudança no tema ou no Portal:
 
 1. classificar o tipo (PATCH, MINOR ou MAJOR) segundo `web/themes/custom/aculta420/docs/versioning.md`, tabela "Classificar antes de codar";
-2. anotar a versão alvo e a subversão `-dev.N` prevista para cada mudança principal;
+2. anotar a versão alvo: commits usam `<linha>-dev.N`; o merge usa a próxima `<linha>.X` da sequência, marcada por commit de release antes do merge (`web/themes/custom/aculta420/docs/versioning.md`);
 3. ao validar uma mudança principal, marcar a versão no código: `aculta420.info.yml`, `CHANGELOG.md` (com SHA e status de validação), `docs/roadmap.md` e a asserção do gate de Foundation;
 4. não marcar versão de estado não validado;
 5. mudança no `aculta_portal` marca a versão em `aculta_portal.info.yml` e entra no `CHANGELOG.md` do módulo;

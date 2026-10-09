@@ -191,6 +191,9 @@ Para tokens e fronteiras visuais da linha 0.2:
 
 ```sh
 php scripts/validate-aculta420-sdc-schemas.php
+php scripts/validate-browser-validators.php
+php scripts/validate-institution-content.php
+php scripts/validate-lms-skin.php
 php scripts/validate-aculta420-design-foundations.php
 php scripts/tests/validate-aculta420-design-foundations-test.php
 php scripts/tests/validate-aculta420-shell-contract-test.php
