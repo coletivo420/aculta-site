@@ -51,7 +51,13 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
    * entra no sitemap do purpose como URL própria. SUPPORT: página de apoio na raiz
    * do subdomínio (DT-P23). MAGAZINE, WIKI e COURSES: home por front de rota.
    */
-  public const ROOT_PURPOSES = ['support', 'magazine', 'wiki', 'courses'];
+  public const ROOT_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses'];
+
+  /**
+   * Páginas públicas que não são nós (rotas ou webforms) por purpose. Mantém a
+   * paridade com o sitemap institucional anterior: /contato é o webform de contato.
+   */
+  public const PUBLIC_PATHS = ['main' => ['/contato']];
 
   /** Bundles elegíveis (matriz da política de indexação). */
   public const BUNDLES = ['page', 'project', 'activity', 'document', 'wiki_entry', 'article'];
@@ -100,6 +106,9 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     if (in_array($purpose, self::ROOT_PURPOSES, TRUE)) {
       $sets[] = ['purpose' => $purpose, 'root' => TRUE];
     }
+    foreach (self::PUBLIC_PATHS[$purpose] ?? [] as $path) {
+      $sets[] = ['purpose' => $purpose, 'path' => $path];
+    }
     $ids = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)
       ->condition('status', 1)
@@ -136,6 +145,10 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
       $root = $this->purposes->canonicalPathUrl($purpose, '/');
       return $root === NULL ? [] : [$this->constructPathData($root)];
     }
+    if (isset($data_set['path'])) {
+      $url = $this->purposes->canonicalPathUrl($purpose, (string) $data_set['path']);
+      return $url === NULL ? [] : [$this->constructPathData($url)];
+    }
     $results = [];
     // R4: a elegibilidade de visualização é verificada como usuário anônimo.
     $this->accountSwitcher->switchTo(new AnonymousUserSession());
@@ -160,7 +173,13 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
   }
 
   private function isEligible(NodeInterface $node, string $purpose): bool {
-    if (!$node->isPublished() || !$node->access('view')) {
+    if (!$node->isPublished()) {
+      return FALSE;
+    }
+    // O acesso é avaliado no contexto do purpose de origem: o hook de entidade do
+    // Portal só libera verbetes da WIKI quando o host ativo é o da WIKI.
+    $viewable = $this->purposes->runInPurpose($purpose, static fn(): bool => $node->access('view'));
+    if ($viewable !== TRUE) {
       return FALSE;
     }
     $source = $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()
@@ -187,9 +206,10 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     if ($domain === NULL) {
       return FALSE;
     }
+    // Sem sobrescrita do domínio, a página inicial é a global (system.site).
     $front = $this->configStorage
       ->createCollection(DomainConfigCollectionUtils::createDomainConfigCollectionName($domain->id()))
-      ->read('system.site')['page']['front'] ?? NULL;
+      ->read('system.site')['page']['front'] ?? $this->configStorage->read('system.site')['page']['front'] ?? NULL;
     if (!is_string($front) || $front === '') {
       return FALSE;
     }
