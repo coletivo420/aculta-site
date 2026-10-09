@@ -1,5 +1,5 @@
 uuid: 703362d9-bac3-426f-81f1-0c86ee2588d9
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -11,7 +11,7 @@ dependencies:
 _core:
   default_config_hash: 5h-XFlLcjPxzvJdqRnBeDq5TbH8ngM6ntj4OgennSrU
 id: commerce_cart_block
-label: 'Cart block'
+label: 'Bloco do carrinho'
 module: views
 description: ''
 tag: commerce_cart_block

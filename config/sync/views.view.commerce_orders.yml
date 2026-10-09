@@ -1,5 +1,5 @@
 uuid: 3e2042b1-0a79-43cc-ac88-d630f326919b
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -13,7 +13,7 @@ dependencies:
 _core:
   default_config_hash: HFX6ZqjZ-Ph27nJoRvTzBtYCqiDzUaPdz-yRGWiQJtE
 id: commerce_orders
-label: Orders
+label: Pedidos
 module: views
 description: ''
 tag: Commerce
@@ -26,7 +26,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: Orders
+      title: Pedidos
       fields:
         commerce_order_bulk_form:
           id: commerce_order_bulk_form
@@ -156,7 +156,7 @@ display:
           entity_type: commerce_order
           entity_field: placed
           plugin_id: field
-          label: Date
+          label: Data
           exclude: false
           alter:
             alter_text: false
@@ -223,7 +223,7 @@ display:
           entity_type: commerce_order
           entity_field: type
           plugin_id: commerce_entity_bundle
-          label: Type
+          label: Tipo
           exclude: false
           alter:
             alter_text: false
@@ -289,7 +289,7 @@ display:
           entity_type: commerce_order
           entity_field: store_id
           plugin_id: commerce_store
-          label: Store
+          label: Loja
           exclude: false
           alter:
             alter_text: false
@@ -355,7 +355,7 @@ display:
           entity_type: commerce_order
           entity_field: uid
           plugin_id: field
-          label: Customer
+          label: Cliente
           exclude: false
           alter:
             alter_text: false
@@ -484,7 +484,7 @@ display:
           entity_type: commerce_order
           entity_field: status
           plugin_id: field
-          label: State
+          label: Estado
           exclude: false
           alter:
             alter_text: false
@@ -724,7 +724,7 @@ display:
           exposed: true
           expose:
             operator_id: order_number_op
-            label: 'Order number'
+            label: 'Número do pedido'
             description: ''
             use_operator: false
             operator: order_number_op
@@ -763,7 +763,7 @@ display:
           exposed: true
           expose:
             operator_id: type_op
-            label: Type
+            label: Tipo
             description: ''
             use_operator: false
             operator: type_op
@@ -804,7 +804,7 @@ display:
           exposed: true
           expose:
             operator_id: state_op
-            label: State
+            label: Estado
             description: ''
             use_operator: false
             operator: state_op
@@ -954,7 +954,7 @@ display:
       path: admin/commerce/orders/list
       menu:
         type: 'default tab'
-        title: Orders
+        title: Pedidos
         description: ''
         weight: -10
         expanded: false
@@ -963,8 +963,8 @@ display:
         context: '0'
       tab_options:
         type: normal
-        title: Orders
-        description: 'Manage your orders.'
+        title: Pedidos
+        description: 'Gerenciar seus pedidos.'
         weight: 0
     cache_metadata:
       max-age: 0

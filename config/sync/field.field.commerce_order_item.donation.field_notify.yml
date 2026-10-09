@@ -1,5 +1,5 @@
 uuid: e28d0aed-f3df-4dd5-8ecd-4a61496ba866
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   config:
@@ -18,6 +18,6 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  on_label: 'On'
-  off_label: 'Off'
+  on_label: Habilitado
+  off_label: Desligado
 field_type: boolean

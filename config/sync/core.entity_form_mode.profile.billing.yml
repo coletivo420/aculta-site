@@ -1,5 +1,5 @@
 uuid: 44931a17-468b-411b-a5b5-625151bca6c2
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -10,7 +10,7 @@ dependencies:
 _core:
   default_config_hash: yeGwCxbA5dBAS_3eBkfaVrbxkASEM357dkjPZShKiR4
 id: profile.billing
-label: Billing
+label: Cobrança
 description: null
 targetEntityType: profile
 cache: true

@@ -1,5 +1,5 @@
 uuid: cf471937-8709-417a-bdaf-3e9219d992ff
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   config:
@@ -11,7 +11,7 @@ id: commerce_order_item.donation.field_recipient_last_name
 field_name: field_recipient_last_name
 entity_type: commerce_order_item
 bundle: donation
-label: 'Last Name'
+label: Sobrenome
 description: ''
 required: false
 translatable: false

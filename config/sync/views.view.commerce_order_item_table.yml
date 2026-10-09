@@ -1,5 +1,5 @@
 uuid: 7230b19e-f1da-4bd8-909d-9132344e282d
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -8,7 +8,7 @@ dependencies:
 _core:
   default_config_hash: 94jSTl3izv7Qo1dLJ-ZvsA28a00EAIZRNaorG8uKvwU
 id: commerce_order_item_table
-label: 'Order items'
+label: 'Itens do pedido'
 module: views
 description: 'Display a set of order items in a table.'
 tag: commerce_order_item_table
@@ -97,7 +97,7 @@ display:
           entity_type: commerce_order_item
           entity_field: unit_price
           plugin_id: field
-          label: 'Unit price'
+          label: 'Preço unitário'
           exclude: false
           alter:
             alter_text: false
@@ -163,7 +163,7 @@ display:
           entity_type: commerce_order_item
           entity_field: quantity
           plugin_id: field
-          label: Quantity
+          label: Quantidade
           exclude: false
           alter:
             alter_text: false
@@ -232,7 +232,7 @@ display:
           entity_type: commerce_order_item
           entity_field: total_price
           plugin_id: field
-          label: 'Total price'
+          label: 'Preço total'
           exclude: false
           alter:
             alter_text: false

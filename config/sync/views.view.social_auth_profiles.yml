@@ -1,5 +1,5 @@
 uuid: 431bc0a2-fdb9-4af2-b9ca-4a6c7c9e44f4
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -98,7 +98,7 @@ display:
           entity_type: social_auth
           entity_field: plugin_id
           plugin_id: field
-          label: 'Plugin ID'
+          label: 'ID do Plug-in'
           exclude: false
           alter:
             alter_text: false

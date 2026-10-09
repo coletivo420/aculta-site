@@ -1,5 +1,5 @@
 uuid: cb6f61c4-fa4d-4620-86c9-0849b0f29ccf
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -101,7 +101,7 @@ display:
           entity_type: commerce_order_item
           entity_field: unit_price
           plugin_id: field
-          label: Price
+          label: Preço
           exclude: false
           alter:
             alter_text: false
@@ -166,7 +166,7 @@ display:
           admin_label: ''
           entity_type: commerce_order_item
           plugin_id: commerce_order_item_edit_quantity
-          label: Quantity
+          label: Quantidade
           exclude: false
           alter:
             alter_text: false
@@ -217,7 +217,7 @@ display:
           admin_label: ''
           entity_type: commerce_order_item
           plugin_id: commerce_order_item_remove_button
-          label: Remove
+          label: Remover
           exclude: false
           alter:
             alter_text: false

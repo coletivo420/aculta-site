@@ -1,5 +1,5 @@
 uuid: 578d5d0c-673b-4a25-aa37-c949ad743819
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -9,7 +9,7 @@ dependencies:
 _core:
   default_config_hash: pjAffbvMFN38k-DPrfBUXiSttBPMx5Ljl-ua11kpzKc
 id: commerce_stores
-label: Stores
+label: Lojas
 module: views
 description: ''
 tag: Commerce
@@ -22,7 +22,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: Stores
+      title: Lojas
       fields:
         commerce_store_bulk_form:
           id: commerce_store_bulk_form
@@ -286,7 +286,7 @@ display:
           entity_type: commerce_store
           entity_field: type
           plugin_id: commerce_entity_bundle
-          label: Type
+          label: Tipo
           exclude: false
           alter:
             alter_text: false
@@ -477,7 +477,7 @@ display:
           exposed: true
           expose:
             operator_id: type_op
-            label: Type
+            label: Tipo
             description: ''
             use_operator: false
             operator: type_op

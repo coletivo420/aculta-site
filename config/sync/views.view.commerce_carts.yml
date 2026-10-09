@@ -1,5 +1,5 @@
 uuid: ce221d2a-d3d0-423a-8dbf-716f09096038
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   module:
@@ -92,7 +92,7 @@ display:
           entity_type: commerce_order
           entity_field: type
           plugin_id: commerce_entity_bundle
-          label: Type
+          label: Tipo
           exclude: false
           alter:
             alter_text: false
@@ -158,7 +158,7 @@ display:
           entity_type: commerce_order
           entity_field: store_id
           plugin_id: commerce_store
-          label: Store
+          label: Loja
           exclude: false
           alter:
             alter_text: false
@@ -224,7 +224,7 @@ display:
           entity_type: commerce_order
           entity_field: uid
           plugin_id: field
-          label: Customer
+          label: Cliente
           exclude: false
           alter:
             alter_text: false
@@ -633,7 +633,7 @@ display:
           exposed: true
           expose:
             operator_id: type_op
-            label: Type
+            label: Tipo
             description: ''
             use_operator: false
             operator: type_op

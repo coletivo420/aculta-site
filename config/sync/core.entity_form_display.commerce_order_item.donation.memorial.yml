@@ -1,5 +1,5 @@
 uuid: d3e44589-3edc-4c76-9d6d-e0e92b096b19
-langcode: en
+langcode: pt-br
 status: true
 dependencies:
   config:
@@ -45,7 +45,7 @@ content:
     region: content
     settings:
       size: 60
-      placeholder: 'First Name'
+      placeholder: Nome
     third_party_settings: {  }
   field_honoree_last:
     type: string_textfield
@@ -53,7 +53,7 @@ content:
     region: content
     settings:
       size: 60
-      placeholder: 'Last Name'
+      placeholder: Sobrenome
     third_party_settings: {  }
   field_message:
     type: string_textarea
@@ -76,7 +76,7 @@ content:
     region: content
     settings:
       size: 60
-      placeholder: 'First Name'
+      placeholder: Nome
     third_party_settings: {  }
   field_recipient_last_name:
     type: string_textfield
@@ -84,7 +84,7 @@ content:
     region: content
     settings:
       size: 60
-      placeholder: 'Last Name'
+      placeholder: Sobrenome
     third_party_settings: {  }
 hidden:
   adjustments: true
