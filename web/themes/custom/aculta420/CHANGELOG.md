@@ -1,3 +1,11 @@
+## 0.4.3 — Revisão documental dos kits de logos (sem alteração de versão)
+
+Mudança apenas documental, sem alterar código, assets ou `aculta420.info.yml`.
+
+- `docs/branding-podplant420.md`: caminhos de `web/stacked/` e `web/horizontal/` escritos por extenso, a partir da raiz do tema.
+- `assets/branding/podplant420/README.md`: referência ao documento de branding corrigida (antes apontava para um diretório inexistente).
+- `assets/branding/baque-sativa/README.md`: seção "Publicação" atualizada para o estado instalado; o texto "destino proposto / PR independente" foi removido.
+
 ## 0.4.3 — Kit de logomarcas Baque Sativa (PR #115) — 2026-10-09
 
 Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um validador offline; sem componente, template, Domain ou cabeçalho alterados). Versão de commit da PR; a versão de merge `0.4.3` será marcada no commit de release antes do merge.
