@@ -68,7 +68,8 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 
 ## Riscos das dependências contrib
 
-- **`domain_simple_sitemap` 3.0.0-rc3.** Release candidate. Suporta Drupal 9, 10 e 11,
+- **`domain_simple_sitemap` 3.0.0-rc3 — avaliado na microfase C (não adotado).** O filtro por domínio do gerador só reconhece `domain_access` e `domain_entity`; o ACULTA usa `field_domain_source`, então não haveria separação real. Ver `ADR-009-avaliacao-domain-simple-sitemap-0.1.0-C.md`.
+- **Histórico:** Release candidate. Suporta Drupal 9, 10 e 11,
   mas tem manutenção mínima e não está coberto pela política de segurança do Drupal, segundo
   a própria página do projeto. Fonte: <https://drupal.org/project/domain_simple_sitemap>.
   Antes de adotar: revisão da superfície de exposição e de issues conhecidas (microfase C).
