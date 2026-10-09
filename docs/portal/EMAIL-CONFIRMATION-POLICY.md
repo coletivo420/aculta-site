@@ -47,6 +47,20 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 3. **Escopo:** além de cursos e edição da wiki, há outras ações a bloquear (por exemplo, apoio, comentários)?
 4. **Expiração do link de cadastro:** usar o mesmo `hash_expiration` (24 h) da troca de e-mail, ou outro prazo?
 
+## 6.1 Validade do link (decisão do responsável)
+
+- O link de confirmação **não expira** (`EmailConfirmationEntity::isExpired()` devolve falso; classe trocada no Portal).
+- A segurança depende do hash de 43 caracteres de uso único, do cancelamento dos pedidos anteriores e do reenvio
+  (`aculta_portal.email_resend`, protegido por login e token CSRF). A configuração `hash_expiration` deixa de valer.
+- Antes desta decisão, a premissa era de 24 horas (ver CHANGELOG do Portal 0.2.0-dev.16).
+
+## 6.2 Decisões já tomadas
+
+- Contas existentes precisam confirmar (sem marca `email_confirmed` = não confirmado).
+- Cadastro é confirmado pelo `email_confirmer` (realm `aculta_registration`).
+- Escopo: cursos, wiki, comentários, loja e apoio.
+- Login por OAuth confirma o e-mail (provedor já verificou o endereço).
+
 ## 7. Segurança
 
 - Nenhum endereço de e-mail nem valor de link é gravado em log além do necessário para diagnóstico (nome e usuário).

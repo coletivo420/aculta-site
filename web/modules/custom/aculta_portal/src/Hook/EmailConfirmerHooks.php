@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\Access\EmailConfirmationResponseAccessHandler;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
@@ -22,7 +23,17 @@ final class EmailConfirmerHooks {
     private readonly AccountInterface $currentUser,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
+    private readonly EmailConfirmationPolicy $policy,
   ) {}
+
+  /** Validade infinita: troca a classe da entidade de confirmação pela do Portal (ver EmailConfirmationEntity). */
+  #[Hook('entity_type_alter')]
+  public function alterConfirmationEntityClass(array &$entity_types): void {
+    if (isset($entity_types['email_confirmer_confirmation'])) {
+      $entity_types['email_confirmer_confirmation']->setClass(\Drupal\aculta_portal\Email\EmailConfirmationEntity::class);
+    }
+  }
 
   /**
    * Troca o handler de acesso das confirmações de e-mail por um que libera a resposta ao visitante.
@@ -42,10 +53,20 @@ final class EmailConfirmerHooks {
    */
   #[Hook('email_confirmer')]
   public function loginAfterConfirmation(string $op, EmailConfirmationInterface $confirmation): void {
-    if ($op !== 'confirm' || $confirmation->getRealm() !== 'email_confirmer_user' || !$this->currentUser->isAnonymous()) {
+    if ($op === 'confirm' && $confirmation->getRealm() === 'aculta_registration') {
+      // Confirmação do cadastro: o e-mail da conta está comprovado.
+      $this->policy->markConfirmed((int) $confirmation->getProperty('user'));
+      return;
+    }
+    if ($op !== 'confirm' || $confirmation->getRealm() !== 'email_confirmer_user') {
       return;
     }
     $uid = (int) $confirmation->getProperty('user');
+    // O novo endereço foi comprovado pelo próprio link: o e-mail da conta passa a ser confirmado.
+    $this->policy->markConfirmed($uid);
+    if (!$this->currentUser->isAnonymous()) {
+      return;
+    }
     $account = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return;

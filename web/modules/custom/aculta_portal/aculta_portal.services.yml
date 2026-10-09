@@ -1,4 +1,15 @@
 services:
+  aculta_portal.email_confirmation_requester:
+    class: Drupal\aculta_portal\Email\EmailConfirmationRequester
+    arguments: ['@email_confirmer', '@entity_type.manager']
+  aculta_portal.email_confirmation_policy:
+    class: Drupal\aculta_portal\Account\EmailConfirmationPolicy
+    arguments: ['@user.data']
+  aculta_portal.email_confirmation_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\EmailConfirmationSubscriber
+    arguments: ['@aculta_portal.email_confirmation_policy']
+    tags:
+      - { name: event_subscriber }
   aculta_portal.deployer_status_reader:
     class: Drupal\aculta_portal\Deployer\DeployerStatusReader
     arguments: ['%app.root%']
