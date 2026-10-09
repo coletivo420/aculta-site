@@ -131,7 +131,8 @@ Marcações já feitas, por linha:
 | 0.4.2 | release da PR #114 (assets Podplant420) | marcada no código; primeira versão do merge |
 | 0.4.3-dev.1 | kit Baque Sativa (PR #115) | marcada no código |
 | 0.4.3 | release da PR #115 (kit Baque Sativa) | marcada no código; primeira versão do merge |
-| 0.4.5-dev.1 | kit de artes Bloco Sativa 420 | marcada no código; merge `0.4.5` pendente |
+| 0.4.5-dev.1 | kit de artes Bloco Sativa 420 | marcada no código |
+| 0.4.5-dev.2 | imagem dos cards de projeto e grade responsiva | marcada no código; merge `0.4.5` pendente |
 | 0.4.4-dev.1 | gates no runtime e gate institucional da home | marcada no código; merge `0.4.4` pendente |
 
 Tags criadas antes desta política: ver a nota em `docs/operations/RELEASES.md`.

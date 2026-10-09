@@ -1,3 +1,15 @@
+## 0.4.5-dev.2 — Imagem dos cards de projeto e grade responsiva — 2026-10-09
+
+Classificação: PATCH da linha 0.4.x (correção visual; sem componente stable, template de dados ou Domain alterados).
+
+- Causa: o CSS do card de projeto (`components/content/project-card/project-card.css`) não era entregue ao navegador. O teaser inclui o SDC por `include`, e isso não anexa a biblioteca de componente. O CSS passa para a biblioteca `global`, carregada em todas as páginas.
+- Imagem do card: ocupa a largura do card em moldura 1:1, com `object-fit: contain` (sem corte das logos) e fundo `--aculta-surface-muted`. Antes ficava em 480 px fixos, sem moldura.
+- Grade `--2` (único consumidor: view de projetos) passa a uma coluna abaixo de 576 px. Antes o card ficava estreito e a imagem reduzia para 105 px em 390 px de largura.
+- Medição no Apache (HTTPS, host de testes local): desktop 1280 px, 527×527 px com `contain`; mobile 390 px, 308×308 px.
+- Limite: não há `srcset`; a imagem de 480 px é servida em todas as larguras.
+
+Validação: `validate-aculta420-design-foundations.php` e `validate-aculta420-sdc-schemas.php` PASS; `validate-lms-skin.php` PASS. Capturas no navegador (desktop e mobile) conferidas. **Não validado**: gate de Foundation sob o novo número de versão (exige bootstrap; ver nota de versão). SHA do merge na `main`: a preencher no merge.
+
 ## 0.4.5-dev.1 — Kit de artes Bloco Sativa 420 (branch feat/bloco-sativa420-media-assets) — 2026-10-09
 
 Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um validador offline; sem componente, template, Domain ou cabeçalho alterados). Numeração: 0.4.4 está reservada à PR #122; esta PR usa a próxima linha livre (regra de `docs/versioning.md`).
