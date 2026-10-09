@@ -18,4 +18,4 @@ Artes oficiais recebidas: texto **amarelo** e texto **vermelho**. Ambas são ver
 - Capas, fotografias e imagens editoriais dinâmicas devem ser geridas por Drupal Media/Image Styles, não copiadas para o tema.
 
 ## Publicação
-Destino proposto: `web/themes/custom/aculta420/assets/branding/baque-sativa/` com `source/`, `web/`, `README.md`, `manifest.json`. Registrar em `web/themes/custom/aculta420/docs/branding-baque-sativa.md`, changelog e índice documental. PR independente; sem merge automático.
+Kit instalado em `web/themes/custom/aculta420/assets/branding/baque-sativa/` (`source/`, `web/`, `README.md`, `manifest.json`). Documentação de uso em `web/themes/custom/aculta420/docs/branding-baque-sativa.md`; verificação com `python3 scripts/verify-baque-sativa-assets.py`.

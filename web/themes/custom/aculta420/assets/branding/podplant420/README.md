@@ -11,4 +11,4 @@ Este diretório contém **10 arquivos WebP** de runtime em `web/` (stacked 128/2
 
 Use `web/` apenas onde existir consumidor real. Não introduzir assets em Domain Header, Institution Bar, nem filtrar/recolorir as marcas. Não usar estas logomarcas como favicon global. A escolha claro/escuro pertence à camada de apresentação consumidora, mantendo mesmo tamanho/layout.
 
-Leia `../../../docs/branding-podplant420.md` (a partir deste diretório, consultar documentação no diretório `aculta420/docs`).
+Leia `../../../docs/branding-podplant420.md` (documentação do tema, em `web/themes/custom/aculta420/docs/`).

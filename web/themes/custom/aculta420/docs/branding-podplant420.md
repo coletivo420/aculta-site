@@ -8,7 +8,7 @@ Quatro PNG RGBA de 1024×1024 foram fornecidos diretamente pelo responsável do 
 
 ## Estrutura e variantes
 
-`web/stacked/`: WebP RGBA 128, 256 e 512 px, em on-dark/on-light. `web/horizontal/`: WebP RGBA 240 e 480 px, em on-dark/on-light (runtime do tema, em `assets/branding/podplant420/web/`). Pacote de handoff fora do tema, em `handoff/podplant420/`: originais PNG intocados em `source/originais/` (4), masters PNG em `source/masters/` (4) e WebP horizontais 720/960 px (4). Total: **22 imagens** (10 runtime + 12 handoff). Inventário com SHA-256 em `handoff/podplant420/asset-inventory.json`, com caminhos relativos à raiz.
+`assets/branding/podplant420/web/stacked/`: WebP RGBA 128, 256 e 512 px, em on-dark/on-light. `assets/branding/podplant420/web/horizontal/`: WebP RGBA 240 e 480 px, em on-dark/on-light (runtime do tema). Pacote de handoff fora do tema, em `handoff/podplant420/`: originais PNG intocados em `source/originais/` (4), masters PNG em `source/masters/` (4) e WebP horizontais 720/960 px (4). Total: **22 imagens** (10 runtime + 12 handoff). Inventário com SHA-256 em `handoff/podplant420/asset-inventory.json`, com caminhos relativos à raiz.
 
 Somente os 10 WebP de runtime ficam em `assets/branding/podplant420/web/`, dentro do tema. O pacote de handoff (originais, masters e 720/960 px) fica fora do tema, em `handoff/podplant420/`, porque nenhum template, CSS ou library o consome nesta fase e o tema não deve carregar binários sem consumidor. Um consumidor futuro que precisar de 720/960 px copia o arquivo para o tema no mesmo PR que o referencia.
 
