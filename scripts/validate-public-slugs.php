@@ -22,7 +22,7 @@ $root = dirname(__DIR__);
 // Ceiling for contributed public routes (DT-P20). It may only shrink: a route leaves this list when it is
 // fixed, and a new violation outside this list fails the gate.
 $contribBaseline = [
-  'lms.course.start', 'lms.course.reset_test', 'lms.group.answer_form', 'lms.group.results', 'lms.group.self_results',
+  'lms.course.start', 'lms.course.reset_test', 'lms.group.results', 'lms.group.self_results',
   'lms.answer.details', 'entity.lms_answer.edit_form', 'entity.group.join', 'entity.group.leave',
   'entity.group.revision_delete_form', 'social_auth.network.redirect', 'social_auth.network.callback',
   'social_auth.user.profiles', 'change_mail_page.change_mail', 'change_mail_page.change_mail_form',
@@ -74,6 +74,15 @@ foreach (array_merge($customRouting, $themeRouting) as $file) {
   }
 }
 
+// Contributed routes whose public path the Portal replaces (DT-P21). The override must exist and
+// carry the friendly path; the contributed path is then no longer a violation.
+$portalOverrides = [
+  'lms.group.answer_form' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/LmsFriendlyRouteSubscriber.php',
+    'path' => '/curso/{group}/{lesson_delta}/{activity_delta}',
+  ],
+];
+
 foreach ($contribRouting as $file) {
   foreach (Yaml::parseFile($file) ?: [] as $name => $route) {
     $path = is_array($route) ? ($route['path'] ?? NULL) : NULL;
@@ -81,6 +90,14 @@ foreach ($contribRouting as $file) {
       continue;
     }
     $checks++;
+    if (isset($portalOverrides[$name])) {
+      $override = $portalOverrides[$name];
+      $source = is_file($override['file']) ? (string) file_get_contents($override['file']) : '';
+      if (!str_contains($source, "'{$override['path']}'")) {
+        $failures[] = "contrib: route '$name' is overridden by the Portal, but '{$override['file']}' does not set {$override['path']}.";
+      }
+      continue;
+    }
     if ($violations($path) === []) {
       continue;
     }
