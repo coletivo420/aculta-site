@@ -223,3 +223,18 @@ definido.
 
 Nunca corrigir integração preenchendo secret em config, movendo secret para o
 tema ou hardcoding caminho Homelab/Hostinger no Portal.
+
+## Importação pelo painel (aculta_portal 0.2.0-dev.9)
+
+Fluxo previsto para cada ambiente, sem valores no Git nem no banco:
+
+1. Copie o arquivo `NAME=value` para a pasta de importação (`secrets/import/`, fora de `web/`) com modo 0600 e dono compatível com o processo web.
+2. Em `/admin/config/aculta/segredos` (permissão `administer aculta secrets`), confira o estado de cada variável (✔ presente, ⚠ opcional ausente, ✖ obrigatória ausente) e escolha o arquivo.
+3. Confirme a exclusão da origem. A importação valida o arquivo, grava o arquivo de credenciais de forma atômica (0600 ou 0640 pela ACL do processo web) e apaga a origem com sobrescrita antes de remover.
+4. O relatório de status do Drupal (`/admin/reports/status`) mostra "Credenciais do ambiente" com aviso enquanto faltarem obrigatórias.
+
+Regras: nenhum valor é exibido, gravado no banco ou escrito em log (só nomes e contagens). Substituir o arquivo atual exige marcar a opção.
+
+Limite da exclusão segura: sobrescrever um arquivo não garante a remoção física dos blocos antigos em sistemas com cópia-na-escrita, journaling ou SSD, nem em snapshots e backups. Por isso a origem deve existir só durante a importação.
+
+Ambiente de teste: `settings.local.php` declara `aculta_secrets_environment = 'test'` (o padrão é `production`).

@@ -5,3 +5,8 @@ administer aculta support settings:
   title: Administrar configurações editoriais de Apoie
   description: Alterar o texto público da página Apoie.
   restrict access: true
+administer aculta secrets:
+  title: Importar credenciais do ambiente
+  description: Importar o arquivo de credenciais e apagar a origem. Nenhum valor é exibido.
+  restrict access: true
+

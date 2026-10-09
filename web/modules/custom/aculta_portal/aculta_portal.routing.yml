@@ -125,3 +125,11 @@ aculta_portal.courses_home:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: courses
+aculta_portal.secrets_import:
+  path: /admin/config/aculta/segredos
+  defaults:
+    _form: '\Drupal\aculta_portal\Secrets\Form\SecretsImportForm'
+    _title: Credenciais do ambiente
+  requirements:
+    _permission: administer aculta secrets
+
