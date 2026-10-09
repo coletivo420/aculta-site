@@ -61,8 +61,12 @@ resolução de purpose por hostname.
 
 ### 0.2-C — Institution Bar
 
-- faixa institucional global, compacta e discreta;
-- marca ACULTA e ações globais preparadas pelo Portal.
+Status: **implementada na branch `feat/aculta420-0.2-c-institution-bar`; visual QA DEFERRED para 0.2-F.**
+
+- faixa institucional global, compacta e discreta, acima do `<header>` do purpose;
+- marca textual ACULTA e menu de conta (`.aculta-utility`) migrado da linha inferior para a faixa;
+- cores somente por `--aculta-shell-institution-*`; sem hostname, purpose ou Domain no tema;
+- URL institucional e ações globais dependem de dado do Portal ainda não preparado (`regions.*` segue `NULL`).
 
 ### 0.2-D — Domain Header
 
