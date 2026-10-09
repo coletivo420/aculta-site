@@ -1,0 +1,71 @@
+{
+  "tool": "aculta-deployer",
+  "scope": [
+    "^config/sync/(.+/)?[^/]+\\.yml$",
+    "^scripts/content/.+\\.json$"
+  ],
+  "drop": [
+    "^config/sync/domain_alias\\.alias\\..*_(toca_net_br|test_8080)\\.yml$"
+  ],
+  "host_rules": [
+    {
+      "from": "aculta.toca.net.br",
+      "to": "aculta.org",
+      "comment": "Host de teste (*.aculta.toca.net.br) para produção (*.aculta.org). Preserva o prefixo do subdomínio."
+    }
+  ],
+  "blocking_kinds": [
+    "canonical",
+    "sitemap"
+  ],
+  "max_bytes": 2097152,
+  "robots_policy": {
+    "production": {
+      "x_robots_tag": null,
+      "hosts": [
+        "https://aculta.org/",
+        "https://conta.aculta.org/",
+        "https://apoio.aculta.org/",
+        "https://coletivo420.aculta.org/",
+        "https://wiki420.aculta.org/",
+        "https://loja.aculta.org/",
+        "https://cursos.aculta.org/"
+      ],
+      "note": "Indexação ativa em todos os domínios e subdomínios de produção. Noindex de páginas privadas da conta permanece no Portal (meta robots por rota).",
+      "private_probes": [
+        "https://conta.aculta.org/entrar",
+        "https://conta.aculta.org/conta-interna",
+        "https://conta.aculta.org/dados",
+        "https://conta.aculta.org/seguranca",
+        "https://conta.aculta.org/conexoes",
+        "https://conta.aculta.org/meus-cursos",
+        "https://aculta.org/painel-administrativo",
+        "https://aculta.org/cart",
+        "https://aculta.org/checkout"
+      ],
+      "private_note": "Caminhos privados (conta, login, painel, carrinho e checkout) devem ter noindex (meta robots ou X-Robots-Tag) ou status 401/403/404/410. O noindex é mantido no Portal por rota; o deployer apenas confere."
+    },
+    "test": {
+      "x_robots_tag": "noindex, nofollow, noarchive",
+      "hosts": [
+        "https://aculta.toca.net.br/",
+        "https://apoio.aculta.toca.net.br/",
+        "https://coletivo420.aculta.toca.net.br/",
+        "https://wiki420.aculta.toca.net.br/"
+      ],
+      "note": "Servidor de testes não indexável."
+    }
+  },
+  "sitemap": {
+    "production": {
+      "index_url": "https://aculta.org/sitemap.xml",
+      "index_base": "https://aculta.org",
+      "note": "Índice central em produção. Os filhos listam URLs canônicas de produção de todos os purposes indexáveis."
+    },
+    "test": {
+      "index_url": "https://aculta.toca.net.br/sitemap.xml",
+      "index_base": "https://aculta.toca.net.br",
+      "note": "Índice no servidor de testes. Os filhos continuam com URLs canônicas de produção (noindex no servidor de testes)."
+    }
+  }
+}

@@ -519,3 +519,28 @@ Não refatorar partes não relacionadas à tarefa sem necessidade.
 Não criar funcionalidades que não foram solicitadas.
 
 Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alteração destrutiva.
+
+## Indexação e sitemap (política do projeto)
+
+### Política de indexação (decisão do responsável, 2026-10-09)
+
+- **Produção indexável:** todos os domínios e subdomínios de produção (`aculta.org`,
+  `conta.`, `apoio.`, `coletivo420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
+  com `noindex`.
+- **Servidor de testes não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`.
+- **Páginas privadas da conta** continuam com `noindex` em nível de rota (meta `robots` do
+  `aculta_portal`). Essa proteção não é removida pelo deploy.
+- **Quem garante:** o `aculta_deployer` (`robots --env=production|test`, `build` com trava de
+  política). Verificação pós-deploy por host; resultado FAIL bloqueia a publicação.
+- Correção registrada: DEP-0003 (VirtualHost de teste com noindex) permanece bloqueante até o
+  `robots --env=production` passar em todos os hosts.
+- **Deploy (decisão do responsável, 2026-10-09):** o deploy para produção só acontece quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` atualiza o código do repositório, mas não publica nada no Hostinger. Até o RC, as verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
+- **Divergência entre ambientes passa pelo `aculta_deployer`.** Qualquer diferença de host,
+  `base_url` do `simple_sitemap`, `robots.txt`, diretiva `Sitemap:`, sitemap ou noindex entre o
+  servidor de testes e a produção deve ser declarada em `config/deploy.json` e verificada por um
+  comando da ferramenta (`sitemap`, `robots`, `verify`). Não corrija por edição manual sem
+  verificação. Se a ferramenta ainda não verifica um caso, registre-o no roadmap do deployer
+  (`web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md`) e no
+  `registry/deploy-registry.json`, em vez de deixar a divergência só na documentação.
+- O `aculta_deployer` está em desenvolvimento (0.1.x). O roadmap dele é `docs/PLANEJAMENTO.md`.
+  Mudanças de descoberta e sitemap por ambiente pertencem à fase 7 desse roadmap.

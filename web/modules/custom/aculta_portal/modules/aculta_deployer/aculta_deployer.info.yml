@@ -1,0 +1,8 @@
+name: 'ACULTA Deployer'
+type: module
+description: 'Substituição de hosts de teste por produção no build de deploy. Submódulo do ACULTA Portal; a CLI é standalone (bin/aculta-deployer) e não depende de serviços Drupal.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+version: '0.1.3'
+dependencies:
+  - aculta_portal:aculta_portal

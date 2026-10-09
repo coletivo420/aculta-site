@@ -7,6 +7,7 @@ Documentação operacional durável do ACULTA.
 - [SECRETS.md](SECRETS.md) — contrato portátil de credenciais e provisioning por ambiente.
 - [RELEASES.md](RELEASES.md) — gates, SemVer, tags e release.
 - [DEPLOYMENT.md](DEPLOYMENT.md) — deployment, conteúdo, homologação e rollback.
+- [RC-READINESS.md](RC-READINESS.md) — bateria de testes locais, pendências e prontidão para RC (sitemap, descoberta, deployer).
 - [Homelab](../../scripts/homelab/README.md) — ambiente de desenvolvimento.
 - [Estados SQLite](../../estados/README.md) — snapshots/estados de desenvolvimento.
 

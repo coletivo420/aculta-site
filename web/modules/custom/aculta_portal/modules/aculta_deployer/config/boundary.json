@@ -1,0 +1,37 @@
+{
+  "consumers": [
+    "web/themes/custom/aculta420",
+    "web/core",
+    "web/modules/contrib",
+    "web/themes/contrib",
+    "web/modules/custom/aculta_portal"
+  ],
+  "tool_terms": [
+    "aculta-deployer",
+    "aculta_deployer",
+    "o submódulo aculta_deployer",
+    "deploy-registry"
+  ],
+  "tool_dirs": [
+    "src",
+    "bin",
+    "config",
+    "registry",
+    "tests"
+  ],
+  "forbidden_dependencies": [
+    "web/themes",
+    "web/core",
+    "aculta420",
+    "\\Drupal\\",
+    "drush",
+    "vendor/",
+    "Drupal::",
+    "DRUPAL_ROOT",
+    "web/modules/contrib"
+  ],
+  "consumer_exclude": [
+    "web/modules/custom/aculta_portal/modules/aculta_deployer"
+  ],
+  "tool_root": "web/modules/custom/aculta_portal/modules/aculta_deployer"
+}

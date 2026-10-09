@@ -1,5 +1,39 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.8 — runInPurpose para avaliação de acesso no contexto de origem (0.1.0-F) — 2026-10-09
+
+- `DomainPurposeManager::runInPurpose()`: executa um callback com o Domain do purpose ativo e restaura o anterior.
+- Consumido pelo `aculta_portal_sitemap` para avaliar o acesso anônimo de verbetes da WIKI no contexto do host da WIKI. A regra de acesso do hook `entity_access` não foi alterada.
+- Correção de robots: `/entrar` (`user.login`) e demais rotas de autenticação e conta do Core (`PortalHooks::AUTH_ROUTES`: login, saída, cadastro, recuperação de senha, reset, edição de identidade) passam a ter `noindex, nofollow`.
+- Correção de robots: a raiz da WIKI e a de CURSOS (`aculta_portal.wiki_home`, `aculta_portal.courses_home`) saíam com `noindex` pela regra geral das rotas `aculta_portal.*`, contrariando o sitemap. Agora são entradas públicas (`PortalHooks::PUBLIC_PORTAL_ROUTES`). Busca da WIKI e rotas privadas continuam com `noindex`.
+
+## 0.2.0-dev.7 — canonicalPathUrl para o sitemap por purpose (0.1.0-E) — 2026-10-09
+
+- `DomainPurposeManager::canonicalPathUrl()`: URL absoluta de um caminho no host canônico de produção do purpose (mesma regra de `canonicalRouteUrl()`).
+- Consumido pelo `aculta_portal_sitemap` (piloto MAIN e SUPPORT). Sem alteração de rotas ou de comportamento público.
+
+Validação: `validate-aculta-portal-drupal11` (ver PR). **Não validado**: testes de navegador deste método (usado apenas na geração do sitemap).
+
+## 0.2.0-dev.6 — Esqueleto do submódulo aculta_portal_sitemap (0.1.0-B) — 2026-10-09
+
+Classificação: PATCH da linha 0.2.0 (estrutura opt-in; sem rotas, serviços ou hooks; sem alteração de comportamento).
+
+- Adiciona `modules/aculta_portal_sitemap` (0.1.0-B): metadados e dependências declaradas (`aculta_portal`, `simple_sitemap`, `domain`). Descoberto e não habilitado.
+- Simulação de habilitação (`pm:enable --simulate`) resolve as dependências sem alterar o banco.
+- Referência na documentação do Portal (`docs/portal/README.md`) para ADR-009.
+
+Validação: gates do Portal (ver PR). **Não validado**: habilitação real do submódulo (não habilitado nesta versão).
+
+## 0.2.0-dev.5 — Submódulo aculta_deployer 0.1.0 — 2026-10-09
+
+Classificação: PATCH da linha 0.2.0 (ferramenta de deploy em submódulo; o Portal não muda comportamento).
+
+- Adiciona `modules/aculta_deployer` (ACULTA Deployer 0.1.0): descoberto pelo Drupal, não habilitado. Substitui `*.aculta.toca.net.br` por `*.aculta.org` no build de produção e mantém o registro de correções de deploy (DEP-0001 canonical e DEP-0002 sitemap, bloqueantes).
+- O Portal fora do submódulo não referencia a ferramenta; o gate `boundaries` do submódulo reprova essa referência.
+- Dívida nova: sitemap sem o host de apoio (DT-P23), decisão pendente.
+
+Validação: `validate-aculta-portal-drupal11.php` PASS (382); testes do submódulo PASS; `check` PASS. **Não validado**: runtime com o submódulo habilitado (não habilitado nesta versão).
+
 ## 0.2.0-dev.4 — Página de apoio na página inicial do subdomínio (correção) — 2026-10-09
 
 Classificação: PATCH da linha 0.2.0 (correção de caminho público de apoio; sem API nova).

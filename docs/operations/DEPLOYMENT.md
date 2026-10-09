@@ -174,3 +174,24 @@ do deploy.
 
 Evidência de uma rodada pertence ao PR/release, não a um novo relatório
 permanente neste repositório.
+
+## Indexação por ambiente
+
+Política aprovada pelo responsável em 2026-10-09.
+
+- **Produção indexável:** todos os domínios e subdomínios de produção (`aculta.org`,
+  `conta.`, `apoio.`, `coletivo420.`, `wiki420.`, `loja.`, `cursos.`) não enviam `X-Robots-Tag`
+  com `noindex`.
+- **Servidor de testes não indexável:** `*.aculta.toca.net.br` envia `noindex, nofollow, noarchive`.
+- **Páginas privadas da conta** continuam com `noindex` em nível de rota (meta `robots` do
+  `aculta_portal`). Essa proteção não é removida pelo deploy.
+- **Quem garante:** o `aculta_deployer` (`robots --env=production|test`, `build` com trava de
+  política). Verificação pós-deploy por host; resultado FAIL bloqueia a publicação.
+- Correção registrada: DEP-0003 (VirtualHost de teste com noindex) permanece bloqueante até o
+  `robots --env=production` passar em todos os hosts.
+
+**Regra de deploy (decisão do responsável, 2026-10-09):** o deploy para produção só acontece quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` atualiza o código do repositório, mas não publica nada no Hostinger. Até o RC, as verificações de produção (`robots --env=production`, `sitemap --env=production`) são ensaios, não ações de deploy.
+
+Procedimento (somente no RC): `aculta-deployer check --strict`, `build --out=DIR`, aplicar o deploy,
+depois `aculta-deployer robots --env=production` e `aculta-deployer sitemap --env=production`
+(devem passar em todos os hosts) e `aculta-deployer robots --env=test` (hosts de teste com noindex).

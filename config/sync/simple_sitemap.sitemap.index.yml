@@ -1,6 +1,6 @@
 uuid: 4eb0db28-1fd0-4ea5-bcc5-61ad1c244336
 langcode: pt-br
-status: false
+status: true
 dependencies:
   config:
     - simple_sitemap.type.index
