@@ -8,6 +8,6 @@ dependencies:
 _core:
   default_config_hash: nqVwm91Uyib_rvFaNPF1MdYqHlmZ38w5rsOVVy4uWDw
 id: content
-label: 'Gestão de conteúdo'
+label: Conteúdo
 description: 'Menu utilizado pelo módulo Navigation para acessar conteúdo, mídia, blocos e arquivos. É necessário mesmo sem links criados manualmente.'
 locked: true

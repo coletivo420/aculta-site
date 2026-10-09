@@ -837,7 +837,7 @@ display:
       tags: {  }
   page_2:
     id: page_2
-    display_title: Página
+    display_title: Arquivos
     display_plugin: page
     position: 2
     display_options:

@@ -20,18 +20,8 @@ register_pending_approval_admin:
   subject: 'Detalhes de conta para [user:display-name] em [site:name] (aguardando aprovação de um administrador)'
   body: "[user:display-name] solicitou a criação de uma conta.\r\n\r\n[user:edit-url]"
 status_activated:
-  subject: 'Account details for [user:display-name] at [site:name]'
-  body: |-
-    [user:display-name],
-
-    Your account at [site:name] has been activated.
-
-    You will be able to log in to [site:login-url] in the future using:
-
-    username: [user:name]
-    password: your password.
-
-    -- [site:name] team
+  subject: 'Detalhes da conta para [user:display-name] em [site:name] (aprovada)'
+  body: "[user:display-name],\r\n\r\nSua conta em [site:name] foi ativada.\r\n\r\nVocê pode se autenticar clicando neste link ou copiando e colando em seu navegador:\r\n\r\n[user:one-time-login-url]\r\n\r\nEsse link pode ser usado para se autenticar apenas uma vez e o levará a uma página onde você pode definir sua senha.\r\n\r\nApós configurar sua senha, você poderá se autenticar em [site:login-url] no futuro usando:\r\n\r\nusuário: [user:account-name]\r\nsenha: Sua senha\r\n\r\n--  Equipe [site:name]"
 status_blocked:
   subject: 'Detalhes da conta para [user:display-name] em [site:name] (bloqueada)'
   body: "[user:display-name],\r\n\r\nSua conta em [site:name] foi bloqueada.\r\n\r\n--  Equipe [site:name]"

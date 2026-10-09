@@ -7,7 +7,7 @@ _core:
 id: front
 label: 'Página inicial'
 tags:
-  canonical_url: 'https://aculta.org/'
+  canonical_url: '[site:url]'
   shortlink: '[site:url]'
   title: 'Associação Cultural Antiproibicionista | Goiânia - GO'
   description: 'Associação sem fins lucrativos de Goiânia que desenvolve projetos de cultura, comunicação, cuidado, direitos e participação social.'
