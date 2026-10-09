@@ -6,6 +6,13 @@
 - Homelab (admin uid 1): `/painel-administrativo/configuracoes/aculta/portal` e `/requisitos` com região `<main>` idêntica antes/depois (22 linhas de tabela, 16 OK).
 - Gate: teto de locator e dívida de `strict_types` zerados para o controller; invariantes de injeção.
 
+## 2026-10-09 — P10-R B.1: enumeração de contas bloqueadas no login
+
+- Achado: o login do Core responde "O nome de usuário … não foi ativado ou está bloqueado." antes da verificação de senha, para qualquer conta existente bloqueada ou não ativada. Contas inexistentes e senhas erradas recebem a mensagem genérica. O módulo `username_enumeration_prevention` cobre apenas o formulário de recuperação de senha. Com o cadastro aberto e a confirmação por e-mail obrigatória, cada cadastro não confirmado virava um endereço revelado.
+- Correção: a etapa `validateAuthentication` do formulário de login é substituída por `aculta_portal.form_callbacks:validateLoginAuthentication`. Contas bloqueadas pulam essa etapa; `validateFinal` produz a mesma mensagem genérica das contas inexistentes e registra a tentativa no controle de flood. As demais contas seguem a lógica do Core.
+- Verificação (executada): cadeia de validação real do formulário, em transação revertida, com três estados: inexistente, bloqueada e ativa com senha errada. Os três retornam "Nome de usuário ou senha incorretos. Esqueceu sua senha?". Testes unitários (`LoginBlockedAccountTest`) e mutação confirmam que a regra é protegida.
+- Não verificado por HTTP: o CAPTCHA Turnstile bloqueia envio por script, como esperado.
+
 ## 2026-10-09 — Resolução final dos bloqueios da PR #90
 
 - **Webform via SMTP:** `system.mail` `webform: SMTPMailSystem` e `smtp.settings` `smtp_allowhtml: true`. Verificado sem envio (formatação em transação revertida): o transporte SMTP não aplica o modelo HTML do webform, então as notificações de contato chegam como fragmento HTML sem o template `webform_email_html`. Registrado como diferença conhecida. Nenhuma outra mensagem do Portal usa HTML.
@@ -14,6 +21,25 @@
 - **Validadores de e-mail:** `smtp.settings` e `system.mail` saem da comparação com o Runtime (ambiente sem credenciais) e são afirmados pelos valores versionados.
 - **`validate-final-contact`:** PENDENTE (mensagem `PENDING:`, saída 2; o Drush reporta 1 para qualquer saída diferente de zero).
 - Ajustes de `validate-portal-commerce-security` e `validate-final-drupal` para o novo conjunto de chaves.
+
+## 2026-10-09 — P10-R: correções da revisão independente
+
+- Login: a conta bloqueada agora passa pelo mesmo controle de flood por IP do Core (mesma condição e mesmo resultado). Sem essa paridade, um IP que atingisse o limite revelaria contas bloqueadas. Verificado com `ip_limit` reduzido a 0 em transação revertida: os três estados retornam `flood_control_triggered = ip`.
+- Login: o callback só autentica quando o objeto do formulário é `UserLoginForm`.
+- Login: a troca do validador é sempre aplicada exatamente uma vez (substitui o do Core ou o coloca primeiro), para que uma mudança de nome nunca restaure o vazamento em silêncio.
+- Testes: asserções de estado (sem erro e sem `set`) para conta bloqueada; caso positivo de assinatura do webhook; assinatura forjada com timestamp atual (o teste anterior dependia da tolerância de timestamp). Suíte: 40 testes PASS; quatro mutações nas proteções falham os testes.
+- Documentação: o uso de `sebastian/diff` pelo Core em runtime estava omitido na auditoria; corrigido. O diff de configuração foi verificado no navegador do Homelab.
+- Permissão de leitura: o diretório `config/sync` (criado pela exportação) não era legível pelo usuário do servidor web, e a tela de diferença de configuração retornava 500. Concedida leitura (`u:aculta:rX`, com entrada padrão) apenas em `config/sync`, nos arquivos do próprio repositório. Nenhum segredo está nesse diretório.
+
+## 2026-10-09 — P10-R: auditoria pós-merge
+
+- **A.1 Configuração:** drift atual limitado a `smtp.settings` e `system.mail` (intencional, específico do ambiente). Sem objetos apenas no sync nem apenas no banco. Sem segredos literais em `config/sync`. Domain aliases com `environment: homelab/local` versionados; efeito em produção depende do nome de ambiente de produção (verificar). Módulos de administração ativos (`views_ui`, `field_ui`, `help`, `update`, `dblog`) — avaliar desativação em produção.
+- **A.2 PHP:** Homelab com PHP 8.4.26 apenas; PHP 8.5 não instalado (exige pacotes do sistema e decisão operacional). Análise estática: sem casts ou funções removidas/deprecadas no 8.5; sem recursos exclusivos do 8.4; pacotes travados declaram suporte compatível. Execução em 8.5: DEFERRED.
+- **A.3 Composer:** `require.php: >=8.3` (piso comum do Core 11.4 e dos pacotes travados; versão testada: 8.4.26). `composer/semver: ^3.4` declarado (uso direto em `PortalRequirementsController`; travado em 3.4.4). `scaffold.file-mapping` exclui `.gitattributes`, que o scaffolding do Core sobrescrevia. `drupal/core-dev: 11.4.8` (dev) para PHPUnit: 85 pacotes de desenvolvimento novos, nenhuma atualização de pacote de runtime; `sebastian/diff` 7.0.1 → 6.0.2, dentro do intervalo aceito pelo Core e sem uso em código de runtime. `composer audit`: sem advisories. `composer validate`: avisos pré-existentes sobre pins exatos em bibliotecas de frontend.
+- **A.4 PHPUnit:** 33 testes unitários em `tests/src/Unit`, PASS. Cobrem: rotas por purpose (Commerce), exceção de reset de senha (dono e token), Mercado Pago fail-closed, acesso cruzado entre contas, contrato de apresentação e bloqueio de conta no login. Mutações nas proteções falham os testes. Pendente: testes de Kernel para serviços P5–P7 (exigem banco de teste).
+- **B.1 Login:** correção de enumeração de contas bloqueadas (ver entrada anterior). Cadastro: a mensagem do Core "The email address … is already taken" revela endereços cadastrados; risco residual, decisão de produto pendente.
+- **B.3 ACL:** a ACL `bdtgn` já não existe em `web/sites/default/files`. O pool `bdtgn` atende apenas o vhost `dbtng.toca.net.br`.
+- **C Verificação:** lint de 59 arquivos PHP, gate PASS (366), PHPUnit PASS (33), Composer validate/audit/platform PASS, `drush cr` e `updatedb:status` sem pendências, `config:status` com apenas as chaves de e-mail específicas do ambiente. Smoke HTTP: todas as rotas esperadas, cadastro e recuperação de senha acessíveis, Mercado Pago sem segredo retorna 503, Social Auth redireciona ao Google, isolamento entre duas contas verificado.
 
 ## 2026-10-09 — Resolução dos bloqueios da PR #90 (validadores)
 

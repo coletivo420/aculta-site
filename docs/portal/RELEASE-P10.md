@@ -61,3 +61,12 @@ Ambiente: Homelab Debian, Apache + PHP-FPM, Drupal 11.4.8, PHP 8.4.26 (alvo do p
 ## Recomendação
 
 **Não mesclar ainda.** O código está verificado no Homelab nas superfícies tocadas e o gate passa. Bloqueiam a recomendação de merge: o drift de configuração (decisão de sincronização), a ausência de testes automatizados do módulo, PHP 8.5 não testado e a política de PR por fase. A remoção da ACL `bdtgn` é higiene operacional e não bloqueia o merge.
+
+## Atualização P10-R (pós-merge)
+
+Estado posterior à integração da PR #90 (`dd5c8a4`), registrado em [P10-R-FINAL-AUDIT.md](P10-R-FINAL-AUDIT.md):
+- ACL `bdtgn`: removida (conferida).
+- Drift de configuração: restrito a `smtp.settings` e `system.mail`, intencionais; importação em produção pendente.
+- PHPUnit: 33 testes unitários PASS; Kernel pendente.
+- PHP 8.5: continua não testado.
+- Enumeração no login de contas bloqueadas: corrigida (`e1516df`). Enumeração no cadastro: risco residual, decisão pendente.
