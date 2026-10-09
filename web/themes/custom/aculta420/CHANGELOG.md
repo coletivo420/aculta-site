@@ -11,6 +11,7 @@ Classificação: MINOR da linha 0.4.0 (JavaScript do carrossel, catálogo de tra
 - Curso "Introdução ao Antiproibicionismo" (id 1) publicado com 7 lições e 14 atividades. Conteúdo versionado em `scripts/content/courses/introducao-antiproibicionismo.json` e carregado por `scripts/content/load-course-introducao-antiproibicionismo.php` (idempotente, sem apagar nada). Fontes: UNAIDS, Harm Reduction International, MPPR, IPEA, Lei 11.343/2006, nota técnica do MPPR sobre o RE 635.659 e ConJur.
 - Rail validado com o curso real: rótulo, card, foco por teclado e largura em 1280 e 390 px. A rolagem com vários cards segue pendente.
 - Diretiva de slugs públicos em português em `AGENTS.md` e gate `scripts/validate-public-slugs.php` (linha de base DT-P20, caso do curso em DT-P21).
+- LMS em português: 331 strings do módulo `lms` (contrib) que estavam em inglês foram traduzidas em `translations/lms.pt-br.po` e importadas sem sobrescrever as 125 traduções existentes. Verificado pelo serviço de tradução do Drupal em pt-BR (verificar resposta, aguardando correção, retomar treinamento, progresso etc.). Contrib não foi alterado.
 - Gates: SDC schemas, design, fixtures, Foundation, shell-contract, domain-presentation e Portal Drupal 11+ — ver o registro de dívidas.
 
 ## Validação T2 (sem nova versão), 0.4.0-dev.2 — 2026-10-09

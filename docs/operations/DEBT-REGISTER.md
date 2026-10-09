@@ -70,7 +70,8 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-T12 | Modo de cor e troca light/dark/auto ausentes | `docs/roadmap.md` antigo, item 0.5 | Baixa | Sim | T7 | Aberta (backlog) |
 | DT-T13 | Ícones, busca, feedback, UI Patterns e biblioteca de componentes sem adoção | `docs/roadmap.md` antigo, itens 0.5–0.8 | Baixa | Sim | T7 | Aberta (backlog) |
 | DT-T15 | Rótulos em inglês no carrossel e na Wiki ("Next Slide", "Carousel", "Read more", "Skip to main content") | corrigidos em 0.4.0-dev.3: catálogo `translations/aculta420.pt-br.po` e JS do carrossel; medido no DOM | Média | Não | T2 | Resolvida |
-| DT-T16 | Catálogo de tradução do tema precisa ser importado em cada ambiente | `drush locale:import --type=customized --override=none pt-br <arquivo>` (ver `translations/`) | Média | Não | T5 | Aberta |
+| DT-T16 | Catálogos de tradução do tema (`aculta420.pt-br.po`) e do LMS (`lms.pt-br.po`) precisam ser importados em cada ambiente | `drush locale:import --type=customized --override=none pt-br <arquivo>` (ver `translations/`) | Média | Não | T5 | Aberta |
+| DT-T17 | 331 strings do LMS (contrib) estavam em inglês | corrigido em 0.4.0-dev.3 via `translations/lms.pt-br.po`; a extração é por expressão regular, então pode haver strings em Twig/JS não capturadas | Média | Não | T2 | Resolvida (verificar em nova release do LMS) |
 | DT-T14 | Foundation de 0.1.0 descrita como "preserva o shell existente" em documentos atuais | `architecture.md` e `development.md` reescritos (0.4.0-dev.2) | Baixa | Não | T0 | Resolvida |
 
 ## Operação e Runtime
