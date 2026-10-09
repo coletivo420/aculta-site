@@ -96,6 +96,12 @@ Status: **implementada na branch `feat/aculta420-0.2-e-mobile-sticky-shell`, emp
   modos light/dark;
 - corrigir contraste e regressões antes de fechar a linha 0.2.0.
 
+Status: **QA parcial; a linha 0.2.0 não está fechada.** Medido e corrigido no
+Homelab (logo no header claro, anel de foco do header, sticky quebrado pelo
+`h-100` do wrapper). Não exercitado: foco por teclado visível, reduced motion,
+estados longos/vazios, demais purposes (sem TLS válido). Ver
+`docs/design-b-qa.md`.
+
 Não criar button SDC. `category-label` permanece candidato experimental e fica
 deferido até existir consumidor comprovado.
 
