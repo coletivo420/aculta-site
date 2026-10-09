@@ -1,5 +1,17 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.11 — credenciais do ambiente: cadastro, máscara e revelação — 2026-10-09
+
+- Removida a importação de arquivo (`secrets/import`) e a exclusão segura da origem. O cadastro passa a ser pelo
+  formulário de "Credenciais do ambiente" (`/admin/config/aculta/segredos`).
+- Valores salvos aparecem mascarados (dois caracteres em cada ponta). O botão 👁 revela o valor completo sob demanda
+  por rota com token CSRF e sem cache. Revelação e salvamento entram no log só com nomes e usuário.
+- `SecretsManager` (substitui `SecretsImporter`): salvamento com merge (campo vazio mantém), só nomes do contrato,
+  valores de uma linha até 4 KiB, gravação atômica em modo 0640.
+- `aculta_secrets_storage`: `file` (teste) grava o arquivo; `database` (produção) não grava. A camada criptografada de
+  produção é provisionada pelo `aculta_deployer` após o deploy (fase 9, pendente).
+- Testes: suíte do Portal com 54 casos (máscara, merge, rejeições, armazenamento em banco e leitura do relatório).
+
 ## 0.2.0-dev.10 — painel do ACULTA Deployer e opções de sitemap — 2026-10-09
 
 - Página `/admin/config/aculta/deployer` (somente leitura, permissão `administer aculta deployer`): lê o relatório neutro

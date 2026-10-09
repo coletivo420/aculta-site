@@ -1,5 +1,13 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.7 — remoção da importação de credenciais; cadastro pelo painel do Portal — 2026-10-09
+
+- Removidos os comandos `secrets check` e `secrets export` e as funções que liam ou gravavam valores de credenciais.
+  O cadastro passa a ser feito no painel "Credenciais do ambiente" do `aculta_portal` (0.2.0-dev.11).
+- `Secrets.php` mantém só o formato `NAME=value` e o contrato usados pelo relatório (`report`).
+- Em produção, a camada criptografada no banco será provisionada pela ferramenta após o deploy (fase 9 do roadmap). Ainda não implementada.
+- Testes: removidos os casos dos comandos removidos; mantidos relatório sem valores, publicação atômica, fronteira e contrato.
+
 ## 0.1.6 — complemento do Portal e relatório para o painel — 2026-10-09
 
 - Comando `report [--out] [--file]`: grava `var/deployer/status.json` (esquema 1) com fronteiras, correções abertas

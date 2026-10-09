@@ -74,15 +74,12 @@ produção. Um 200 sem noindex é sempre falha.
 - Gere o relatório antes de consultar o painel. Sem o arquivo, a página informa que o relatório está indisponível.
 - O Portal não executa a ferramenta. Verificações de rede (sitemap e robots) continuam como comandos próprios.
 
-## Credenciais locais (0.1.4)
+## Credenciais (0.1.7)
 
-- Arquivo padrão: `secrets/aculta.secrets.env` na raiz do repositório (ignorado pelo Git; fora de `web/`;
-  sem escrita de grupo e sem acesso de outros: 0600, ou 0640 com ACL de leitura para o processo web). O Drupal o lê por `settings.local.php` (`aculta_secrets_file`).
-- `$CLI secrets check --env=test` e `--env=production`: valida o arquivo. Mostra só nomes e motivos.
-- `$CLI secrets export --env=production --out=/caminho/novo.env`: grava as variáveis do contrato em um arquivo
-  novo, 0600, fora do repositório. Depois de cada deploy, copie esse arquivo para o ambiente de produção
-  pelo canal aprovado e importe as variáveis no ambiente do processo web. A ferramenta não envia nada.
-- Credenciais ausentes no ambiente aparecem como FAIL com o nome da variável. O valor nunca é exibido.
+- Não há comandos de importação ou exportação de credenciais na ferramenta. O cadastro é feito no painel
+  "Credenciais do ambiente" do Portal (ver `docs/operations/SECRETS.md`).
+- `$CLI report` inclui, por ambiente, só os nomes presentes e ausentes das credenciais obrigatórias.
+- Em produção, a camada criptografada no banco é provisionada pela ferramenta após o deploy (fase 9, pendente).
 
 ## Descoberta e sitemaps (0.1.3)
 

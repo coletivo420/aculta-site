@@ -37,8 +37,8 @@ final class DeployerStatusReaderTest extends UnitTestCase {
 
   public function testSchemaOneIsReadAndOtherSchemaRejected(): void {
     $file = $this->base . '/var/deployer/status.json';
-    file_put_contents($file, json_encode(['schema' => 1, 'tool' => 'aculta-deployer 0.1.6']));
-    $this->assertSame('aculta-deployer 0.1.6', (new DeployerStatusReader($this->base . '/web'))->read()['tool']);
+    file_put_contents($file, json_encode(['schema' => 1, 'tool' => 'ferramenta 0.1.6']));
+    $this->assertSame('ferramenta 0.1.6', (new DeployerStatusReader($this->base . '/web'))->read()['tool']);
     file_put_contents($file, json_encode(['schema' => 2]));
     $this->assertNull((new DeployerStatusReader($this->base . '/web'))->read());
     file_put_contents($file, 'não é json');

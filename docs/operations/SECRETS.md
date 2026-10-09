@@ -35,16 +35,18 @@ modificada. O gate completo Portal/Security ainda para em `core.extension`,
 porque o Runtime tem `config_translation` habilitado e o sync não; essa
 diferença permanece fora do escopo e não foi importada nem exportada.
 
-## Arquivo local (0.1.4)
+## Credenciais por ambiente (0.2.0-dev.11)
 
-- Caminho no servidor de testes: `secrets/aculta.secrets.env` na raiz do repositório, ignorado pelo Git
-  (`*.secrets.env` e `/secrets/`), fora de `web/`, sem escrita de grupo e sem acesso de outros (ex.: 0600, ou 0640 com ACL de leitura para o processo web). `settings.local.php` aponta para ele por
-  `dirname(DRUPAL_ROOT)`.
-- Migrado de `/etc/aculta/secrets.env` (histórico). A cópia antiga foi removida em 2026-10-09 pelo responsável.
-  Leitura pelo processo web: ACL de leitura para o usuário do PHP-FPM e o `www-data`, e escrita para a pasta.
-- Validação e exportação pós-deploy: `aculta-deployer secrets check|export` (ver USO do deployer).
-  Nomes do contrato: `aculta_deployer/config/secrets-contract.json`. Gate: `tests/run.php` do deployer
-  verifica que todo nome do contrato aparece na tabela deste documento.
+- **Teste e homelab:** o painel grava as credenciais em `secrets/aculta.secrets.env` (raiz do repositório, ignorado
+  pelo Git, fora de `web/`). `settings.local.php` aponta para ele (`aculta_secrets_file`) e declara
+  `aculta_secrets_storage = 'file'`.
+- **Produção:** as credenciais ficam no banco de dados, criptografadas. O painel **não grava** nesse modo
+  (`aculta_secrets_storage = 'database'`). O provisionamento da camada criptografada é responsabilidade do
+  `aculta_deployer`, executado após o deploy (fase 9 do roadmap do deployer, ainda não implementada).
+- Permissões do arquivo de teste: sem escrita de grupo e sem acesso de outros (0600, ou 0640 com ACL de leitura
+  para o processo web). A regra é a mesma do loader do Drupal.
+- O `aculta_deployer` não importa, não exporta e não valida valores de credenciais (0.1.7). Ele lê o contrato
+  (`config/secrets-contract.json`) para o relatório de status.
 
 ## Variáveis atuais
 
@@ -224,17 +226,22 @@ definido.
 Nunca corrigir integração preenchendo secret em config, movendo secret para o
 tema ou hardcoding caminho Homelab/Hostinger no Portal.
 
-## Importação pelo painel (aculta_portal 0.2.0-dev.9)
+## Credenciais do ambiente (painel, aculta_portal 0.2.0-dev.11)
 
-Fluxo previsto para cada ambiente, sem valores no Git nem no banco:
+Página `/admin/config/aculta/segredos` (permissão `administer aculta secrets`, restrita):
 
-1. Copie o arquivo `NAME=value` para a pasta de importação (`secrets/import/`, fora de `web/`) com modo 0600 e dono compatível com o processo web.
-2. Em `/admin/config/aculta/segredos` (permissão `administer aculta secrets`), confira o estado de cada variável (✔ presente, ⚠ opcional ausente, ✖ obrigatória ausente) e escolha o arquivo.
-3. Confirme a exclusão da origem. A importação valida o arquivo, grava o arquivo de credenciais de forma atômica (modo 0640 pela ACL de leitura do processo web; a regra recusa escrita de grupo e acesso de outros) e apaga a origem com sobrescrita antes de remover.
-4. O relatório de status do Drupal (`/admin/reports/status`) mostra "Credenciais do ambiente" com aviso enquanto faltarem obrigatórias.
+1. Mostra cada variável do contrato, a Key correspondente, se é obrigatória no ambiente e o estado
+   (✔ preenchida, ⚠ opcional sem valor, ✖ obrigatória sem valor), com a mesma legenda do diagnóstico do Portal.
+2. Valores salvos aparecem **mascarados** (dois caracteres de cada ponta; valores curtos viram só bolinhas).
+   O botão 👁 pede o valor completo ao servidor por uma rota com token CSRF e sem cache; o botão de novo volta
+   à máscara. O valor completo nunca fica no HTML da página.
+3. Campos de digitação (senha) para cadastrar ou alterar. Campo vazio mantém o valor atual.
+4. Salvar grava o arquivo de credenciais de forma atômica (modo 0640 em teste). Só nomes do contrato são aceitos,
+   valores com quebra de linha são recusados e o tamanho é limitado a 4 KiB.
+5. Cada revelação e cada salvamento geram entrada no log com nomes e usuário. Nenhum valor vai para o log, o
+   banco ou a configuração exportada.
 
-Regras: nenhum valor é exibido, gravado no banco ou escrito em log (só nomes e contagens). Substituir o arquivo atual exige marcar a opção.
+Limites: valores novos valem a partir da próxima requisição (o Key lê o ambiente no bootstrap). Em produção o
+formulário não grava (ver acima). O painel não substitui cofre de senhas: a revelação é restrita aos
+administradores e fica registrada.
 
-Limite da exclusão segura: sobrescrever um arquivo não garante a remoção física dos blocos antigos em sistemas com cópia-na-escrita, journaling ou SSD, nem em snapshots e backups. Por isso a origem deve existir só durante a importação.
-
-Ambiente de teste: `settings.local.php` declara `aculta_secrets_environment = 'test'` (o padrão é `production`).

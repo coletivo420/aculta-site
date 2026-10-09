@@ -193,7 +193,7 @@ final class PortalRequirementsController extends ControllerBase {
       ['aculta_portal.requirements', $this->t('Status dos módulos e temas'), $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.')],
       ['aculta_portal.support_settings', $this->t('Configurações do Apoio'), $this->t('Edite o texto institucional exibido na página pública Apoie.')],
       ['aculta_portal.deployer_status', $this->t('ACULTA Deployer: status'), $this->t('Relatório de fronteiras, correções de deploy abertas e credenciais por ambiente. Somente leitura.')],
-      ['aculta_portal.secrets_import', $this->t('Credenciais do ambiente'), $this->t('Conferir as credenciais do contrato e importar o arquivo de origem (a origem é apagada após importar).')],
+      ['aculta_portal.secrets_import', $this->t('Credenciais do ambiente'), $this->t('Cadastrar e conferir as credenciais do ambiente. Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.')],
       ['entity.simple_sitemap.collection', $this->t('Sitemaps: variantes'), $this->t('Variantes de sitemap por purpose (MAIN, SUPPORT, WIKI, MAGAZINE, COURSES) e o índice em /sitemap.xml.')],
       ['simple_sitemap.settings', $this->t('Sitemaps: configurações'), $this->t('Configurações gerais do sitemap (base URL, geração e limites).')],
     ] as [$route, $title, $description]) {

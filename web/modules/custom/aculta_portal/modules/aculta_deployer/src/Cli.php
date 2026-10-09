@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.6';
+  public const VERSION = '0.1.7';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -32,7 +32,6 @@ final class Cli {
       'verify' => $this->verify(),
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
-      'secrets' => $this->secrets((string) ($argv[2] ?? ''), $options),
       'report' => $this->report($options),
       default => $this->help(),
     };
@@ -293,153 +292,6 @@ final class Cli {
       return 1;
     }
     $this->say("report: relatório gravado em $out (sem valores de credenciais)");
-    return 0;
-  }
-
-  /**
-   * Arquivo local de credenciais (ACULTA Secrets Contract). Nunca imprime valores: só nomes e
-   * motivos. Padrão do arquivo: <repo>/secrets/aculta.secrets.env (ignorado pelo Git, fora de web/).
-   *   secrets check  [--env=production|test] [--file=PATH]
-   *   secrets export --env=production|test --out=PATH [--file=PATH]
-   *
-   * @param array<string, string|bool> $o
-   */
-  private function secrets(string $sub, array $o): int {
-    $env = is_string($o['env'] ?? null) ? $o['env'] : 'production';
-    if (!in_array($sub, ['check', 'export'], true)) {
-      $this->err('uso: secrets check|export [--env=production|test] [--file=PATH] [--out=PATH]');
-      return 1;
-    }
-    if (!in_array($env, ['production', 'test'], true)) {
-      $this->err("secrets: ambiente desconhecido: $env");
-      return 1;
-    }
-    $contract = $this->json($this->repoRoot . '/config/secrets-contract.json');
-    if (($problems = Secrets::contractProblems($contract)) !== []) {
-      foreach ($problems as $p) {
-        $this->err("secrets: contrato inválido: $p");
-      }
-      return 1;
-    }
-    $file = is_string($o['file'] ?? null) ? $o['file'] : $this->repoRoot . '/secrets/aculta.secrets.env';
-    $values = $this->secretsValidate($file, $env, $contract);
-    if ($values === null) {
-      $this->say("secrets ($env): FAIL");
-      return 1;
-    }
-    if ($sub === 'check') {
-      $this->say("secrets ($env): PASS (" . count($values) . ' variável(eis) no arquivo; valores não exibidos)');
-      return 0;
-    }
-    return $this->secretsExport($o, $env, $contract, $values);
-  }
-
-  /**
-   * Valida o arquivo: existência, permissões, fora do document root, ignorado pelo Git (se
-   * estiver no repositório), sintaxe, nomes do contrato e obrigatórios do ambiente.
-   *
-   * @param array<string, mixed> $contract
-   * @return array<string, string>|null valores lidos, ou null se alguma verificação falhou
-   */
-  private function secretsValidate(string $file, string $env, array $contract): ?array {
-    $real = realpath($file);
-    if ($real === false || !is_file($real) || !is_readable($real)) {
-      $this->say("FAIL arquivo ausente ou ilegível: $file");
-      return null;
-    }
-    $ok = true;
-    $mode = fileperms($real) & 0777;
-    if (($m = Secrets::modeProblem($mode)) !== null) {
-      $this->say(sprintf('FAIL permissões %04o: %s', $mode, $m));
-      $ok = false;
-    }
-    $webRoot = realpath($this->repoRoot . '/web');
-    if ($webRoot !== false && Secrets::isInside($real, $webRoot)) {
-      $this->say('FAIL o arquivo está dentro do document root (web/)');
-      $ok = false;
-    }
-    $repoReal = realpath($this->repoRoot);
-    if ($repoReal !== false && Secrets::isInside($real, $repoReal)) {
-      $cmd = 'git -C ' . escapeshellarg($repoReal) . ' check-ignore -q ' . escapeshellarg($real) . ' 2>/dev/null';
-      exec($cmd, $unused, $rc);
-      if ($rc !== 0) {
-        $this->say('FAIL o arquivo dentro do repositório não é ignorado pelo Git');
-        $ok = false;
-      }
-    }
-    $values = Secrets::parse((string) file_get_contents($real));
-    if ($values === null) {
-      $this->say('FAIL linhas fora do formato NAME=value (conteúdo não exibido)');
-      return null;
-    }
-    $allowed = Secrets::allowedNames($contract);
-    foreach (array_keys($values) as $name) {
-      if (!in_array($name, $allowed, true)) {
-        $this->say("FAIL variável fora do contrato: $name");
-        $ok = false;
-      }
-    }
-    foreach (Secrets::requiredNames($contract, $env) as $name) {
-      if (!isset($values[$name])) {
-        $this->say("FAIL obrigatória ausente em $env: $name");
-        $ok = false;
-      } elseif ($values[$name] === '') {
-        $this->say("FAIL obrigatória vazia em $env: $name");
-        $ok = false;
-      }
-    }
-    return $ok ? $values : null;
-  }
-
-  /**
-   * Grava as variáveis do contrato presentes no arquivo em um arquivo novo, 0600, fora do
-   * repositório. Não sobrescreve. Serve à importação manual pós-deploy.
-   *
-   * @param array<string, string|bool> $o
-   * @param array<string, mixed> $contract
-   * @param array<string, string> $values
-   */
-  private function secretsExport(array $o, string $env, array $contract, array $values): int {
-    $out = is_string($o['out'] ?? null) ? $o['out'] : '';
-    if ($out === '') {
-      $this->err('secrets export: informe --out=PATH (arquivo novo, fora do repositório)');
-      return 1;
-    }
-    if (file_exists($out)) {
-      $this->err('secrets export: o destino já existe; escolha outro caminho (não sobrescreve)');
-      return 1;
-    }
-    $dirReal = realpath(dirname($out));
-    $repoReal = realpath($this->repoRoot);
-    if ($dirReal === false) {
-      $this->err('secrets export: o diretório de destino não existe');
-      return 1;
-    }
-    if ($repoReal !== false && Secrets::isInside($dirReal, $repoReal)) {
-      $this->err('secrets export: o destino não pode ficar dentro do repositório');
-      return 1;
-    }
-    $lines = [];
-    foreach (Secrets::allowedNames($contract) as $name) {
-      if (isset($values[$name])) {
-        $lines[] = $name . '=' . $values[$name];
-      }
-    }
-    $leaf = basename($out);
-    if ($leaf === '' || $leaf === '.' || $leaf === '..') {
-      $this->err('secrets export: o destino precisa ser um nome de arquivo, não um diretório');
-      return 1;
-    }
-    $target = $dirReal . DIRECTORY_SEPARATOR . $leaf;
-    $fh = @fopen($target, 'xb');
-    if ($fh === false) {
-      $this->err('secrets export: não foi possível criar o destino');
-      return 1;
-    }
-    fwrite($fh, implode("\n", $lines) . "\n");
-    fclose($fh);
-    chmod($target, 0600);
-    $this->say("secrets export ($env): " . count($lines) . " variável(eis) gravada(s) em $target (0600); valores não exibidos");
     return 0;
   }
 
@@ -734,8 +586,6 @@ Uso:
   aculta-deployer build --out=DIR [--allow-open-blocking]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
   aculta-deployer report [--out=PATH] [--file=PATH]  relatório neutro para o painel do Portal (sem valores)
-  aculta-deployer secrets check [--env=production|test] [--file=PATH]  valida o arquivo local de credenciais (sem valores)
-  aculta-deployer secrets export --env=production|test --out=PATH  grava cópia 0600 fora do repositório, para importação manual
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version
 

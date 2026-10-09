@@ -100,7 +100,7 @@ final class DeployerStatusController extends ControllerBase {
     }
     $build['links'] = [
       '#type' => 'container',
-      'import' => ['#type' => 'link', '#title' => $this->t('Importar credenciais'), '#url' => Url::fromRoute('aculta_portal.secrets_import')],
+      'import' => ['#type' => 'link', '#title' => $this->t('Credenciais do ambiente'), '#url' => Url::fromRoute('aculta_portal.secrets_import')],
     ];
     $build['not_included'] = ['#plain_text' => $this->t('Não incluído neste relatório: verificações de rede (sitemap e robots), que são comandos próprios da ferramenta.')];
     return $build;
