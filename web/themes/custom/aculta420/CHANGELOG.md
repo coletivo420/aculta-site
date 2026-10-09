@@ -1,4 +1,4 @@
-## 0.4.3-dev.1 — Kit de logomarcas Baque Sativa (branch assets/baque-sativa-brand-kit) — 2026-10-09
+## 0.4.3 — Kit de logomarcas Baque Sativa (PR #115) — 2026-10-09
 
 Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um validador offline; sem componente, template, Domain ou cabeçalho alterados). Versão de commit da PR; a versão de merge `0.4.3` será marcada no commit de release antes do merge.
 
