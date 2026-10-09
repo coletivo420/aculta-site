@@ -1,3 +1,12 @@
+## Unreleased — Assets visuais Podplant420 — 2026-10-09
+
+- Quatro identidades aprovadas organizadas em `assets/branding/podplant420/`: stacked/horizontal para superfícies claras e escuras.
+- Derivados WebP canônicos com transparência: stacked 128/256/512 px e horizontal 240/480 px; o pacote de handoff preserva também derivados 720/960 e masters raster sem duplicá-los no runtime sem consumidor.
+- Composições horizontais tiveram somente canvas transparente excedente removido, sem deformação, recoloração, filtro CSS ou vetorização automática.
+- Origem, nomenclatura, acessibilidade, responsividade, cache, Media API e regras anti-regressão documentados em `docs/branding-podplant420.md`.
+- Nenhuma mudança em Institution Bar, Domain Header, Domain purpose ou SDC genérico; nenhuma imagem editorial/capa foi inventada ou catalogada no tema.
+- Validação determinística de dimensões, formato, transparência e duplicatas adicionada; QA visual/Drupal runtime continua não declarado sem execução real.
+
 ## 0.4.0-dev.6 — Logomarca Wiki420 no Domain Header (PR #112) — 2026-10-09
 
 Classificação: MINOR da linha 0.4.0 (novo asset de identidade e apresentação por purpose); sem componente stable alterado.
