@@ -12,7 +12,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta, marcada em `0.4.0-dev.7` | marcada no código | Patterns v1; T2, T3 e T4 concluídas; falta fechar T1 (decisões de estruturas internas) |
+| 0.4.0 | linha aberta, marcada em `0.4.0-dev.8` | marcada no código | Patterns v1; T2 a T5 concluídas (T5 com reconstrução em ambiente novo DEFERRED); falta fechar T1 |
 
 Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
 `aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.
@@ -62,11 +62,13 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
 - Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts. Cumprido.
 - Dívida nova: `validate-institution-browser.mjs` espera `/apoie` e `aculta_favicon.ico`, que o runtime atual não serve (DT-T18).
 
-### T5 — Portabilidade do conteúdo (DT-T10, DT-O03)
+### T5 — Portabilidade do conteúdo (DT-T10, DT-O03) — concluída em 0.4.0-dev.8, reconstrução em ambiente novo DEFERRED
 
-- Versionar a migração de conteúdo das seções, do hero e do cabeçalho de projetos, sem
-  credenciais, em `scripts/migrations/` ou equivalente, com dry-run e documentação.
-- Critério: um ambiente novo reproduz o conteúdo esperado a partir do Git e dos scripts.
+- Conteúdo de seções, missão, cabeçalho de projetos e hero declarado em `scripts/content/institution/home-content.json`, com exportador e loader por UUID, dry-run por padrão (`ACULTA_APPLY=1` para gravar).
+- Gate `validate-institution-content.php`: o JSON cobre todo UUID referenciado pelas colocações da home e do cabeçalho.
+- Dry-run no Runtime atual: 14 entidades sem diferença. Teste negativo: alteração do slogan detectada.
+- DEFERRED: reconstrução completa num ambiente novo. O único snapshot em `estados/` é de 2026-10-04 e não tem os campos de seção nem do hero; a verificação exige importar a configuração num ambiente de teste, o que fica para uma tarefa autorizada.
+- Critério parcial: versionado e verificável; reconstrução em ambiente novo pendente.
 
 ### T6 — Dependência do LMS (DT-T11)
 

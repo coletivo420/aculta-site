@@ -1,3 +1,14 @@
+## 0.4.0-dev.8 — T5: conteúdo da home versionado por UUID — 2026-10-09
+
+Classificação: PATCH da linha 0.4.0 (portabilidade do conteúdo; sem mudança visual); sem componente stable alterado.
+
+- `scripts/content/institution/home-content.json` declara 13 blocos `basic` (seções, missão, cabeçalho de projetos) e o hero do nó 1, por UUID. Exportador somente leitura e loader idempotente, em dry-run por padrão (`ACULTA_APPLY=1` grava).
+- Gate `scripts/validate-institution-content.php`: 39 checagens. Confere que o JSON cobre todo UUID referenciado pelas colocações `aculta_home_*` e `aculta_projects_header_*`, e que não sobrou marcado legado.
+- Dry-run no Runtime: 14 entidades sem diferença. Teste negativo: alteração do slogan no JSON foi detectada.
+- Dados institucionais (`aculta_institution`) ficam fora do escopo; são criados por `scripts/install-institution.php`.
+- DEFERRED: reconstrução completa em ambiente novo. O snapshot em `estados/` é anterior aos campos de seção e do hero.
+- Versão marcada em `aculta420.info.yml` e na asserção do gate de Foundation; sem tag.
+
 ## 0.4.0-dev.7 — T4 concluída: validadores de navegador sem endpoint fixo — 2026-10-09
 
 Classificação: PATCH da linha 0.4.0 (ferramentas de validação; sem mudança de tema visível); sem componente stable alterado.
