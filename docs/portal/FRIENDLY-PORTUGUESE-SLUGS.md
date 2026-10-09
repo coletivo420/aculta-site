@@ -360,3 +360,13 @@ Antes de publicar uma mudança de rota pública:
 - redirects para mudanças públicas;
 - canonical e sitemap coerentes;
 - paridade de Domain entre Homelab e produção.
+
+## Diretiva e gate
+
+A diretiva obrigatória para agentes está em `AGENTS.md` (seção "URLs e slugs públicos em português"). O gate `php scripts/validate-public-slugs.php`:
+
+- reprova segmento numérico ou termo técnico em inglês em rotas customizadas e do tema;
+- para rotas de contrib, usa uma linha de base que só pode diminuir (DT-P20). Rota nova fora dela reprova; rota corrigida sai dela;
+- o caso `/course/1/0/1` é DT-P21: a correção exige um subscriber de rota e um processador de saída no Portal, com slugs derivados do título da lição e da atividade.
+
+Exceções permanentes: `/admin`, `/ajax`, `/api`, callbacks técnicos e arquivos `.json`.

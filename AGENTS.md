@@ -471,6 +471,14 @@ da implementação.
 
 O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 
+## URLs e slugs públicos em português (obrigatório)
+
+- Toda URL pública navegável de conteúdo ou de ação humana usa slug em português: minúsculas, palavras separadas por hífen, sem acentos e sem IDs numéricos quando existir título estável.
+- Não usar inglês nem termos técnicos de módulo, classe ou plugin no slug público (por exemplo `course`, `group`, `node`, `user`, `lesson`, `activity`). Usar `curso`, `grupo`, `licao`, `atividade`, `entrar`, `minha-conta`.
+- Rotas técnicas não são navegação: callbacks, endpoints AJAX, APIs e a administração do Drupal (`/admin`) ficam como estão. Qualquer outra exceção é registrada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`.
+- Slug publicado é estável. Mudança exige alias antigo redirecionado para o novo.
+- Diretiva detalhada em `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Gate: `php scripts/validate-public-slugs.php`.
+
 ## Versionamento obrigatório de mudanças
 
 O versionamento controla as mudanças e os avanços no código. Não criar tags no GitHub sem pedido explícito do responsável.

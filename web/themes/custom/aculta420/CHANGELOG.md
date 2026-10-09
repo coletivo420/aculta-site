@@ -10,6 +10,7 @@ Classificação: MINOR da linha 0.4.0 (JavaScript do carrossel, catálogo de tra
 - Rótulos em inglês corrigidos: catálogo `translations/aculta420.pt-br.po` importado com `--override=none` (12 strings novas). Região do carrossel traduzida no `js/editorial-carousel.js`. Medido no DOM: região "Carrossel", controles "Controles do carrossel", "Slide anterior", "Próximo slide", "Navegação dos slides". Só restam textos mistos em português com a palavra "Login", que são nomes próprios de ação.
 - Curso "Introdução ao Antiproibicionismo" (id 1) publicado com 7 lições e 14 atividades. Conteúdo versionado em `scripts/content/courses/introducao-antiproibicionismo.json` e carregado por `scripts/content/load-course-introducao-antiproibicionismo.php` (idempotente, sem apagar nada). Fontes: UNAIDS, Harm Reduction International, MPPR, IPEA, Lei 11.343/2006, nota técnica do MPPR sobre o RE 635.659 e ConJur.
 - Rail validado com o curso real: rótulo, card, foco por teclado e largura em 1280 e 390 px. A rolagem com vários cards segue pendente.
+- Diretiva de slugs públicos em português em `AGENTS.md` e gate `scripts/validate-public-slugs.php` (linha de base DT-P20, caso do curso em DT-P21).
 - Gates: SDC schemas, design, fixtures, Foundation, shell-contract, domain-presentation e Portal Drupal 11+ — ver o registro de dívidas.
 
 ## Validação T2 (sem nova versão), 0.4.0-dev.2 — 2026-10-09

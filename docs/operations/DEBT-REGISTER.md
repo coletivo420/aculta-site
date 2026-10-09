@@ -48,6 +48,8 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-P16 | PR #63 citada como integração em andamento | `docs/modules/OPERATIONS.md` e `docs/modules/README.md` | Baixa | Não | S0 | Resolvida nesta revisão |
 | DT-P17 | Roadmap do Portal cita prioridades e versões do tema já superadas | `docs/portal/ROADMAP.md` antes desta revisão | Média | Não | S0 | Resolvida nesta revisão |
 | DT-P18 | `AGENTS.md` aponta "auditoria P10-R" como próxima etapa, já mesclada | `AGENTS.md` linha 73 | Baixa | Não | S0 | Resolvida nesta revisão |
+| DT-P20 | 21 rotas públicas de contrib com termo em inglês ou ID numérico (LMS, Group, Social Auth, Profile, Change Mail, Webform, Diff, Email Confirmer), por exemplo `/user/{user}/...` e `/group/{group}/...` | `scripts/validate-public-slugs.php`, linha de base `$contribBaseline`; só pode diminuir | Média | Não | P | Aberta |
+| DT-P21 | Lições e atividades do LMS usam posições numéricas na URL (`/course/1/0/1`); o curso também não tem slug | rota `course/{group}/{lesson_delta}/{activity_delta}` do contrib; plano: subscriber de rota e processador de saída no Portal, com slugs derivados do título | Média | Sim (confirmar o desenho) | P | Aberta |
 | DT-P19 | Credencial root exposta no chat | `P10-R` item 7 e seção 14: rotacionada pelo responsável em 2026-10-09 | Alta | Não | — | Resolvida (informada pelo responsável) |
 
 ## Tema (`aculta420`)
