@@ -1,3 +1,20 @@
+## 0.4.5-dev.4 — Validador de navegador: página de apoio no host SUPPORT (DT-T18) — 2026-10-09
+
+Classificação: PATCH da linha 0.4.x (ferramenta de verificação; sem alteração de apresentação, componente ou Domain).
+
+- `validate-institution-browser.mjs` lê a página de apoio no host SUPPORT (`ACULTA_SUPPORT_ORIGIN`), não mais `/apoio` no domínio principal. O validador de navegador agora exige duas variáveis de ambiente: `ACULTA_DEVTOOLS_PORT`, `ACULTA_SITE_ORIGIN` e `ACULTA_SUPPORT_ORIGIN`.
+- Regra do botão de contribuição: com a gateway ativa, o botão aparece após a escolha; com a gateway indisponível, aparece o aviso e o botão não aparece.
+- Regra do sitemap: aceita qualquer host oficial `*.aculta.org` e exige o host de apoio.
+
+Execução no servidor de testes (Chromium headless com DevTools): apoio 200 com escolha correta; aviso de indisponibilidade presente com a gateway desativada; favicon 200.
+
+**Falhas reais que o validador agora aponta (não ocultadas):**
+- Canonical da página de apoio aponta para o host de teste; a política exige produção.
+- O sitemap não inclui o host de apoio.
+- O favicon oficial ainda não foi definido: o site serve `aculta420-favicon.ico`, o validador espera `aculta_favicon.ico`.
+
+SHA do merge na `main`: a preencher no merge.
+
 ## 0.4.5-dev.3 — Cards de projeto: imagem 256 px com 2x e conteúdo centralizado — 2026-10-09
 
 Classificação: PATCH da linha 0.4.x (apresentação e configuração de imagem; sem componente stable, Domain ou cabeçalho alterados).
