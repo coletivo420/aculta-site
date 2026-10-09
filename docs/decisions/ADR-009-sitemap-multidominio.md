@@ -108,5 +108,6 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 - Microfases A a J concluídas no servidor de testes; submódulo `aculta_portal_sitemap` 0.1.1.
 - Índice central em `/sitemap.xml` com as variantes `main`, `support`, `wiki`, `magazine` e `courses`; `default` desabilitada.
 - Endereço por ambiente: a `base_url` segue o site definido pelo `aculta_deployer` (`environment.json`).
-- Decisões do responsável ainda pendentes: indexar `/wiki/verbetes`; remover os nós de teste 69 e 70.
+- Decisão do responsável ainda pendente: indexar `/wiki/verbetes`.
+- Nós de teste 69 e 70 removidos (2026-10-09, autorizado).
 - Produção (RC): DEP-0002 (apoio cross-host) e verificação no Search Console.

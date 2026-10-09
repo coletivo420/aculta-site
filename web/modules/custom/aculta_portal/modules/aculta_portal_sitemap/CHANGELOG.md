@@ -7,8 +7,7 @@
   ajuste manual no runtime de teste foi removido, e não há mais drift em `simple_sitemap.settings`.
 - Verificado no servidor de testes: índice com 5 filhos (`https://aculta.toca.net.br/<variante>/sitemap.xml`);
   `aculta-deployer sitemap --env=test` PASS; `robots --env=test` PASS; homologação `url.site` PASS; testes do submódulo PASS.
-- Pendências que dependem de decisão ou de produção: indexar `/wiki/verbetes` (decisão do responsável); remover os
-  nós de teste 69 e 70 (decisão do responsável); DEP-0002 (apoio cross-host) e verificação no Search Console
+- Pendências que dependem de decisão ou de produção: indexar `/wiki/verbetes` (decisão do responsável);  DEP-0002 (apoio cross-host) e verificação no Search Console
   (produção, RC).
 
 ## 0.1.0-I/J — documentação consolidada e homologação url.site — 2026-10-09
