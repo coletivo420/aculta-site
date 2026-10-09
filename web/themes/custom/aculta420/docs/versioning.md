@@ -48,11 +48,25 @@ Exemplos: `0.2.0`, `0.3.0`, `0.3.1`, `0.4.0-dev.1`, `0.4.0`.
 
 Antes de codar, anotar a versão alvo e a subversão prevista para cada mudança principal.
 
+## Versão sequencial por merge (vigente a partir de 0.4.1)
+
+- Cada PR mesclada na `main` que muda o tema ou o Portal recebe a próxima versão da sequência
+  da linha: `0.4.1`, `0.4.2`, `0.4.3` e assim por diante.
+- A PR já traz esse número nos marcadores (`info.yml`, CHANGELOG, roadmap e gate de Foundation).
+  Não há `-dev.N` intermediário entre a abertura e o merge.
+- O número é conferido contra a `main` antes do merge. Se outra PR mesclar antes, a PR seguinte
+  é renumerada para o próximo número livre.
+- A primeira versão sob esta regra é `0.4.1`, porque a última mesclada é `0.4.0-dev.6` (PR #112).
+- Documentação sem código não avança a versão (ver "Mudanças apenas documentais").
+- A classificação MINOR ou MAJOR continua sendo decisão do responsável e aparece no CHANGELOG;
+  a sequência avança o PATCH dentro da linha.
+- Tag continua sob pedido explícito do responsável.
+
 ## Marcar a versão de uma mudança
 
 Ao validar uma mudança principal (gates de tema e Runtime e, quando couber, HTTP ou navegador):
 
-1. aumentar `-dev.N` (ou abrir a linha seguinte) e atualizar `aculta420.info.yml`;
+1. aplicar a versão sequencial por merge (acima) em `aculta420.info.yml`;
 2. adicionar a entrada no `CHANGELOG.md` com: versão, data, mudança principal, SHA do commit
    na `main` e status de validação (validado ou não validado);
 3. atualizar o status em `docs/roadmap.md`;
@@ -105,5 +119,7 @@ Marcações já feitas, por linha:
 | 0.3.0 | fechamento da linha 0.3 | concluída |
 | 0.3.1 | fase de padrões SDC | versão decidida pelo responsável, exceção à classificação MINOR |
 | 0.4.0-dev.1 | rail de cursos | marcada no código |
+| 0.4.0-dev.6 | logomarca Wiki420 (PR #112) | marcada no código |
+| 0.4.1 | T4, T5 e T6 (PR #113) | primeira versão pela regra sequencial por merge |
 
 Tags criadas antes desta política: ver a nota em `docs/operations/RELEASES.md`.
