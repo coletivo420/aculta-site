@@ -1,5 +1,16 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.4 — Página de apoio na página inicial do subdomínio (correção) — 2026-10-09
+
+Classificação: PATCH da linha 0.2.0 (correção de caminho público de apoio; sem API nova).
+
+- A página pública de apoio é a página inicial do subdomínio de apoio (`/`). A rota interna `aculta_portal.support_form` continua em `/apoio`, porque o Drupal não indexa rota com caminho `/`.
+- `SupportFrontOnlySubscriber` (novo, priority 30): `/apoio` acessado diretamente responde 404; a página é servida somente quando a requisição original é `/`.
+- `front` do domínio de apoio: `/apoio` (coleção `domain.apoio_aculta_org`, `system.site`), exportado em `config/sync/domain/apoio_aculta_org/system.site.yml`. O valor do runtime estava em `/apoie`, rota já removida.
+- Verificado no runtime pelo Drush: front do domínio de apoio resolve `/` para `/apoio` e casa `aculta_portal.support_form`; `/apoio` direto é recusado pelo subscriber; o `/` do domínio principal continua em `/node/1`.
+- **Não verificado por requisição HTTP real**: o probe do kernel falha com 500 no subscriber de HTMX fora de uma requisição HTTP, também para páginas que já funcionavam; o 404 de purpose no host principal depende do `DomainRouteSubscriber` existente.
+- **Pendente**: o link literal `href="/apoio"` na home (`home-content.json`) não passa pelo hook e precisa de resolução por purpose ou de URL do host de apoio.
+
 ## 0.2.0-dev.3 — Página de apoio em /apoio (DT-T18) — 2026-10-09
 
 Classificação: PATCH da linha 0.2.0 (correção de caminho público e redirecionamento; sem API nova).
