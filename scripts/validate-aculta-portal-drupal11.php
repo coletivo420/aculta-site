@@ -90,13 +90,16 @@ $check(
 
 $services = $read($moduleRoot . '/aculta_portal.services.yml');
 $legacySubscriberTags = preg_match_all('/name:\s*kernel\.event_subscriber\b/', $services);
+// P7.2: Core renames kernel.event_subscriber <-> event_subscriber in
+// RegisterEventSubscribersPass, so the legacy tag is redundant. Listener
+// registration was verified identical before and after the migration.
 $check(
-  is_int($legacySubscriberTags) && $legacySubscriberTags <= 6,
-  'Legacy kernel.event_subscriber debt may not grow above the P1 baseline of 6.',
+  is_int($legacySubscriberTags) && $legacySubscriberTags === 0,
+  'Portal subscribers must use the canonical event_subscriber tag; legacy kernel.event_subscriber is not allowed.',
 );
 $check(
-  preg_match('/name:\s*event_subscriber\b/', $services) === 1,
-  'At least one canonical event_subscriber tag must remain present.',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 7,
+  'Portal must register exactly seven canonical event_subscriber tags.',
 );
 
 $legacyProceduralFunctions = [];
@@ -693,6 +696,19 @@ $check(
     && str_contains($tokenSource, 'addCacheableDependency($purposeDomain)'),
   'P6.2 image token must depend on the purpose Domain entity it is built from.',
 );
+
+// P7.3: every Portal request-phase listener ignores subrequests.
+foreach ([
+  'src/EventSubscriber/AccountRouteSubscriber.php',
+  'src/EventSubscriber/CepLookupRateLimitSubscriber.php',
+  'src/EventSubscriber/DomainPurposeRequestSubscriber.php',
+  'src/Commerce/MercadoPago/WebhookEventSubscriber.php',
+] as $requestListener) {
+  $check(
+    str_contains($read($moduleRoot . '/' . $requestListener), 'isMainRequest()'),
+    $requestListener . ' must guard request handling with isMainRequest().',
+  );
+}
 
 $serviceLocatorCeilings = [
 ];
