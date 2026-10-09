@@ -1,8 +1,9 @@
+import { devtoolsUrl, siteOrigin } from './lib/browser-env.mjs';
 // Final review through the existing local Chrome session. Never contacts production.
 import {writeFile, mkdir} from 'node:fs/promises';
-const origin='http://localhost:8080', dir='tmp/final-local-review';
+const origin=siteOrigin(), dir='tmp/final-local-review';
 await mkdir(dir,{recursive:true});
-const targets=await(await fetch('http://localhost:9223/json')).json();
+const targets=await(await fetch(devtoolsUrl('/json'))).json();
 const socket=new WebSocket(targets.find(t=>t.type==='page').webSocketDebuggerUrl);
 await new Promise((resolve,reject)=>{socket.onopen=resolve;socket.onerror=reject;});
 let sequence=0;const pending=new Map();

@@ -1,3 +1,4 @@
+import { devtoolsUrl } from './lib/browser-env.mjs';
 // Read-only probe of the Composer-installed release using the local Chrome DOM.
 import {readFile, writeFile, mkdir} from 'node:fs/promises';
 const source = await readFile('web/modules/contrib/yoast_seo/js/yoast_seo.js', 'utf8');
@@ -5,7 +6,7 @@ const marker = 'Orchestrator.prototype.updatePreview = function () {';
 const start = source.indexOf(marker);
 if (start < 0) throw Error('Expected plugin method not found.');
 const body = source.slice(start + marker.length, source.indexOf('\n  };', start));
-const targets = await (await fetch('http://localhost:9223/json')).json();
+const targets = await (await fetch(devtoolsUrl('/json'))).json();
 const target = targets.find(t => t.type === 'page' && /^http:\/\/(localhost|127\.0\.0\.1)(:|\/)/.test(t.url));
 if (!target) throw Error('A local Chrome tab is required.');
 const socket = new WebSocket(target.webSocketDebuggerUrl);
