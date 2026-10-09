@@ -4,18 +4,18 @@ Atualizado em 2026-10-09 pela revisão documental. Dívidas e pendências, com e
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.
 
-## Releases e tags
+## Releases e marcações
 
-| Versão | Estado | Tag | Conteúdo |
+| Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
-| 0.1.0 | concluída (2026-10-07) | `aculta420-theme-v0.1.0` | Foundation: provider, namespace, tokens, fronteiras |
-| 0.2.0 | concluída (2026-10-09) | `aculta420-theme-v0.2.0` | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
-| 0.3.0 | concluída (2026-10-09) | `aculta420-theme-v0.3.0` | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
-| 0.3.1 | concluída (2026-10-09) | `aculta420-theme-v0.3.1` | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta | `aculta420-theme-v0.4.0-dev.1` (rail) | Patterns v1; falta fechar estruturas internas |
+| 0.1.0 | concluída (2026-10-07) | marcada no código | Foundation: provider, namespace, tokens, fronteiras |
+| 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
+| 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
+| 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
+| 0.4.0 | linha aberta, marcada em `0.4.0-dev.1` | marcada no código | Patterns v1; falta fechar estruturas internas |
 
-Regras de versão em [`docs/versioning.md`](versioning.md). O `info.yml` guarda a última release;
-subversões `-dev` não o alteram.
+Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
+`aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.
 
 ## Saneamento
 

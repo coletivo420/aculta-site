@@ -1,157 +1,109 @@
 # Versionamento
 
-ACULTA420 possui versão própria, independente do site Drupal e do
-`aculta_portal`.
+O versionamento do ACULTA420 controla as mudanças e os avanços **no código**. A versão é
+assinalada dentro do repositório. Tags no GitHub não são criadas por padrão.
 
-Versão inicial: **0.1.0**.
+Aplica-se também ao `aculta_portal`, com a mesma regra (ver "Portal" abaixo).
+
+## Regra principal
+
+- Toda mudança que altera código, configuração, componente ou gate avança a versão
+  marcada no código, de acordo com a classificação abaixo.
+- Assinalar a versão significa atualizar três marcadores no mesmo commit ou PR:
+  1. `aculta420.info.yml`: campo `version` com a versão atual;
+  2. `CHANGELOG.md`: seção com a versão, a data e as mudanças principais;
+  3. `docs/roadmap.md`: status da fase ou linha.
+- Gate que checa a versão (`validate-aculta420-foundation.php`) é atualizado no mesmo PR.
+- **Tag Git não é criada sem pedido explícito do responsável.** Quando o responsável pedir,
+  a tag segue o formato `aculta420-theme-vX.Y.Z[-dev.N]`, apontando para o commit já mesclado.
 
 ## SemVer
 
-Formato:
-
-`MAJOR.MINOR.PATCH`
+Formato `MAJOR.MINOR.PATCH`, com pré-release `-dev.N` quando a linha ainda não fechou.
 
 Antes de 1.0:
 
-- MINOR = entrega coerente de arquitetura/features;
-- PATCH = correção compatível, docs, acessibilidade ou performance;
-- prerelease = `-dev.N`, `-beta.N`, `-rc.N` quando necessário.
+- MINOR: entrega coerente de arquitetura ou feature, incluindo componente novo `experimental`;
+- PATCH: correção compatível, documentação, acessibilidade ou performance;
+- `-dev.N`: subversão marcada dentro de uma linha aberta. Exemplo: `0.4.0-dev.1`.
 
-Exemplos:
-
-```text
-0.2.0-dev.1
-0.2.0-rc.1
-0.2.0
-0.2.1
-```
+Exemplos: `0.2.0`, `0.3.0`, `0.3.1`, `0.4.0-dev.1`, `0.4.0`.
 
 ## Proteção de componentes stable
 
-Mesmo em 0.x:
+- PATCH não quebra props, slots ou semântica stable.
+- Quebra intencional exige MINOR e nota de migração.
+- Remoção documenta a substituição quando houver consumidor.
+- Componente experimental pode mudar em MINOR, com quebra explícita.
 
-- PATCH não quebra props/slots/semântica stable;
-- quebra intencional exige MINOR e migration note;
-- remoção deve documentar substituição quando houver consumidor.
-
-Experimental pode mudar em MINOR, mas a quebra deve ser explícita.
-
-## 1.0+
-
-- MAJOR = breaking API;
-- MINOR = feature compatível;
-- PATCH = fix compatível.
-
-## Tags
-
-O repositório contém site, módulos e tema. Tags do tema são namespaced:
-
-`aculta420-theme-v0.1.0`
-
-Não usar `v0.1.0` genérico.
-
-## Fonte de verdade
-
-Release deve manter coerentes:
-
-1. `aculta420.info.yml`;
-2. `CHANGELOG.md`;
-3. `docs/roadmap.md`;
-4. tag Git quando publicada.
-
-## Release checklist
-
-- version metadata;
-- CHANGELOG;
-- roadmap;
-- schema validation;
-- PHP/Twig/YAML sanity;
-- `drush cr`;
-- config status/import;
-- smoke matrix de domains;
-- desktop/mobile;
-- keyboard/focus;
-- reduced motion;
-- component states;
-- asset attachment;
-- nenhuma regra de negócio nova no tema.
-
-## Decisão de versão (0.3.1)
-
-A fase de padrões SDC (seções, hero, grade, carrossel e cabeçalho por purpose) foi
-registrada como **0.3.1** por decisão do responsável. A regra acima recomendaria MINOR,
-porque introduz componentes novos. A exceção vale somente porque:
-
-- os componentes novos são `experimental`;
-- nenhum componente `stable` teve API alterada;
-- o escopo é a conclusão de uma migração iniciada na 0.3.x.
-
-Qualquer fase futura com componente novo deve seguir a regra geral e registrar a
-classificação antes de codar. Não reutilizar esta exceção como precedente sem decisão
-explícita.
-
-## Subversões e registro de mudanças (obrigatório)
-
-Toda mudança do tema e do Portal passa por este procedimento, antes de começar o código.
-
-### 1. Classificar antes de codar
+## Classificar antes de codar
 
 | Tipo de mudança | Versão alvo | Exemplo |
 | --- | --- | --- |
-| correção, docs, acessibilidade, performance sem API nova | PATCH | corrigir sticky, reduced motion |
-| componente novo `experimental`, ou feature compatível | MINOR (ou PATCH com decisão registrada) | project-card |
-| quebra de componente `stable`, ou de contrato Portal → tema | MINOR pré-1.0, com nota de migração | troca de props stable |
-| breaking em 1.0+ | MAJOR | — |
+| correção, acessibilidade, performance, sem API nova | PATCH | corrigir sticky, reduced motion |
+| documentação sem código, config ou componente | PATCH sem código novo; registrar no CHANGELOG | revisão de roadmap |
+| componente novo `experimental`, feature compatível | MINOR da linha aberta (`-dev.N`) | project-card, rail |
+| quebra de componente `stable` ou de contrato Portal → tema | MINOR pré-1.0, com nota de migração | troca de props stable |
+| breaking em 1.0 ou depois | MAJOR | — |
 
-Antes de codar, anotar: a versão alvo, a lista das mudanças principais e a subversão
-prevista para cada uma (`X.Y.Z-dev.N`).
+Antes de codar, anotar a versão alvo e a subversão prevista para cada mudança principal.
 
-### 2. Subversões `-dev.N` por mudança principal validada
+## Marcar a versão de uma mudança
 
-- Cada mudança principal, depois de validada (gates de tema e Runtime, e HTTP ou
-  navegador no escopo), recebe o próximo `-dev.N` e uma tag anotada:
-  `aculta420-theme-vX.Y.Z-dev.N`.
-- A tag vai no commit que está na `main` após o merge, nunca em commit intermediário
-  não validado.
-- Estados quebrados ou não validados não recebem tag. Um commit intermediário pode
-  existir na branch sem tag.
+Ao validar uma mudança principal (gates de tema e Runtime e, quando couber, HTTP ou navegador):
 
-### 3. Entrada no CHANGELOG
+1. aumentar `-dev.N` (ou abrir a linha seguinte) e atualizar `aculta420.info.yml`;
+2. adicionar a entrada no `CHANGELOG.md` com: versão, data, mudança principal, SHA do commit
+   na `main` e status de validação (validado ou não validado);
+3. atualizar o status em `docs/roadmap.md`;
+4. ajustar a asserção de versão do gate de Foundation.
 
-Para cada `-dev.N`, uma linha com a mudança principal, o SHA da `main` e o status de
-validação. Mudanças que não foram validadas entram como "não validado".
+Estado não validado não recebe marcação de versão nova. Ele fica no changelog como "não validado".
 
-### 4. Release final
+## Fechar uma linha de release
 
 Quando a fase fecha:
 
-1. `aculta420.info.yml` recebe a versão final;
-2. `CHANGELOG.md` recebe a seção com data;
+1. `aculta420.info.yml` recebe a versão final, sem `-dev`;
+2. `CHANGELOG.md` recebe a seção final com data;
 3. `docs/roadmap.md` marca a fase como concluída;
-4. a tag `aculta420-theme-vX.Y.Z` é criada na `main` depois do merge;
-5. o gate de Foundation passa a esperar a versão final.
-
-Os quatro documentos acima precisam estar coerentes (ver "Fonte de verdade").
-
-### 5. Portal e configuração
-
-- Mudança em `aculta_portal` entra também no `CHANGELOG.md` do módulo, com a versão
-  do tema em que foi entregue. O Portal ainda não tem tag própria; a primeira release
-  rastreada deve usar `portal-vX.Y.Z` (ver `docs/operations/RELEASES.md`).
-- Mudança de configuração ou de conteúdo do Runtime registra a alteração no CHANGELOG
-  do tema, com a dependência de conteúdo que outro ambiente precisa.
-
-### 6. PRs
-
-- Uma PR por fase ou subversão. Ao fechar uma PR obsoleta, registrar o motivo no
-  próprio PR e arquivar o que for único fora do repositório antes de excluir a branch.
-- Antes de mesclar, a PR não pode deixar commit intermediário em conflito com a
-  versão declarada.
+4. o gate de Foundation passa a esperar a versão final;
+5. a tag só é criada se o responsável pedir.
 
 ## Mudanças apenas documentais
 
-- Mudança que altera só documentação (sem código, config, componente ou gate) é classificada
-  como PATCH de documentação. Entra no `CHANGELOG.md` com a versão vigente e não gera tag.
-- O `aculta420.info.yml` continua na última release. Subversões `-dev` não o alteram.
-- Documentação e código no mesmo PR não se enquadram aqui: o código segue a tabela de
-  classificação e a tag após validação.
+- Mudança só de documentação entra no `CHANGELOG.md` com a versão vigente e não altera o
+  `info.yml`.
+- Documentação e código no mesmo PR seguem a classificação de código.
+
+## Portal
+
+- Mudança em `aculta_portal` entra no `CHANGELOG.md` do módulo com a versão do Portal marcada
+  em `aculta_portal.info.yml`.
+- A versão do Portal segue a mesma classificação e a mesma regra de marcação.
+- Tag `portal-vX.Y.Z` só é criada sob pedido explícito do responsável.
+
+## Configuração e conteúdo
+
+- Mudança de configuração ou de conteúdo que outro ambiente precisa é registrada no CHANGELOG,
+  com a dependência de conteúdo.
+
+## PRs
+
+- Uma PR por fase ou subversão. Ao fechar uma PR obsoleta, registrar o motivo na própria PR e
+  arquivar o que for único fora do repositório antes de excluir a branch.
+- PR que muda a versão marcada precisa manter `info.yml`, `CHANGELOG.md`, roadmap e gate coerentes.
+
+## Histórico de marcações
+
+Marcações já feitas, por linha:
+
+| Versão | Marcação no código | Observação |
+| --- | --- | --- |
+| 0.1.0 | Foundation | concluída |
+| 0.2.0 | fechamento da linha 0.2 | concluída |
+| 0.3.0 | fechamento da linha 0.3 | concluída |
+| 0.3.1 | fase de padrões SDC | versão decidida pelo responsável, exceção à classificação MINOR |
+| 0.4.0-dev.1 | rail de cursos | marcada no código |
+
+Tags criadas antes desta política: ver a nota em `docs/operations/RELEASES.md`.

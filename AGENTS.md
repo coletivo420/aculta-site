@@ -473,14 +473,17 @@ O Portal usa tags `portal-vX.Y.Z`. Ver `docs/operations/RELEASES.md`.
 
 ## Versionamento obrigatório de mudanças
 
+O versionamento controla as mudanças e os avanços no código. Não criar tags no GitHub sem pedido explícito do responsável.
+
 Antes de codar qualquer mudança no tema ou no Portal:
 
 1. classificar o tipo (PATCH, MINOR ou MAJOR) segundo `web/themes/custom/aculta420/docs/versioning.md`, tabela "Classificar antes de codar";
 2. anotar a versão alvo e a subversão `-dev.N` prevista para cada mudança principal;
-3. ao validar uma mudança principal, criar a tag `aculta420-theme-vX.Y.Z-dev.N` no commit da `main` depois do merge, e registrar a linha no CHANGELOG com o SHA;
-4. não taguear estado não validado;
-5. mudança no `aculta_portal` vai ao CHANGELOG do módulo, citando a versão do tema;
-6. os quatro documentos de release (`aculta420.info.yml`, `CHANGELOG.md`, `docs/roadmap.md` e a tag) devem ficar coerentes.
+3. ao validar uma mudança principal, marcar a versão no código: `aculta420.info.yml`, `CHANGELOG.md` (com SHA e status de validação), `docs/roadmap.md` e a asserção do gate de Foundation;
+4. não marcar versão de estado não validado;
+5. mudança no `aculta_portal` marca a versão em `aculta_portal.info.yml` e entra no `CHANGELOG.md` do módulo;
+6. os marcadores de release (info, changelog, roadmap e gate) devem ficar coerentes no mesmo PR;
+7. criar tag Git somente quando o responsável pedir explicitamente.
 
 A exceção de versão já registrada (0.3.1) não autoriza nova exceção sem decisão do responsável.
 

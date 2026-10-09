@@ -2,6 +2,11 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## Versionamento por marcação no código (sem tag), 0.4.0-dev.1 — 2026-10-09
+
+- Política: a versão é assinalada no código (`aculta420.info.yml`, este changelog, roadmap e gate). Tags Git não são criadas sem pedido explícito do responsável. `docs/versioning.md`, `AGENTS.md` e `docs/operations/RELEASES.md` atualizados.
+- `aculta420.info.yml` passa a marcar a versão atual, `0.4.0-dev.1`. Asserção do gate de Foundation acompanha.
+
 ## Documentação (sem tag), versão vigente 0.3.1 — 2026-10-09
 - Limpeza documental: removidos `design-b-qa.md` e `features.md` (histórico no Git, último commit `9c95420`); índices reescritos; referências corrigidas. Regras que sobreviveram ficam em `docs/portal/GUARDRAILS.md` e nos guardrails do tema.
 
