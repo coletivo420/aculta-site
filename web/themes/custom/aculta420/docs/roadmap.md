@@ -129,20 +129,22 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 ### F3 — Busca e feedback (DT-T13)
 
+- **Decisão do responsável (2026-10-09): busca pelos serviços do banco** (Search API com o backend de banco de dados), sem serviço de busca externo.
 - Apresentação de busca com Search API e Autocomplete; mensagens por toast e alert com
   Messenger. Backend e índices ficam no Portal e no Core.
-- Pré-requisito: F2 e decisão de backend (ver Portal F2).
+- Pré-requisito: F2 (concluída em 0.5.1). Verificar, antes de implementar, se o backend de banco atende a relevância e a latência esperadas.
 
 ### F4 — Padrões de Drupal UI e biblioteca de componentes (DT-T13)
 
 - UI Patterns para Views e Manage Display onde houver consumidor real.
 - Biblioteca navegável dos componentes (UI Patterns Library ou UI Examples), com estados
   documentados.
+- Pendente de decisão do responsável: qual módulo usar para a biblioteca. UI Patterns expõe os componentes SDC do tema ao site builder (Layout Builder, Views, formatadores). UI Examples é um módulo de exemplos de referência, para documentar componentes; não muda a renderização. Recomendação: UI Examples para a biblioteca, e UI Patterns só quando houver consumidor real.
 - Pré-requisito: T4 (schemas validados).
 
 ### F5 — Mega menu
 
-- Só depois de a navegação base estar estável em produção.
+- **Decisão do responsável (2026-10-09): só depois do primeiro RC.** Antes disso não há produção estável para validar a navegação.
 
 ## Critério para encerrar o saneamento do tema
 
