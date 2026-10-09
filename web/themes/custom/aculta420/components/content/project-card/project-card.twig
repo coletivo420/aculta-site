@@ -1,0 +1,11 @@
+{#
+  Project card inner markup. The presenter node--project--teaser.html.twig owns
+  the article, its attributes and the title/CTA links; no business rule here.
+#}
+{% if media %}<div class="aculta-project-image">{{ media }}</div>{% endif %}
+<div class="aculta-project-text">
+  {% if category %}<div class="aculta-category">{{ category }}</div>{% endif %}
+  <h3>{{ title }}</h3>
+  {% if summary %}<div class="aculta-prose">{{ summary }}</div>{% endif %}
+  {% if cta %}{{ cta }}{% endif %}
+</div>

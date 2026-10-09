@@ -109,6 +109,18 @@ deferido até existir consumidor comprovado.
 
 ## 0.3.0 — Card System v1
 
+Status: **concluída em 2026-10-09.** Tag `aculta420-theme-v0.3.0` após merge na `main`. Ver `docs/components.md`.
+
+- project-card: SDC experimental extraído do teaser, com DOM idêntico ao anterior; medido sem mídia, com título longo, em escuro, mobile e reduced motion;
+- course-card: apresentação do `lms:course_card` (LMS dono de dados e marcação) pela skin do tema; sem SDC paralelo;
+- editorial-card: API stable preservada, sem mudança;
+- product-card: não criado, sem catálogo Commerce com consumidor real;
+- abstração de mídia: não extraída, porque não há duplicação comprovada além do `project-card`;
+- variantes SDC: nenhuma criada, sem consumidor real;
+- pendências para `stable`: consumo real estável e variante `featured` quando houver consumidor.
+
+Itens originais da fase:
+
 - project-card;
 - course-card;
 - consolidar contratos recorrentes;

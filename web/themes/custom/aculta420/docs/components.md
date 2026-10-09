@@ -18,7 +18,8 @@ components/
 ```text
 components/
 └── content/
-    └── editorial-card/
+    ├── editorial-card/       (stable)
+    └── project-card/        (experimental, 0.3.0)
 ```
 
 Não criar diretórios vazios apenas para parecer completo.
@@ -54,7 +55,24 @@ Preferir render element `#type: component` em PHP quando Drupal precisar
 conhecer attachment/cache/render contract; Twig inclui componentes em presenters
 quando esse boundary for mais simples.
 
-## Componente atual
+## Componentes atuais
+
+### `aculta420:project-card`
+
+Status: experimental (0.3.0). Local: `components/content/project-card/`.
+
+Slots: `media` (omitido quando vazio), `category`, `title` (link), `summary`, `cta` (link).
+O presenter `node--project--teaser.html.twig` mantém `<article>`, attributes e links;
+o SDC mantém a marcação interna, com as mesmas classes do teaser anterior (DOM idêntico
+medido). Sem props, JavaScript ou consulta de dados.
+
+### Course card (LMS, skin do tema)
+
+Não há SDC `aculta420:course-card`. O componente estável `lms:course_card` pertence ao
+módulo LMS (dados, marcação e assets). O tema apresenta esse componente pela
+`css/components/course-card.css`: mapeia as variáveis `--color-*` do LMS, o fundo, o overlay,
+as sombras de texto e as cores do botão "começar" para tokens semânticos. Um SDC paralelo
+duplicaria um componente estável de outro módulo e foi evitado.
 
 ### `aculta420:editorial-card`
 
