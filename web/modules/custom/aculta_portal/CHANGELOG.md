@@ -1,5 +1,12 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.7 — canonicalPathUrl para o sitemap por purpose (0.1.0-E) — 2026-10-09
+
+- `DomainPurposeManager::canonicalPathUrl()`: URL absoluta de um caminho no host canônico de produção do purpose (mesma regra de `canonicalRouteUrl()`).
+- Consumido pelo `aculta_portal_sitemap` (piloto MAIN e SUPPORT). Sem alteração de rotas ou de comportamento público.
+
+Validação: `validate-aculta-portal-drupal11` (ver PR). **Não validado**: testes de navegador deste método (usado apenas na geração do sitemap).
+
 ## 0.2.0-dev.6 — Esqueleto do submódulo aculta_portal_sitemap (0.1.0-B) — 2026-10-09
 
 Classificação: PATCH da linha 0.2.0 (estrutura opt-in; sem rotas, serviços ou hooks; sem alteração de comportamento).

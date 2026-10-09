@@ -110,6 +110,31 @@ final class DomainPurposeManager {
   }
 
   /** Generates a same-application path on a purpose domain. */
+  /**
+   * Absolute canonical URL for a path on a purpose host, always on the
+   * production hostname from the domain record (never an alias).
+   */
+  public function canonicalPathUrl(string $purpose, string $path): ?Url {
+    if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+      return NULL;
+    }
+    $domainId = self::DOMAIN_IDS[$purpose] ?? NULL;
+    $domain = $this->getDomain($purpose);
+    if ($domainId === NULL || !$domain) {
+      return NULL;
+    }
+    $config = $this->configFactory->get('domain.record.' . $domainId);
+    $hostname = $config->get('hostname');
+    if (!is_string($hostname) || $hostname === '') {
+      return NULL;
+    }
+    $domain = clone $domain;
+    $domain->setHostname($hostname);
+    $domain->set('scheme', $config->get('scheme') ?: 'https');
+    $domain->setPath();
+    return Url::fromUri(rtrim($domain->getPath(), '/') . $path);
+  }
+
   public function pathUrl(string $purpose, string $path): ?Url {
     if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
       return NULL;
