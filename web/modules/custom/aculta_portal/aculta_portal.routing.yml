@@ -62,6 +62,22 @@ aculta_portal.support_form:
     _title: Apoie a Associação
   requirements:
     _access: 'TRUE'
+aculta_portal.account_settings:
+  path: /configuracoes
+  defaults:
+    _form: '\Drupal\aculta_portal\Appearance\AppearanceForm'
+    _title: Configurações
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.appearance_settings:
+  path: /admin/config/aculta/aparencia
+  defaults:
+    _form: '\Drupal\aculta_portal\Appearance\SettingsForm'
+    _title: Aparência do site
+  requirements:
+    _permission: administer aculta appearance settings
 aculta_portal.support_settings:
   path: /admin/config/aculta/apoio
   defaults:

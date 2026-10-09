@@ -1,4 +1,7 @@
 services:
+  aculta_portal.color_mode_preference:
+    class: Drupal\aculta_portal\Appearance\ColorModePreference
+    arguments: ['@config.factory', '@user.data']
   aculta_portal.registration_terms:
     class: Drupal\aculta_portal\Account\RegistrationTerms
     arguments: ['@agreement.handler', '@entity_type.manager']

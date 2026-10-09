@@ -33,6 +33,7 @@ final class AccountShellBuilder {
       'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data'],
       'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections'],
       'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security'],
+      'aculta_portal.account_settings' => ['title' => $this->translation->translate('Configurações'), 'route' => 'aculta_portal.account_settings'],
     ];
     if (!isset($sections[$route])) {
       return;
