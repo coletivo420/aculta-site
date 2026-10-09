@@ -35,6 +35,17 @@ modificada. O gate completo Portal/Security ainda para em `core.extension`,
 porque o Runtime tem `config_translation` habilitado e o sync não; essa
 diferença permanece fora do escopo e não foi importada nem exportada.
 
+## Arquivo local (0.1.4)
+
+- Caminho no servidor de testes: `secrets/aculta.secrets.env` na raiz do repositório, ignorado pelo Git
+  (`*.secrets.env` e `/secrets/`), fora de `web/`, modo 0600. `settings.local.php` aponta para ele por
+  `dirname(DRUPAL_ROOT)`.
+- Migrado de `/etc/aculta/secrets.env`. O arquivo antigo precisa ser removido por quem tem root:
+  `sudo rm /etc/aculta/secrets.env`. O processo de deploy não tem permissão de escrita nesse diretório.
+- Validação e exportação pós-deploy: `aculta-deployer secrets check|export` (ver USO do deployer).
+  Nomes do contrato: `aculta_deployer/config/secrets-contract.json`. Gate: `tests/run.php` do deployer
+  verifica que todo nome do contrato aparece na tabela deste documento.
+
 ## Variáveis atuais
 
 | Key ID | Environment | Sensível | Encoding |
