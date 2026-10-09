@@ -36,14 +36,20 @@ final class FormHooks {
 
     if ($formId === 'user_login_form') {
       // Core reports blocked or unactivated accounts before the password check,
-      // which discloses that an address is registered. The Portal callback keeps
-      // them indistinguishable from unknown accounts.
-      $form['#validate'] = array_map(
-        static fn($validator) => $validator === '::validateAuthentication'
-          ? 'aculta_portal.form_callbacks:validateLoginAuthentication'
-          : $validator,
-        $form['#validate'] ?? [],
-      );
+      // which discloses that an address is registered. The Portal callback
+      // replaces Core's authentication step. It is always present exactly once:
+      // if Core's step is missing, the callback runs first, so a rename can never
+      // silently restore the disclosure.
+      $wrapper = 'aculta_portal.form_callbacks:validateLoginAuthentication';
+      $validators = array_values(array_filter($form['#validate'] ?? [], static fn($v) => $v !== $wrapper));
+      $index = array_search('::validateAuthentication', $validators, TRUE);
+      if ($index === FALSE) {
+        array_unshift($validators, $wrapper);
+      }
+      else {
+        $validators[$index] = $wrapper;
+      }
+      $form['#validate'] = $validators;
     }
 
     if ($formId === 'change_mail_form'

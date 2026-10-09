@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\profile\ProfileInterface;
+use Drupal\user\Form\UserLoginForm;
 use Drupal\user\UserAuthenticationInterface;
+use Drupal\user\UserFloodControlInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 
@@ -26,22 +29,42 @@ final class PortalFormCallbacks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TranslationInterface $translation,
     private readonly UserAuthenticationInterface $userAuth,
+    private readonly UserFloodControlInterface $floodControl,
+    private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
   /**
    * Authenticates the login form without disclosing blocked accounts.
    *
-   * Blocked or unactivated accounts are skipped here, so validateFinal() gives
-   * them the same generic message and the same flood accounting as unknown
-   * accounts. Every other account goes through Core's validateAuthentication().
+   * Core reports a blocked or unactivated account with its own message before
+   * any password check. Here a blocked account is recognized first and leaves
+   * the authentication step, so validateFinal() gives the generic message used
+   * for unknown accounts. The IP flood check runs first, with the same condition
+   * and outcome as Core, so the flood response cannot tell the accounts apart.
+   * Every other account goes through Core's validateAuthentication().
    */
   public function validateLoginAuthentication(array &$form, FormStateInterface $formState): void {
-    $name = trim((string) $formState->getValue('name'));
-    $account = $name !== '' ? $this->userAuth->lookupAccount($name) : FALSE;
+    $formObject = $formState->getFormObject();
+    if (!$formObject instanceof UserLoginForm) {
+      // Never authenticate through an unexpected form object.
+      return;
+    }
+
+    $password = trim((string) $formState->getValue('pass'));
+    $account = FALSE;
+    if (!$formState->isValueEmpty('name') && strlen($password) > 0) {
+      $floodConfig = $this->configFactory->get('user.flood');
+      if (!$this->floodControl->isAllowed('user.failed_login_ip', $floodConfig->get('ip_limit'), $floodConfig->get('ip_window'))) {
+        $formState->set('flood_control_triggered', 'ip');
+        return;
+      }
+      $account = $this->userAuth->lookupAccount($formState->getValue('name'));
+    }
+
     if ($account instanceof UserInterface && $account->isBlocked()) {
       return;
     }
-    $formState->getFormObject()->validateAuthentication($form, $formState);
+    $formObject->validateAuthentication($form, $formState);
   }
 
   /** Validates conditional Activity fields. */

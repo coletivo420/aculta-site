@@ -57,8 +57,25 @@ final class MercadoPagoWebhookFailClosedTest extends UnitTestCase {
     $this->assertSame(401, $response?->getStatusCode());
   }
 
-  public function testForgedSignatureIsRejected(): void {
-    $headers = ['x-signature' => 'ts=1700000000,v1=' . str_repeat('0', 64), 'x-request-id' => 'req-1'];
+  /**
+   * Builds the signature header exactly as Mercado Pago does: HMAC-SHA256 over
+   * "id:<data.id>;request-id:<request id>;ts:<ms>;" with the secret. The
+   * timestamp is current, so the outcome depends only on the HMAC.
+   */
+  private function signedHeaders(string $secret, string $hash_secret_override = ''): array {
+    $ts = (string) (int) (microtime(true) * 1000);
+    $hash = hash_hmac('sha256', 'id:1;request-id:req-1;ts:' . $ts . ';', $hash_secret_override !== '' ? $hash_secret_override : $secret);
+    return ['x-signature' => 'ts=' . $ts . ',v1=' . $hash, 'x-request-id' => 'req-1'];
+  }
+
+  public function testCorrectlySignedCurrentNotificationPasses(): void {
+    $response = $this->guard()->validateAndNormalize($this->post($this->signedHeaders(self::FAKE_SECRET)), TRUE, self::FAKE_SECRET);
+    $this->assertNull($response, 'A valid signature must not be rejected by the guard.');
+  }
+
+  public function testForgedSignatureWithCurrentTimestampIsRejected(): void {
+    // Same timestamp and request id, hash computed with a different secret.
+    $headers = $this->signedHeaders(self::FAKE_SECRET, 'another-test-secret');
     $response = $this->guard()->validateAndNormalize($this->post($headers), TRUE, self::FAKE_SECRET);
     $this->assertSame(401, $response?->getStatusCode());
   }
