@@ -161,7 +161,7 @@ Não criar SDC apenas para embrulhar uma `<div>` usada uma vez.
 ### Conta
 
 A matriz detalhada está em
-[ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
+[GUARDRAILS.md](GUARDRAILS.md).
 
 Candidatos atuais:
 

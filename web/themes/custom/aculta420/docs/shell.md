@@ -190,7 +190,7 @@ uma fase posterior.
 - 0.2-F — Design B QA.
 
 Estado atual: linha 0.2.0 concluída. 0.2-A e 0.2-B estão na `main`; 0.2-C a 0.2-F
-estão em PRs empilhadas (#92 a #95). QA em navegador em `docs/design-b-qa.md`.
+estão em PRs empilhadas (#92 a #95). QA em navegador registrado no Git (commit `9c95420`, `docs/design-b-qa.md`).
 
 ### Institution Bar (0.2-C)
 

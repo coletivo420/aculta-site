@@ -65,7 +65,7 @@ Core, preservando:
 ## Minha Conta
 
 A fronteira detalhada entre SDC e AJAX está em
-[ACCOUNT-SDC-AJAX.md](ACCOUNT-SDC-AJAX.md).
+[GUARDRAILS.md](GUARDRAILS.md).
 
 Decisão:
 

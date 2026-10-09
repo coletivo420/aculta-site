@@ -1,76 +1,28 @@
-# ACULTA Portal
+# Documentação do Portal
 
-Documentação canônica da camada de integração `aculta_portal`.
+Índice do `aculta_portal`. Só documentos normativos e de referência vigentes.
 
-O Portal integra Drupal Core/contrib, Domain, Conta, Commerce, LMS e conteúdo.
-Ele não substitui as fontes de verdade desses subsistemas.
+## Normas
 
-## Ler primeiro
+- [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) — padrão Drupal 11+ e regras de código.
+- [GUARDRAILS.md](GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki, Conta e AJAX.
+- [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) — fonte de verdade de cada dado.
+- [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
+- [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.
 
-- [Padrão Drupal 11+](DRUPAL-11-STANDARDS.md) — normativo para humanos e agentes de IA
-- [Arquitetura](ARCHITECTURE.md)
-- [Fontes de verdade](SOURCE-OF-TRUTH.md)
-- [Camadas anti-regressão](../ANTI-REGRESSION.md)
-- [Módulos Drupal](../modules/README.md)
-- [Modernização Drupal 11+ Aculta Portal — roadmap P0–P10 e P5.x](ROADMAP.md)
-- [Passagem para o próximo agente](MODERNIZACAO-DRUPAL-11-HANDOFF.md)
+## Políticas
 
-## Conta
+- [ADMIN-DOMAIN-POLICY.md](ADMIN-DOMAIN-POLICY.md) — painel administrativo e canonicalização para MAIN.
+- [CROSS-DOMAIN-REQUEST-POLICY.md](CROSS-DOMAIN-REQUEST-POLICY.md) — requisições entre purposes.
+- [PAYMENT-DOMAIN-POLICY.md](PAYMENT-DOMAIN-POLICY.md) — carrinho, checkout e pagamento no MAIN.
+- [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md) — URLs e slugs em português.
 
-- [Política AJAX](AJAX.md)
-- [Semântica de apresentação](ACCOUNT-PRESENTATION-MODEL.md)
-- [Matriz SDC/AJAX](ACCOUNT-SDC-AJAX.md)
-- [Conta, AJAX e Views interativas](../modules/ACCOUNT-UI.md)
-- [Autenticação e identidade](../modules/AUTHENTICATION.md)
+## Contratos
 
-## Produto/domínios
+- [DOMAIN-PRESENTATION-CONTRACT.md](DOMAIN-PRESENTATION-CONTRACT.md) — contrato Portal → tema.
+- [COMPONENT-DESIGN-SYSTEM.md](COMPONENT-DESIGN-SYSTEM.md) — componentes e Bootstrap.
+- [AJAX.md](AJAX.md) — política de AJAX e interatividade.
 
-- [Fórum](FORUM.md)
-- [Wiki420](WIKI.md)
-- [Revista](MAGAZINE.md)
-- [Loja](SHOP.md)
-- [Slugs públicos em português](FRIENDLY-PORTUGUESE-SLUGS.md)
+## Roadmap
 
-## Tema
-
-- [Integração com o Component Design System](COMPONENT-DESIGN-SYSTEM.md)
-- [Documentação ACULTA420](../../web/themes/custom/aculta420/README.md)
-
-## Domínios e requests
-
-- [Política do domínio administrativo](ADMIN-DOMAIN-POLICY.md)
-- [Requests e redirects cross-domain](CROSS-DOMAIN-REQUEST-POLICY.md)
-- [Checkout e pagamentos em MAIN](PAYMENT-DOMAIN-POLICY.md)
-- [Domain Presentation Contract](DOMAIN-PRESENTATION-CONTRACT.md)
-
-## Operação
-
-- [Testes](../operations/TESTING.md)
-- [Hardening](../operations/HARDENING.md)
-- [Releases](../operations/RELEASES.md)
-- [Homelab](../../scripts/homelab/README.md)
-
-## Integrações
-
-- [Autenticação](../integrations/AUTHENTICATION.md)
-- [CAPTCHA / Turnstile](../integrations/CAPTCHA.md)
-- [Google](../integrations/GOOGLE.md)
-
-## Padrão de implementação
-
-Toda alteração em `aculta_portal` deve seguir [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) e executar o gate progressivo `php scripts/validate-aculta-portal-drupal11.php`. A dívida explicitamente registrada pelo gate é temporária: fases posteriores devem reduzi-la, nunca ampliá-la.
-
-## Regra principal
-
-Antes de escrever código novo:
-
-1. identificar a fonte de verdade;
-2. usar a API pública de Core/contrib;
-3. decidir o Domain purpose;
-4. aplicar access/cache antes da apresentação;
-5. preservar progressive enhancement;
-6. atualizar a documentação canônica;
-7. validar no Runtime quando houver mudança funcional.
-
-Histórico de fases/PRs não é fonte de verdade. Consulte o Git/GitHub quando
-precisar de evidência histórica.
+- [ROADMAP.md](ROADMAP.md) — saneamento e features de produto.

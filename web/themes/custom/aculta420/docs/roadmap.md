@@ -21,7 +21,7 @@ subversões `-dev` não o alteram.
 
 ### T0 — Higiene documental (DT-T01, DT-T02, DT-T14)
 
-- Remover "0.1.0" como versão atual em `README.md`, `docs/README.md`, `docs/features.md`,
+- Remover "0.1.0" como versão atual em `README.md` e `docs/README.md` (`docs/features.md` já foi removido),
   `docs/design-system.md` e `docs/development.md`. Manter menção histórica quando for histórica.
 - Descrever o estado atual do shell (0.2.0 em diante), e não a Foundation.
 - Critério: nenhum documento afirma "versão atual 0.1.0"; o gate de documentação passa.
