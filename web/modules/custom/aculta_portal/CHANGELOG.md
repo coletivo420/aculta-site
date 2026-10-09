@@ -1,5 +1,13 @@
 # Changelog — ACULTA Portal
 
+## 2026-10-09 — Hook de tema para seções (entregue no tema 0.3.1)
+
+- `PortalHooks::theme()` declara `aculta_section` (variáveis `section_title`, `section_heading`, `section_variant`, `section_body`). O template do módulo é um fallback neutro, sem classes de tema; o tema sobrescreve.
+- `EditorialHooks::entityViewAlter()` entrega essas variáveis para blocos `basic`. Nenhuma regra por purpose; a visibilidade do bloco é que escolhe o cabeçalho de cada subdomínio.
+- Commits na `main`: `1645359`, `ae94114`. Entregue pelo tema 0.3.1 (ver `web/themes/custom/aculta420/CHANGELOG.md`).
+- Gate Drupal 11+ do Portal: PASS (366 checks).
+- Não há tag `portal-v*` ainda.
+
 ## 2026-10-08 — P5.4-D: PortalRequirementsController DI
 
 - `\Drupal::service('theme_handler')` ×2 e `\Drupal::root()` → `ThemeHandlerInterface` e parâmetro `app.root` injetados por `#[Autowire]`; helpers lazy `currentUser()`/`moduleHandler()`/`config()` → serviços explícitos; `strict_types=1`; `Composer\InstalledVersions` importado.
