@@ -1,3 +1,14 @@
+## 0.4.6-dev.1 — Validador de navegador: regras de barra, sigla e estado indisponível — 2026-10-09
+
+Classificação: PATCH (correção de ferramenta de verificação), após o fechamento da 0.4.5.
+
+- Regra da sigla: deixa de reprovar a sigla "ACULTA". Reprova só quando a sigla aparece sem o nome completo "Associação Cultural Antiproibicionista", conforme `shell.md` (marca "ACULTA + nome completo").
+- Regra da barra: a presença de `.aculta-utility` (menu de conta, "quando existir") não reprova mais. Overflow e demais checagens da barra continuam.
+- Apoio com gateway indisponível: a checagem de botão desabilitado só vale quando há botão. Sem gateway, o aviso aparece e o botão não (verificado: `unavailable: true`, `buttonPresent: false`).
+- Sitemap continua delegado ao `aculta_deployer sitemap`.
+
+Validação: `validate-institution-browser.mjs` com `ACULTA_SUPPORT_ORIGIN` contra `https://aculta.toca.net.br`: exit 0.
+
 ## 0.4.5 — Fechamento da linha 0.4.x — 2026-10-09
 
 Classificação: fechamento de linha (release). Sem alteração funcional além da marcação; o conteúdo já está em `main`.
