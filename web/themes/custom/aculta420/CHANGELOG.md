@@ -1,3 +1,18 @@
+## 0.4.2 — Assets visuais Podplant420 (PR #114) — 2026-10-09
+
+Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um validador offline; sem componente, template, Domain ou Institution Bar alterados). Versão de commit da PR; a versão de merge `0.4.2` será marcada no commit de release antes do merge.
+
+- Quatro identidades aprovadas: stacked e horizontal, para superfícies claras e escuras. Runtime em `assets/branding/podplant420/web/` (10 WebP); pacote de handoff fora do tema, em `handoff/podplant420/` (originais, masters e 720/960 px).
+- Derivados WebP com transparência: stacked 128/256/512 px e horizontal 240/480 px no tema. Horizontais 720/960 px só no handoff, sem consumidor.
+- Horizontais: somente o canvas transparente excedente foi removido, com margem de segurança; sem deformação, recoloração, filtro CSS ou vetorização.
+- Inventário com SHA-256, dimensões, transparência e peso em `handoff/podplant420/asset-inventory.json` (22 arquivos, caminhos relativos à raiz).
+- Validadores: `scripts/verify-podplant420-assets.py` (22 imagens) e `scripts/validate-podplant420-assets.php` (10 derivados web).
+- Origem, nomenclatura, acessibilidade, responsividade, cache, Media API e anti-regressão em `docs/branding-podplant420.md`.
+- Nenhuma mudança em Institution Bar, Domain Header, Domain purpose ou SDC genérico. Nenhuma imagem editorial ou capa foi criada.
+- Versão marcada em `aculta420.info.yml` e na asserção do gate de Foundation.
+
+Validação: PASS nos dois validadores de assets, `git diff --check` limpo e conferência visual de fundo claro e escuro. **Não validado**: gate de Foundation (exige bootstrap Drupal, não executado neste checkout); QA visual em navegador e runtime Drupal (DEFERRED). SHA do commit na `main`: a preencher no merge.
+
 ## 0.4.1 — T4, T5 e T6: validadores, conteúdo por UUID e skin do LMS sem variáveis internas — 2026-10-09
 
 Classificação: PATCH da linha 0.4.0 (ferramentas, portabilidade e correção de acoplamento; sem mudança visual). Primeira versão marcada pela regra sequencial por merge (`docs/versioning.md`). Sem componente stable alterado.

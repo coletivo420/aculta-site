@@ -110,6 +110,8 @@ Documentos normativos:
 - [Decisões](docs/decisions.md)
 - [Roadmap](docs/roadmap.md)
 - [Versionamento](docs/versioning.md)
+- [Branding Wiki420](docs/branding-wiki420.md)
+- [Branding Podplant420](docs/branding-podplant420.md)
 - [CHANGELOG](CHANGELOG.md)
 
 ## Regra principal
