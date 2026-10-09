@@ -1,4 +1,4 @@
-## 0.4.1-dev.1 — T4, T5 e T6 (versão do merge: 0.4.1) — 2026-10-09
+## 0.4.1 — T4, T5 e T6: validadores, conteúdo por UUID e skin do LMS sem variáveis internas — 2026-10-09
 
 Classificação: PATCH da linha 0.4.0 (ferramentas, portabilidade e correção de acoplamento; sem mudança visual). Primeira versão marcada pela regra sequencial por merge (`docs/versioning.md`). Sem componente stable alterado.
 
