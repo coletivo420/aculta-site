@@ -1,5 +1,11 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.9 — remoção da seção de credenciais do relatório — 2026-10-09
+
+- `report` deixa de incluir a situação das credenciais obrigatórias por ambiente, e a opção `--file` sai com ela.
+- A página de status do Portal deixa de mostrar a tabela de credenciais. O cadastro continua na página "Credenciais do ambiente".
+- Removido `src/Secrets.php` (sem uso). A checagem de nomes do contrato contra `docs/operations/SECRETS.md` lê o JSON diretamente.
+
 ## 0.1.8 — ambiente do site (teste/produção) — 2026-10-09
 
 - Comando `environment [show] | environment set --to=production|test`: grava `var/deployer/environment.json` com o

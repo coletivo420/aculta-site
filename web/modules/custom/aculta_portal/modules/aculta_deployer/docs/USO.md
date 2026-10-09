@@ -99,7 +99,7 @@ Pendente: `build` e `verify` ainda não recebem `--env`; a fase 10 do roadmap tr
 
 - Não há comandos de importação ou exportação de credenciais na ferramenta. O cadastro é feito no painel
   "Credenciais do ambiente" do Portal (ver `docs/operations/SECRETS.md`).
-- `$CLI report` inclui, por ambiente, só os nomes presentes e ausentes das credenciais obrigatórias.
+- O relatório não inclui credenciais. A situação das credenciais aparece só na página "Credenciais do ambiente" do Portal.
 - Em produção, a camada criptografada no banco é provisionada pela ferramenta após o deploy (fase 9, pendente).
 
 ## Descoberta e sitemaps (0.1.3)

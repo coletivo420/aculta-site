@@ -33,6 +33,6 @@
    `config/deploy.json` e conferida por um comando do deployer (`sitemap`, `robots`, `verify`). Não
    se resolve por edição manual sem verificação. Um problema que o deployer não consegue
    verificar fica registrado em `registry/deploy-registry.json`.
-11. **Credenciais nunca são impressas nem versionadas.** O relatório contém só nomes e estados. A ferramenta
+11. **Credenciais nunca são impressas nem versionadas.** O relatório não contém credenciais. A ferramenta
    não importa, não exporta e não valida valores. Os valores ficam no arquivo de teste (modo sem escrita de
    grupo e sem acesso de outros) ou no banco criptografado de produção, ambos fora do Git.

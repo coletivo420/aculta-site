@@ -8,7 +8,6 @@
 | `src/Cli.php` | Comandos: `version`, `check`, `boundaries`, `list`, `register`, `build`, `verify`, `robots`, `sitemap`, `report`, `environment`. |
 | `src/Transform.php` | Escopo, remoção de aliases de teste e substituição de host. |
 | `src/Registry.php` | Leitura, validação e gravação de `registry/deploy-registry.json`. |
-| `src/Secrets.php` | Formato NAME=value e contrato de nomes; usados pelo relatório. Sem importação ou exportação de valores (0.1.7). |
 | `config/secrets-contract.json` (raiz do repositório) | Contrato compartilhado com o Portal: nomes e ambientes obrigatórios, sem valores. Espelha `docs/operations/SECRETS.md`. |
 | `src/Boundary.php` | Verificação de fronteiras, com regras em `config/boundary.json`. |
 | `config/deploy.json` | Escopo, aliases removidos e regras de host. |
