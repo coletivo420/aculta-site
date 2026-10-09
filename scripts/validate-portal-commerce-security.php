@@ -271,7 +271,13 @@ $assert((bool) \Drupal::entityTypeManager()->getStorage('crop_type')->load('acul
 $assert((bool) \Drupal::entityTypeManager()->getStorage('image_style')->load('aculta_avatar'), 'Institutional avatar image style exists.');
 
 $registration = \Drupal::config('user.settings');
-$assert($registration->get('register') === 'admin_only', 'Public registration remains closed until mail delivery is proven.');
+// Public registration is open by decision: visitors create accounts without
+// administrative approval, and every account must confirm its e-mail
+// (verify_mail). Closed registration (admin_only) is also accepted.
+$register_mode = $registration->get('register');
+$assert(in_array($register_mode, ['admin_only', 'visitors'], TRUE), 'Public registration mode is one of the reviewed values.');
+$assert($register_mode === 'admin_only' || $registration->get('verify_mail') === TRUE, 'Public registration requires e-mail verification (verify_mail).');
+$assert($registration->get('notify.register_no_approval_required') === TRUE, 'Registration needs no administrative approval (decision: e-mail verification only).');
 $assert($registration->get('verify_mail') === TRUE, 'Registration email verification remains enabled.');
 $assert(\Drupal::config('smtp.settings')->get('smtp_on') === FALSE, 'SMTP2GO delivery is not claimed functional without credentials.');
 $assert(\Drupal::config('smtp.settings')->get('smtp_password') === '', 'SMTP password is absent from active ordinary configuration.');
