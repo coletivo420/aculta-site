@@ -103,6 +103,30 @@ final class TokenHooks {
     ];
   }
 
+  /**
+   * Link de confirmação de e-mail (email_confirmer) sempre no host da conta.
+   *
+   * O módulo monta o link com o host da requisição que criou o pedido; fora da conta, a rota responde 404
+   * pela política de purposes. Aqui o link é refeito com o domínio ACCOUNT do ambiente.
+   */
+  #[Hook('tokens_alter')]
+  public function alterEmailConfirmationUrl(array &$replacements, array $context, BubbleableMetadata $metadata): void {
+    if (($context['type'] ?? NULL) !== 'email-confirmer' || !isset($context['data']['email_confirmer_confirmation'])) {
+      return;
+    }
+    $confirmation = $context['data']['email_confirmer_confirmation'];
+    $url = $this->domainPurposeManager->routeUrl('account', 'entity.email_confirmer_confirmation.response_form', [
+      'email_confirmer_confirmation' => $confirmation->uuid(),
+      'hash' => $confirmation->getHash(),
+    ]);
+    foreach ($context['tokens'] ?? [] as $name => $original) {
+      if ($name === 'confirmation-url' && $url !== NULL && isset($replacements[$original])) {
+        $replacements[$original] = $url->toString();
+      }
+    }
+    $metadata->setCacheMaxAge(0);
+  }
+
   /** Replaces institutional/editorial tokens while preserving cacheability. */
   #[Hook('tokens')]
   public function tokens(

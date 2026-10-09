@@ -1,5 +1,11 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.13 — link de confirmação de e-mail sempre no host da conta — 2026-10-09
+
+- `TokenHooks::alterEmailConfirmationUrl()` (`tokens_alter`): o link `[email-confirmer:confirmation-url]` passa a usar o
+  domínio ACCOUNT do ambiente. Antes, usava o host da requisição, e fora da conta a rota respondia 404.
+- Não altera o módulo contrib `email_confirmer`.
+
 ## 0.2.0-dev.12 — ambiente definido pelo deployer — 2026-10-09
 
 - O gerenciador de credenciais lê `var/deployer/environment.json` antes da configuração local: o ambiente
