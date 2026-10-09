@@ -9,7 +9,7 @@ Purpose planejado:
 `forum`.
 
 O purpose `forum` só passa a ser estável depois da implementação e validação
-do Portal 0.11.0.
+da feature de participação (ver `docs/portal/ROADMAP.md`, F3).
 
 Código customizado depende do purpose, não do hostname de ambiente.
 `DomainPurposeManager` centraliza Domain ID, URL correta, canonical de produção

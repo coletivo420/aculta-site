@@ -70,7 +70,7 @@ Este padrão é obrigatório para:
 - ChatGPT e outros agentes;
 - demais ferramentas de IA que produzam ou revisem código neste repositório.
 
-O projeto em andamento é **Modernização Drupal 11+ Aculta Portal**. A PR #90 foi integrada à `main` (merge `dd5c8a4`); P0–P10 estão concluídas. Antes de qualquer alteração do Portal, ler `docs/portal/ROADMAP.md`, `docs/portal/MODERNIZACAO-DRUPAL-11-HANDOFF.md` e `docs/portal/P10-R-FINAL-AUDIT.md`. Próxima etapa: auditoria P10-R e decisões pendentes listadas nesse documento; novas fases exigem decisão do responsável.
+O projeto em andamento é **Modernização Drupal 11+ Aculta Portal**. A PR #90 foi integrada à `main` (merge `dd5c8a4`); P0–P10 estão concluídas. Antes de qualquer alteração do Portal, ler `docs/portal/GUARDRAILS.md`, `docs/portal/DRUPAL-11-STANDARDS.md` e `docs/operations/DEBT-REGISTER.md`.md` e `docs/portal/P10-R-FINAL-AUDIT.md`. A auditoria P10-R foi mesclada (PR #91). A próxima etapa é o saneamento de dívidas em `docs/operations/DEBT-REGISTER.md`; o planejamento de produto vem depois da resolução dessas pendências. Novas fases exigem decisão do responsável.
 
 A referência normativa é `docs/portal/DRUPAL-11-STANDARDS.md`. Antes de alterar o Portal, leia esse documento e preserve as fronteiras Core/contrib → `aculta_portal` → contrato neutro → ACULTA420.
 

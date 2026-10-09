@@ -1,196 +1,106 @@
-# Modernização Drupal 11+ Aculta Portal
+# Roadmap do aculta_portal
 
-Atualizado em 2026-10-08. Plano técnico de modernização do módulo `aculta_portal`, separado das prioridades gerais do produto.
+Atualizado em 2026-10-09 pela revisão documental. Substitui o roadmap de modernização
+P0–P10 e a lista antiga de prioridades de produto.
 
-Repositório: `coletivo420/aculta-site`; branch `refactor/aculta-portal-p1-drupal11-standards`; PR [#90](https://github.com/coletivo420/aculta-site/pull/90).
-Referência normativa: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md). Transferência entre agentes: [guia de continuidade](MODERNIZACAO-DRUPAL-11-HANDOFF.md).
+Dívidas e pendências, com evidência, estão em [`docs/operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md).
+Este roadmap planeja as fases a partir desse registro. Não planeja lançamento 1.0.
 
-## Objetivo e restrições
+Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
+[SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) (fontes de verdade) e
+[RELEASES.md](../operations/RELEASES.md) (gates de release).
 
-Core Drupal 11.3+ com verificação de APIs no Core instalado; preferir práticas modernas e registrar separadamente deprecações oficiais e dívidas normativas ACULTA. Arquitetura: Core/contrib → Portal → contrato neutro → ACULTA420. Evitar novos service locators, storage paralelo, bypass de access, URLs hardcoded e lógica financeira custom redundante. MAIN mantém administração, cart, checkout e payment.
+## Estado atual
 
-## Todas as fases
+- Versão: **`portal-v0.1.0`** (tag em `f651bdd`).
+- Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
+- Gates: Drupal 11+ do Portal PASS (366 checks); tema PASS (Foundation 309 checks).
+- Pendências abertas: 19 itens do Portal no registro (ver DEBT-REGISTER).
 
-| Fase | Entrega | Estado |
-| --- | --- | --- |
-| P0 | Auditoria e inventário | Concluída |
-| P1 + P1-R | Baseline Drupal 11+, documentação, IA, gates | Revisada estaticamente |
-| P2.1–P2.3 + P2-R | Token/Editorial/Library OOP e DI | Revisada estaticamente |
-| P3.1–P3.3 | Form API/CallableResolver/callbacks exactly-once | Revisada estaticamente |
-| P4.1–P4.3 + P4-R | form_alter, entity_access, entity_presave OOP; .module vazio removido | Revisada estaticamente |
-| P5.1 | SupportForm: storage e BlockManager injetados | Concluída estaticamente |
-| P5.2–P5.7 e P5-R | Views, EntityQuery, controllers, storage e access | Revisada estaticamente; Homelab parcial (sessão de usuário comum pendente) |
-| P6 | Render API, cache, privacidade, Domain | P6.2 concluída (imagem DEFERRED); P6.1/P6.3–P6.6 verificadas no Homelab |
-| P7 | Subscribers, serviços, multidomínio | Concluída e verificada no Homelab; sobreposição de `entity.user.edit_form` mantida por defesa em profundidade |
-| P8 | Deprecações e prontidão D12/D13 | Revisada estaticamente; 0 achados em código; pendências de Composer (`require.php`, `composer/semver`) e PHP 8.5 |
-| P9 | Hardening, segurança, documentação e gates | Revisada e verificada; rollback de código documentado em `HARDENING-P9.md` |
-| P10 | Codex/Homelab, homologação, correções e merge | Executada. PR #90 integrada à `main` (merge `dd5c8a4`). Auditoria pós-merge P10-R em `P10-R-FINAL-AUDIT.md` |
-| P10-R | Auditoria pós-merge e encerramento | Em branch `audit/aculta-portal-p10-r-final`; pendências classificadas em `P10-R-FINAL-AUDIT.md` |
+## Ordem de execução
 
-Na P1 havia 18 funções runtime procedurais no `.module`; após P4, zero e arquivo removido. Lifecycle procedural exigido pelo Core é exceção legítima. Testes completos em runtime ainda NÃO foram executados.
+1. **Saneamento (S0–S6)**: resolver as dívidas antes de qualquer feature.
+2. **Features de produto (F1–F4)**: somente depois de S0–S4 estarem fechadas, ou de a fase
+   ser explicitamente priorizada pelo responsável.
 
-## P5-extra-2 — economia de tokens e roteamento de modelos (CONCLUÍDA)
+Cada fase segue a política de `docs/versioning.md`: classificar antes de codar, registrar a
+versão alvo, validar e só então taguear.
 
-Política para agentes: pesquisa, inventário e edição simples usam modelo econômico; implementação moderada usa capacidade proporcional; revisão final e atividades sensíveis (access, cache privado, Domain, Auth e Commerce) exigem modelo de maior capacidade. Utilitário somente leitura em `scripts/portal-agent-budget.py`, política em [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md). Não há mudança automática de modelo nem preços presumidos. A próxima execução continua P5.2-A.
+## Saneamento
 
-## P5-extra-1 — remoção de escopo de portabilidade (CONCLUÍDA)
+### S0 — Higiene documental (esta fase)
 
-Portabilidade, conversão, migração e compatibilidade entre motores SQLite/MariaDB **não pertencem** ao módulo `aculta_portal` nem à iniciativa **Modernização Drupal 11+ Aculta Portal**. Essa responsabilidade é exclusiva do projeto independente **DBTNG-2**. Não incluir testes de migração/portabilidade entre bancos, adaptadores de banco ou conversores nas fases P5, P9 ou P10 deste roadmap. É permitido documentar qual SGBD cada ambiente utiliza, sem atribuir ao Portal responsabilidade de migração ou compatibilidade entre motores. As consultas do Portal continuam obrigadas a usar APIs públicas do Drupal.
+- Corrigir referências a PRs e estados obsoletos (DT-P16, DT-P17, DT-P18).
+- Critério: `rg "PR #63|em integração|P10-R.*próxima"` vazio nos documentos atuais.
 
-## P5 — EntityQuery, Views, Storage, DI e Access
+### S1 — Fronteira de apresentação (DT-P01)
 
-### P5.1 — concluída
-`src/Support/Form/SupportForm.php`: troca de `PaymentGateway::load()` por `EntityTypeManagerInterface` e de `\\Drupal::service('plugin.manager.block')` por `BlockManagerInterface`; strict_types, gate e changelog. Commit `75362a35c14156be9274ed1a29181e71a7bcf6e6`. Mantido fail-closed e Commerce Donation Flow; homologação runtime pendente.
+- As duas páginas de template do módulo (`aculta-portal-shell`, `aculta-portal-photo-editor`)
+  usam classes `aculta-*` do tema. Mover a apresentação para o tema, ou trocar essas classes por
+  nomes neutros de contrato.
+- Critério: nenhuma classe `aculta-*` em `web/modules/custom/aculta_portal/templates/`; o gate
+  do Portal passa a impedir o retorno.
 
-### P5.2-A — Cursos (concluída, commit `76439ca`)
-`src/Controller/CoursesController.php`: avaliar `views_embed_view('courses_catalog', 'block_1')` e confirmar a API do Core instalado; quando suportado, trocar por render element `#type => 'view'`. Preservar View/display, argumentos, empty state, cache, access, pager, filtros, attachments. Não pré-renderizar HTML ou introduzir fábrica de Views sem necessidade. Atualizar gate, changelog e docs no mesmo commit; smoke Homelab pendente.
+### S2 — Tipagem e cobertura (DT-P02, DT-P03)
 
-### P5.2-B — Wiki420
-`src/Controller/WikiController.php`: inventariar `views_embed_view` e `Views::getView`; distinguir renderização simples de execução programática. Migrar cada ponto apenas com paridade de display, filtros, argumentos, paginação, access, cache e isolamento do purpose WIKI.
+- `declare(strict_types=1)` em `PortalHooks.php`; remover o teto correspondente do gate.
+- Testes de Kernel para os serviços P5–P7, em banco SQLite de teste. Comece pelos três de maior
+  risco: login (validação), domínio (política de rotas) e pagamento (fail-closed).
+- Critério: teto de `strictTypesDebt` vazio; ao menos um teste de Kernel por serviço de risco alto.
 
-### P5.2-R — revisão de Views
-Comparação pré/pós para cada display, critérios de access/cache, output vazio e registro de testes pendentes; teto do gate zerado somente para wrappers eliminados.
+### S3 — Validação em ambiente real (DT-P04, DT-P05, DT-P07, DT-P08, DT-P11, DT-O06, DT-O07)
 
-### P5.3 — EntityQuery/access
-Inventariar `getQuery()`, `entityQuery()`, `loadByProperties()`; impor `accessCheck(TRUE/FALSE)` explícito e justificado onde aplicável; validar filtros de UID, bundle, status, idioma, Domain, ownership. `accessCheck(TRUE)` não substitui verificações individuais de entity access.
+- PHP 8.5 instalado no Homelab: lint, PHPUnit e smoke.
+- Importação controlada de `smtp.settings` e `system.mail` e teste de entrega a endereço controlado.
+  Depende de deploy; não bloqueia S0–S2.
+- Mercado Pago com credencial de sandbox (decisão do responsável sobre a credencial).
+- Login completo com CAPTCHA por HTTP em ambiente de teste.
+- `validate-final-contact` com o flag de ambiente local documentado.
+- Critério: cada item com resultado registrado ou decisão de adiar, sem `DEFERRED` implícito.
 
-### P5.4 — Controllers/DI
-- P5.4-A: `PortalController`, BlockManager e Social Auth.
-- P5.4-B: `PortalController`, Email Confirmer.
-- P5.4-C: `PortalController`, route match/form de conta e preservação de parâmetros com try/finally.
-- P5.4-D: `PortalRequirementsController`, ThemeHandler, Composer/root path.
-- P5.4-E: controllers residuais, inclusive Wiki.
-Cada recorte tem paridade funcional, DI e redução de teto no gate.
+### S4 — Decisões do responsável (DT-P06, DT-P09, DT-P10, DT-G01)
 
-### P5.5 — Storage
-Uniformizar storages injetados; revisar Profile `loadByUser`, `loadByProperties`, `loadMultiple`, Commerce customer e Social Auth, sem storage paralelo ou acesso direto a tabelas internas contrib.
+- Reabrir a política de enumeração pelo cadastro quando houver revisão de CAPTCHA.
+- Decidir sobre os módulos de administração ativos em produção.
+- Decidir sobre a mensagem do webform via SMTP (template HTML).
+- Critério: cada decisão registrada no registro, com data e responsável.
 
-### P5.6 — Access
-Testar A vs B, operações view/update/delete, Wiki fora do Domain correto, conta privada, vínculos OAuth, perfis Commerce e cacheability de AccessResult. Preservar fail-closed do Mercado Pago.
+### S5 — Conta e AJAX (DT-P12, DT-P13)
 
-### P5.7 / P5-R — revisão formal
-Validar APIs modernas, EntityQuery, Views, DI, access, cache, storage, invariantes e gates, documentando resultados realmente executados e pendências de runtime.
+- Conta: segurança e conexões reimplementadas sobre a `main`, como presenters e sem storage
+  paralelo. Escopo a confirmar antes do início (DT-P12).
+- Reduzir `js/account-navigation.js` (183 linhas) por fluxo, com fallback de página inteira.
+- Busca, engajamento e fórum: só entram como feature (F-fase), com decisão de adoção.
 
-## P6 — Render/cache/privacidade
-P6.1 inventário render arrays; P6.2 tokens de URL/imagem e cache Domain/alias/host/scheme (`domain`, `url.site`); P6.3 Conta privada; P6.4 Views/LMS/Group; P6.5 Form API/AccessResult; P6.6 contrato Portal → ACULTA420; P6-R revisão de contexts, tags, max-age e isolamento.
+### S6 — Operação e Runtime (DT-O01 a DT-O05)
 
-## P7 — Subscribers/serviços/multidomínio
-P7.1 inventário listeners; P7.2 tags legadas e API atual; P7.3 isMainRequest e subrequests; P7.4 DI; P7.5 Domain purpose/rotas; P7.6 eventos Conta/OAuth/Commerce; P7.7 deduplicação; P7-R revisão de prioridades/segurança.
+- Limpeza de branches remotas mescladas (64): listar, confirmar e apagar só com autorização.
+- Política para `estados/`: o snapshot de 2026-10-04 não representa mais o Runtime. Decidir entre
+  novo snapshot versionado ou registro de drift.
+- Diretório de agregados do Drupal: ajuste de permissão no ambiente (responsabilidade de operação).
+- Credenciais de teste: rotação e remoção periódicas, conforme `TEST-DATA.md`.
 
-## P8 — Deprecações/prontidão D12/D13
-P8.1 inventário; P8.2 substituições seguras; P8.3 Upgrade Status/Rector conforme pertinência; P8.4 matriz contrib; P8.5 PHP/Symfony/Composer; P8.6 matriz CURRENTLY RECOMMENDED IN D11 / DEPRECATED IN D11 / REMOVED/CHANGED IN D12 / ANNOUNCED FOR D13; P8-R revisão. Nunca declarar compatibilidade major sem validar Core e contrib.
+## Features de produto (depois do saneamento)
 
-## P9 — Hardening final
-P9.1 segredos/segurança; P9.2 erros/failure modes; P9.3 segurança operacional e confiabilidade; P9.4 performance; P9.5 gates; P9.6 código órfão; P9.7 documentação/IA; P9.8 rollback/release readiness; P9-R revisão acumulada.
+Estas fases dependem de S0–S4. Nenhuma tem versão alvo de 1.0.
 
-## P10 — Codex/Homelab
-Verificar branch, HEAD e main; lint PHP integral e gate; Composer validate/audit; `drush cr`; `updatedb:status` e `config:status`; smoke Conta/Wiki/Cursos/Social Auth/Commerce/Domain e isolamento A/B; correções finas e revisão final. Não executar updb/cim/cex automaticamente. Merge só após validação e autorização.
+### F1 — Conta completa
+- Segurança, conexões e identidade (ver S5), com presenters e AJAX reduzido.
+- Critério: cada fluxo da conta com fallback sem JavaScript.
 
-## Protocolo de execução
-Uma subfase por vez na **mesma branch/PR #90**; sem merge/rebase/force push prematuro. Sempre código + gate + changelog + documentação; ao fim de cada família revisão -R. Reportar separadamente estático, lint, gate real e Homelab. Não assumir que histórico de chat substitui código Git.
+### F2 — Busca e feedback
+- Search API e Views para Wiki e conteúdo, quando houver backend e Runtime.
+- Critério: indexação sem alterar índices de produção sem autorização.
 
----
+### F3 — Participação
+- Fórum e Participation Hub, com Domain próprio e Forum/Node/Comment/Taxonomy como fontes.
+- Critério: nenhum storage paralelo; access e cache por Domain.
 
-## Prioridades do produto independentes desta modernização
+### F4 — Engajamento
+- Flag para favoritos e follows; Comment Notify para notificações, com opt-in e privacidade.
+- Critério: consentimento e envio de e-mail validados em S3.
 
-## Prioridade 1 — fechar internacionalização pt-BR
+## Critério para encerrar o saneamento
 
-PR #63:
-
-- Language/Locale/Config Translation;
-- catálogo local mínimo;
-- UI de login/recuperação em pt-BR;
-- gate Runtime versionado;
-- classificar drift de Configuration Sync antes do merge.
-
-## Prioridade 2 — Conta: segurança, conexões e dados
-
-Reimplementar sobre a `main` atual — não reutilizar cegamente as antigas drafts
-superseded.
-
-Objetivos:
-
-- presenters de Segurança/Conexões;
-- identidade/dados;
-- access/cache explícitos;
-- Social Auth/Email Confirmer/Profile como fontes de verdade;
-- preservar Form API, OAuth e AJAX/fallback.
-
-## Prioridade 3 — AJAX da Conta
-
-Reduzir `account-navigation.js` por fluxo, sem big-bang.
-
-Direção:
-
-- Drupal AJAX / Core HTMX / Views AJAX / Form API quando apropriado;
-- preservar URL/history/focus/status/behaviors;
-- full-page fallback obrigatório;
-- VVJT apenas dentro de Views específicas.
-
-## Prioridade 4 — ACULTA420 Design System
-
-O tema evolui por releases próprias, começando em 0.1.0:
-
-- 0.2.0 — Foundations 2.0;
-- 0.3.0 — Card System v1;
-- 0.4.0 — Patterns v1;
-- preservar Bootstrap/Form API;
-- não converter Twig em massa.
-
-Referência:
-[../../web/themes/custom/aculta420/docs/roadmap.md](../../web/themes/custom/aculta420/docs/roadmap.md).
-
-## Prioridade 5 — Fórum e Participation Hub
-
-Quando ativado:
-
-- Domain FORUM;
-- Forum/Node/Comment/Taxonomy como fontes;
-- tópicos/respostas;
-- participação agregada sem storage paralelo;
-- shared session;
-- access/cache/Domain.
-
-## Prioridade 6 — Search e Engagement
-
-Avaliar/implementar somente com necessidade e Runtime:
-
-- Search API + Views para Wiki/Fórum;
-- Flag para favoritos/follows;
-- Comment Notify para notificações;
-- opt-in/privacy/SMTP;
-- remover busca/integrações antigas somente após paridade.
-
-## Prioridade 7 — deduplicação e hardening
-
-- remover código custom quando Core/contrib já cobrir com paridade;
-- revisar service locator residual;
-- access/cache;
-- cron/queues/logs/headers;
-- dependency audit;
-- auditar cacheability dos tokens de URL/imagem derivados de `DomainPurposeManager`, incluindo entidade Domain/alias e variação de host/scheme (`domain` / `url.site`) antes de considerar a P6 de cache concluída;
-- failure modes/rollback.
-
-Ver [../operations/HARDENING.md](../operations/HARDENING.md).
-
-## Verificação de conta/e-mail
-
-Planejada de forma **condicional**.
-
-Antes de desenvolver ferramenta própria, procurar alternativa Core/contrib.
-Se nenhuma atender, implementar solução para:
-
-- contas criadas fora de OAuth;
-- confirmação de novo e-mail;
-- token único/expirável;
-- flood control;
-- proteção contra enumeração.
-
-Ver [../modules/AUTHENTICATION.md](../modules/AUTHENTICATION.md).
-
-## Portal 1.0
-
-1.0 significa baseline integrado, testado, operável e documentado; não significa
-implementar todas as ideias do roadmap.
-
-Gates: [../operations/RELEASES.md](../operations/RELEASES.md).
+Todos os itens do registro do Portal estão em Resolvida, Decisão registrada ou Aberta com
+justificativa aceita pelo responsável. Os gates passam. Não há dívida nova sem registro.

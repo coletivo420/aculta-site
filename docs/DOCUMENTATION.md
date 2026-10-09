@@ -1,96 +1,68 @@
 # Política de documentação
 
-Data da revisão: 2026-10-07.
+Atualizada em 2026-10-09 pela limpeza documental.
 
-## Objetivo
+## O que fica na documentação
 
-Manter documentação útil para humanos e IA sem transformar o repositório em um
-arquivo de snapshots de execução.
+Só guardrails e referências vigentes:
 
-## Tipos permitidos
+- **Guardrails:** regra que bloqueia regressão. Fronteiras, políticas de domínio, segredos e
+  dados de teste, gates, release e versionamento, fontes de verdade, decisões vigentes (ADRs).
+- **Referências:** procedimento de operação que ainda vale (deploy, testes, dados de teste)
+  e inventário de módulos e integrações.
+- **Roadmap e dívidas:** um roadmap por projeto e um único registro de dívidas com evidência.
 
-### Canônica
+## O que sai
 
-Descreve o estado atual do sistema e seus contratos.
+- relatórios de auditoria, QA ou revisão de uma fase concluída;
+- handoffs e guias de passagem entre agentes;
+- planos de fase já executados, matrizes datadas e checklists de execução;
+- especificações de produto ainda não iniciadas (vão para o roadmap, e a especificação volta
+  ao Git quando a feature começar);
+- listagens de features e estados atuais que duplicam código, changelog ou roadmap;
+- blocos de resultado de execução dentro de documentos normativos.
 
-Exemplos:
+Antes de remover, extrair as regras do documento para um guardrail. Depois, remover e registrar o
+último commit em que o arquivo existia.
 
-- arquitetura;
-- fontes de verdade;
-- módulos;
-- integrações;
-- regras de domínio;
-- comportamento atual do Portal/tema.
+## Onde fica o histórico
 
-### ADR
+No Git. Cada remoção registra o último commit em que o arquivo existia, em `DEBT-REGISTER.md` ou
+na seção de limpeza do changelog. Recuperar: `git show <commit>:<caminho>`.
 
-Registra uma decisão arquitetural que precisa de contexto e justificativa.
+## Onde fica o estado atual
 
-### Operacional
+- versão e release: `aculta420.info.yml`, `CHANGELOG.md` do tema e tags;
+- Portal: `CHANGELOG.md` do módulo e tags `portal-v*`;
+- pendências: `docs/operations/DEBT-REGISTER.md`;
+- planejamento: `docs/portal/ROADMAP.md` e `web/themes/custom/aculta420/docs/roadmap.md`.
 
-Runbooks duráveis de teste, hardening, deploy/release e Homelab.
+Documento não deve conter "status atual", "próxima etapa" ou número de PR como fonte de verdade.
+Esses dados mudam; ficam no changelog, no roadmap ou no registro de dívidas.
 
-### Roadmap
+## Como criar um documento novo
 
-Somente trabalho futuro ainda relevante. Deve apontar para contratos canônicos,
-não duplicá-los.
+1. Confirmar que ele é guardrail ou referência. Se não for, o lugar é o roadmap ou o changelog.
+2. Indicar o dono e a data de revisão no topo.
+3. Não citar fase, PR ou branch como estado vigente.
+4. Adicioná-lo ao índice da pasta (`docs/README.md`, `docs/portal/README.md` ou o do tema).
+5. Links relativos devem resolver. A checagem de links é feita antes de cada PR de documentação.
 
-## O que não deve virar documento permanente
+## Revisão
 
-Não criar um novo arquivo apenas para:
+- A cada release, revisar os índices e remover o que não for guardrail ou referência.
+- Documento sem uso há duas releases vai para o histórico.
 
-- registrar um PR específico;
-- guardar SHA/HEAD de uma rodada;
-- copiar logs de Runtime;
-- registrar uma fase já concluída;
-- manter checklist temporária de uma correção;
-- duplicar uma regra que já possui documento canônico.
+## Limpeza de 2026-10-09
 
-Essas evidências pertencem ao PR, issue, CHANGELOG ou histórico Git.
+Removidos (último commit com os arquivos: `9c95420`):
 
-## Regra anti-obsolescência
+- `docs/portal/P10-R-FINAL-AUDIT.md`, `RELEASE-P10.md`, `MODERNIZACAO-DRUPAL-11-HANDOFF.md`,
+  `HARDENING-P9.md`, `DEPRECATION-MATRIX-P8.md`;
+- `docs/portal/ACCOUNT-PRESENTATION-MODEL.md`, `ACCOUNT-SDC-AJAX.md`, `FORUM.md`, `MAGAZINE.md`,
+  `SHOP.md`, `WIKI.md` (regras consolidadas em `docs/portal/GUARDRAILS.md`);
+- `web/themes/custom/aculta420/docs/design-b-qa.md` e `features.md`.
 
-Quando uma fase termina:
-
-1. migrar decisões duráveis para a documentação canônica;
-2. migrar regras de segurança para [ANTI-REGRESSION.md](ANTI-REGRESSION.md);
-3. atualizar roadmap/índices;
-4. remover o documento transitório.
-
-## Responsabilidade por mudança
-
-Mudanças em:
-
-- módulos → atualizar `docs/modules/`;
-- autenticação/integrações → `docs/integrations/`;
-- arquitetura/ownership → `docs/architecture/` ou ADR;
-- Portal → `docs/portal/`;
-- tema/SDC → `web/themes/custom/aculta420/docs/`;
-- operação/release → `docs/operations/`.
-
-## IA e automação
-
-Agentes devem:
-
-- começar por [README.md](README.md) e pelo mapa raiz do repositório;
-- ler [ANTI-REGRESSION.md](ANTI-REGRESSION.md) antes de refactor transversal;
-- não recriar documentos de fase removidos;
-- não converter histórico em requisito atual;
-- atualizar documentação junto do código;
-- preservar links relativos e evitar duplicação de fonte de verdade.
-
-
-## Documentação junto de scripts
-
-Diretórios em `scripts/` podem manter um `README.md` curto para explicar:
-
-- objetivo;
-- como executar;
-- pré-condições;
-- riscos;
-- referência para a documentação canônica.
-
-Não armazenar ali novos relatórios de fase, snapshots de revisão, logs ou
-“final reports”. Evidência de execução pertence ao PR/issue/release.
-
-Runbook durável deve viver em `docs/operations/`.
+Blocos de histórico de execução removidos: seções de implementação e resultados de Runtime em
+`docs/portal/DOMAIN-PRESENTATION-CONTRACT.md` e seção de plano de versão em
+`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`.

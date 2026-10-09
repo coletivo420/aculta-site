@@ -147,3 +147,11 @@ Os quatro documentos acima precisam estar coerentes (ver "Fonte de verdade").
   próprio PR e arquivar o que for único fora do repositório antes de excluir a branch.
 - Antes de mesclar, a PR não pode deixar commit intermediário em conflito com a
   versão declarada.
+
+## Mudanças apenas documentais
+
+- Mudança que altera só documentação (sem código, config, componente ou gate) é classificada
+  como PATCH de documentação. Entra no `CHANGELOG.md` com a versão vigente e não gera tag.
+- O `aculta420.info.yml` continua na última release. Subversões `-dev` não o alteram.
+- Documentação e código no mesmo PR não se enquadram aqui: o código segue a tabela de
+  classificação e a tag após validação.

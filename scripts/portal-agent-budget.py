@@ -34,12 +34,12 @@ def main():
     content = [
         'Projeto: Modernização Drupal 11+ Aculta Portal',
         f'Fase: {args.phase}',
-        'PR #90; conferir HEAD antes de atuar.',
+        'Portal portal-v0.1.0; conferir HEAD antes de atuar.',
         'Drupal 11+ moderno, DI, access/cache e gates; sem merge.',
         'Portabilidade SQLite/MariaDB pertence a DBTNG-2.',
         'Consultar os arquivos-alvo e documentação original antes de editar.',
     ]
-    for relative in ('docs/portal/ROADMAP.md', 'docs/portal/MODERNIZACAO-DRUPAL-11-HANDOFF.md'):
+    for relative in ('docs/portal/ROADMAP.md', 'docs/operations/DEBT-REGISTER.md'):
         file = ROOT / relative
         if file.is_file():
             matches = [line.strip() for line in file.read_text(encoding='utf-8').splitlines() if args.phase.lower() in line.lower()]

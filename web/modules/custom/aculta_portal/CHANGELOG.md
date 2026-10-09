@@ -1,5 +1,11 @@
 # Changelog — ACULTA Portal
 
+## Documentação (sem tag), versão vigente portal-v0.1.0 — 2026-10-09
+- Limpeza documental: removidos P10-R, RELEASE-P10, handoff, HARDENING-P9, matriz P8 e os documentos de produto de Conta, Fórum, Revista, Loja e Wiki. Regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`. Histórico no Git (último commit `9c95420`).
+
+- Revisão documental: roadmap reescrito em saneamento antes de features, sem plano de 1.0; registro de dívidas em `docs/operations/DEBT-REGISTER.md`.
+- Correção de referências à PR #63 (fechada) e do estado do `config_translation`, que está ativo na `main`.
+
 ## portal-v0.1.0 — 2026-10-09 — primeira release rastreada
 
 Primeira versão do Portal com tag. Consolida as fases P0–P10 da modernização Drupal 11+ (PR #90) e a auditoria P10-R (PR #91), mais as correções posteriores de domínio, autenticação, CAPTCHA e a hook de seções do tema 0.3.1.

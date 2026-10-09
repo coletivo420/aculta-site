@@ -1,6 +1,6 @@
 # Política de URLs e slugs amigáveis em português
 
-Status: **requisito transversal do Portal 1.0**
+Status: **requisito transversal das features de produto** (ver `ROADMAP.md`, F2–F4)
 
 ## Objetivo
 
@@ -192,7 +192,7 @@ Rotas LMS técnicas podem permanecer internas.
 
 ## FORUM
 
-Na implementação 0.11/0.12, definir desde o início aliases amigáveis:
+Na implementação das rotas de produto, definir desde o início aliases amigáveis:
 
 - `/forum` ou root do subdomínio como landing;
 - `/topico/<titulo>`;
@@ -349,31 +349,14 @@ Para cada mudança de slug:
 - cache;
 - access.
 
-## Gate Portal 1.0
+## Verificação
 
-Portal 1.0 exige:
+Antes de publicar uma mudança de rota pública:
 
-- inventário completo de rotas públicas;
-- nenhuma navegação principal expondo slug técnico/inglês sem justificativa;
-- ACCOUNT padronizado;
-- Wiki padronizada;
-- Courses padronizado;
-- Support padronizado;
-- Magazine padronizado;
-- Forum já nascer padronizado quando entrar no 1.0;
-- Shop seguir a política no escopo realmente implementado;
+- inventário completo das rotas públicas;
+- nenhuma navegação principal expondo slug técnico ou em inglês sem justificativa;
+- ACCOUNT, Wiki, Courses, Support, Magazine e Fórum com slugs em português;
+- Shop seguindo a política apenas no escopo realmente implementado;
 - redirects para mudanças públicas;
-- canonical/sitemap consistentes;
-- Domain parity Homelab/produção.
-
-## Implementação no roadmap
-
-A implementação deve ocorrer como fase transversal antes do 1.0:
-
-**Portal 0.18.1 — Friendly Portuguese Slugs**
-
-Essa versão deve ser executada depois das principais rotas/features existirem e
-antes do hardening/release final, para evitar renomear rotas repetidamente
-durante a construção das features.
-
-Ela não substitui 0.18 Deduplication nem 0.19 Hardening.
+- canonical e sitemap coerentes;
+- paridade de Domain entre Homelab e produção.
