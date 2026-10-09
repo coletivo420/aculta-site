@@ -263,5 +263,18 @@ $assert(str_contains($joined, 'Exec.php') && !str_contains($joined, 'Ok.php'), '
 $assert(str_contains($joined, 'Bad.php'), 'fronteira: citação da ferramenta fora da pasta neutra é recusada');
 exec('rm -rf ' . escapeshellarg($bRoot));
 
+// Ambiente do site: grava test/production com o endereço certo; recusa valor desconhecido; restaura o arquivo real.
+$envFile = dirname($toolRoot, 6) . '/var/deployer/environment.json';
+$envBefore = is_file($envFile) ? (string) file_get_contents($envFile) : null;
+exec($cli . ' environment set --to=production 2>&1', $e1, $erc1);
+$envProd = json_decode((string) file_get_contents($envFile), true);
+$assert($erc1 === 0 && ($envProd['environment'] ?? null) === 'production' && ($envProd['site'] ?? null) === 'https://aculta.org', 'environment set production grava o endereço de produção');
+exec($cli . ' environment set --to=xx 2>&1', $e2, $erc2);
+$assert($erc2 !== 0 && (json_decode((string) file_get_contents($envFile), true)['environment'] ?? null) === 'production', 'environment recusa valor desconhecido e mantém o atual');
+exec($cli . ' environment set --to=test 2>&1', $e3, $erc3);
+$envTest = json_decode((string) file_get_contents($envFile), true);
+$assert($erc3 === 0 && ($envTest['site'] ?? null) === 'https://aculta.toca.net.br', 'environment set test grava o endereço de teste');
+if ($envBefore === null) { @unlink($envFile); } else { file_put_contents($envFile, $envBefore); }
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);
