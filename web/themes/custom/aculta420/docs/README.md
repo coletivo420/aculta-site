@@ -14,5 +14,6 @@
 10. [branding-wiki420.md](branding-wiki420.md) — identidade estática e integração da Wiki420.
 11. [branding-podplant420.md](branding-podplant420.md) — identidade estática e política de imagens do Podplant420.
 12. [branding-baque-sativa.md](branding-baque-sativa.md) — kit de logomarcas do Grupo de Percussão Baque Sativa (cards e páginas do grupo; fora do cabeçalho global).
+13. [branding-bloco-sativa420.md](branding-bloco-sativa420.md) — kit de artes do Bloco Sativa 420 (cards e páginas de projeto; fora do cabeçalho global; autoria e licença pendentes).
 
 Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de releases: Git e changelog.
