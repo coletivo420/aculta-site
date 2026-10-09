@@ -18,5 +18,30 @@
     "canonical",
     "sitemap"
   ],
-  "max_bytes": 2097152
+  "max_bytes": 2097152,
+  "robots_policy": {
+    "production": {
+      "x_robots_tag": null,
+      "hosts": [
+        "https://aculta.org/",
+        "https://conta.aculta.org/",
+        "https://apoio.aculta.org/",
+        "https://coletivo420.aculta.org/",
+        "https://wiki420.aculta.org/",
+        "https://loja.aculta.org/",
+        "https://cursos.aculta.org/"
+      ],
+      "note": "Indexação ativa em todos os domínios e subdomínios de produção. Noindex de páginas privadas da conta permanece no Portal (meta robots por rota)."
+    },
+    "test": {
+      "x_robots_tag": "noindex, nofollow, noarchive",
+      "hosts": [
+        "https://aculta.toca.net.br/",
+        "https://apoio.aculta.toca.net.br/",
+        "https://coletivo420.aculta.toca.net.br/",
+        "https://wiki420.aculta.toca.net.br/"
+      ],
+      "note": "Servidor de testes não indexável."
+    }
+  }
 }
