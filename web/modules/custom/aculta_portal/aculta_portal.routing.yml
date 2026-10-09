@@ -123,6 +123,19 @@ aculta_portal.wiki_home:
   requirements:
     _permission: access content
 
+aculta_portal.search:
+  path: /busca
+  defaults:
+    _controller: '\Drupal\aculta_portal\Search\SearchPageController::page'
+    _title: Buscar
+  requirements:
+    _permission: access content
+aculta_portal.search_suggestions:
+  path: /busca/sugestoes
+  defaults:
+    _controller: '\Drupal\aculta_portal\Search\SearchPageController::suggestions'
+  requirements:
+    _permission: access content
 aculta_portal.wiki_search:
   path: /wiki/busca
   defaults:

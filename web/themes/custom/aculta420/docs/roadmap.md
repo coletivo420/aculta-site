@@ -130,6 +130,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 ### F3 — Busca e feedback (DT-T13)
 
 - **Decisão do responsável (2026-10-09): busca pelos serviços do banco** (Search API com o backend de banco de dados), sem serviço de busca externo.
+- **Estado: backend e página entregues no Portal 0.2.0-dev.19** (`/busca`, sugestões do Core, avisos por Messenger). Pendências: `content_access` no índice, testes de Kernel e QA visual.
 - Apresentação de busca com Search API e Autocomplete; mensagens por toast e alert com
   Messenger. Backend e índices ficam no Portal e no Core.
 - Pré-requisito: F2 (concluída em 0.5.1). Verificar, antes de implementar, se o backend de banco atende a relevância e a latência esperadas.

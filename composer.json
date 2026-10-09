@@ -242,6 +242,7 @@
         "drupal/redirect": "^1.13",
         "drupal/rename_admin_paths": "^3.1",
         "drupal/schema_metatag": "^3.0",
+        "drupal/search_api": "^1.40",
         "drupal/security_review": "^3.1",
         "drupal/simple_sitemap": "^4.2",
         "drupal/smtp": "^1.4",
@@ -290,7 +291,8 @@
                 "web-root": "web/"
             },
             "file-mapping": {
-                "[project-root]/.gitattributes": false
+                "[project-root]/.gitattributes": false,
+                "[web-root]/robots.txt": false
             }
         },
         "installer-paths": {
