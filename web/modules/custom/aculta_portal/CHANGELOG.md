@@ -1,5 +1,23 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.18 — correção do autowire em AppearanceHooks — 2026-10-09
+
+- `AppearanceHooks` importava `Drupal\Core\DependencyInjection\Attribute\Autowire`, que não existe. O atributo era ignorado e o container não montava o hook. Passa a usar `Symfony\Component\DependencyInjection\Attribute\Autowire`, como os demais arquivos do Portal.
+- Verificado em cópia isolada do Runtime (banco de teste, não o Runtime compartilhado): serviço e hook carregam; `/configuracoes` e `/admin/config/aculta/aparencia` registrados; escolha de usuária sobrepõe o padrão do site; visitante recebe o padrão. RUNTIME STATUS do Runtime oficial segue DEFERRED.
+
+## 0.2.0-dev.17 — Modo de cor: preferência por usuário e padrão global — 2026-10-09
+
+RUNTIME STATUS: DEFERRED no Runtime oficial. Em cópia isolada, serviço, rotas, formulário e contrato verificados (ver 0.2.0-dev.18).
+
+- Preferência do modo de cor por usuário em `user.data` (banco), chaves `aculta_portal`/`color_mode`, valores `light`, `dark` e `auto`.
+- Minha Conta > Configurações (`/configuracoes`): formulário com os três estados; item no menu da conta.
+- Padrão global do site em `/admin/config/aculta/aparencia` (`aculta_portal.appearance`, padrão `light`), permissão `administer aculta appearance settings`.
+- Contrato neutro para o tema: `aculta_color_mode` no `preprocess_html` (`AppearanceHooks`). O tema aplica o atributo.
+- Cacheability: contexto `user`, tag `config:aculta_portal.appearance` e tag `user:<uid>`; ao salvar, a tag do usuário é invalidada.
+- Rota de conta incluída nas listas de propósito `account` do domínio.
+
+Validação estática: `validate-aculta-portal-drupal11.php` PASS (470 checagens); `php -l` nos arquivos novos.
+
 ## 0.2.0-dev.16 — política de confirmação de e-mail (base) e validade infinita — 2026-10-09
 
 - Estado de confirmação por usuário (`EmailConfirmationPolicy`, `user.data` `aculta_portal`/`email_confirmed`). Sem a marca: não confirmado.

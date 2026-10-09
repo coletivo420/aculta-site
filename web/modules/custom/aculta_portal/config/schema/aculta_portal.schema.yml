@@ -27,3 +27,11 @@ aculta_portal.settings:
     institution_transparency_nid:
       type: integer
       label: 'Página de transparência institucional'
+
+aculta_portal.appearance:
+  type: config_object
+  label: 'Modo de cor padrão do ACULTA Portal'
+  mapping:
+    default_mode:
+      type: string
+      label: 'Modo de cor padrão (light, dark ou auto)'
