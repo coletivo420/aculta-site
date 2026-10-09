@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.1.0', 'Theme metadata remains on Foundation version 0.1.0.');
+$assert(($info['version'] ?? NULL) === '0.2.0', 'Theme metadata is on the closed 0.2.0 line.');
 $forbiddenIntegrationModules = ['social_auth', 'social_auth_google', 'captcha', 'turnstile', 'key'];
 $themeInfoDependencies = array_map(
   static fn(string $dependency): string => str_contains($dependency, ':')
@@ -219,6 +219,7 @@ foreach (glob($root . '/config/sync/block.block.aculta_*.yml') ?: [] as $path) {
 $expectedTemplates = [
   'block--block-content--type--aculta-institution.html.twig',
   'block--system-branding-block.html.twig',
+  'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
   'node--project--teaser.html.twig',

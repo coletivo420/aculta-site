@@ -97,3 +97,8 @@
   }
   .aculta-navbar .navbar-nav .nav-link { min-height: 2.75rem; display: flex; align-items: center; }
 }
+
+/* Reduced motion for shell links. The reset in drupal-bootstrap.css uses lower specificity than the navbar transition, so it is repeated here. */
+@media (prefers-reduced-motion: reduce) {
+  .aculta-navbar .navbar-nav .nav-link { transition: none; }
+}

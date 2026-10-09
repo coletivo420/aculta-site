@@ -184,7 +184,7 @@
   outline: 3px solid var(--aculta-focus-ring);
   outline-offset: 3px;
 }
-.aculta-header :focus-visible { outline-color: var(--aculta-text-inverse); }
+.aculta-header :focus-visible { outline-color: var(--aculta-shell-domain-text); }
 .aculta-footer :focus-visible { outline-color: var(--aculta-text-inverse); }
 ::selection { color: var(--aculta-interactive-active-text); background-color: var(--aculta-interactive-active-bg); }
 

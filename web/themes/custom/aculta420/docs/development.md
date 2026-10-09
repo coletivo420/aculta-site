@@ -75,6 +75,7 @@ Core/Bootstrap5/contrib:
 | Override | Motivo atual |
 | --- | --- |
 | `page.html.twig` | compor o shell público e regiões existentes |
+| `content/off-canvas-page-wrapper.html.twig` | trocar `h-100` por `min-vh-100` e `flex-shrink-0`: sem isso o header sticky fica preso à primeira tela (medido em 0.2-F) |
 | `block--system-branding-block.html.twig` | wrapper visual ACULTA420 + fallback textual |
 | `navigation/breadcrumb.html.twig` | apresentar o título atual preparado pelo Portal |
 | `block--block-content--type--aculta-institution.html.twig` | view modes institucionais específicos |

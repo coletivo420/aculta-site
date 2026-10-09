@@ -50,6 +50,8 @@
   --aculta-shell-border: var(--aculta-border-default);
   --aculta-shell-active-bg: var(--aculta-interactive-active-bg);
   --aculta-shell-active-text: var(--aculta-interactive-active-text);
+  /* Logo legibility only: dark marks on the light shell, untouched on the dark shell. */
+  --aculta-shell-logo-filter: brightness(0);
 
   /* Existing component contracts retained while consumers migrate gradually. */
   --aculta-button-primary-bg: var(--aculta-interactive-bg);
@@ -215,6 +217,7 @@
   --aculta-shell-border: var(--aculta-border-default);
   --aculta-shell-active-bg: var(--aculta-interactive-active-bg);
   --aculta-shell-active-text: var(--aculta-interactive-active-text);
+  --aculta-shell-logo-filter: none;
 
   --aculta-button-primary-bg: var(--aculta-interactive-bg);
   --aculta-button-primary-text: var(--aculta-interactive-text);
