@@ -14,3 +14,36 @@ msgstr "Sair"
 
 msgid "I agree."
 msgstr "Li e concordo."
+
+msgid "Create new account"
+msgstr "Criar nova conta"
+
+msgid "Add lowercase letters"
+msgstr "Adicione letras minúsculas"
+
+msgid "Add uppercase letters"
+msgstr "Adicione letras maiúsculas"
+
+msgid "Add numbers"
+msgstr "Adicione números"
+
+msgid "Add punctuation"
+msgstr "Adicione pontuação"
+
+msgid "Confirm password"
+msgstr "Confirmar senha"
+
+msgid "Make it different from your username"
+msgstr "Use uma senha diferente do seu nome de usuário"
+
+msgid "Passwords match"
+msgstr "As senhas coincidem"
+
+msgid "Password strength"
+msgstr "Força da senha"
+
+msgid "Recommendations to make your password stronger"
+msgstr "Recomendações para deixar a sua senha mais forte"
+
+msgid "User account menu"
+msgstr "Menu da conta de usuário"

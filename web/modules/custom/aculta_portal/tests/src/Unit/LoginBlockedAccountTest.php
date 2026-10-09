@@ -43,6 +43,10 @@ final class LoginBlockedAccountTest extends UnitTestCase {
         $this->createMock(\Drupal\email_confirmer\EmailConfirmerManagerInterface::class),
         $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class),
       ),
+      new \Drupal\aculta_portal\Account\RegistrationTerms(
+        $this->createMock(\Drupal\agreement\AgreementHandlerInterface::class),
+        $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class),
+      ),
     );
   }
 

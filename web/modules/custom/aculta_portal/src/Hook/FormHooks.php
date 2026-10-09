@@ -53,7 +53,15 @@ final class FormHooks {
     }
     // Cadastro: a conta fica ativa e o e-mail só é confirmado pelo link enviado (política de confirmação).
     if ($formId === 'user_register_form') {
+      // Checkbox de aceite dos termos, obrigatório, logo acima do botão de envio.
+      $form['aculta_terms'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->translation->translate('Li e aceito os Termos de Uso e a Política de Privacidade.'),
+        '#required' => TRUE,
+        '#weight' => 90,
+      ];
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:requestRegistrationConfirmation';
+      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:acceptRegistrationTerms';
     }
 
     if ($formId === 'user_login_form') {

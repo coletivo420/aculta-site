@@ -33,7 +33,16 @@ final class PortalFormCallbacks {
     private readonly UserFloodControlInterface $floodControl,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EmailConfirmationRequester $confirmationRequester,
+    private readonly \Drupal\aculta_portal\Account\RegistrationTerms $registrationTerms,
   ) {}
+
+  /** Registra o aceite dos termos do cadastro (checkbox obrigatório no formulário). */
+  public function acceptRegistrationTerms(array &$form, FormStateInterface $formState): void {
+    $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
+    if ($account instanceof \Drupal\user\UserInterface) {
+      $this->registrationTerms->record($account);
+    }
+  }
 
   /** Envia a confirmação de e-mail do cadastro recém-criado (conta ativa, e-mail não confirmado). */
   public function requestRegistrationConfirmation(array &$form, FormStateInterface $formState): void {
