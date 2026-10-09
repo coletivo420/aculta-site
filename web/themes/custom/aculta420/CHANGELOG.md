@@ -2,6 +2,15 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## Validação T2 (sem nova versão), 0.4.0-dev.2 — 2026-10-09
+
+Validação em navegador, sem alteração de código do tema. Versão vigente permanece 0.4.0-dev.2.
+
+- Carrossel da home validado com teclas reais: avanço automático com movimento normal; sem avanço automático com movimento reduzido; Enter avança mesmo com movimento reduzido; contorno de foco no botão Próximo. Space não conclusivo.
+- Placement `aculta_home_editorial_highlights` ativada no Runtime só para o teste e restaurada para desativada. Config inalterada.
+- Novo achado: rótulos em inglês nos controles e na região do carrossel (DT-T15).
+- Rail: ainda validado só com clones; falta curso publicado (DT-T05).
+
 ## 0.4.0-dev.2 — Saneamento T0, T1 e T4 — 2026-10-09
 
 Classificação: PATCH de qualidade (gate novo e documentação), dentro da linha 0.4.0. Validado: gates de tema e Portal (ver abaixo).
