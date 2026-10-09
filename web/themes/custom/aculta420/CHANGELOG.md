@@ -1,3 +1,9 @@
+## Unreleased — Wiki420 brand assets (draft)
+
+- Prepara identidade Wiki420 via `DomainPresentationBuilder` e `regions.brand_media`, sem seletores por hostname no tema.
+- O header mantém o branding atual até `wiki420-horizontal-960w.webp` ser entregue e os testes Homelab passarem.
+- Novas diretrizes em `docs/branding-wiki420.md`; artefatos raster ainda precisam ser incorporados à branch.
+
 # CHANGELOG — ACULTA420
 
 Este changelog versiona o tema/design system ACULTA420.
