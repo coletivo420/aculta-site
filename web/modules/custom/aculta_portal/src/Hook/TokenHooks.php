@@ -204,6 +204,10 @@ final class TokenHooks {
             $canonicalUrl->setOption('https', $request->isSecure());
           }
 
+          // The absolute URL reflects the request scheme and host (url.site)
+          // and the active alias environment (domain) when no source Domain
+          // pins it. Declare both so a page cache entry cannot cross them.
+          $metadata->addCacheContexts(['url.site', 'domain']);
           $generated = $canonicalUrl->setAbsolute()->toString(TRUE);
           $metadata->addCacheableDependency($generated);
           $value = $generated->getGeneratedUrl();
@@ -285,6 +289,13 @@ final class TokenHooks {
             $imageUrl = str_starts_with($relative, '/')
               ? $this->domainPurposeManager->pathUrl($domainPurpose, $relative)
               : NULL;
+            // pathUrl() is built from the purpose Domain entity and the active
+            // alias environment, and it returns a plain Url without metadata.
+            $purposeDomain = $this->domainPurposeManager->getDomain($domainPurpose);
+            if ($purposeDomain !== NULL) {
+              $metadata->addCacheableDependency($purposeDomain);
+            }
+            $metadata->addCacheContexts(['url.site', 'domain']);
             $value = $imageUrl?->toString() ?? $relative;
           }
           break;

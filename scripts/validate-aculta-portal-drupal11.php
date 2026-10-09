@@ -680,6 +680,20 @@ $check(
   'P5.5 runtime storage must not use static entity-type or entity-query locators.',
 );
 
+// P6.2: URL-bearing tokens declare the request-dependent cache contexts they
+// read (scheme/host via url.site, alias environment via domain) and the
+// purpose Domain entity behind the image path.
+$tokenSource = $read($srcRoot . '/Hook/TokenHooks.php');
+$check(
+  substr_count($tokenSource, "addCacheContexts(['url.site', 'domain'])") === 2,
+  'P6.2 canonical and image tokens must declare url.site and domain cache contexts.',
+);
+$check(
+  str_contains($tokenSource, "getDomain(\$domainPurpose)")
+    && str_contains($tokenSource, 'addCacheableDependency($purposeDomain)'),
+  'P6.2 image token must depend on the purpose Domain entity it is built from.',
+);
+
 $serviceLocatorCeilings = [
 ];
 $viewsWrapperCeilings = [
