@@ -35,12 +35,14 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
   `aculta-institutional-note`.
 - Critério: decisão registrada por estrutura; a linha 0.4.0 fecha com `0.4.0` e tag final.
 
-### T2 — Validação em navegador (DT-T04, DT-T05, DT-T06)
+### T2 — Validação em navegador (DT-T04, DT-T05, DT-T06) — carrossel validado; rail com cursos reais pendente
 
 - Ativar a view do carrossel no Runtime (ou criar um bloco de teste) e validar em navegador:
   rolagem, teclado, reduced motion.
 - Validar o rail com cursos reais (hoje só há um curso publicado).
 - Foco por teclado em janela com foco real, para o anel de foco de tokens.
+- Carrossel: validado em navegador (autoplay, pausa com movimento reduzido, avanço por Enter, foco com contorno). A placement foi restaurada para desativada; reativar depende de decisão do responsável.
+- Rail: validado com clones no DOM. Falta validar com cursos publicados (DT-T05).
 - Critério: cada item com captura e medição, sem clones no DOM.
 
 ### T3 — CSS residual dos padrões (DT-T07)
