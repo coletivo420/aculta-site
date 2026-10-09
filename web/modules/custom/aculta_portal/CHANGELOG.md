@@ -1,5 +1,15 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.5 — Submódulo aculta_deployer 0.1.0 — 2026-10-09
+
+Classificação: PATCH da linha 0.2.0 (ferramenta de deploy em submódulo; o Portal não muda comportamento).
+
+- Adiciona `modules/aculta_deployer` (ACULTA Deployer 0.1.0): descoberto pelo Drupal, não habilitado. Substitui `*.aculta.toca.net.br` por `*.aculta.org` no build de produção e mantém o registro de correções de deploy (DEP-0001 canonical e DEP-0002 sitemap, bloqueantes).
+- O Portal fora do submódulo não referencia a ferramenta; o gate `boundaries` do submódulo reprova essa referência.
+- Dívida nova: sitemap sem o host de apoio (DT-P23), decisão pendente.
+
+Validação: `validate-aculta-portal-drupal11.php` PASS (382); testes do submódulo PASS; `check` PASS. **Não validado**: runtime com o submódulo habilitado (não habilitado nesta versão).
+
 ## 0.2.0-dev.4 — Página de apoio na página inicial do subdomínio (correção) — 2026-10-09
 
 Classificação: PATCH da linha 0.2.0 (correção de caminho público de apoio; sem API nova).
