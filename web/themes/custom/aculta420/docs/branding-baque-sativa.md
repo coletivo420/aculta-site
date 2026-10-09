@@ -22,7 +22,14 @@ Este kit reúne as logomarcas do **Grupo de Percussão Baque Sativa** para uso e
 
 As duas variantes são **versões da marca**. **Não são modos claro/escuro.** A escolha entre amarelo e vermelho deve ser feita pelo conteúdo ou pelo design aprovado, nunca por domínio, hostname ou modo de cor do site.
 
-Observação visual: o amarelo tem pouco contraste sobre superfície clara. Em uma prancha de revisão, o lettering amarelo sobre creme ficou visivelmente mais fraco que o vermelho. Não foi medida uma razão de contraste numérica. Para superfícies claras, avaliar o vermelho ou um fundo escuro antes de adotar o amarelo.
+**Contraste medido** (cor dominante do lettering no master, amostrada com quantização de 8 níveis; razão WCAG 2.x):
+
+| Variante | Sobre claro `#f4f1ea` | Sobre escuro `#14120f` |
+| --- | ---: | ---: |
+| `yellow` (240, 200, 0) | **1,44:1** | 11,54:1 |
+| `red` (208, 24, 0) | 4,88:1 | 3,39:1 |
+
+O amarelo **não atende** a 3:1 (texto grande) sobre superfície clara; não deve ser usado sobre creme ou branco sem outra camada de contraste. O vermelho atende a 4,5:1 sobre claro, e sobre escuro passa só como texto grande (3:1), sem chegar a 4,5:1 para texto normal. Medidas não substituem decisão de design.
 
 ## Dimensões
 
@@ -50,7 +57,7 @@ O master amarelo mede 521 × 899 px e o vermelho mede 557 × 957 px. Ambos mant�
 
 - Todos os arquivos têm canal alfa com transparência real. Não há fundo opaco.
 - `master` é o original recortado com margem de segurança. Os demais derivados são redimensionados a partir dele.
-- Foi verificado visualmente, em fundo claro e escuro, que tambor, correntes e lettering estão íntegros, sem cortes e sem distorção. Não houve halos visíveis na inspeção em 520 px. Em tamanhos pequenos (64–128 px) a inspeção foi somente determinística (dimensões e transparência), sem zoom visual.
+- Foi verificado visualmente, em fundo claro e escuro, que tambor, correntes e lettering estão íntegros, sem cortes e sem distorção. Não houve halos visíveis na inspeção em 520 px. Em 64, 96 e 128 px, ampliados 4× sem interpolação (vizinho mais próximo), também não apareceram halos ou cortes. Em **64 px** o subtítulo "GRUPO DE PERCUSSÃO" fica ilegível, e em **96 px** é de leitura difícil; a partir de **128 px** é legível.
 
 ## Formatos: PNG e WebP
 
@@ -64,7 +71,7 @@ O master amarelo mede 521 × 899 px e o vermelho mede 557 × 957 px. Ambos mant�
 
 - **Cards quadrados:** `square-256` ou `square-512`.
 - **Cards verticais, listas e páginas do grupo:** `h384`, `h512`, `h768` ou `master`, conforme o espaço.
-- **Miniaturas e listas compactas:** `h64`, `h96` ou `h128`.
+- **Miniaturas e listas compactas:** `h128` quando o nome "Grupo de Percussão" precisa ser lido. `h64` e `h96` só para uso em que o texto já esteja em outro lugar ou a marca seja apenas identificação visual.
 - **Não esticar** a marca vertical para ocupar formato horizontal.
 
 ## Tamanhos responsivos
@@ -108,5 +115,5 @@ O master amarelo mede 521 × 899 px e o vermelho mede 557 × 957 px. Ambos mant�
 ## Limites desta entrega
 
 - Nenhum template, SDC, CSS ou library consome o kit nesta fase. Os arquivos estão prontos para uso, sem integração visual.
-- Não foram feitas medições de contraste numérico.
+- Contraste medido apenas para a cor do lettering contra as duas cores de fundo de referência usadas aqui; não foi testado sobre as cores reais de cada superfície do site.
 - QA visual em navegador e no runtime Drupal estão **DEFERRED** para o homelab, quando houver consumidor.
