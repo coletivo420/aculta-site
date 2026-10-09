@@ -56,9 +56,6 @@
     "user.role.administrator",
     "user.role.authenticated",
     "user.settings",
-    "user_registrationpassword.mail",
-    "user_registrationpassword.mail_original",
-    "user_registrationpassword.settings",
     "key.key.mercadopago_webhook_secret"
   ],
   "sensitive_config_values_exported": false,

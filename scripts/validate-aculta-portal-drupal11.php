@@ -710,6 +710,17 @@ foreach ([
   );
 }
 
+// Login destinations: the account menu varies by page because its Log in link
+// carries the current page as destination. Removing these contexts would let a
+// cached block show another page's destination.
+$blockBuildSource = $read($srcRoot . '/Hook/BlockBuildHooks.php');
+$check(
+  str_contains($blockBuildSource, "#[Hook('block_build_alter')]")
+    && str_contains($blockBuildSource, "'system_menu_block:account'")
+    && str_contains($blockBuildSource, "addCacheContexts(['url.path', 'url.query_args'])"),
+  'Account menu block must vary by url.path and url.query_args so login destinations are per page.',
+);
+
 $serviceLocatorCeilings = [
 ];
 $viewsWrapperCeilings = [

@@ -484,7 +484,8 @@ $canonical_sync_path = realpath(dirname(DRUPAL_ROOT) . DIRECTORY_SEPARATOR . 'co
 $effective_sync_path = realpath(\Drupal\Core\Site\Settings::get('config_sync_directory'));
 $assert($canonical_sync_path !== FALSE && $effective_sync_path === $canonical_sync_path, 'Drupal Configuration Sync points at the repository canonical config/sync directory.');
 $sync_storage = \Drupal::service('config.storage.sync');
-$assert(count($manifest['configs']) === 59, 'The reviewed account manifest contains 59 intentionally selected config objects.');
+// user_registrationpassword was removed (commit b4b4389); its three objects are no longer in the manifest.
+$assert(count($manifest['configs']) === 56, 'The reviewed account manifest contains 56 intentionally selected config objects.');
 $assert(in_array('field.storage.user.user_picture', $manifest['configs'], TRUE), 'Private User picture storage is included in the reviewed manifest.');
 $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
   ksort($data);
