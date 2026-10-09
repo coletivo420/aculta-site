@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Presentation;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
@@ -88,6 +89,23 @@ final class DomainPresentationBuilder {
       ])
       ->addCacheableDependency($domain);
 
+    // Purpose-specific asset choice belongs to the Portal; the theme only
+    // receives an access-safe render array and does not inspect host/purpose.
+    $brandMedia = NULL;
+    if ($purpose === 'wiki') {
+      $relativeLogo = 'themes/custom/aculta420/assets/branding/wiki420/web/wiki420-horizontal-960w.webp';
+      if (is_file(DRUPAL_ROOT . '/' . $relativeLogo)) {
+        $brandMedia = [
+          '#theme' => 'image',
+          '#uri' => Url::fromUri('base:' . $relativeLogo)->toString(),
+          '#alt' => $title,
+          '#width' => 960,
+          '#height' => 328,
+          '#attributes' => ['class' => ['aculta-domain-brand-image']],
+        ];
+      }
+    }
+
     return new DomainPresentation(
       [
         'purpose' => $purpose,
@@ -97,7 +115,7 @@ final class DomainPresentationBuilder {
         'logo_alt' => $title,
       ],
       [
-        'brand_media' => NULL,
+        'brand_media' => $brandMedia,
         'navigation' => NULL,
         'actions' => NULL,
       ],
