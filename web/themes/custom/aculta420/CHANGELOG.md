@@ -1,3 +1,14 @@
+## 0.4.5-dev.1 — Kit de artes Bloco Sativa 420 (branch feat/bloco-sativa420-media-assets) — 2026-10-09
+
+Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um validador offline; sem componente, template, Domain ou cabeçalho alterados). Numeração: 0.4.4 está reservada à PR #122; esta PR usa a próxima linha livre (regra de `docs/versioning.md`).
+
+- Kit em `assets/branding/bloco-sativa420/`: originais PNG (horizontal 2048×682; quadrado 1024×1024) em `source/` e nove derivados WebP opacos (horizontal 640, 960, 1280 e 2048 px; quadrado 256, 512 e 1024 px) em `web/`. Copiados byte a byte do pacote; sem reconversão.
+- Verificador `scripts/verify-bloco-sativa420-assets.py`: 9 arquivos, bytes, SHA-256, dimensões, formato, proporção dos derivados e opacidade. Caso negativo verificado.
+- Documentação em `docs/branding-bloco-sativa420.md`, com índice e README do tema atualizados.
+- Nenhum template consome o kit. A arte de projeto pertence à Media Library (`field_image`).
+
+Validação: verificador PASS; fidelidade dos derivados medida (PSNR 25,6 a 38,8 dB contra o original reduzido) e inspeção visual sem perda de texto. **Não validado**: gates de runtime (nenhum consumidor); QA em navegador (DEFERRED). **Pendente**: autoria e licença, confirmadas pelo responsável antes de publicação. SHA do merge na `main`: a preencher no merge.
+
 ## 0.4.3 — Revisão documental dos kits de logos (sem alteração de versão)
 
 Mudança apenas documental, sem alterar código, assets ou `aculta420.info.yml`.
