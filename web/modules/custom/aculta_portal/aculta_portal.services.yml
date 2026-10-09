@@ -1,6 +1,9 @@
 services:
-  aculta_portal.secrets_importer:
-    class: Drupal\aculta_portal\Secrets\SecretsImporter
+  aculta_portal.deployer_status_reader:
+    class: Drupal\aculta_portal\Deployer\DeployerStatusReader
+    arguments: ['%app.root%']
+  aculta_portal.secrets_manager:
+    class: Drupal\aculta_portal\Secrets\SecretsManager
     arguments: ['@key.repository', '@settings', '@logger.factory', '%app.root%']
   aculta_portal.auth_integration:
     class: Drupal\aculta_portal\Auth\AuthIntegrationManager

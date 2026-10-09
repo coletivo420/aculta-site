@@ -82,3 +82,6 @@ __pycache__/
 /var/database/*.db-wal
 /var/database/*.db-shm
 /var/database/*.bak
+
+# Relatório neutro do ACULTA Deployer para o painel (sem valores; gerado localmente)
+/var/deployer/

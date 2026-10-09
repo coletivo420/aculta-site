@@ -128,8 +128,23 @@ aculta_portal.courses_home:
 aculta_portal.secrets_import:
   path: /admin/config/aculta/segredos
   defaults:
-    _form: '\Drupal\aculta_portal\Secrets\Form\SecretsImportForm'
+    _form: '\Drupal\aculta_portal\Secrets\Form\SecretsForm'
     _title: Credenciais do ambiente
   requirements:
     _permission: administer aculta secrets
+aculta_portal.secrets_reveal:
+  path: /admin/config/aculta/segredos/revelar/{name}
+  defaults:
+    _controller: '\Drupal\aculta_portal\Secrets\SecretsRevealController::reveal'
+  requirements:
+    _permission: administer aculta secrets
+    _csrf_token: 'TRUE'
+    name: '[A-Z][A-Z0-9_]*'
+aculta_portal.deployer_status:
+  path: /admin/config/aculta/deployer
+  defaults:
+    _controller: '\Drupal\aculta_portal\Deployer\DeployerStatusController::page'
+    _title: ACULTA Deployer
+  requirements:
+    _permission: administer aculta deployer
 

@@ -110,6 +110,31 @@ Pendências desta fase (não fechadas):
 3. Decidir a `base_url` de teste de forma permanente (runtime hoje, `settings.local.php` como alternativa).
 4. ~~Revisão do gate S5 para a verificação de descoberta.~~ Feita em 0.1.3 (itens S4 e S5 acima).
 
+## Fase 8 — Painel do Portal e complemento (0.1.6)
+
+**Status: implementada no código e nos testes.**
+
+- Comando `report` e relatório neutro `var/deployer/status.json` (esquema 1, sem valores).
+- Página somente leitura no painel do `aculta_portal` e opções de sitemap na visão geral.
+- Declarado como complemento opcional do `aculta_portal`; o Portal não depende dele.
+
+## Fase 10 — Ambiente por função (0.1.8)
+
+**Status: parcialmente implementada.** `environment`, `robots`, `sitemap` e `report` respeitam o ambiente. Pendências:
+1. `build` e `verify` ainda não recebem `--env`; hoje são de produção.
+2. Testes de cada função nos dois estados (fixtures por ambiente), não só o estado atual.
+
+## Fase 9 — Provisionamento de credenciais em produção (pendente)
+
+**Status: não iniciada.** Decisão do responsável (2026-10-09): em produção as credenciais ficam no banco de dados,
+criptografadas, e o `aculta_deployer` as provisiona após o deploy. A ferramenta não grava valores hoje (0.1.7).
+
+Pendências desta fase:
+1. Escolher a criptografia (chave, local da chave e rotação) com o responsável; a chave não fica no Git.
+2. Gravação e leitura da camada criptografada no banco, pelo caminho do Drupal Key (provider compatível).
+3. Passo pós-deploy com verificação de presença (nomes), sem exibir valores, e bloqueio se obrigatórias faltarem.
+4. Gate S5 e registro no CHANGELOG da versão.
+
 ## Fase 6 — Release 0.2.0 (curta)
 
 - Atualizar CHANGELOG, VERSION e `info.yml`; a tag só é criada sob pedido do responsável.

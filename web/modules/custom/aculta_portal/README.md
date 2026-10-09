@@ -74,8 +74,10 @@ O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime mig
 
 Consultar [CHANGELOG.md](CHANGELOG.md).
 
-## Credenciais do ambiente (0.2.0-dev.9)
+## Credenciais do ambiente (0.2.0-dev.11)
 
-Painel `/admin/config/aculta/segredos` para conferir e importar as credenciais do contrato
-(`config/secrets-contract.json`). Valores nunca são exibidos. Detalhes, fluxo e limites em
-[docs/operations/SECRETS.md](../../../docs/operations/SECRETS.md#importação-pelo-painel-aculta_portal-0200-dev9).
+Painel `/admin/config/aculta/segredos` para cadastrar as credenciais do contrato
+(`config/secrets-contract.json`). Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.
+Em teste, são gravados em arquivo; em produção, ficam no banco criptografado, provisionado pelo
+`aculta_deployer` após o deploy. Detalhes e limites em
+[docs/operations/SECRETS.md](../../../docs/operations/SECRETS.md#credenciais-do-ambiente-painel-aculta_portal-0200-dev11).

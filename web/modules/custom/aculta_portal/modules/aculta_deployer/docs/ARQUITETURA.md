@@ -5,10 +5,10 @@
 | Arquivo | Função |
 | --- | --- |
 | `bin/aculta-deployer` | Ponto de entrada da CLI. Carrega as classes de `src/`. |
-| `src/Cli.php` | Comandos: `check`, `boundaries`, `list`, `register`, `build`, `version`. |
+| `src/Cli.php` | Comandos: `version`, `check`, `boundaries`, `list`, `register`, `build`, `verify`, `robots`, `sitemap`, `report`, `environment`. |
 | `src/Transform.php` | Escopo, remoção de aliases de teste e substituição de host. |
 | `src/Registry.php` | Leitura, validação e gravação de `registry/deploy-registry.json`. |
-| `src/Secrets.php` | Lógica do arquivo local de credenciais: parse NAME=value, permissões, contenção e contrato. |
+| `src/Secrets.php` | Formato NAME=value e contrato de nomes; usados pelo relatório. Sem importação ou exportação de valores (0.1.7). |
 | `config/secrets-contract.json` (raiz do repositório) | Contrato compartilhado com o Portal: nomes e ambientes obrigatórios, sem valores. Espelha `docs/operations/SECRETS.md`. |
 | `src/Boundary.php` | Verificação de fronteiras, com regras em `config/boundary.json`. |
 | `config/deploy.json` | Escopo, aliases removidos e regras de host. |
@@ -24,13 +24,19 @@
 - Fora do escopo: documentação (`docs/`), código PHP e tema. A documentação descreve o
   ambiente de teste e não é publicada como configuração.
 
+## Papel no ACULTA Portal
+
+O ACULTA Deployer é um **complemento opcional** do `aculta_portal`: o Portal funciona sem ele. O módulo Drupal
+declara a dependência (`aculta_portal`) e fica desabilitado por padrão, porque a ferramenta é a CLI. A comunicação
+com o Portal é um arquivo neutro (`var/deployer/status.json`, esquema 1) que contém só nomes e estados.
+
 ## Barreiras de separação
 
 - **Tema (`web/themes/custom/aculta420`)**: não pode referenciar a ferramenta. Qualquer
   termo como `aculta-deployer` ou `aculta_deployer` no tema reprova `boundaries`.
-- **Portal (`aculta_portal`, fora do submódulo)**: não pode referenciar a ferramenta. O
-  submódulo é opcional: o Portal funciona sem ele. A exclusão do submódulo é explícita
-  em `config/boundary.json` (`consumer_exclude`).
+- **Portal (`aculta_portal`, fora do submódulo)**: não pode referenciar a ferramenta, exceto a pasta de leitura do
+  painel (`src/Deployer`), que lê o relatório neutro e não executa a CLI (`consumer_tool_reference_allowed`). O
+  submódulo é opcional: o Portal funciona sem ele.
 - **Core e contribs**: nunca são alterados nem referenciados.
 - **A própria ferramenta**: não pode depender de Drupal (`\Drupal\`, `Drupal::`),
   de Drush, de vendor, do tema ou de módulos do Portal. Os termos proibidos ficam em

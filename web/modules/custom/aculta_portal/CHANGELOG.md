@@ -1,5 +1,34 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.12 — ambiente definido pelo deployer — 2026-10-09
+
+- O gerenciador de credenciais lê `var/deployer/environment.json` antes da configuração local: o ambiente
+  (teste ou produção) é o que o deployer definiu.
+- Painel de status do deployer mostra ambiente e endereço do site.
+- Testes: ambiente do deployer prevalece; arquivo inválido cai para a configuração local.
+
+## 0.2.0-dev.11 — credenciais do ambiente: cadastro, máscara e revelação — 2026-10-09
+
+- Removida a importação de arquivo (`secrets/import`) e a exclusão segura da origem. O cadastro passa a ser pelo
+  formulário de "Credenciais do ambiente" (`/admin/config/aculta/segredos`).
+- Valores salvos aparecem mascarados (dois caracteres em cada ponta). O botão 👁 revela o valor completo sob demanda
+  por rota com token CSRF e sem cache. Revelação e salvamento entram no log só com nomes e usuário.
+- `SecretsManager` (substitui `SecretsImporter`): salvamento com merge (campo vazio mantém), só nomes do contrato,
+  valores de uma linha até 4 KiB, gravação atômica em modo 0640.
+- `aculta_secrets_storage`: `file` (teste) grava o arquivo; `database` (produção) não grava. A camada criptografada de
+  produção é provisionada pelo `aculta_deployer` após o deploy (fase 9, pendente).
+- Testes: suíte do Portal com 54 casos (máscara, merge, rejeições, armazenamento em banco e leitura do relatório).
+
+## 0.2.0-dev.10 — painel do ACULTA Deployer e opções de sitemap — 2026-10-09
+
+- Página `/admin/config/aculta/deployer` (somente leitura, permissão `administer aculta deployer`): lê o relatório neutro
+  `var/deployer/status.json` e mostra fronteiras, correções abertas e credenciais por nome e estado. Sem valores.
+- Visão geral (`/admin/config/aculta/portal`): links para o status do deployer, para importação de credenciais, para as
+  variantes de sitemap e para as configurações do sitemap.
+- Reconhecimento de complemento: o Portal não depende do submódulo `aculta_deployer`; sem o relatório, a página informa
+  "indisponível".
+- Fronteira: a pasta `src/Deployer` pode citar a ferramenta, mas não a executa.
+
 ## 0.2.0-dev.9 — importação de credenciais pelo painel (ACULTA Secrets Contract) — 2026-10-09
 
 - Painel `/admin/config/aculta/segredos` (permissão `administer aculta secrets`, restrita): mostra cada variável do contrato com ✔ OK / ⚠ Atenção / ✖ Erro (mesma biblioteca e legenda do diagnóstico do Portal). Nunca exibe valores.

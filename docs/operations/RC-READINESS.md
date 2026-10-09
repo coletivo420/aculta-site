@@ -10,7 +10,7 @@ módulos, temas e subtemas (ver [DEPLOYMENT.md](DEPLOYMENT.md) e [RELEASES.md](R
 - Sitemap multidomínio (`aculta_portal_sitemap`, fases 0.1.0-A a J).
 - Descoberta: `robots.txt` com diretiva `Sitemap:`, índice central em `/sitemap.xml`.
 - `aculta_deployer` 0.1.5: verificação de sitemap, `robots`, caminhos privados e credenciais por ambiente.
-- Ajustes do Portal (`aculta_portal` 0.2.0-dev.9) necessários ao sitemap, ao `noindex` e à importação de credenciais.
+- Ajustes do Portal (`aculta_portal` 0.2.0-dev.11) necessários ao sitemap, ao `noindex` e ao cadastro de credenciais.
 
 Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produção.
 
@@ -51,8 +51,8 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 | Componente | Versão | Status |
 | --- | --- | --- |
 | `aculta_portal_sitemap` | 0.1.0 (fases A a J) | Pronto para RC no servidor de testes |
-| `aculta_deployer` | 0.1.5 | Pronto para RC no servidor de testes; `verify` de produção depende do RC |
-| `aculta_portal` | 0.2.0-dev.9 | Sitemap, robots, `noindex` e importação de credenciais; release depende do RC geral |
+| `aculta_deployer` | 0.1.7 | Pronto para RC no servidor de testes; `verify` de produção depende do RC |
+| `aculta_portal` | 0.2.0-dev.11 | Sitemap, robots, `noindex` e cadastro de credenciais; release depende do RC geral |
 | `aculta420` (tema) | 0.4.x | Não avaliado como release; item 1 pendente |
 
 ## Como repetir a bateria
@@ -77,6 +77,6 @@ web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/homologacao
 - Varredura antes do commit: nenhum host de teste novo em `config/sync`; nenhum valor de credencial.
 - SMTP no servidor de testes: ativado no runtime (`smtp.settings:smtp_on = true`, 2026-10-09). As
   credenciais `SMTP2GO_USERNAME` e `SMTP2GO_PASSWORD` ainda **não** foram importadas; sem elas o envio
-  autenticado falha. Importar pelo painel `/admin/config/aculta/segredos`, nunca pelo Git.
+  autenticado falha. Cadastrar pelo painel `/admin/config/aculta/segredos`, nunca pelo Git. Em produção, a camada criptografada é provisionada pelo deployer após o deploy (fase 9).
 - Não exportado: `.htaccess` e as coleções `domain.*` (não vêm do export padrão).
 

@@ -1,5 +1,30 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.8 — ambiente do site (teste/produção) — 2026-10-09
+
+- Comando `environment [show] | environment set --to=production|test`: grava `var/deployer/environment.json` com o
+  ambiente e o endereço do site (`config/deploy.json`, bloco `environments`). Valor desconhecido é recusado.
+- `robots`, `sitemap` e `report` usam o mesmo ambiente de trabalho: `--env`, senão o arquivo, senão `test`.
+- Relatório do painel inclui ambiente e endereço. O Portal lê o mesmo arquivo para escolher o conjunto de credenciais.
+- Testes: set de produção e teste, recusa e restauração do arquivo real.
+
+## 0.1.7 — remoção da importação de credenciais; cadastro pelo painel do Portal — 2026-10-09
+
+- Removidos os comandos `secrets check` e `secrets export` e as funções que liam ou gravavam valores de credenciais.
+  O cadastro passa a ser feito no painel "Credenciais do ambiente" do `aculta_portal` (0.2.0-dev.11).
+- `Secrets.php` mantém só o formato `NAME=value` e o contrato usados pelo relatório (`report`).
+- Em produção, a camada criptografada no banco será provisionada pela ferramenta após o deploy (fase 9 do roadmap). Ainda não implementada.
+- Testes: removidos os casos dos comandos removidos; mantidos relatório sem valores, publicação atômica, fronteira e contrato.
+
+## 0.1.6 — complemento do Portal e relatório para o painel — 2026-10-09
+
+- Comando `report [--out] [--file]`: grava `var/deployer/status.json` (esquema 1) com fronteiras, correções abertas
+  e credenciais obrigatórias por ambiente (só nomes e estados). Sem rede e sem valores. Publicação atômica, 0640.
+- Declarado como complemento opcional do `aculta_portal` (`info.yml`). O Portal não depende do módulo.
+- Política de fronteira: a pasta de leitura do painel (`aculta_portal/src/Deployer`) pode citar a ferramenta, mas não
+  pode executá-la nem usar seu código (`consumer_tool_reference_allowed` e `consumer_allowed_forbidden`).
+- Testes: relatório sem valores, sobrescrita atômica e a exceção de fronteira.
+
 ## 0.1.5 — regra de permissão do arquivo de credenciais — 2026-10-09
 
 - `Secrets::modeProblem()` passa a recusar só escrita de grupo (0020) e acesso de outros (0007). Leitura de grupo

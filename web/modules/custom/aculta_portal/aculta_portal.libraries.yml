@@ -24,3 +24,11 @@ requirements-report:
   css:
     theme:
       css/requirements-report.css: {}
+
+secrets-reveal:
+  js:
+    js/secrets-reveal.js: {}
+  css:
+    theme:
+      css/requirements-report.css: {}
+

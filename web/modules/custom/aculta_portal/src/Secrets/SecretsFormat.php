@@ -73,10 +73,4 @@ final class SecretsFormat {
     return ($perms & 0007) !== 0 ? 'acesso de outros (exigido: sem acesso para outros)' : NULL;
   }
 
-  /** Verdadeiro se $path está dentro de $dir (ambos resolvidos com realpath). */
-  public static function isInside(string $path, string $dir): bool {
-    $prefix = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-    return $path === rtrim($dir, DIRECTORY_SEPARATOR) || str_starts_with($path, $prefix);
-  }
-
 }

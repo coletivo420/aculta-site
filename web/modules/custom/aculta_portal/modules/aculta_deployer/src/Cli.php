@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.5';
+  public const VERSION = '0.1.8';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -32,7 +32,8 @@ final class Cli {
       'verify' => $this->verify(),
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
-      'secrets' => $this->secrets((string) ($argv[2] ?? ''), $options),
+      'report' => $this->report($options),
+      'environment' => $this->environment((string) ($argv[2] ?? ''), $options),
       default => $this->help(),
     };
   }
@@ -102,7 +103,7 @@ final class Cli {
    * @param array<string, string|bool> $o
    */
   private function robots(array $o): int {
-    $env = is_string($o['env'] ?? null) ? $o['env'] : 'production';
+    $env = $this->activeEnvironment($o);
     $policy = $this->json($this->toolRoot . '/config/deploy.json')['robots_policy'][$env] ?? null;
     if ($policy === null) {
       $this->err("robots: ambiente desconhecido: $env");
@@ -168,7 +169,7 @@ final class Cli {
    * @param array<string, string|bool> $o
    */
   private function sitemap(array $o): int {
-    $env = is_string($o['env'] ?? null) ? $o['env'] : 'production';
+    $env = $this->activeEnvironment($o);
     $cfg = $this->json($this->toolRoot . '/config/deploy.json');
     $policy = $cfg['sitemap'][$env] ?? null;
     if ($policy === null) {
@@ -226,149 +227,152 @@ final class Cli {
   }
 
   /**
-   * Arquivo local de credenciais (ACULTA Secrets Contract). Nunca imprime valores: só nomes e
-   * motivos. Padrão do arquivo: <repo>/secrets/aculta.secrets.env (ignorado pelo Git, fora de web/).
-   *   secrets check  [--env=production|test] [--file=PATH]
-   *   secrets export --env=production|test --out=PATH [--file=PATH]
+   * Ambiente ativo, lido do arquivo neutro var/deployer/environment.json. Retorna NULL se ainda não foi definido.
+   *
+   * @return array{environment: string, site: string, changed_at: string}|null
+   */
+  private function currentEnvironment(): ?array {
+    $file = $this->repoRoot . '/var/deployer/environment.json';
+    $data = is_file($file) ? json_decode((string) file_get_contents($file), true) : null;
+    return is_array($data) && ($data['schema'] ?? null) === 1 && isset($data['environment'], $data['site'], $data['changed_at'])
+      ? ['environment' => (string) $data['environment'], 'site' => (string) $data['site'], 'changed_at' => (string) $data['changed_at']]
+      : null;
+  }
+
+  /**
+   * Ambiente de trabalho de uma função: --env explícito; senão o ambiente definido em
+   * var/deployer/environment.json; senão "test" (estado seguro). Valor inválido vira "test"
+   * e a função informa o ambiente usado.
    *
    * @param array<string, string|bool> $o
    */
-  private function secrets(string $sub, array $o): int {
-    $env = is_string($o['env'] ?? null) ? $o['env'] : 'production';
-    if (!in_array($sub, ['check', 'export'], true)) {
-      $this->err('uso: secrets check|export [--env=production|test] [--file=PATH] [--out=PATH]');
-      return 1;
+  private function activeEnvironment(array $o): string {
+    $sites = $this->json($this->toolRoot . '/config/deploy.json')['environments'] ?? [];
+    if (is_string($o['env'] ?? null) && isset($sites[$o['env']])) {
+      return (string) $o['env'];
     }
-    if (!in_array($env, ['production', 'test'], true)) {
-      $this->err("secrets: ambiente desconhecido: $env");
-      return 1;
-    }
-    $contract = $this->json($this->repoRoot . '/config/secrets-contract.json');
-    if (($problems = Secrets::contractProblems($contract)) !== []) {
-      foreach ($problems as $p) {
-        $this->err("secrets: contrato inválido: $p");
-      }
-      return 1;
-    }
-    $file = is_string($o['file'] ?? null) ? $o['file'] : $this->repoRoot . '/secrets/aculta.secrets.env';
-    $values = $this->secretsValidate($file, $env, $contract);
-    if ($values === null) {
-      $this->say("secrets ($env): FAIL");
-      return 1;
-    }
-    if ($sub === 'check') {
-      $this->say("secrets ($env): PASS (" . count($values) . ' variável(eis) no arquivo; valores não exibidos)');
+    $current = $this->currentEnvironment();
+    return $current !== null && isset($sites[$current['environment']]) ? $current['environment'] : 'test';
+  }
+
+  /**
+   * Ambiente do site: "environment" mostra o atual; "environment set --to=production|test" grava o
+   * ambiente e o endereço do site em var/deployer/environment.json. O Portal lê esse arquivo para
+   * escolher o conjunto de chaves (o deployer determina qual conjunto usar).
+   *
+   * @param array<string, string|bool> $o
+   */
+  private function environment(string $sub, array $o): int {
+    if ($sub === '' || $sub === 'show') {
+      $current = $this->currentEnvironment();
+      $this->say($current === null
+        ? 'environment: não definido (o Portal usa a configuração local)'
+        : sprintf('environment: %s — %s (definido em %s)', $current['environment'], $current['site'], $current['changed_at']));
       return 0;
     }
-    return $this->secretsExport($o, $env, $contract, $values);
+    if ($sub !== 'set') {
+      $this->err('uso: environment [show] | environment set --to=production|test');
+      return 1;
+    }
+    $to = is_string($o['to'] ?? null) ? $o['to'] : '';
+    $sites = $this->json($this->toolRoot . '/config/deploy.json')['environments'] ?? [];
+    if (!isset($sites[$to])) {
+      $this->err('environment: ambiente desconhecido: ' . $to);
+      return 1;
+    }
+    $dir = $this->repoRoot . '/var/deployer';
+    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+      $this->err('environment: não foi possível criar var/deployer');
+      return 1;
+    }
+    $data = ['schema' => 1, 'environment' => $to, 'site' => (string) $sites[$to]['site'], 'changed_at' => gmdate('c')];
+    $target = $dir . '/environment.json';
+    $temp = $dir . '/.environment-' . bin2hex(random_bytes(6)) . '.tmp';
+    $fh = @fopen($temp, 'xb');
+    if ($fh === false) {
+      $this->err('environment: não foi possível gravar');
+      return 1;
+    }
+    chmod($temp, 0640);
+    fwrite($fh, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    fclose($fh);
+    if (!rename($temp, $target)) {
+      @unlink($temp);
+      $this->err('environment: falha ao publicar');
+      return 1;
+    }
+    $this->say("environment: definido como {$to} — {$data['site']}");
+    return 0;
   }
 
   /**
-   * Valida o arquivo: existência, permissões, fora do document root, ignorado pelo Git (se
-   * estiver no repositório), sintaxe, nomes do contrato e obrigatórios do ambiente.
-   *
-   * @param array<string, mixed> $contract
-   * @return array<string, string>|null valores lidos, ou null se alguma verificação falhou
-   */
-  private function secretsValidate(string $file, string $env, array $contract): ?array {
-    $real = realpath($file);
-    if ($real === false || !is_file($real) || !is_readable($real)) {
-      $this->say("FAIL arquivo ausente ou ilegível: $file");
-      return null;
-    }
-    $ok = true;
-    $mode = fileperms($real) & 0777;
-    if (($m = Secrets::modeProblem($mode)) !== null) {
-      $this->say(sprintf('FAIL permissões %04o: %s', $mode, $m));
-      $ok = false;
-    }
-    $webRoot = realpath($this->repoRoot . '/web');
-    if ($webRoot !== false && Secrets::isInside($real, $webRoot)) {
-      $this->say('FAIL o arquivo está dentro do document root (web/)');
-      $ok = false;
-    }
-    $repoReal = realpath($this->repoRoot);
-    if ($repoReal !== false && Secrets::isInside($real, $repoReal)) {
-      $cmd = 'git -C ' . escapeshellarg($repoReal) . ' check-ignore -q ' . escapeshellarg($real) . ' 2>/dev/null';
-      exec($cmd, $unused, $rc);
-      if ($rc !== 0) {
-        $this->say('FAIL o arquivo dentro do repositório não é ignorado pelo Git');
-        $ok = false;
-      }
-    }
-    $values = Secrets::parse((string) file_get_contents($real));
-    if ($values === null) {
-      $this->say('FAIL linhas fora do formato NAME=value (conteúdo não exibido)');
-      return null;
-    }
-    $allowed = Secrets::allowedNames($contract);
-    foreach (array_keys($values) as $name) {
-      if (!in_array($name, $allowed, true)) {
-        $this->say("FAIL variável fora do contrato: $name");
-        $ok = false;
-      }
-    }
-    foreach (Secrets::requiredNames($contract, $env) as $name) {
-      if (!isset($values[$name])) {
-        $this->say("FAIL obrigatória ausente em $env: $name");
-        $ok = false;
-      } elseif ($values[$name] === '') {
-        $this->say("FAIL obrigatória vazia em $env: $name");
-        $ok = false;
-      }
-    }
-    return $ok ? $values : null;
-  }
-
-  /**
-   * Grava as variáveis do contrato presentes no arquivo em um arquivo novo, 0600, fora do
-   * repositório. Não sobrescreve. Serve à importação manual pós-deploy.
+   * Relatório neutro para o painel do ACULTA Portal (var/deployer/status.json). Contém só nomes,
+   * contagens e estados: nunca valores de credenciais. Não faz rede; sitemap e robots são comandos
+   * próprios e não entram no relatório.
    *
    * @param array<string, string|bool> $o
-   * @param array<string, mixed> $contract
-   * @param array<string, string> $values
    */
-  private function secretsExport(array $o, string $env, array $contract, array $values): int {
-    $out = is_string($o['out'] ?? null) ? $o['out'] : '';
-    if ($out === '') {
-      $this->err('secrets export: informe --out=PATH (arquivo novo, fora do repositório)');
-      return 1;
-    }
-    if (file_exists($out)) {
-      $this->err('secrets export: o destino já existe; escolha outro caminho (não sobrescreve)');
-      return 1;
-    }
-    $dirReal = realpath(dirname($out));
-    $repoReal = realpath($this->repoRoot);
-    if ($dirReal === false) {
-      $this->err('secrets export: o diretório de destino não existe');
-      return 1;
-    }
-    if ($repoReal !== false && Secrets::isInside($dirReal, $repoReal)) {
-      $this->err('secrets export: o destino não pode ficar dentro do repositório');
-      return 1;
-    }
-    $lines = [];
-    foreach (Secrets::allowedNames($contract) as $name) {
-      if (isset($values[$name])) {
-        $lines[] = $name . '=' . $values[$name];
+  private function report(array $o): int {
+    $out = is_string($o['out'] ?? null) ? $o['out'] : $this->repoRoot . '/var/deployer/status.json';
+    $file = is_string($o['file'] ?? null) ? $o['file'] : $this->repoRoot . '/secrets/aculta.secrets.env';
+    $registry = $this->registry();
+    $open = $registry->open();
+    $boundary = $this->boundaryViolations();
+    $contract = $this->json($this->repoRoot . '/config/secrets-contract.json');
+    $values = is_file($file) && is_readable($file) ? Secrets::parse((string) file_get_contents($file)) : null;
+    $environments = [];
+    foreach (['production', 'test'] as $env) {
+      $present = [];
+      $missing = [];
+      foreach (Secrets::requiredNames($contract, $env) as $name) {
+        if (isset($values[$name]) && $values[$name] !== '') {
+          $present[] = $name;
+        }
+        else {
+          $missing[] = $name;
+        }
       }
+      $environments[$env] = ['present' => $present, 'missing' => $missing];
     }
-    $leaf = basename($out);
-    if ($leaf === '' || $leaf === '.' || $leaf === '..') {
-      $this->err('secrets export: o destino precisa ser um nome de arquivo, não um diretório');
+    $report = [
+      'schema' => 1,
+      'tool' => 'aculta-deployer ' . self::VERSION,
+      'generated_at' => gmdate('c'),
+      'boundaries' => ['ok' => $boundary === [], 'violations' => count($boundary)],
+      'registry' => [
+        'open' => count($open),
+        'open_blocking' => count($registry->openBlocking()),
+        'entries' => array_map(static fn(array $e): array => [
+          'id' => (string) ($e['id'] ?? ''),
+          'kind' => (string) ($e['kind'] ?? ''),
+          'blocking' => ($e['blocking'] ?? FALSE) === TRUE,
+          'current' => (string) ($e['current'] ?? ''),
+        ], $open),
+      ],
+      'secrets' => ['file_present' => $values !== null, 'environments' => $environments],
+      'environment' => $this->currentEnvironment(),
+      'not_included' => ['network' => 'execute aculta-deployer sitemap e robots', 'values' => 'nunca incluídos'],
+    ];
+    $dir = dirname($out);
+    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+      $this->err('report: não foi possível criar a pasta de destino');
       return 1;
     }
-    $target = $dirReal . DIRECTORY_SEPARATOR . $leaf;
-    $fh = @fopen($target, 'xb');
+    $temp = $dir . DIRECTORY_SEPARATOR . '.status-' . bin2hex(random_bytes(6)) . '.tmp';
+    $fh = @fopen($temp, 'xb');
     if ($fh === false) {
-      $this->err('secrets export: não foi possível criar o destino');
+      $this->err('report: não foi possível gravar o relatório');
       return 1;
     }
-    fwrite($fh, implode("\n", $lines) . "\n");
+    chmod($temp, 0640);
+    fwrite($fh, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
     fclose($fh);
-    chmod($target, 0600);
-    $this->say("secrets export ($env): " . count($lines) . " variável(eis) gravada(s) em $target (0600); valores não exibidos");
+    if (!rename($temp, $out)) {
+      @unlink($temp);
+      $this->err('report: falha ao publicar o relatório');
+      return 1;
+    }
+    $this->say("report: relatório gravado em $out (sem valores de credenciais)");
     return 0;
   }
 
@@ -662,8 +666,8 @@ Uso:
   aculta-deployer register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]
   aculta-deployer build --out=DIR [--allow-open-blocking]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
-  aculta-deployer secrets check [--env=production|test] [--file=PATH]  valida o arquivo local de credenciais (sem valores)
-  aculta-deployer secrets export --env=production|test --out=PATH  grava cópia 0600 fora do repositório, para importação manual
+  aculta-deployer environment [show] | environment set --to=production|test  define o ambiente do site (e o endereço) lido pelo Portal
+  aculta-deployer report [--out=PATH] [--file=PATH]  relatório neutro para o painel do Portal (sem valores)
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)
   aculta-deployer version
 
