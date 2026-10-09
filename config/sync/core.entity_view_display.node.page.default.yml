@@ -5,6 +5,12 @@ dependencies:
   config:
     - field.field.node.page.body
     - field.field.node.page.field_domain_source
+    - field.field.node.page.field_hero_eyebrow
+    - field.field.node.page.field_hero_lead
+    - field.field.node.page.field_hero_primary
+    - field.field.node.page.field_hero_secondary
+    - field.field.node.page.field_hero_slogan
+    - field.field.node.page.field_hero_title
     - field.field.node.page.field_meta_tags
     - node.type.page
   module:
@@ -29,5 +35,11 @@ content:
     region: content
 hidden:
   field_domain_source: true
+  field_hero_eyebrow: true
+  field_hero_lead: true
+  field_hero_primary: true
+  field_hero_secondary: true
+  field_hero_slogan: true
+  field_hero_title: true
   field_meta_tags: true
   langcode: true
