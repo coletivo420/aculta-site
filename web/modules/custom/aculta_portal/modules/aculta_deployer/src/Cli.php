@@ -29,6 +29,7 @@ final class Cli {
       'list' => $this->list(),
       'register' => $this->register($options),
       'build' => $this->build($options),
+      'verify' => $this->verify(),
       default => $this->help(),
     };
   }
@@ -89,6 +90,32 @@ final class Cli {
       $this->say(sprintf('%s [%s] %s%s — %s', $e['id'], $e['status'], $e['kind'], ($e['blocking'] ?? false) ? ' (bloqueante)' : '', $e['page']));
     }
     return 0;
+  }
+
+  /** Fase 5: GET somente leitura nas entradas com probe e expect. */
+  private function verify(): int {
+    $code = 0;
+    $checked = 0;
+    foreach ($this->registry()->entries() as $e) {
+      if (!isset($e['probe'], $e['expect'])) {
+        continue;
+      }
+      $checked++;
+      $body = Verify::fetch((string) $e['probe']);
+      if ($body === null) {
+        $this->say("FAIL {$e['id']}: não foi possível ler {$e['probe']} (URL inválida ou sem resposta)");
+        $code = 1;
+        continue;
+      }
+      if (Verify::evaluate($body, (string) $e['expect'])) {
+        $this->say("PASS {$e['id']}: {$e['probe']} contém o valor esperado");
+      } else {
+        $this->say("FAIL {$e['id']}: {$e['probe']} não contém o valor esperado");
+        $code = 1;
+      }
+    }
+    $this->say($checked === 0 ? 'verify: nenhuma entrada com probe' : ($code === 0 ? 'verify: PASS' : 'verify: FAIL'));
+    return $code;
   }
 
   /** @param array<string, string|bool> $o */

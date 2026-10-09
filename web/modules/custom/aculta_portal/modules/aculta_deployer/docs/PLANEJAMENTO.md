@@ -78,6 +78,8 @@ Gate de segurança ao fim da fase 4: ver seção "Gate S4".
 
 ## Fase 5 — Pipeline de deploy e verificação pós-deploy (longa)
 
+**Status: concluída.** Implementado: `verify` somente leitura (GET, sem redirecionamentos, somente HTTPS, sem credenciais na URL, tempo limite de 10 s e limite de 1 MiB); entradas do registro com `probe` e `expect`; builds nunca sobrescrevem, então o build anterior permanece para rollback.
+
 Objetivo: fechar o ciclo entre build, deploy e verificação.
 
 - Comando `verify --url=PRODUÇÃO`: somente leitura, confere canonical e sitemap das
@@ -113,10 +115,10 @@ Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 
 ### Gate S5 (deploy)
 
-- [ ] `verify` é somente leitura: nenhuma requisição altera estado do servidor.
-- [ ] Relatório de deploy não contém segredos, tokens nem caminhos de servidor.
-- [ ] Build anterior preservado para rollback.
-- [ ] Verificação pós-deploy compara canonical e sitemap com o registro.
+- [x] `verify` é somente leitura: só GET, nenhum arquivo ou registro é alterado (testado por hash).
+- [x] Relatório de deploy não contém segredos, tokens nem caminhos de servidor (caminhos relativos ao repositório; saída do build não é registrada).
+- [x] Build anterior preservado para rollback (builds nunca sobrescrevem).
+- [x] Verificação pós-deploy compara canonical e sitemap com o registro (`expect`).
 
 ## Riscos abertos
 

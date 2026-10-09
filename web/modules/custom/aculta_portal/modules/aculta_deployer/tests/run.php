@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // Testes determinísticos da CLI. Não usam Drupal, Drush nem vendor.
 $toolRoot = dirname(__DIR__);
-foreach (['Registry', 'Transform', 'Boundary', 'Cli'] as $class) {
+foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Cli'] as $class) {
   require_once $toolRoot . '/src/' . $class . '.php';
 }
 
@@ -158,6 +158,22 @@ try {
 }
 $assert($threwBad && file_get_contents($regFile) === $before, 'importação com um achado inválido não grava nada');
 unlink($regFile);
+
+// Fase 5: verificação pós-deploy somente leitura.
+$assert(AcultaDeployer\Verify::isAllowedUrl('https://apoio.aculta.org/'), 'verify aceita URL https válida');
+$assert(!AcultaDeployer\Verify::isAllowedUrl('http://apoio.aculta.org/'), 'verify recusa http');
+$assert(!AcultaDeployer\Verify::isAllowedUrl('https://user:senha@apoio.aculta.org/'), 'verify recusa URL com credenciais');
+$assert(!AcultaDeployer\Verify::isAllowedUrl('https://'), 'verify recusa URL sem host');
+$assert(AcultaDeployer\Verify::evaluate('<link rel="canonical" href="https://apoio.aculta.org/">', '<link rel="canonical" href="https://apoio.aculta.org/">'), 'verify encontra o valor esperado no corpo');
+$assert(!AcultaDeployer\Verify::evaluate('<link rel="canonical" href="https://apoio.aculta.toca.net.br/">', '<link rel="canonical" href="https://apoio.aculta.org/">'), 'verify reprova canonical de teste');
+$assert(!AcultaDeployer\Verify::evaluate('qualquer coisa', ''), 'verify reprova expectativa vazia');
+$regPath = $toolRoot . '/registry/deploy-registry.json';
+$before = hash_file('sha256', $regPath);
+ob_start();
+$rcVerify = (new AcultaDeployer\Cli($toolRoot))->run(['x', 'verify']);
+ob_end_clean();
+$assert($rcVerify === 1 || $rcVerify === 0, 'verify executa e retorna código de saída válido');
+$assert(hash_file('sha256', $regPath) === $before, 'verify não altera o registro (somente leitura)');
 
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

@@ -19,6 +19,8 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
   - Com entradas bloqueantes abertas, o build é recusado. `--allow-open-blocking` serve
     só para ensaio, e não para publicar.
   - Grava `DIR/deploy-report.json` com os arquivos, as remoções e as substituições.
+- `$CLI verify`: GET somente leitura nas entradas com `probe` e `expect`. Só aceita HTTPS,
+  sem credenciais na URL, sem seguir redirecionamentos. Não altera nenhum arquivo nem o registro.
 - `$CLI version`.
 
 ## Procedimento de deploy
@@ -27,8 +29,11 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
 2. `$CLI build --out=/caminho/de/producao`.
 3. Confira `deploy-report.json`: nenhum `toca.net.br` deve restar nos arquivos gerados.
 4. Aplique a árvore gerada no ambiente de produção, pelo processo do responsável.
-5. Após o deploy, rode o validador de navegador contra produção e atualize o registro:
-   entradas resolvidas passam para `status: resolved`.
+5. Após o deploy, rode `$CLI verify`. Entradas que passam podem ser marcadas `status: resolved`
+   no registro, com a decisão registrada.
+6. Rollback: cada build fica em seu próprio diretório. Para voltar, aponte o ambiente de
+   produção para o diretório do build anterior, pelo processo do responsável. Builds nunca
+   são sobrescritos.
 
 ## Testes
 

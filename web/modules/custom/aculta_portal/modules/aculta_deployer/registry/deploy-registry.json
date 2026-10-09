@@ -11,7 +11,9 @@
       "expected_production": "https://apoio.aculta.org/",
       "reason": "O canonical é gerado a partir do host da requisição. No servidor de testes ele aponta para o alias de teste; a política do repositório exige o host de produção como canonical. Não é corrigível no código de apresentação: precisa de ajuste no deploy.",
       "owner": "responsável do projeto",
-      "decision": "pendente"
+      "decision": "pendente",
+      "probe": "https://apoio.aculta.org/",
+      "expect": "<link rel=\"canonical\" href=\"https://apoio.aculta.org/\">"
     },
     {
       "id": "DEP-0002",
@@ -23,7 +25,9 @@
       "expected_production": "https://apoio.aculta.org/ listado no sitemap do host de apoio",
       "reason": "O simple_sitemap gera um sitemap só, com links internos; não aceita URL absoluta de outro host. Incluir o host de apoio exige variante de sitemap por domínio (módulo ou rota técnica), que é decisão de arquitetura.",
       "owner": "responsável do projeto",
-      "decision": "pendente"
+      "decision": "pendente",
+      "probe": "https://apoio.aculta.org/sitemap.xml",
+      "expect": "<loc>https://apoio.aculta.org/</loc>"
     }
   ]
 }
