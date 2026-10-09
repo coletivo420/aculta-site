@@ -144,9 +144,8 @@ Ao evoluir o shell:
 - preferir `position: sticky` a `fixed` como ponto de partida;
 - reutilizar Bootstrap Collapse/Offcanvas em vez de criar engine JS própria.
 
-A Foundation 0.1.0 não autoriza o redesign visual completo. A fase 0.2-A prepara
-somente semantic tokens; o shell visual segue as etapas documentadas em
-[roadmap.md](roadmap.md) e [shell.md](shell.md).
+O shell multidomínio já está implementado (linha 0.2.0). Mudanças nele seguem o contrato em
+[shell.md](shell.md) e a classificação em [versioning.md](versioning.md).
 
 ## Configuração
 
@@ -191,6 +190,7 @@ asset web sem contrato, dependência direta do tema no Portal ou library quebrad
 Para tokens e fronteiras visuais da linha 0.2:
 
 ```sh
+php scripts/validate-aculta420-sdc-schemas.php
 php scripts/validate-aculta420-design-foundations.php
 php scripts/tests/validate-aculta420-design-foundations-test.php
 php scripts/tests/validate-aculta420-shell-contract-test.php

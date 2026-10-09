@@ -140,13 +140,11 @@ Permanecem estáveis quando representam:
 Isso evita quebrar configuração/conteúdo sem benefício. O machine name do tema,
 por outro lado, é sempre `aculta420`.
 
-## Shell multidomínio planejado
+## Shell multidomínio
 
-A Foundation 0.1.0 preserva o shell existente. A linha 0.2.0 prepara o Design B
-em etapas: 0.2-A entrega tokens semânticos; 0.2-B define o contrato de
-apresentação; 0.2-C/0.2-D implementam Institution Bar e Domain Header;
-0.2-E/0.2-F tratam mobile/sticky e validação. O 0.2-A não altera markup nem
-resolve purpose.
+O shell é composto por Institution Bar, Domain Header e área de conteúdo. Ele recebe dados de
+apresentação já resolvidos pelo Portal e não resolve purpose nem hostname. Sticky e navegação
+móvel usam Bootstrap Collapse. Contrato completo em [shell.md](shell.md).
 
 ### Contrato de color mode
 
