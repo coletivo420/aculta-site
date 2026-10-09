@@ -1,0 +1,14 @@
+{# Editorial section block: fields map to the content-section pattern; the body stays rich content. #}
+{% extends "block.html.twig" %}
+{% block content %}
+  {% if section_entity %}
+    {{ include('aculta420:content-section', {
+      title: section_entity.field_section_title.value,
+      heading: section_entity.field_section_heading.value,
+      variant: section_entity.field_section_variant.value ?: 'default',
+      body: content,
+    }, with_context = false) }}
+  {% else %}
+    {{ content }}
+  {% endif %}
+{% endblock %}

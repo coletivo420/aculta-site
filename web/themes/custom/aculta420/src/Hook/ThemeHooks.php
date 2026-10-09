@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420\Hook;
 
+use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Render\Element;
 use Drupal\node\NodeInterface;
@@ -35,6 +38,68 @@ final class ThemeHooks {
       $variables['options']['show_progress_bar'] = FALSE;
       $variables['options']['show_page_counter'] = FALSE;
     }
+  }
+
+  /**
+   * Exposes the basic block entity to the editorial section block template.
+   */
+  #[Hook('preprocess_block')]
+  public function preprocessBlock(array &$variables): void {
+    $entity = $variables['elements']['content']['#block_content'] ?? NULL;
+    if ($entity instanceof BlockContentInterface && $entity->bundle() === 'basic') {
+      $variables['section_entity'] = $entity;
+    }
+  }
+
+  /**
+   * Feeds the home hero pattern from the page fields on the full view.
+   *
+   * Only pages that filled the hero title get it. The hero is a render array
+   * with weight -100, so its access and cache metadata bubble with the node.
+   */
+  #[Hook('preprocess_node')]
+  public function preprocessNode(array &$variables): void {
+    $node = $variables['elements']['#node'] ?? NULL;
+    if (!$node instanceof NodeInterface
+      || $node->bundle() !== 'page'
+      || ($variables['view_mode'] ?? '') !== 'full'
+      || !$node->hasField('field_hero_title')
+      || $node->get('field_hero_title')->isEmpty()) {
+      return;
+    }
+
+    $actions = [];
+    $classes = [
+      'field_hero_primary' => ['btn', 'btn-primary'],
+      'field_hero_secondary' => ['btn', 'btn-outline-primary'],
+    ];
+    foreach ($classes as $field => $class) {
+      $item = $node->get($field)->first();
+      if ($item === NULL || $item->uri === NULL || $item->uri === '') {
+        continue;
+      }
+      $actions[] = Link::fromTextAndUrl(
+        $item->title !== NULL && $item->title !== '' ? $item->title : $item->uri,
+        Url::fromUri($item->uri, ['attributes' => ['class' => $class]]),
+      )->toRenderable();
+    }
+
+    $text = static fn(string $field): ?string => $node->hasField($field) && !$node->get($field)->isEmpty()
+      ? (string) $node->get($field)->value
+      : NULL;
+
+    $variables['content']['aculta_hero'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:hero',
+      '#props' => [
+        'eyebrow' => $text('field_hero_eyebrow'),
+        'title' => (string) $text('field_hero_title'),
+        'slogan' => $text('field_hero_slogan'),
+        'lead' => $text('field_hero_lead'),
+      ],
+      '#slots' => ['actions' => $actions],
+      '#weight' => -100,
+    ];
   }
 
   /**

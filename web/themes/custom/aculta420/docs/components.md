@@ -55,6 +55,28 @@ Preferir render element `#type: component` em PHP quando Drupal precisar
 conhecer attachment/cache/render contract; Twig inclui componentes em presenters
 quando esse boundary for mais simples.
 
+## Padrões 0.4 (experimental)
+
+Estado em 0.4.0. Todos experimentais por política, até consumo estável e validação.
+
+| Pattern | Local | Consumidor | Dados |
+| --- | --- | --- | --- |
+| `aculta420:content-section` | `components/patterns/content-section/` | `block--block-content--type--basic.html.twig` | campos `field_section_title`, `field_section_heading`, `field_section_variant` e o corpo |
+| `aculta420:hero` | `components/patterns/hero/` | `ThemeHooks::preprocessNode()` (página `page` na visualização full) | campos `field_hero_*` do nó |
+| `aculta420:content-grid` | `components/patterns/content-grid/` | `views-view-unformatted--aculta-projects.html.twig` | linhas da view (cada uma com seu presenter) |
+| `aculta420:carousel` | `components/patterns/carousel/` | `views-view-vvjb.html.twig` | engine VVJB, sem alteração |
+
+Ao migrar, o HTML antigo das seções (`section.aculta-editorial-section`) passou a ser
+estrutura de campos. O texto rico interno permaneceu no corpo, e o texto de cada seção
+foi conferido contra o original antes da gravação.
+
+Pendências da 0.4, registradas para decisão:
+
+- **Cabeçalho da lista de projetos** (`views.view.aculta_projects`, header em texto): não migrado. A área Entity do Views renderiza a entidade sem template de tema, porque o Core não registra a hook `block_content` para o tema. Para migrar, é preciso um template por hook de módulo (`aculta_portal`) ou posicionar o bloco como placement.
+- **Carrossel**: o wrapper foi migrado, mas a view da home está desativada no Runtime, então não foi visto em navegador.
+- **Estruturas internas** (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, `aculta-editorial-link`, `aculta-institutional-note`) continuam em rich text dentro do corpo.
+- **Rail de cursos**: não criado, porque exigiria mudar a view `courses_catalog`.
+
 ## Componentes atuais
 
 ### `aculta420:project-card`
