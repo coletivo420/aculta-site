@@ -272,7 +272,7 @@ final class PortalHooks {
             }
           }
         }
-        elseif ($route === 'aculta_portal.support_form' || $uri === 'internal:/apoie') {
+        elseif ($route === 'aculta_portal.support_form' || in_array($uri, ['internal:/apoio', 'internal:/apoie'], TRUE)) {
           $target = $resolver->pathUrl('support', '/');
         }
         elseif ($uri === 'internal:/noticias') {
