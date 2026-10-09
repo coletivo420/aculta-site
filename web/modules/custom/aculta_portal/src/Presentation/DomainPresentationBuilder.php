@@ -93,15 +93,28 @@ final class DomainPresentationBuilder {
     // receives an access-safe render array and does not inspect host/purpose.
     $brandMedia = NULL;
     if ($purpose === 'wiki') {
-      $relativeLogo = 'themes/custom/aculta420/assets/branding/wiki420/web/wiki420-horizontal-960w.webp';
-      if (is_file(DRUPAL_ROOT . '/' . $relativeLogo)) {
+      $logoDir = 'themes/custom/aculta420/assets/branding/wiki420/web/';
+      $variants = ['480w' => 480, '720w' => 720, '960w' => 960];
+      if (is_file(DRUPAL_ROOT . '/' . $logoDir . 'wiki420-horizontal-960w.webp')) {
+        // The header shows the logo at most 18rem wide; the browser picks the density.
+        $srcset = [];
+        foreach ($variants as $suffix => $width) {
+          $srcset[] = Url::fromUri('base:' . $logoDir . 'wiki420-horizontal-' . $suffix . '.webp')->toString() . ' ' . $width . 'w';
+        }
         $brandMedia = [
           '#theme' => 'image',
-          '#uri' => Url::fromUri('base:' . $relativeLogo)->toString(),
+          '#uri' => Url::fromUri('base:' . $logoDir . 'wiki420-horizontal-960w.webp')->toString(),
           '#alt' => $title,
           '#width' => 960,
           '#height' => 307,
-          '#attributes' => ['class' => ['aculta-domain-brand-image']],
+          '#attributes' => [
+            'class' => ['aculta-domain-brand-image'],
+            'srcset' => implode(', ', $srcset),
+            'sizes' => '18rem',
+            // The logo is above the fold and is the header's main visual: no lazy loading.
+            'loading' => 'eager',
+            'fetchpriority' => 'high',
+          ],
         ];
       }
     }

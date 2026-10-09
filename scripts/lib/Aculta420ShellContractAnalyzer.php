@@ -63,11 +63,10 @@ final class Aculta420ShellContractAnalyzer {
     )) {
       $findings[] = 'Twig must not branch on a concrete Domain purpose.';
     }
+    // brand_media is consumed by the header (Wiki420 logo, PR #112); navigation and actions stay deferred.
     foreach ([
-      'regions.brand_media',
       'regions.navigation',
       'regions.actions',
-      "['regions']['brand_media']",
       "['regions']['navigation']",
       "['regions']['actions']",
     ] as $needle) {
