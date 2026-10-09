@@ -239,7 +239,7 @@ Ao trocar uma URL pública já usada:
 1. inventariar path atual;
 2. definir novo path;
 3. preservar canonical;
-4. criar redirect permanente quando apropriado;
+4. criar redirect permanente apenas a partir da versão estável; até lá, não há redirecionamentos (ver regra abaixo);
 5. atualizar menus;
 6. atualizar breadcrumbs;
 7. atualizar sitemap;
@@ -247,7 +247,7 @@ Ao trocar uma URL pública já usada:
 9. atualizar Search/Views;
 10. testar links salvos/deep links.
 
-Nunca quebrar silently um path público já indexado.
+Até o lançamento da versão estável, não há redirecionamentos: o site está em desenvolvimento e o caminho antigo responde 404. Redirecionamentos 301 de slugs antigos, incluindo os criados em ciclos anteriores, foram removidos do runtime. A partir da versão estável, é obrigatório o redirecionamento 301 de todo path público já indexado que mudar.
 
 ## Canonical e SEO
 
