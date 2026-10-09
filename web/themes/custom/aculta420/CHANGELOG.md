@@ -1,3 +1,13 @@
+## 0.4.5-dev.5 — Sitemap do validador delegado ao aculta_deployer; DT-T18 pendente — 2026-10-09
+
+Classificação: PATCH da linha 0.4.x (ferramenta de verificação e registro; sem alteração de apresentação, componente ou Domain).
+
+- `validate-institution-browser.mjs` deixa de montar o sitemap por conta própria. Chama `aculta-deployer sitemap --env=production|test` (ambiente pelo host do site) e registra a saída em `sitemap-deployer.txt`. O resultado do deployer é o critério de `sitemapValid`.
+- Registro: `DEP-0002` (`registry/deploy-registry.json`) traz o valor verificado no servidor de testes (`/support/sitemap.xml` lista `https://apoio.aculta.org/`). A entrada segue aberta e bloqueante até a verificação de produção no RC.
+- DT-T18 passa a **Pendente**, independente do tema, até concluir o sistema de apoios. Permanecem abertos: o botão de apoio com gateway ativa (servidor de testes sem gateway) e o favicon oficial.
+
+Validação: `aculta-deployer sitemap --env=test` PASS no servidor de testes; `validate-institution-browser.mjs` executado com `ACULTA_SUPPORT_ORIGIN` (ver saída na PR).
+
 ## 0.4.5-dev.4 — Validador de navegador: página de apoio no host SUPPORT (DT-T18) — 2026-10-09
 
 Classificação: PATCH da linha 0.4.x (ferramenta de verificação; sem alteração de apresentação, componente ou Domain).

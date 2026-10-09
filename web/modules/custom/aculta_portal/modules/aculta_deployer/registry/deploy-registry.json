@@ -21,7 +21,7 @@
             "status": "open",
             "blocking": true,
             "page": "sitemap.xml: página raiz do host SUPPORT (https://apoio.aculta.org/)",
-            "current": "ausente: o sitemap é único e lista URLs do domínio principal",
+            "current": "servidor de testes: /support/sitemap.xml (filho do índice https://aculta.toca.net.br/sitemap.xml) lista https://apoio.aculta.org/ (aculta_deployer sitemap --env=test: PASS)",
             "expected_production": "https://apoio.aculta.org/ listado no sitemap do host de apoio",
             "reason": "O simple_sitemap gera um sitemap só, com links internos; não aceita URL absoluta de outro host. Incluir o host de apoio exige variante de sitemap por domínio (módulo ou rota técnica), que é decisão de arquitetura.",
             "owner": "responsável do projeto",
