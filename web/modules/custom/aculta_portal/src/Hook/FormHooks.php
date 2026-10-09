@@ -28,6 +28,8 @@ final class FormHooks {
     private readonly TranslationInterface $translation,
     #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
     private readonly \Drupal\aculta_portal\Account\EmailConfirmationPolicy $emailPolicy,
+    #[Autowire(service: 'aculta_portal.domain_purpose')]
+    private readonly \Drupal\aculta_portal\Domain\DomainPurposeManager $domainPurpose,
   ) {}
 
   /**
@@ -56,8 +58,9 @@ final class FormHooks {
       // Checkbox de aceite dos termos, obrigatório, logo acima do botão de envio.
       $form['aculta_terms'] = [
         '#type' => 'checkbox',
-        '#title' => $this->translation->translate('Li e aceito os Termos de Uso e a Política de Privacidade.'),
+        '#title' => $this->termsLabel(),
         '#required' => TRUE,
+        '#default_value' => TRUE,
         '#weight' => 90,
       ];
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:requestRegistrationConfirmation';
@@ -199,4 +202,23 @@ final class FormHooks {
       }
     }
   }
+
+  /**
+   * Rótulo do aceite: "Li e aceito os Termos de Uso e a Política de Privacidade.", com links para as páginas
+   * do MAIN que abrem em nova aba (o cadastro acontece no host da conta).
+   */
+  private function termsLabel(): \Drupal\Component\Render\MarkupInterface {
+    $link = static function (string $href, string $text): string {
+      return '<a href="' . htmlspecialchars($href, ENT_QUOTES) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($text, ENT_QUOTES) . '</a>';
+    };
+    $terms = $this->domainPurpose->pathUrl('main', '/termos-de-uso')?->toString() ?? '/termos-de-uso';
+    $privacy = $this->domainPurpose->pathUrl('main', '/politica-de-privacidade')?->toString() ?? '/politica-de-privacidade';
+    $pattern = (string) $this->translation->translate('Li e aceito os @terms e a @privacy.');
+    $html = strtr($pattern, [
+      '@terms' => $link($terms, (string) $this->translation->translate('Termos de Uso')),
+      '@privacy' => $link($privacy, (string) $this->translation->translate('Política de Privacidade')),
+    ]);
+    return \Drupal\Core\Render\Markup::create($html);
+  }
+
 }

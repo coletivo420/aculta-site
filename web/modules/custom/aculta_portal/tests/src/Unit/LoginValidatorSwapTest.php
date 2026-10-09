@@ -27,6 +27,12 @@ final class LoginValidatorSwapTest extends UnitTestCase {
       $this->createMock(AccountProxyInterface::class),
       $this->createMock(TranslationInterface::class),
       new \Drupal\aculta_portal\Account\EmailConfirmationPolicy($this->createMock(\Drupal\user\UserDataInterface::class), $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class)),
+      new \Drupal\aculta_portal\Domain\DomainPurposeManager(
+        $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class),
+        $this->createMock(\Drupal\domain\DomainNegotiatorInterface::class),
+        $this->createMock(\Drupal\Core\Config\ConfigFactoryInterface::class),
+        new \Symfony\Component\HttpFoundation\RequestStack(),
+      ),
     );
     $form = ['#validate' => $start];
     $state = $this->createMock(FormStateInterface::class);
