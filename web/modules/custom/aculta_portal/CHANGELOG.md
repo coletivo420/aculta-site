@@ -1,5 +1,19 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.15 — cadastro com senha e confirmação de e-mail — 2026-10-09
+
+- Formulário de cadastro (`user_register_form`): mostra nome de usuário, e-mail, senha e confirmação, e CAPTCHA. Foto não aparece (display `user.user.register` com só a seção de conta).
+- Com verificação de e-mail ligada, a senha escolhida é validada (mínimo de 8 caracteres) e gravada depois de salvar a conta; a conta continua bloqueada até a confirmação do e-mail.
+- `FormHooks` (`form_alter`) e `PortalFormCallbacks::validateRegistrationPassword()` / `storeRegistrationPassword()`.
+
+## 0.2.0-dev.14 — confirmação de e-mail para visitante, login automático e tradução — 2026-10-09
+
+- Página de confirmação de troca de e-mail liberada a visitante anônimo para pedidos pendentes e não expirados (`EmailConfirmationResponseAccessHandler`). O hash da URL continua sendo verificado por `confirm()`.
+- Após confirmar, o visitante anônimo entra na conta do pedido (`EmailConfirmerHooks::loginAfterConfirmation`, `user_login_finalize()`). Risco aceito: quem tiver o link entra na conta; o link é de uso único e expira.
+- Link de confirmação sempre no host da conta (versão 0.2.0-dev.13).
+- Tradução para português: textos de e-mail e de confirmação em `config/sync/language/pt-br/email_confirmer.settings.yml`; textos fixos dos módulos `email_confirmer_user` e `change_mail_page` em `translations/email_confirmer.pt-br.po` (importar com `drush locale-import`).
+- Não altera o contrib `email_confirmer`.
+
 ## 0.2.0-dev.13 — link de confirmação de e-mail sempre no host da conta — 2026-10-09
 
 - `TokenHooks::alterEmailConfirmationUrl()` (`tokens_alter`): o link `[email-confirmer:confirmation-url]` passa a usar o
