@@ -1,0 +1,16 @@
+# Textos de interface que ainda apareciam em inglês. Importar com:
+# drush locale-import --type=not-customized --override=all pt-br <este arquivo>
+msgid ""
+msgstr ""
+"Project-Id-Version: ACULTA Portal — interface\n"
+"Language: pt-br\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Log out"
+msgstr "Sair"
+
+msgid "I agree."
+msgstr "Li e concordo."
