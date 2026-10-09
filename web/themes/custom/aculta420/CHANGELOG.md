@@ -1,4 +1,4 @@
-## 0.4.6-dev.1 — Validador de navegador: regras de barra, sigla e estado indisponível — 2026-10-09
+## 0.4.6 — Validador de navegador: regras de barra, sigla e estado indisponível — 2026-10-09
 
 Classificação: PATCH (correção de ferramenta de verificação), após o fechamento da 0.4.5.
 
