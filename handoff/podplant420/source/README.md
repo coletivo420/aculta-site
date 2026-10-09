@@ -11,6 +11,6 @@ The task brief also references `podplant420-logomarcas.zip`; that archive was no
 
 `originais/` holds those four PNG files unedited. `masters/` holds four raster derivatives used as the source for the web files: a 512 x 512 square per composition and a 960 px-wide horizontal per composition. Their hashes are recorded in `../asset-inventory.json`.
 
-The derivatives sit inside the theme directory, but no template, CSS file or library references them in this phase. They are kept as the handoff package; a consumer adopts them only with a demonstrated need. Web derivatives preserve transparency and proportions. Horizontal artwork was cropped only to remove excessive transparent canvas, retaining a safety margin; no mark was stretched, redrawn, recolored or converted to SVG.
+This directory is the handoff package and lives outside the theme. The 720/960 px horizontal WebP derivatives are in `../web/horizontal/`. No template, CSS file or library references any of these files in this phase; a consumer adopts one only with a demonstrated need, copying it into the theme in the same change that uses it.
 
 The files were supplied by the project representative as approved material for this integration. Legal provenance, copyright chain and licensing were not independently verified. Any future source addition must record origin, authorization/license and intended use before publication.

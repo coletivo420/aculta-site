@@ -1,11 +1,11 @@
-## 0.4.2-dev.1 — Assets visuais Podplant420 (PR #114) — 2026-10-09
+## 0.4.2-dev.2 — Assets visuais Podplant420 (PR #114) — 2026-10-09
 
 Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um validador offline; sem componente, template, Domain ou Institution Bar alterados). Versão de commit da PR; a versão de merge `0.4.2` será marcada no commit de release antes do merge.
 
-- Quatro identidades aprovadas em `assets/branding/podplant420/`: stacked e horizontal, para superfícies claras e escuras. Originais intocados em `source/originais/`; masters em `source/masters/`.
-- Derivados WebP com transparência: stacked 128/256/512 px; horizontal 240/480/720/960 px. Os 720 e 960 px estão no diretório do tema sem consumidor nesta PR.
+- Quatro identidades aprovadas: stacked e horizontal, para superfícies claras e escuras. Runtime em `assets/branding/podplant420/web/` (10 WebP); pacote de handoff fora do tema, em `handoff/podplant420/` (originais, masters e 720/960 px).
+- Derivados WebP com transparência: stacked 128/256/512 px e horizontal 240/480 px no tema. Horizontais 720/960 px só no handoff, sem consumidor.
 - Horizontais: somente o canvas transparente excedente foi removido, com margem de segurança; sem deformação, recoloração, filtro CSS ou vetorização.
-- Inventário com SHA-256, dimensões, transparência e peso em `asset-inventory.json`.
+- Inventário com SHA-256, dimensões, transparência e peso em `handoff/podplant420/asset-inventory.json` (22 arquivos, caminhos relativos à raiz).
 - Validadores: `scripts/verify-podplant420-assets.py` (22 imagens) e `scripts/validate-podplant420-assets.php` (10 derivados web).
 - Origem, nomenclatura, acessibilidade, responsividade, cache, Media API e anti-regressão em `docs/branding-podplant420.md`.
 - Nenhuma mudança em Institution Bar, Domain Header, Domain purpose ou SDC genérico. Nenhuma imagem editorial ou capa foi criada.

@@ -8,16 +8,16 @@ Quatro PNG RGBA de 1024×1024 foram fornecidos diretamente pelo responsável do 
 
 ## Estrutura e variantes
 
-`assets/branding/podplant420/source/originais/`: originais PNG anexados, intocados. `source/masters/`: 4 PNG raster derivados que servem de fonte aos arquivos web (512×512 quadrado; 960×396/397 horizontal). `web/stacked/`: WebP RGBA 128, 256 e 512 px, em on-dark/on-light. `web/horizontal/`: WebP RGBA 240, 480, 720 e 960 px, em on-dark/on-light. Total: **22 imagens** (4 originais + 4 masters + 14 web). Inventário detalhado com SHA-256 em `asset-inventory.json`.
+`web/stacked/`: WebP RGBA 128, 256 e 512 px, em on-dark/on-light. `web/horizontal/`: WebP RGBA 240 e 480 px, em on-dark/on-light (runtime do tema, em `assets/branding/podplant420/web/`). Pacote de handoff fora do tema, em `handoff/podplant420/`: originais PNG intocados em `source/originais/` (4), masters PNG em `source/masters/` (4) e WebP horizontais 720/960 px (4). Total: **22 imagens** (10 runtime + 12 handoff). Inventário com SHA-256 em `handoff/podplant420/asset-inventory.json`, com caminhos relativos à raiz.
 
-Presença no diretório do tema não significa uso: `source/` e os derivados 720/960 não são referenciados por templates, CSS ou libraries nesta fase. Eles ficam versionados como pacote de handoff e como fonte para consumidores futuros, que só os adotam com necessidade comprovada.
+Somente os 10 WebP de runtime ficam em `assets/branding/podplant420/web/`, dentro do tema. O pacote de handoff (originais, masters e 720/960 px) fica fora do tema, em `handoff/podplant420/`, porque nenhum template, CSS ou library o consome nesta fase e o tema não deve carregar binários sem consumidor. Um consumidor futuro que precisar de 720/960 px copia o arquivo para o tema no mesmo PR que o referencia.
 
 | Família | Variantes | Usos previstos |
 | --- | --- | --- |
 | `stacked-on-dark` | WebP 128/256/512 | cards, thumbnails de identidade sobre fundo escuro |
 | `stacked-on-light` | WebP 128/256/512 | cards sobre superfície clara |
-| `horizontal-on-dark` | WebP 240/480/720/960 | vitrines, seções e chamadas largas sobre escuro |
-| `horizontal-on-light` | WebP 240/480/720/960 | vitrines, seções e chamadas largas sobre claro |
+| `horizontal-on-dark` | WebP 240/480 (runtime); 720/960 (handoff) | vitrines, seções e chamadas largas sobre escuro |
+| `horizontal-on-light` | WebP 240/480 (runtime); 720/960 (handoff) | vitrines, seções e chamadas largas sobre claro |
 
 O sufixo `w` significa largura de arquivo, não densidade do dispositivo. Conservar a proporção intrínseca da composição (`object-fit: contain`; não esticar, cortar elementos da logo ou adicionar fundo opaco). O logo quadrado contém margens compositivas; não gerar favicon nem ícone isolado sem aprovação de identidade e consumidor.
 
