@@ -1,3 +1,13 @@
+## 0.4.5 — Fechamento da linha 0.4.x — 2026-10-09
+
+Classificação: fechamento de linha (release). Sem alteração funcional além da marcação; o conteúdo já está em `main`.
+
+- Linha 0.4.x fechada em `0.4.5`. Inclui 0.4.4 (PR #122: gate institucional validado pelo hero), 0.4.5-dev.1 (kit Bloco Sativa 420, PR #124), 0.4.5-dev.2 e dev.3 (cards de projeto, PR #129), 0.4.5-dev.4 (validador de apoio no host SUPPORT, PR #130) e 0.4.5-dev.5 (sitemap pelo `aculta_deployer`).
+- A linha 0.4 fecha sem versão `0.4.0` retroativa e sem tag, por decisão do responsável. `0.4.0` seria regressão de versão. A decisão T1 (estruturas internas como conteúdo rico) está em `docs/components.md`.
+- Pendências que não bloqueiam o fechamento, registradas em `docs/operations/DEBT-REGISTER.md`: DT-T18 pendente (independente do tema, até concluir o sistema de apoios); T5 com reconstrução em ambiente novo DEFERRED; QA em navegador DEFERRED dos kits (0.4.3 e 0.4.5-dev.1). A F1 (modo de cor) está em avaliação, sem código.
+
+Validação: gate de Foundation via Drush (310 checagens, com a versão 0.4.5); gates de design e de SDC; `aculta-deployer sitemap --env=test` PASS.
+
 ## 0.4.5-dev.5 — Sitemap do validador delegado ao aculta_deployer; DT-T18 pendente — 2026-10-09
 
 Classificação: PATCH da linha 0.4.x (ferramenta de verificação e registro; sem alteração de apresentação, componente ou Domain).
