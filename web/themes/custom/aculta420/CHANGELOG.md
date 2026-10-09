@@ -1,4 +1,4 @@
-## 0.5.1-dev.1 — F2 (ícones): Bootstrap Icons sem dependência nova — 2026-10-09
+## 0.5.1 — F2 (ícones) concluída: Bootstrap Icons sem dependência nova — 2026-10-09
 
 Classificação: PATCH da linha 0.5 (gate e documentação; sem componente, template ou dependência novos).
 
