@@ -70,8 +70,14 @@ Status: **implementada na branch `feat/aculta420-0.2-c-institution-bar`; visual 
 
 ### 0.2-D — Domain Header
 
+Status: **implementada na branch `feat/aculta420-0.2-d-domain-header`, empilhada sobre 0.2-C; visual QA DEFERRED para 0.2-F.**
+
 - cabeçalho visual principal com marca, título e navegação preparados pelo Portal;
-- tokens estruturais sem identidade codificada por purpose.
+- superfície `--aculta-shell-domain-*` (elevada), texto de domínio e linha inferior
+  `--aculta-border-accent`, sem cor literal nem identidade por purpose;
+- o menu de navegação herda a superfície do header; itens ativos mantêm os tokens
+  de interação já aprovados;
+- `regions.actions` e `regions.navigation` seguem sem consumidor até o Portal prepará-los.
 
 ### 0.2-E — Mobile/Sticky Shell
 
