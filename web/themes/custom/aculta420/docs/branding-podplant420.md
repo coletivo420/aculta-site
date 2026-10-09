@@ -1,6 +1,6 @@
 # Podplant420 — Política de assets visuais (ACULTA420)
 
-Status: **pacote preparado offline; integração e testes de runtime ainda não realizados**. Abertura de PR delegada ao agente homelab. Esta inclusão de arquivos, por si, **não altera templates, cabeçalhos nem Domain**.
+Status: **assets integrados e validados offline** (SHA-256, decodificação, transparência, dimensões e duplicatas). **Nenhum template, CSS ou library os consome nesta fase**; QA visual em navegador e runtime Drupal estão **DEFERRED**. A inclusão desses arquivos não altera cabeçalhos, Institution Bar, Domain Header nem Domain purpose.
 
 ## Origem e propriedade
 
@@ -9,6 +9,8 @@ Quatro PNG RGBA de 1024×1024 foram fornecidos diretamente pelo responsável do 
 ## Estrutura e variantes
 
 `assets/branding/podplant420/source/originais/`: originais PNG anexados, intocados. `source/masters/`: 4 PNG raster derivados que servem de fonte aos arquivos web (512×512 quadrado; 960×396/397 horizontal). `web/stacked/`: WebP RGBA 128, 256 e 512 px, em on-dark/on-light. `web/horizontal/`: WebP RGBA 240, 480, 720 e 960 px, em on-dark/on-light. Total: **22 imagens** (4 originais + 4 masters + 14 web). Inventário detalhado com SHA-256 em `asset-inventory.json`.
+
+Presença no diretório do tema não significa uso: `source/` e os derivados 720/960 não são referenciados por templates, CSS ou libraries nesta fase. Eles ficam versionados como pacote de handoff e como fonte para consumidores futuros, que só os adotam com necessidade comprovada.
 
 | Família | Variantes | Usos previstos |
 | --- | --- | --- |
