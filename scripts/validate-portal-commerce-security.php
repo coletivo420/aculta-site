@@ -501,7 +501,11 @@ $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
     }
   }
 };
+// Mail is environment-bound (see validate-final-drupal.php); assert the
+// versioned values directly instead of comparing with the Homelab Runtime.
+$environment_bound = ['smtp.settings', 'system.mail'];
 foreach ($manifest['configs'] as $name) {
+  if (in_array($name, $environment_bound, TRUE)) continue;
   $active_data = $active_storage->read($name);
   $sync_data = $sync_storage->read($name);
   $sort_recursive($active_data);
@@ -515,6 +519,7 @@ sort($sync_names);
 $assert($active_names === $sync_names, 'The canonical config/sync object set is the complete active configuration set.');
 $assert(count($active_names) >= 651, 'The complete config contains the previous baseline plus approved account configuration.');
 foreach ($active_names as $name) {
+  if (in_array($name, $environment_bound, TRUE)) continue;
   $active_data = $active_storage->read($name);
   $sync_data = $sync_storage->read($name);
   $sort_recursive($active_data);

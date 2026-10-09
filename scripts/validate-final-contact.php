@@ -3,6 +3,12 @@
 use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\WebformSubmissionForm;
 if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) throw new RuntimeException('Local only.');
+// PENDING (exit 2): the contact form is protected by Turnstile, which rejects
+// scripted submissions by design. This test cannot run without an approved
+// test-only CAPTCHA exception. Exit code 2 means pending, not passed.
+// Remove this block only when that exception is decided and documented.
+fwrite(STDERR, "PENDING: contact submission test needs a decided CAPTCHA exception (Turnstile).\n");
+exit(2);
 $transaction = \Drupal::database()->startTransaction();
 $initial = count(\Drupal::state()->get('system.test_mail_collector', []));
 try {
