@@ -1,5 +1,6 @@
+import { siteUrl } from './lib/browser-env.mjs';
 import {writeFile, mkdir} from 'node:fs/promises';
-const html = await (await fetch('http://localhost:8080/')).text();
+const html = await (await fetch(siteUrl('/'))).text();
 const scripts = [...html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map(m => JSON.parse(m[1]));
 const old = scripts.find(s => s['@type'] === 'Organization');
 const graph = scripts.flatMap(s => s['@graph'] ?? []);

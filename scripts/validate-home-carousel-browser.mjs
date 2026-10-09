@@ -1,5 +1,6 @@
+import { devtoolsUrl, siteUrl } from './lib/browser-env.mjs';
 import {writeFile, mkdir} from 'node:fs/promises';
-const targets = await (await fetch('http://localhost:9223/json')).json();
+const targets = await (await fetch(devtoolsUrl('/json'))).json();
 const ws = new WebSocket(targets.find(t => t.type === 'page').webSocketDebuggerUrl);
 await new Promise(r => ws.onopen = r);
 let id = 0; const pending = new Map();
@@ -11,7 +12,7 @@ const report=[]; await call('Page.enable');
 await mkdir('tmp/home-carousel-review',{recursive:true});
 for(const width of [1440,1200,1100,1099,1024,768,480,360]){
  await call('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false});
- await call('Page.navigate',{url:'http://localhost:8080/'}); await sleep(2000);
+ await call('Page.navigate',{url:siteUrl('/')}); await sleep(2000);
  await ev('document.querySelector("vvjb-carousel")?.scrollIntoView({block:"center"})'); await sleep(700);
  const result=await ev(`(()=>{const c=document.querySelector('vvjb-carousel');return {width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,toggle:getComputedStyle(document.querySelector('.aculta-menu-toggle')).display,menuTops:[...document.querySelectorAll('#aculta-primary-menu a')].map(n=>Math.round(n.getBoundingClientRect().top)),menuFont:getComputedStyle(document.querySelector('#aculta-primary-menu a')).fontSize,slides:c?.querySelectorAll('.vvjb-item').length,active:c?.querySelectorAll('.active-slide.vvjb-item').length,initialized:c?._isHydrated,interval:c?._config.slideTime,cardWidth:c?.querySelector('.vvjb-item').offsetWidth,controls:[...c.querySelectorAll('button')].map(n=>n.getAttribute('aria-label')),sectionBarHeight:document.querySelector('.aculta-section-title').offsetHeight,oldBlocks:!!document.querySelector('#block-aculta-home-knowledge,#block-aculta-home-care,#block-aculta-home-research')};})()`);
  report.push(result);
@@ -38,7 +39,7 @@ const menuOpen=await ev('document.querySelector(".aculta-menu-toggle").getAttrib
 await ev('document.querySelector("#aculta-primary-menu").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');await sleep(400);
 const menuClosed=await ev('document.querySelector(".aculta-menu-toggle").getAttribute("aria-expanded")==="false" && document.activeElement.classList.contains("aculta-menu-toggle")');
 await call('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
-await call('Page.navigate',{url:'http://localhost:8080/'});await sleep(1500);
+await call('Page.navigate',{url:siteUrl('/')});await sleep(1500);
 await ev('document.querySelector("vvjb-carousel").scrollIntoView()');await sleep(500);
 const reduced=await ev('({paused:document.querySelector("vvjb-carousel")._isPaused,transition:getComputedStyle(document.querySelector(".vvjb-items")).transitionDuration})');
 await call('Emulation.setEmulatedMedia',{features:[]});

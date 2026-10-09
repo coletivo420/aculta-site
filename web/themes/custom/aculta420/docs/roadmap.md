@@ -12,7 +12,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta, marcada em `0.4.0-dev.6` | marcada no código | Patterns v1; T2 e T3 concluídas; falta fechar T1 (decisões de estruturas internas) |
+| 0.4.0 | linha aberta; PR #113 em `0.4.1` (T2 a T6), pronta para merge | marcada no código | Patterns v1; T2 a T6 concluídas (T5 com reconstrução em ambiente novo DEFERRED); falta fechar T1 |
 
 Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
 `aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.
@@ -54,23 +54,29 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
 - Medição antes/depois: estilo computado idêntico por propriedade em 17 seletores de controle e padrão; 14 capturas de tela idênticas byte a byte (1280 e 390 px, 7 páginas); foco e movimento reduzido do card idênticos.
 - Os seletores compartilhados por `.card` continuam globais em `content.css`, porque ainda não têm consumidor de SDC.
 
-### T4 — Validação automatizada (DT-T08, DT-T09) — schemas concluídos em 0.4.0-dev.2
+### T4 — Validação automatizada (DT-T08, DT-T09) — concluída em 0.4.1
 
-- Validar schemas dos SDCs contra os props e slots usados nos templates.
-- Parametrizar a porta DevTools dos validadores `.mjs` (hoje fixa em 9223).
-- Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts.
+- Schemas dos SDCs validados contra props e slots usados nos templates (`validate-aculta420-sdc-schemas.php`, DT-T08).
+- Validadores `.mjs` sem porta nem origem fixas: leem `ACULTA_DEVTOOLS_PORT` e `ACULTA_SITE_ORIGIN` por `scripts/lib/browser-env.mjs`. Sem as variáveis, o validador para antes de conectar (DT-T09).
+- Gate `validate-browser-validators.php` reprova endpoint literal nos scripts.
+- Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts. Cumprido.
+- Dívida nova: `validate-institution-browser.mjs` espera `/apoie` e `aculta_favicon.ico`, que o runtime atual não serve (DT-T18).
 
-### T5 — Portabilidade do conteúdo (DT-T10, DT-O03)
+### T5 — Portabilidade do conteúdo (DT-T10, DT-O03) — concluída em 0.4.1, reconstrução em ambiente novo DEFERRED
 
-- Versionar a migração de conteúdo das seções, do hero e do cabeçalho de projetos, sem
-  credenciais, em `scripts/migrations/` ou equivalente, com dry-run e documentação.
-- Critério: um ambiente novo reproduz o conteúdo esperado a partir do Git e dos scripts.
+- Conteúdo de seções, missão, cabeçalho de projetos e hero declarado em `scripts/content/institution/home-content.json`, com exportador e loader por UUID, dry-run por padrão (`ACULTA_APPLY=1` para gravar).
+- Gate `validate-institution-content.php`: o JSON cobre todo UUID referenciado pelas colocações da home e do cabeçalho.
+- Dry-run no Runtime atual: 14 entidades sem diferença. Teste negativo: alteração do slogan detectada.
+- DEFERRED: reconstrução completa num ambiente novo. O único snapshot em `estados/` é de 2026-10-04 e não tem os campos de seção nem do hero; a verificação exige importar a configuração num ambiente de teste, o que fica para uma tarefa autorizada.
+- Critério parcial: versionado e verificável; reconstrução em ambiente novo pendente.
 
-### T6 — Dependência do LMS (DT-T11)
+### T6 — Dependência do LMS (DT-T11) — concluída na PR #113 (merge 0.4.1)
 
-- A skin do `lms:course_card` depende de variáveis internas do módulo `lms`. Definir teste de
-  regressão visual e revisar a skin em cada upgrade do LMS.
-- Critério: captura de referência do catálogo e checagem no upgrade.
+- A skin do `lms:course_card` não define nem consome mais as variáveis `--color-*` do módulo. Propriedades com tokens ACULTA, mesmos seletores e cascata.
+- Medição: sem diferença de estilo computado no catálogo (padrão e foco, 1280 e 390 px); capturas idênticas.
+- Gate `validate-lms-skin.php`: fixa a versão do LMS revisada (1.2.3). Upgrade reprova até revisão da skin e da captura de referência.
+- Decisão: cores de status do LMS ficam como fallback do módulo.
+- Critério cumprido para o que é visível a visitante; estados de status pendentes (ver CHANGELOG 0.4.1).
 
 ## Features de produto (depois do saneamento)
 

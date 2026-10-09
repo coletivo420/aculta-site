@@ -48,11 +48,30 @@ Exemplos: `0.2.0`, `0.3.0`, `0.3.1`, `0.4.0-dev.1`, `0.4.0`.
 
 Antes de codar, anotar a versão alvo e a subversão prevista para cada mudança principal.
 
+## Versão sequencial por merge (vigente a partir de 0.4.1)
+
+Duas sequências, com papéis distintos:
+
+- **`-dev.N` nomeia commits.** Enquanto a PR está aberta, cada commit que altera a versão marcada
+  usa `<linha>-dev.N`, com N crescendo a cada commit da PR: `0.4.1-dev.1`, `0.4.1-dev.2`, ...
+- **`0.4.X` nomeia merges.** Cada PR mesclada na `main` recebe a próxima versão da sequência da
+  linha: `0.4.1`, `0.4.2`, `0.4.3` e assim por diante.
+- A versão final (`0.4.X`, sem `-dev`) é marcada por um commit de release feito imediatamente antes
+  do merge. Esse commit é o único que remove o `-dev` e fecha a versão da PR.
+- O número `0.4.X` é conferido contra a `main` antes do release. Se outra PR mesclar antes, a PR
+  seguinte é renumerada para o próximo número livre.
+- A primeira versão sob esta regra é `0.4.1`, porque a última mesclada é `0.4.0-dev.6` (PR #112).
+  Commits anteriores desta PR (`0.4.0-dev.7`, `0.4.0-dev.8`) ficam no histórico como estão.
+- Documentação sem código não avança a versão (ver "Mudanças apenas documentais").
+- A classificação MINOR ou MAJOR continua sendo decisão do responsável e aparece no CHANGELOG;
+  a sequência avança o PATCH dentro da linha.
+- Tag continua sob pedido explícito do responsável.
+
 ## Marcar a versão de uma mudança
 
 Ao validar uma mudança principal (gates de tema e Runtime e, quando couber, HTTP ou navegador):
 
-1. aumentar `-dev.N` (ou abrir a linha seguinte) e atualizar `aculta420.info.yml`;
+1. aplicar a versão sequencial por merge (acima) em `aculta420.info.yml`;
 2. adicionar a entrada no `CHANGELOG.md` com: versão, data, mudança principal, SHA do commit
    na `main` e status de validação (validado ou não validado);
 3. atualizar o status em `docs/roadmap.md`;
@@ -105,5 +124,7 @@ Marcações já feitas, por linha:
 | 0.3.0 | fechamento da linha 0.3 | concluída |
 | 0.3.1 | fase de padrões SDC | versão decidida pelo responsável, exceção à classificação MINOR |
 | 0.4.0-dev.1 | rail de cursos | marcada no código |
+| 0.4.0-dev.6 | logomarca Wiki420 (PR #112) | marcada no código |
+| 0.4.1 | T4, T5 e T6 (PR #113) | primeira versão pela regra sequencial por merge |
 
 Tags criadas antes desta política: ver a nota em `docs/operations/RELEASES.md`.

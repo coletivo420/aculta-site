@@ -1,6 +1,7 @@
+import { devtoolsUrl } from './lib/browser-env.mjs';
 // Stable visual evidence, after fonts, lazy hydration and native transitions settle.
 import {writeFile} from 'node:fs/promises';
-const targets=await(await fetch('http://localhost:9223/json')).json();
+const targets=await(await fetch(devtoolsUrl('/json'))).json();
 const ws=new WebSocket(targets.find(t=>t.type==='page').webSocketDebuggerUrl);await new Promise(r=>ws.onopen=r);
 let id=0;const queue=new Map();ws.onmessage=e=>{const m=JSON.parse(e.data);queue.get(m.id)?.(m.result);queue.delete(m.id);};
 const call=(method,params={})=>new Promise(r=>{queue.set(++id,r);ws.send(JSON.stringify({id,method,params}));});

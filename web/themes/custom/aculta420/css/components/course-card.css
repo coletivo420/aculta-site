@@ -1,23 +1,18 @@
 /* 0.3 course-card: presentation skin for the LMS-owned lms:course_card.
- * The LMS keeps the data, markup and component assets. This file only maps its
- * variables, background, overlay, text shadows and start-link colours to ACULTA
- * semantic tokens. Selectors start at .aculta-main (0,2,0), which outranks the
- * LMS defaults whatever the stylesheet order. An inline background image from
- * the LMS still wins over background-image: none.
+ * The LMS keeps the data, markup and component assets. This file sets the card's
+ * properties directly with ACULTA semantic tokens (DT-T11): it no longer defines the
+ * LMS internal --color-* variables. Selectors start at .aculta-main (0,2,0), which
+ * outranks the LMS defaults whatever the stylesheet order. An inline background image
+ * from the LMS still wins over background-image: none. The LMS status colours (success,
+ * info, warning, error, neutral) are not themed here; they stay the LMS's own fallbacks.
  */
 .aculta-main .lms-course-card {
-  --color-text: var(--aculta-text-primary);
-  --color-primary: var(--aculta-interactive-bg);
-  --color-on-primary: var(--aculta-interactive-text);
-  --color-primary-dark: var(--aculta-interactive-hover-bg);
-  --color-on-primary-hover: var(--aculta-interactive-hover-text);
-  --color-gray-300: var(--aculta-border-default);
-  --border-radius: var(--bs-border-radius);
   min-height: 0;
   background-color: var(--aculta-surface-raised);
   background-image: none;
   border: 1px solid var(--aculta-border-default);
   border-top: 3px solid var(--aculta-interactive-active-bg);
+  border-radius: var(--bs-border-radius);
   transition: border-color var(--aculta-motion-fast) var(--aculta-ease-standard), box-shadow var(--aculta-motion-fast) var(--aculta-ease-standard);
 }
 .aculta-main .lms-course-card:is(:hover, :focus-within) {
@@ -46,12 +41,20 @@
   text-shadow: none;
 }
 .aculta-main .lms-course-card .lms-start-link a {
-  color: var(--color-on-primary);
-  background-color: var(--color-primary);
+  color: var(--aculta-interactive-text);
+  background-color: var(--aculta-interactive-bg);
 }
 .aculta-main .lms-course-card .lms-start-link a:is(:hover, :focus) {
-  color: var(--color-on-primary-hover);
-  background-color: var(--color-primary-dark);
+  color: var(--aculta-interactive-hover-text);
+  background-color: var(--aculta-interactive-hover-bg);
+}
+/* The LMS sets span colours with its own variables; plain spans take the interactive text
+   and the coming-soon state keeps the primary text, as the variables did before. */
+.aculta-main .lms-course-card .lms-action-info span:not([class]) {
+  color: var(--aculta-interactive-text);
+}
+.aculta-main .lms-course-card .lms-action-info .coming-soon {
+  color: var(--aculta-text-primary);
 }
 @media (prefers-reduced-motion: reduce) {
   .aculta-main .lms-course-card,
