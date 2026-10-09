@@ -2,6 +2,17 @@
 
 Este changelog versiona o tema/design system ACULTA420.
 
+## 0.4.0-dev.2 — Saneamento T0, T1 e T4 — 2026-10-09
+
+Classificação: PATCH de qualidade (gate novo e documentação), dentro da linha 0.4.0. Validado: gates de tema e Portal (ver abaixo).
+
+- Novo gate `scripts/validate-aculta420-sdc-schemas.php`: valida metadados e schema de cada `component.yml`, tipos, enums e defaults, e confirma que cada `include('aculta420:…')` passa só variáveis declaradas. Testado com caso negativo (variável inexistente reprovada).
+- Decisão T1: estruturas internas (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, CTAs, notas) permanecem como rich text, registrada em `components.md`.
+- T0: `architecture.md`, `design-system.md` e `development.md` descrevem o estado atual, e não a Foundation ou o planejamento.
+- Registro de dívidas: DT-T01, DT-T03, DT-T08 e DT-T14 atualizados.
+- Gates: SDC schemas PASS (98 checagens); design-foundations PASS; Foundation PASS (309); shell-contract PASS (9); domain-presentation PASS (127); Portal Drupal 11+ PASS (366).
+- Não feito nesta fase: T2 (exige view do carrossel ativa no Runtime), T3 (CSS residual), T5 (scripts de migração ainda dependem de IDs do Runtime) e T6 (regressão após upgrade do LMS).
+
 ## Versionamento por marcação no código (sem tag), 0.4.0-dev.1 — 2026-10-09
 
 - Política: a versão é assinalada no código (`aculta420.info.yml`, este changelog, roadmap e gate). Tags Git não são criadas sem pedido explícito do responsável. `docs/versioning.md`, `AGENTS.md` e `docs/operations/RELEASES.md` atualizados.

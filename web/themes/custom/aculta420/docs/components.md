@@ -77,7 +77,7 @@ Pendências da 0.4:
 - **Cabeçalho de projetos** é um bloco `basic` ("Cabeçalho — Nossos projetos") posicionado por visibilidade de purpose: `aculta_projects_header_home` em `<front>` e `aculta_projects_header_page` em `/projetos`, ambos com `aculta_domain_purpose = main`. A view de projetos não tem mais cabeçalho próprio. Nenhum ramo por purpose existe no tema.
 - **Cabeçalho por domínio** segue a prática do projeto: o Domain Header é único para todos os domínios. Cada seção de subdomínio é um bloco com visibilidade `aculta_domain_purpose`, configurado por placement; o tema apenas apresenta o bloco. Um novo subdomínio recebe seu próprio placement, sem mudança de código.
 - **Carrossel**: o wrapper foi migrado, mas a view da home está desativada no Runtime, então não foi visto em navegador.
-- **Estruturas internas** (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, `aculta-editorial-link`, `aculta-institutional-note`) continuam em rich text dentro do corpo.
+- **Estruturas internas** (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, `aculta-editorial-link`, `aculta-institutional-note`): **decisão registrada (T1): permanecem como rich text no corpo.** São texto editorial sem schema fixo. Virar SDC exigiria um modelo de conteúdo por bloco, o que é decisão de produto e não entra no saneamento. Revisar só se o responsável pedir.
 - **Rail de cursos**: não criado, porque exigiria mudar a view `courses_catalog`.
 
 ## Componentes atuais

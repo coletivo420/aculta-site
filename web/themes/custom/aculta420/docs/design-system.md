@@ -38,10 +38,9 @@ resolve o problema.
 
 ## Foundations
 
-ACULTA420 0.1.0 estabeleceu palette, tipografia, bordas/foco, espaçamento de
-seção e mapping Bootstrap. A 0.2-A adiciona semantic surfaces, text, borders,
-interactive e shell tokens, mantendo as primitivas físicas da paleta em
-`tokens.css`.
+O sistema de tokens tem palette, tipografia, bordas/foco, espaçamento de seção, mapping
+Bootstrap e tokens semânticos de superfícies, texto, bordas, interação e shell. As primitivas
+físicas da paleta permanecem em `tokens.css`.
 
 Inventário CSS da 0.2-A:
 

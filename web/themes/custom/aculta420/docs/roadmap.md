@@ -19,14 +19,16 @@ Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica
 
 ## Saneamento
 
-### T0 — Higiene documental (DT-T01, DT-T02, DT-T14)
+### T0 — Higiene documental (DT-T01, DT-T02, DT-T14) — concluída em 0.4.0-dev.2
 
 - Remover "0.1.0" como versão atual em `README.md` e `docs/README.md` (`docs/features.md` já foi removido),
   `docs/design-system.md` e `docs/development.md`. Manter menção histórica quando for histórica.
 - Descrever o estado atual do shell (0.2.0 em diante), e não a Foundation.
 - Critério: nenhum documento afirma "versão atual 0.1.0"; o gate de documentação passa.
 
-### T1 — Fechar a linha 0.4.0 (DT-T03)
+### T1 — Fechar a linha 0.4.0 (DT-T03) — decisão registrada em 0.4.0-dev.2
+
+Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4.0 fecha quando T2 e T3 forem concluídas.
 
 - Decidir, para cada estrutura interna, entre migrar para SDC ou manter como conteúdo rico:
   `aculta-areas`, `aculta-callout`, `aculta-page-intro`, CTAs (`aculta-editorial-link`) e
@@ -47,7 +49,7 @@ Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica
   ou registrar por que ficam globais.
 - Critério: nenhum seletor de padrão migrado fica sem dono; visual idêntico medido em captura.
 
-### T4 — Validação automatizada (DT-T08, DT-T09)
+### T4 — Validação automatizada (DT-T08, DT-T09) — schemas concluídos em 0.4.0-dev.2
 
 - Validar schemas dos SDCs contra os props e slots usados nos templates.
 - Parametrizar a porta DevTools dos validadores `.mjs` (hoje fixa em 9223).
