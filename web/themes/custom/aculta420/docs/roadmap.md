@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha aberta; PR #113 em `0.4.1` (T2 a T6), pronta para merge | marcada no código | Patterns v1; T2 a T6 concluídas (T5 com reconstrução em ambiente novo DEFERRED); falta fechar T1 |
+| 0.4.2 | PR #114 em `0.4.2-dev.1` (assets Podplant420, sem consumidor de template) | marcada no código | Assets de identidade Podplant420 validados offline; QA visual e runtime DEFERRED |
 
 Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
 `aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.

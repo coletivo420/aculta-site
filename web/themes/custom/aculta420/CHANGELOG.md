@@ -1,11 +1,17 @@
-## Unreleased — Assets visuais Podplant420 — 2026-10-09
+## 0.4.2-dev.1 — Assets visuais Podplant420 (PR #114) — 2026-10-09
 
-- Quatro identidades aprovadas organizadas em `assets/branding/podplant420/`: stacked/horizontal para superfícies claras e escuras.
-- Derivados WebP canônicos com transparência: stacked 128/256/512 px e horizontal 240/480 px; o pacote de handoff preserva também derivados 720/960 e masters raster sem duplicá-los no runtime sem consumidor.
-- Composições horizontais tiveram somente canvas transparente excedente removido, sem deformação, recoloração, filtro CSS ou vetorização automática.
-- Origem, nomenclatura, acessibilidade, responsividade, cache, Media API e regras anti-regressão documentados em `docs/branding-podplant420.md`.
-- Nenhuma mudança em Institution Bar, Domain Header, Domain purpose ou SDC genérico; nenhuma imagem editorial/capa foi inventada ou catalogada no tema.
-- Validação determinística de dimensões, formato, transparência e duplicatas adicionada; QA visual/Drupal runtime continua não declarado sem execução real.
+Classificação: PATCH da linha 0.4.x (assets de identidade, documentação e um validador offline; sem componente, template, Domain ou Institution Bar alterados). Versão de commit da PR; a versão de merge `0.4.2` será marcada no commit de release antes do merge.
+
+- Quatro identidades aprovadas em `assets/branding/podplant420/`: stacked e horizontal, para superfícies claras e escuras. Originais intocados em `source/originais/`; masters em `source/masters/`.
+- Derivados WebP com transparência: stacked 128/256/512 px; horizontal 240/480/720/960 px. Os 720 e 960 px estão no diretório do tema sem consumidor nesta PR.
+- Horizontais: somente o canvas transparente excedente foi removido, com margem de segurança; sem deformação, recoloração, filtro CSS ou vetorização.
+- Inventário com SHA-256, dimensões, transparência e peso em `asset-inventory.json`.
+- Validadores: `scripts/verify-podplant420-assets.py` (22 imagens) e `scripts/validate-podplant420-assets.php` (10 derivados web).
+- Origem, nomenclatura, acessibilidade, responsividade, cache, Media API e anti-regressão em `docs/branding-podplant420.md`.
+- Nenhuma mudança em Institution Bar, Domain Header, Domain purpose ou SDC genérico. Nenhuma imagem editorial ou capa foi criada.
+- Versão marcada em `aculta420.info.yml` e na asserção do gate de Foundation.
+
+Validação: PASS nos dois validadores de assets, `git diff --check` limpo e conferência visual de fundo claro e escuro. **Não validado**: gate de Foundation (exige bootstrap Drupal, não executado neste checkout); QA visual em navegador e runtime Drupal (DEFERRED). SHA do commit na `main`: a preencher no merge.
 
 ## 0.4.1 — T4, T5 e T6: validadores, conteúdo por UUID e skin do LMS sem variáveis internas — 2026-10-09
 

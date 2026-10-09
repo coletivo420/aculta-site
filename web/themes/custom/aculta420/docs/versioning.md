@@ -126,5 +126,6 @@ Marcações já feitas, por linha:
 | 0.4.0-dev.1 | rail de cursos | marcada no código |
 | 0.4.0-dev.6 | logomarca Wiki420 (PR #112) | marcada no código |
 | 0.4.1 | T4, T5 e T6 (PR #113) | primeira versão pela regra sequencial por merge |
+| 0.4.2-dev.1 | assets Podplant420 e validador (PR #114) | marcada no código; merge `0.4.2` pendente |
 
 Tags criadas antes desta política: ver a nota em `docs/operations/RELEASES.md`.
