@@ -590,7 +590,7 @@ foreach ($support_code as $file) {
 $assert($payment_processor_markers === 0, 'Support contains no custom payment transport, capture/refund, token, or API client implementation.');
 $has_webhook_route = FALSE;
 foreach (\Drupal::service('router.route_provider')->getAllRoutes() as $route_name => $route_definition) {
-  if (str_contains((string) $route_name, 'webhook') && str_starts_with($route_definition->getPath(), '/apoio')) {
+  if (str_starts_with((string) $route_name, 'aculta_portal.') && str_contains((string) $route_name, 'webhook')) {
     $has_webhook_route = TRUE;
   }
 }

@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
@@ -152,6 +153,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
     $request = $event->getRequest();
     $routeName = (string) $request->attributes->get('_route');
+    // The support form is routed at /apoio but is the public home of the SUPPORT
+    // subdomain: it is served only when the original request path is /.
+    if ($routeName === 'aculta_portal.support_form' && $request->getPathInfo() !== '/') {
+      throw new NotFoundHttpException();
+    }
     if (in_array($routeName, ['user.login', 'social_auth.network.redirect'], TRUE)
       && !$this->currentUser->isAuthenticated()
       && $request->hasSession()) {
