@@ -4,14 +4,35 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\views\Views;
+use Drupal\views\ViewExecutableFactory;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 
 /** Public landing page and bounded title/summary/body search for the Wiki. */
 final class WikiController extends ControllerBase {
+
+  public function __construct(
+    #[Autowire(service: 'entity_type.manager')]
+    private readonly EntityTypeManagerInterface $entities,
+    #[Autowire(service: 'views.executable')]
+    private readonly ViewExecutableFactory $viewExecutableFactory,
+    #[Autowire(service: 'aculta_portal.domain_purpose')]
+    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'database')]
+    private readonly Connection $database,
+    #[Autowire(service: 'date.formatter')]
+    private readonly DateFormatterInterface $dateFormatter,
+    #[Autowire(service: 'current_user')]
+    private readonly AccountInterface $account,
+  ) {}
 
   /** Builds the Wiki home from the editorial Views. */
   public function home(): array {
@@ -52,7 +73,7 @@ final class WikiController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Quer colaborar? Proponha um verbete.'),
         '#url' => Url::fromRoute('node.add', ['node_type' => 'wiki_entry']),
-        '#access' => $this->currentUser()->hasPermission('create wiki_entry content'),
+        '#access' => $this->account->hasPermission('create wiki_entry content'),
       ],
       'categories_title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Categorias da Wiki420')],
       'categories' => $this->viewBlock('wiki_categories', 'block_1'),
@@ -85,13 +106,16 @@ final class WikiController extends ControllerBase {
       return $build;
     }
     $term = mb_substr($term, 0, 100);
-    $wikiDomain = \Drupal::service('aculta_portal.domain_purpose')->getDomain('wiki');
+    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
     if (!$wikiDomain) {
       $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.')];
       return $build;
     }
-    $pattern = '%' . \Drupal::database()->escapeLike($term) . '%';
-    $query = \Drupal::entityQuery('node')
+    $pattern = '%' . $this->database->escapeLike($term) . '%';
+    // Public search: node access applies to the listing, and each result is
+    // still checked individually before rendering.
+    $nodeStorage = $this->entities->getStorage('node');
+    $query = $nodeStorage->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'wiki_entry')
       ->condition('field_domain_source.target_id', $wikiDomain->id())
@@ -103,14 +127,20 @@ final class WikiController extends ControllerBase {
       ->condition('field_wiki_summary.value', $pattern, 'LIKE')
       ->condition('body.value', $pattern, 'LIKE');
     $ids = $query->condition($matches)->execute();
-    $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple($ids);
-    $build['count'] = ['#type' => 'item', '#plain_text' => $this->formatPlural(count($nodes), '1 verbete encontrado.', '@count verbetes encontrados.')];
-    foreach ($nodes as $node) {
+    $viewBuilder = $this->entities->getViewBuilder('node');
+    $results = [];
+    foreach ($nodeStorage->loadMultiple($ids) as $node) {
       if ($node->access('view')) {
-        $build['results'][$node->id()] = $this->entityTypeManager()->getViewBuilder('node')->view($node, 'teaser');
+        $results[$node->id()] = $viewBuilder->view($node, 'teaser');
       }
     }
-    if (!$nodes) {
+    // pt-BR plural rules use the singular form for 0, so the count is only
+    // shown when there is at least one visible result.
+    if ($results) {
+      $build['count'] = ['#type' => 'item', '#plain_text' => $this->formatPlural(count($results), '1 verbete encontrado.', '@count verbetes encontrados.')];
+      $build['results'] = $results;
+    }
+    else {
       $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.')];
     }
     return $build;
@@ -126,11 +156,13 @@ final class WikiController extends ControllerBase {
         'tags' => ['node_list:wiki_entry'],
       ],
     ];
-    $wikiDomain = \Drupal::service('aculta_portal.domain_purpose')->getDomain('wiki');
+    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
     if (!$wikiDomain) {
       return $build;
     }
-    $ids = \Drupal::entityQuery('node')
+    // Public listing: node access applies; each row is re-checked below.
+    $nodeStorage = $this->entities->getStorage('node');
+    $ids = $nodeStorage->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', 'wiki_entry')
       ->condition('field_domain_source.target_id', $wikiDomain->id())
@@ -138,9 +170,8 @@ final class WikiController extends ControllerBase {
       ->sort('changed', 'DESC')
       ->range(0, 5)
       ->execute();
-    $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple($ids);
+    $nodes = $nodeStorage->loadMultiple($ids);
     $cacheability = CacheableMetadata::createFromRenderArray($build);
-    $dateFormatter = \Drupal::service('date.formatter');
     foreach ($nodes as $node) {
       if (!$node->access('view')) {
         continue;
@@ -157,7 +188,7 @@ final class WikiController extends ControllerBase {
         'updated' => [
           '#type' => 'html_tag',
           '#tag' => 'time',
-          '#value' => $dateFormatter->format($changed, 'medium'),
+          '#value' => $this->dateFormatter->format($changed, 'medium'),
           '#attributes' => ['datetime' => gmdate(DATE_ATOM, $changed)],
         ],
       ];
@@ -173,10 +204,16 @@ final class WikiController extends ControllerBase {
     return $build;
   }
 
-  /** Embeds one permission-checked Wiki View block. */
+  /**
+   * Embeds one Wiki View display; the Views element enforces display access.
+   *
+   * Uses the injected executable factory instead of the static Views locator
+   * and keeps buildRenderable() so '#embed', cache keys and properties match.
+   */
   private function viewBlock(string $viewId, string $displayId): array {
-    $view = Views::getView($viewId);
-    return $view ? $view->buildRenderable($displayId) : ['#markup' => ''];
+    $config = $this->entities->getStorage('view')->load($viewId);
+    $view = $config ? $this->viewExecutableFactory->get($config) : NULL;
+    return $view?->buildRenderable($displayId) ?? ['#markup' => ''];
   }
 
 }

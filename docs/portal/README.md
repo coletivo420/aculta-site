@@ -7,11 +7,13 @@ Ele não substitui as fontes de verdade desses subsistemas.
 
 ## Ler primeiro
 
+- [Padrão Drupal 11+](DRUPAL-11-STANDARDS.md) — normativo para humanos e agentes de IA
 - [Arquitetura](ARCHITECTURE.md)
 - [Fontes de verdade](SOURCE-OF-TRUTH.md)
 - [Camadas anti-regressão](../ANTI-REGRESSION.md)
 - [Módulos Drupal](../modules/README.md)
-- [Roadmap atual](ROADMAP.md)
+- [Modernização Drupal 11+ Aculta Portal — roadmap P0–P10 e P5.x](ROADMAP.md)
+- [Passagem para o próximo agente](MODERNIZACAO-DRUPAL-11-HANDOFF.md)
 
 ## Conta
 
@@ -53,6 +55,10 @@ Ele não substitui as fontes de verdade desses subsistemas.
 - [Autenticação](../integrations/AUTHENTICATION.md)
 - [CAPTCHA / Turnstile](../integrations/CAPTCHA.md)
 - [Google](../integrations/GOOGLE.md)
+
+## Padrão de implementação
+
+Toda alteração em `aculta_portal` deve seguir [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) e executar o gate progressivo `php scripts/validate-aculta-portal-drupal11.php`. A dívida explicitamente registrada pelo gate é temporária: fases posteriores devem reduzi-la, nunca ampliá-la.
 
 ## Regra principal
 

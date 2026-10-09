@@ -2,12 +2,15 @@ services:
   aculta_portal.auth_integration:
     class: Drupal\aculta_portal\Auth\AuthIntegrationManager
     arguments: ['@config.factory']
+  aculta_portal.form_callbacks:
+    class: Drupal\aculta_portal\Form\PortalFormCallbacks
+    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation']
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
-    arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose']
+    arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose', '@group.membership_loader']
   aculta_portal.presentation.account_course:
     class: Drupal\aculta_portal\Presentation\AccountCoursePresenter
     arguments: ['@aculta_portal.account_courses', '@string_translation']
@@ -34,7 +37,7 @@ services:
     class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
     arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_purpose_resolver']
     tags:
-      - { name: kernel.event_subscriber }
+      - { name: event_subscriber }
   # CEP Autocomplete 1.0.0 references this Drupal logger channel but does
   # not define it. Supply the standard Core logger channel without changing
   # contributed code.
@@ -51,24 +54,24 @@ services:
     class: Drupal\aculta_portal\Commerce\MercadoPago\WebhookEventSubscriber
     arguments: ['@entity_type.manager', '@key.repository', '@aculta_portal.mercado_pago_webhook_guard']
     tags:
-      - { name: kernel.event_subscriber }
+      - { name: event_subscriber }
   aculta_portal.account_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber
     arguments: ['@current_user', '@aculta_portal.domain_purpose']
     tags:
-      - { name: kernel.event_subscriber }
+      - { name: event_subscriber }
   aculta_portal.cep_lookup_rate_limit_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\CepLookupRateLimitSubscriber
     arguments: ['@flood']
     tags:
-      - { name: kernel.event_subscriber }
+      - { name: event_subscriber }
   aculta_portal.social_auth_user_created_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\SocialAuthUserCreatedSubscriber
     arguments: ['@user.data']
     tags:
-      - { name: kernel.event_subscriber }
+      - { name: event_subscriber }
   aculta_portal.social_auth_profile_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\SocialAuthProfileSubscriber
     arguments: ['@entity_type.manager']
     tags:
-      - { name: kernel.event_subscriber }
+      - { name: event_subscriber }

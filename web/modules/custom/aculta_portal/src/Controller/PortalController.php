@@ -1,15 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\change_mail_page\Form\ChangeMailForm;
+use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\email_confirmer\EmailConfirmerManagerInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,10 +34,16 @@ final class PortalController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
     private readonly FormBuilderInterface $accountFormBuilder,
-    private readonly \Drupal\aculta_portal\AccountCoursesManager $accountCourses,
+    private readonly AccountCoursesManager $accountCourses,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly UserDataInterface $userData,
     private readonly AuthIntegrationManager $authIntegrationManager,
+    private readonly BlockManagerInterface $blockManager,
+    private readonly EmailConfirmerManagerInterface $emailConfirmer,
+    private readonly RouteMatchInterface $routeMatch,
+    private readonly AccountInterface $account,
+    private readonly ModuleHandlerInterface $modules,
+    private readonly ConfigFactoryInterface $configs,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -39,6 +55,12 @@ final class PortalController extends ControllerBase {
       $container->get('aculta_portal.domain_purpose'),
       $container->get('user.data'),
       $container->get('aculta_portal.auth_integration'),
+      $container->get('plugin.manager.block'),
+      $container->get('email_confirmer'),
+      $container->get('current_route_match'),
+      $container->get('current_user'),
+      $container->get('module_handler'),
+      $container->get('config.factory'),
     );
   }
 
@@ -53,7 +75,7 @@ final class PortalController extends ControllerBase {
   }
 
   public function dashboard(): array {
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $account = $this->entities->getStorage('user')->load($this->account->id());
     $profile = $this->loadParticipantProfile($account);
     $nickname = $profile && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty() ? $profile->get('field_nickname')->value : '';
     $first_name = $profile && !$profile->get('field_first_name')->isEmpty() ? $profile->get('field_first_name')->value : '';
@@ -97,7 +119,7 @@ final class PortalController extends ControllerBase {
   }
 
   /** Builds a compact learning summary for the account overview. */
-  private function buildCoursesSummary(\Drupal\Core\Session\AccountInterface $account): array {
+  private function buildCoursesSummary(AccountInterface $account): array {
     $count = $this->accountCourses->countCourses($account);
     $build = [
       '#type' => 'container',
@@ -138,10 +160,10 @@ final class PortalController extends ControllerBase {
   }
 
   public function connections(): array {
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $account = $this->entities->getStorage('user')->load($this->account->id());
     $google_ready = $this->authIntegrationManager->isGoogleConfigured();
     $links = [];
-    if ($this->moduleHandler()->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
+    if ($this->modules->moduleExists('social_auth') && $this->entities->hasDefinition('social_auth')) {
       $links = $this->entities->getStorage('social_auth')->loadByProperties([
         'user_id' => $account->id(),
         'plugin_id' => self::GOOGLE_SOCIAL_AUTH_PLUGIN_ID,
@@ -190,7 +212,7 @@ final class PortalController extends ControllerBase {
       $items['google_login'] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-auth-provider']],
-        'provider' => \Drupal::service('plugin.manager.block')
+        'provider' => $this->blockManager
           ->createInstance('social_auth_login', [])
           ->build(),
       ];
@@ -203,7 +225,7 @@ final class PortalController extends ControllerBase {
   }
 
   public function security(): array {
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $account = $this->entities->getStorage('user')->load($this->account->id());
     $email_ready = $this->transactionalMailReady();
     $content = [
       'intro' => ['#plain_text' => $this->t('Gerencie como você acessa sua conta.')],
@@ -223,8 +245,8 @@ final class PortalController extends ControllerBase {
       '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
     ];
 
-    if ($email_ready && $this->moduleHandler()->moduleExists('email_confirmer_user') && $this->moduleHandler()->moduleExists('change_mail_page')) {
-      $content['email_section']['change_form'] = $this->accountFormBuilder->getForm(\Drupal\change_mail_page\Form\ChangeMailForm::class, $account);
+    if ($email_ready && $this->modules->moduleExists('email_confirmer_user') && $this->modules->moduleExists('change_mail_page')) {
+      $content['email_section']['change_form'] = $this->accountFormBuilder->getForm(ChangeMailForm::class, $account);
       $pending_email = $this->pendingEmail($account->id());
       if ($pending_email !== NULL) {
         $content['email_section']['pending'] = [
@@ -261,10 +283,10 @@ final class PortalController extends ControllerBase {
   }
 
   private function transactionalMailReady(): bool {
-    $smtp = $this->config('smtp.settings');
-    $mail_system = $this->config('system.mail')->get('interface.default');
-    $site_mail = trim((string) $this->config('system.site')->get('mail'));
-    return $this->moduleHandler()->moduleExists('smtp')
+    $smtp = $this->configs->get('smtp.settings');
+    $mail_system = $this->configs->get('system.mail')->get('interface.default');
+    $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));
+    return $this->modules->moduleExists('smtp')
       && $mail_system === 'SMTPMailSystem'
       && (bool) $smtp->get('smtp_on')
       && trim((string) $smtp->get('smtp_host')) !== ''
@@ -274,14 +296,14 @@ final class PortalController extends ControllerBase {
   }
 
   private function pendingEmail(int|string $uid): ?string {
-    if (!$this->moduleHandler()->moduleExists('email_confirmer_user')) {
+    if (!$this->modules->moduleExists('email_confirmer_user')) {
       return NULL;
     }
     $pending = $this->userData->get('email_confirmer_user', $uid, 'email_change_new_address');
     if (!is_string($pending) || $pending === '') {
       return NULL;
     }
-    $confirmations = \Drupal::service('email_confirmer')->getConfirmations($pending, 'pending', 0, 'email_confirmer_user');
+    $confirmations = $this->emailConfirmer->getConfirmations($pending, 'pending', 0, 'email_confirmer_user');
     foreach ($confirmations as $confirmation) {
       if ((int) $confirmation->get('uid')->target_id === (int) $uid) {
         return $pending;
@@ -291,7 +313,7 @@ final class PortalController extends ControllerBase {
   }
 
   private function buildDataSection(string $section): array {
-    $account = $this->entities->getStorage('user')->load($this->currentUser()->id());
+    $account = $this->entities->getStorage('user')->load($this->account->id());
     $profile = $section === 'address'
       ? $this->loadCommerceAddressProfile($account)
       : $this->loadParticipantProfile($account);
@@ -337,7 +359,7 @@ final class PortalController extends ControllerBase {
     ];
   }
 
-  private function loadParticipantProfile($account) {
+  private function loadParticipantProfile(UserInterface $account) {
     $profiles = $this->entities->getStorage('profile')->loadByUser($account, 'participante');
     return $profiles ?: $this->entities->getStorage('profile')->create([
       'type' => 'participante',
@@ -353,7 +375,7 @@ final class PortalController extends ControllerBase {
    * An unsaved Profile entity lets the standard Commerce Address field form
    * create the customer profile through normal Form API submission.
    */
-  private function loadCommerceAddressProfile($account) {
+  private function loadCommerceAddressProfile(UserInterface $account) {
     $storage = $this->entities->getStorage('profile');
     $existing = $storage->loadByUser($account, 'customer');
     if (!$existing) {
@@ -376,8 +398,8 @@ final class PortalController extends ControllerBase {
    * during form construction, then remove Social Auth's separate account
    * management section because the Portal has a dedicated Connections page.
    */
-  private function buildPortalAccountForm($account): array {
-    $parameters = \Drupal::routeMatch()->getParameters();
+  private function buildPortalAccountForm(UserInterface $account): array {
+    $parameters = $this->routeMatch->getParameters();
     $had_user_parameter = $parameters->has('user');
     $previous_user_parameter = $parameters->get('user');
     $parameters->set('user', $account);

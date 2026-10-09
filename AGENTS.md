@@ -54,6 +54,40 @@ Configuração exportável do Drupal:
 
 config/sync/
 
+## P5-extra-2 — economia de tokens e roteamento de agentes
+
+Para pesquisa, inventário e tarefas básicas verificáveis, usar preferencialmente o modelo mais econômico disponível; para DI/Views/Entity API, escalar conforme risco; para revisão formal, autenticação, segurança, acesso/cache privado, Domain, Commerce, segredos e merge, reservar modelo de maior capacidade. A seleção é manual: o utilitário não muda o modelo por conta própria.
+
+Consultar `docs/portal/AGENT-TOKEN-ECONOMY.md`. Usar `python3 scripts/portal-agent-budget.py route research` para recomendação de tier e `python3 scripts/portal-agent-budget.py context P5.2-A 3000` para contexto curto. Economizar tokens lendo arquivos e linhas relevantes, evitando dumps/roadmaps repetidos e mantendo relatório conciso; nunca dispensar revisão, documentação, gates ou evidências.
+
+## Padrão Drupal 11+ do ACULTA Portal
+
+O módulo `web/modules/custom/aculta_portal` adota **Drupal Core 11.3+ como baseline arquitetural**.
+
+Este padrão é obrigatório para:
+- desenvolvedores humanos;
+- Codex;
+- ChatGPT e outros agentes;
+- demais ferramentas de IA que produzam ou revisem código neste repositório.
+
+O projeto em andamento é **Modernização Drupal 11+ Aculta Portal**. Antes de retomar PR #90, ler `docs/portal/ROADMAP.md` e `docs/portal/MODERNIZACAO-DRUPAL-11-HANDOFF.md`. Próxima fase: P5.2-A. Não antecipar P6.
+
+A referência normativa é `docs/portal/DRUPAL-11-STANDARDS.md`. Antes de alterar o Portal, leia esse documento e preserve as fronteiras Core/contrib → `aculta_portal` → contrato neutro → ACULTA420.
+
+Regras resumidas:
+- Core/contrib continuam fonte de verdade; não criar storage paralelo quando a capacidade já existir;
+- preferir dependency injection em classes; não introduzir novos service locators `\Drupal::...` em `src/`;
+- hooks runtime novos/refatorados usam OOP `#[Hook]` quando suportado pelo Core instalado; lifecycle permanece procedural quando exigido;
+- tratar como deprecada no projeto qualquer prática runtime legada contrária ao padrão moderno Drupal 11+ (por exemplo `#[FormAlter]`, hook procedural migrável, novo callback global ou novo service locator), mesmo quando ainda tolerada por compatibilidade; exceções precisam de evidência da API upstream;
+- EntityQuery declara `accessCheck(TRUE|FALSE)` conscientemente;
+- Form API em Drupal 11.3+ prefere callbacks resolvidos pelo `CallableResolver` e serviços DI;
+- subscribers usam `EventSubscriberInterface` e o tag `event_subscriber`; prioridades funcionais não mudam por estética;
+- Render API, access e cacheability fazem parte do contrato funcional;
+- nenhuma mudança é chamada de “Drupal 12/13 ready” sem verificar Core, change records e módulos contrib;
+- execute `php scripts/validate-aculta-portal-drupal11.php` em mudanças do Portal e elimine, não expanda, a dívida técnica registrada pelo gate.
+
+A documentação deve registrar o motivo arquitetural das regras, não apenas sua forma.
+
 ## Servidor web
 
 Apache é o baseline definitivo do ACULTA no Homelab e em produção.
@@ -308,9 +342,9 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 - Por decisão explícita do projeto, Estados integrais podem ser versionados neste repositório público. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
 - Produção continua usando MariaDB. Nunca implantar `estados/*.sqlite` nem apontar produção para o Runtime.
 - Não editar um Estado imutável. Mudanças operacionais depois do restore pertencem somente ao Runtime.
-- Código custom deve usar APIs Drupal e permanecer compatível com SQLite e MariaDB. SQL específico exige justificativa.
+- Código custom deve utilizar APIs Drupal para acesso a dados. A portabilidade/migração entre SQLite e MariaDB não é responsabilidade de `aculta_portal`; pertence ao projeto independente **DBTNG-2**.
 - `web/sites/default/settings.local.php` e configurações locais permanecem fora do Git. Credenciais MariaDB de produção nunca entram em settings versionados.
-- Existe intenção futura de migrar o Runtime do Homelab para MariaDB quando o BDTGN estiver maduro para a integração. Até essa decisão ser executada, SQLite continua sendo a fonte operacional do Homelab e os Estados continuam snapshots SQLite.
+- Alterações futuras de mecanismo de banco e procedimentos de migração devem ser acompanhados exclusivamente no projeto **DBTNG-2**; não fazem parte das fases de modernização do Portal.
 
 ## Integrações Google e serviços externos
 

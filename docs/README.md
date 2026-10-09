@@ -18,6 +18,7 @@ Snapshots de PR/fase, SHAs e logs pertencem ao Git/GitHub.
 | módulos Drupal | [modules/README.md](modules/README.md) |
 | integrações | [integrations/README.md](integrations/README.md) |
 | ACULTA Portal | [portal/README.md](portal/README.md) |
+| padrão Drupal 11+ do Portal | [portal/DRUPAL-11-STANDARDS.md](portal/DRUPAL-11-STANDARDS.md) |
 | roadmap do Portal | [portal/ROADMAP.md](portal/ROADMAP.md) |
 | operação/testes/releases | [operations/README.md](operations/README.md) |
 | deployment | [operations/DEPLOYMENT.md](operations/DEPLOYMENT.md) |

@@ -7,7 +7,7 @@ namespace Drupal\aculta_portal;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\group\Entity\GroupMembership;
+use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\lms\Entity\Bundle\Course;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\TrainingManager;
@@ -23,6 +23,7 @@ final class AccountCoursesManager {
   public function __construct(
     private readonly TrainingManager $trainingManager,
     private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly GroupMembershipLoaderInterface $membershipLoader,
   ) {}
 
   /**
@@ -39,7 +40,7 @@ final class AccountCoursesManager {
   public function getCourses(AccountInterface $account): array {
     $items = [];
 
-    foreach (GroupMembership::loadByUser($account) as $membership) {
+    foreach ($this->membershipLoader->loadByUser($account) as $membership) {
       $group = $membership->getGroup();
       if (!$group instanceof Course || $group->bundle() !== 'lms_course') {
         continue;

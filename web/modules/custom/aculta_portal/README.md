@@ -37,11 +37,16 @@ fontes de verdade.
 
 - trabalhar com Domain purpose, não hostname hardcoded;
 - preferir DI, Entity API, Views e serviços públicos;
+- hooks runtime novos/refatorados usam classes em `src/Hook/` com `#[Hook]` quando suportado pelo Core;
+- guards de lifecycle runtime, como `entity_presave`, também usam Hook classes quando o Core suporta OOP; lifecycle de install/update permanece procedural somente quando exigido;
+- no Portal, práticas runtime legadas contrárias ao padrão Drupal 11+ são dívida/depreciação do projeto; `#[FormAlter]`, novos hooks procedurais migráveis e novos service locators não são aceitos;
+- callbacks Form API novos/refatorados usam serviços serializáveis no formato `service.id:method`; `aculta_portal.form_callbacks` concentra callbacks migrados progressivamente;
 - em controllers novos/refatorados, dependências de runtime entram por DI explícita; não depender de helpers de `ControllerBase` que resolvam serviços de forma lazy;
 - `ContainerInjectionInterface::create()` pode montar as dependências do controller, mas a lógica funcional não consulta o container;
 - não consultar tabelas contrib diretamente quando houver API;
 - não criar storage paralelo;
 - respeitar entity access antes de expor metadata;
+- decisões de entity access condicionadas por Domain/rota/usuário/request carregam cacheability explícita; tokens one-time de request/session não recebem cache persistente;
 - dados privados variam por usuário e não usam cache compartilhado;
 - segredos ficam fora de Configuration Sync e Git;
 - AJAX usa preferencialmente APIs Drupal;
@@ -53,10 +58,17 @@ fontes de verdade.
 
 ## Documentação normativa
 
-Consultar [docs/portal](../../../../docs/portal/README.md).
+O padrão obrigatório para código humano e gerado/revisado por IA é [Padrão Drupal 11+](../../../../docs/portal/DRUPAL-11-STANDARDS.md).
 
-O roadmap e decisões de arquitetura vivem lá. Este README serve como entrada
-rápida para quem está no diretório do módulo.
+Execute o gate progressivo antes de concluir alterações estruturais:
+
+```sh
+php scripts/validate-aculta-portal-drupal11.php
+```
+
+Consultar também [docs/portal](../../../../docs/portal/README.md), [Modernização Drupal 11+ Aculta Portal](../../../../docs/portal/ROADMAP.md) e [passagem para agentes](../../../../docs/portal/MODERNIZACAO-DRUPAL-11-HANDOFF.md).
+
+O roadmap e decisões de arquitetura vivem lá. Desde a P4, os hooks runtime migráveis estão em `src/Hook/` e o módulo não mantém mais um `aculta_portal.module` vazio. Este README serve como entrada rápida para quem está no diretório do módulo.
 
 ## Changelog
 

@@ -1,16 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\aculta_portal\Controller;
 
+use Composer\InstalledVersions;
 use Composer\Semver\Semver;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Administrative status report for the Portal's runtime integrations. */
 final class PortalRequirementsController extends ControllerBase {
 
   /** @var array<string, string>|null */
   private ?array $composerRequirements = NULL;
+
+  public function __construct(
+    #[Autowire(service: 'theme_handler')]
+    private readonly ThemeHandlerInterface $themes,
+    #[Autowire(service: 'module_handler')]
+    private readonly ModuleHandlerInterface $modules,
+    #[Autowire(service: 'config.factory')]
+    private readonly ConfigFactoryInterface $configs,
+    #[Autowire(service: 'current_user')]
+    private readonly AccountInterface $account,
+    #[Autowire(param: 'app.root')]
+    private readonly string $appRoot,
+  ) {}
 
   /**
    * The Composer-backed modules integrated by the Portal.
@@ -173,7 +194,7 @@ final class PortalRequirementsController extends ControllerBase {
       ['aculta_portal.support_settings', $this->t('Configurações do Apoio'), $this->t('Edite o texto institucional exibido na página pública Apoie.')],
     ] as [$route, $title, $description]) {
       $url = Url::fromRoute($route);
-      if (!$url->access($this->currentUser())) {
+      if (!$url->access($this->account)) {
         continue;
       }
       $rows[] = [
@@ -248,7 +269,7 @@ final class PortalRequirementsController extends ControllerBase {
   private function buildModuleRow(array $requirement): array {
     $missing = [];
     foreach ($requirement['modules'] as $module) {
-      if (!$this->moduleHandler()->moduleExists($module)) {
+      if (!$this->modules->moduleExists($module)) {
         $missing[] = $module;
       }
     }
@@ -292,7 +313,7 @@ final class PortalRequirementsController extends ControllerBase {
 
   /** Builds the enabled public theme row. */
   private function buildBaseThemeRow(): array {
-    $exists = \Drupal::service('theme_handler')->themeExists('bootstrap5');
+    $exists = $this->themes->themeExists('bootstrap5');
     $version = $this->packageVersion('drupal/bootstrap5');
     $minimum = $this->minimumConstraint('drupal/bootstrap5', '4.0.8');
     $compatible = $version !== NULL && $this->versionSatisfies($version, $minimum);
@@ -311,8 +332,8 @@ final class PortalRequirementsController extends ControllerBase {
 
   /** Builds the enabled public theme row. */
   private function buildThemeRow(): array {
-    $theme_exists = \Drupal::service('theme_handler')->themeExists('aculta420');
-    $default_theme = $this->config('system.theme')->get('default');
+    $theme_exists = $this->themes->themeExists('aculta420');
+    $default_theme = $this->configs->get('system.theme')->get('default');
     $enabled = $theme_exists && $default_theme === 'aculta420';
     $status = $enabled ? 'ok' : 'error';
     return [
@@ -329,17 +350,17 @@ final class PortalRequirementsController extends ControllerBase {
 
   /** Returns an installed Composer package version when available. */
   private function packageVersion(string $package): ?string {
-    if (!class_exists(\Composer\InstalledVersions::class) || !\Composer\InstalledVersions::isInstalled($package)) {
+    if (!class_exists(InstalledVersions::class) || !InstalledVersions::isInstalled($package)) {
       return NULL;
     }
-    return \Composer\InstalledVersions::getPrettyVersion($package)
-      ?: \Composer\InstalledVersions::getVersion($package);
+    return InstalledVersions::getPrettyVersion($package)
+      ?: InstalledVersions::getVersion($package);
   }
 
   /** Reads the actual project requirement, falling back to the audited map. */
   private function minimumConstraint(string $package, string $fallback): string {
     if ($this->composerRequirements === NULL) {
-      $file = dirname(\Drupal::root()) . '/composer.json';
+      $file = dirname($this->appRoot) . '/composer.json';
       $decoded = is_readable($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
       $this->composerRequirements = is_array($decoded['require'] ?? NULL) ? $decoded['require'] : [];
     }

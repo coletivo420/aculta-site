@@ -54,7 +54,7 @@ $assert(\Drupal::config('system.logging')->get('error_level') === 'verbose' && s
 $route_subscriber_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/EventSubscriber/AccountRouteSubscriber.php');
 $assert(str_contains($route_subscriber_source, "get('_raw_variables')") && str_contains($route_subscriber_source, 'isValidCorePasswordResetRequest'), 'Account route guard can identify raw user IDs before parameter conversion and delegates password-reset exception to a Core token check.');
 $assert(str_contains($route_subscriber_source, "get('pass-reset-token')") && str_contains($route_subscriber_source, "get('pass_reset_" ) && str_contains($route_subscriber_source, 'hash_equals'), 'The account edit exception requires Drupal Core\'s session-bound one-time token.');
-$assert(str_contains(file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/aculta_portal.module'), "getRouteName() === 'entity.user.edit_form'") && str_contains(file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/aculta_portal.module'), "->hasPermission('administer users')"), 'Core entity access also prevents regular users from reaching the generic account edit form.');
+$assert(str_contains(file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/EntityHooks.php'), "getRouteName() === 'entity.user.edit_form'") && str_contains(file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/EntityHooks.php'), "->hasPermission('administer users')"), 'Core entity access also prevents regular users from reaching the generic account edit form.');
 $portal_hooks = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
 $assert(str_contains($portal_hooks, "^/user/([1-9][0-9]*)/edit$") && str_contains($portal_hooks, "aculta_account_edit_blocked") && str_contains($portal_hooks, "aculta_portal.security"), 'A blocked own generic account edit page offers a direct Portal Security link.');
 $portal_hooks_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Hook/PortalHooks.php');
@@ -147,7 +147,9 @@ foreach (['aculta_apoio.client', 'aculta_apoio.credentials', 'aculta_apoio.manag
 }
 
 $anonymous = \Drupal\user\Entity\User::create(['name' => 'access-audit-anonymous']);
-$authenticated = \Drupal\user\Entity\User::create(['name' => 'access-audit-user', 'roles' => ['authenticated']]);
+// Unsaved fixture with a synthetic uid: real sessions are logged in only when
+// uid > 0, which routes using _user_is_logged_in require.
+$authenticated = \Drupal\user\Entity\User::create(['uid' => 999990, 'name' => 'access-audit-user', 'roles' => ['authenticated']]);
 $administrator = \Drupal\user\Entity\User::create(['uid' => 1, 'name' => 'access-audit-administrator', 'roles' => ['administrator']]);
 $access = \Drupal::service('access_manager');
 $route_expectations = [
@@ -269,7 +271,13 @@ $assert((bool) \Drupal::entityTypeManager()->getStorage('crop_type')->load('acul
 $assert((bool) \Drupal::entityTypeManager()->getStorage('image_style')->load('aculta_avatar'), 'Institutional avatar image style exists.');
 
 $registration = \Drupal::config('user.settings');
-$assert($registration->get('register') === 'admin_only', 'Public registration remains closed until mail delivery is proven.');
+// Public registration is open by decision: visitors create accounts without
+// administrative approval, and every account must confirm its e-mail
+// (verify_mail). Closed registration (admin_only) is also accepted.
+$register_mode = $registration->get('register');
+$assert(in_array($register_mode, ['admin_only', 'visitors'], TRUE), 'Public registration mode is one of the reviewed values.');
+$assert($register_mode === 'admin_only' || $registration->get('verify_mail') === TRUE, 'Public registration requires e-mail verification (verify_mail).');
+$assert($registration->get('notify.register_no_approval_required') === TRUE, 'Registration needs no administrative approval (decision: e-mail verification only).');
 $assert($registration->get('verify_mail') === TRUE, 'Registration email verification remains enabled.');
 $assert(\Drupal::config('smtp.settings')->get('smtp_on') === FALSE, 'SMTP2GO delivery is not claimed functional without credentials.');
 $assert(\Drupal::config('smtp.settings')->get('smtp_password') === '', 'SMTP password is absent from active ordinary configuration.');
@@ -400,7 +408,7 @@ foreach ([['single', 'custom_amount', ''], ['single', 'custom_amount', '0'], ['s
   $state->setValue(['commerce_donation_pane', 'field_gift_type'], [['value' => $gift_type]]);
   $state->setValue(['commerce_donation_pane', 'field_donation_amount'], [['donation_level' => ['value' => $choice, 'amount' => $amount]]]);
   $form = [];
-  aculta_portal_validate_donation_amount($form, $state);
+  \Drupal::service('aculta_portal.form_callbacks')->validateDonationAmount($form, $state);
   $assert($state->hasAnyErrors(), 'Donation form rejects empty, zero, negative, or recurring input.');
 }
 $valid_state = new \Drupal\Core\Form\FormState();
@@ -408,7 +416,7 @@ $valid_state->clearErrors();
 $valid_state->setValue(['commerce_donation_pane', 'field_gift_type'], [['value' => 'single']]);
 $valid_state->setValue(['commerce_donation_pane', 'field_donation_amount'], [['donation_level' => ['value' => 'custom_amount', 'amount' => '20']]]);
 $valid_form = [];
-aculta_portal_validate_donation_amount($valid_form, $valid_state);
+\Drupal::service('aculta_portal.form_callbacks')->validateDonationAmount($valid_form, $valid_state);
 $assert(!$valid_state->hasAnyErrors(), 'Donation form accepts a positive custom amount.');
 $number_state = new \Drupal\Core\Form\FormState();
 $number_state->clearErrors();
@@ -482,7 +490,8 @@ $canonical_sync_path = realpath(dirname(DRUPAL_ROOT) . DIRECTORY_SEPARATOR . 'co
 $effective_sync_path = realpath(\Drupal\Core\Site\Settings::get('config_sync_directory'));
 $assert($canonical_sync_path !== FALSE && $effective_sync_path === $canonical_sync_path, 'Drupal Configuration Sync points at the repository canonical config/sync directory.');
 $sync_storage = \Drupal::service('config.storage.sync');
-$assert(count($manifest['configs']) === 59, 'The reviewed account manifest contains 59 intentionally selected config objects.');
+// user_registrationpassword was removed (commit b4b4389); its three objects are no longer in the manifest.
+$assert(count($manifest['configs']) === 56, 'The reviewed account manifest contains 56 intentionally selected config objects.');
 $assert(in_array('field.storage.user.user_picture', $manifest['configs'], TRUE), 'Private User picture storage is included in the reviewed manifest.');
 $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
   ksort($data);
@@ -492,7 +501,11 @@ $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
     }
   }
 };
+// Mail is environment-bound (see validate-final-drupal.php); assert the
+// versioned values directly instead of comparing with the Homelab Runtime.
+$environment_bound = ['smtp.settings', 'system.mail'];
 foreach ($manifest['configs'] as $name) {
+  if (in_array($name, $environment_bound, TRUE)) continue;
   $active_data = $active_storage->read($name);
   $sync_data = $sync_storage->read($name);
   $sort_recursive($active_data);
@@ -506,6 +519,7 @@ sort($sync_names);
 $assert($active_names === $sync_names, 'The canonical config/sync object set is the complete active configuration set.');
 $assert(count($active_names) >= 651, 'The complete config contains the previous baseline plus approved account configuration.');
 foreach ($active_names as $name) {
+  if (in_array($name, $environment_bound, TRUE)) continue;
   $active_data = $active_storage->read($name);
   $sync_data = $sync_storage->read($name);
   $sort_recursive($active_data);
