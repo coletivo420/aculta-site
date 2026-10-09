@@ -62,3 +62,40 @@ o submódulo não cria outra.
 ## Próxima microfase
 
 0.1.0-E: sitemaps piloto para MAIN e SUPPORT, usando o adaptador mínimo. Não iniciada.
+
+## Confirmação do padrão noindex (R5)
+
+Verificação somente leitura feita em 2026-10-09 no runtime e no servidor de testes.
+
+### Padrão existente no projeto
+
+| Mecanismo | Onde | Quando dispara |
+| --- | --- | --- |
+| `<meta name="robots" content="noindex, nofollow">` via tags de metatag | `PortalHooks` (linhas 539 e 542) | Rotas `aculta_portal.*` (exceto o formulário de apoio) e rotas transacionais de doação e checkout. |
+| `X-Robots-Tag: noindex, nofollow` | `DomainPurposeRequestSubscriber` (redirecionamentos e 404 de purpose errado) e `AccountRouteSubscriber` (escrita fora da conta) | Respostas que não devem ser indexadas. |
+
+### Metatag dos nós (campo `field_meta_tags`)
+
+- Configurações padrão `global`, `node` e `front` do módulo `metatag`: **nenhuma diretiva `robots` ou `noindex`**.
+- Os 12 registros de `node__field_meta_tags` no runtime: **nenhuma diretiva `robots` ou `noindex`**.
+- Conclusão: hoje não há nó com `noindex`. A regra R5 precisa ser verificada no código do sitemap, para o caso de algum nó receber a diretiva no futuro.
+
+### Achado crítico: noindex global no servidor de testes
+
+- Todas as páginas testadas (`/contato`, `/institucional`, `/projetos/carnareggae-bloco-sativa`
+  e as páginas do apoio) respondem `X-Robots-Tag: noindex, nofollow, noarchive`.
+- A origem é o VirtualHost do Apache do servidor de testes (`aculta.toca.net.br.conf`, linhas 3 e 95,
+  e `toca.net.br.conf`, linhas 42 e 87). A configuração não está no repositório.
+- Isso é regra do Homelab (`docs/architecture/environments.md`). **Se o cabeçalho for copiado
+  para produção, o site inteiro deixa de ser indexado.**
+- Registrado como **DEP-0003** (bloqueante) no registro do `aculta_deployer`.
+
+### Regra R5 definitiva
+
+- **R5a — Nó:** excluir do sitemap o nó cujo `field_meta_tags` contenha `robots` com `noindex`.
+  A verificação é feita pelo adaptador (fase E), antes de gerar a URL.
+- **R5b — Rotas do Portal:** nenhuma rota `aculta_portal.*` entra no sitemap. Essas rotas não são
+  entidades e não são listadas pelo gerador.
+- **R5c — Ambiente:** o sitemap de produção só é válido se o cabeçalho `X-Robots-Tag` de
+  noindex estiver ausente no VirtualHost de produção (DEP-0003). O teste de sitemap no servidor
+  de testes não representa indexação real.
