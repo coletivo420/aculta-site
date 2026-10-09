@@ -1,8 +1,13 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.18 — correção do autowire em AppearanceHooks — 2026-10-09
+
+- `AppearanceHooks` importava `Drupal\Core\DependencyInjection\Attribute\Autowire`, que não existe. O atributo era ignorado e o container não montava o hook. Passa a usar `Symfony\Component\DependencyInjection\Attribute\Autowire`, como os demais arquivos do Portal.
+- Verificado em cópia isolada do Runtime (banco de teste, não o Runtime compartilhado): serviço e hook carregam; `/configuracoes` e `/admin/config/aculta/aparencia` registrados; escolha de usuária sobrepõe o padrão do site; visitante recebe o padrão. RUNTIME STATUS do Runtime oficial segue DEFERRED.
+
 ## 0.2.0-dev.17 — Modo de cor: preferência por usuário e padrão global — 2026-10-09
 
-RUNTIME STATUS: DEFERRED (código sem execução no Runtime; validação de Drupal, cache e formulários pendente).
+RUNTIME STATUS: DEFERRED no Runtime oficial. Em cópia isolada, serviço, rotas, formulário e contrato verificados (ver 0.2.0-dev.18).
 
 - Preferência do modo de cor por usuário em `user.data` (banco), chaves `aculta_portal`/`color_mode`, valores `light`, `dark` e `auto`.
 - Minha Conta > Configurações (`/configuracoes`): formulário com os três estados; item no menu da conta.
