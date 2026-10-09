@@ -21,7 +21,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 | 1 | Gate Drupal 11+ do Portal | `php scripts/validate-aculta-portal-drupal11.php` | PASS (382 checks) |
 | 2 | Slugs públicos | `php scripts/validate-public-slugs.php` | PASS (266 rotas; 20 violações de contrib na linha de base DT-P20) |
 | 3 | Fundação do tema | `drush scr scripts/validate-aculta420-foundation.php` | PASS (310 checks) |
-| 4 | Contrato de shell do tema | `drush scr scripts/validate-aculta420-shell-contract.php` | **FAIL**: o script instancia `ThemeHooks` com 2 argumentos; o construtor atual exige 3. Ajuste no tema, não feito (tema sem autorização) |
+| 4 | Contrato de shell do tema | `drush scr scripts/validate-aculta420-shell-contract.php` | PASS (9 checks). Corrigido o validador: passava 2 argumentos a `ThemeHooks`, que exige 3 (`entity_type.manager`). O tema não foi alterado |
 | 5 | Foundations de design (contraste) | `php scripts/validate-aculta420-design-foundations.php` | PASS |
 | 6 | Schemas SDC | `php scripts/validate-aculta420-sdc-schemas.php` | PASS (7 componentes, 98 checks) |
 | 7 | PHPUnit do Portal | `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests` | PASS (48 testes, 76 asserções) |
@@ -40,22 +40,20 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 
 ## Pendências que impedem o RC do projeto
 
-1. **Validador de shell do tema (item 4)**: falha por assinatura de construtor. Corrigir no tema
-   exige autorização explícita (AGENTS.md: `web/themes/custom/aculta420/**` não se altera sem ela).
-2. **Drift de configuração**: `drush config:status` lista 95 itens. A maior parte é anterior a esta
+1. **Drift de configuração**: `drush config:status` lista 95 itens. A maior parte é anterior a esta
    sessão (Commerce, formulários, campos). Só `simple_sitemap.settings` é intencional e de
    runtime: `base_url` = host de teste. Exige decisão de release sobre a baseline de configuração
    (TESTING.md: "não usar `cex` em massa").
-3. **Produção (DEP-0001, DEP-0002, DEP-0003)**: os hosts `*.aculta.org` de apoio, wiki, coletivo420 e
+2. **Produção (DEP-0001, DEP-0002, DEP-0003)**: os hosts `*.aculta.org` de apoio, wiki, coletivo420 e
    cursos não respondem a partir do Homelab; o `verify` do deployer marca essas entradas como FAIL.
    Só fecham no RC/deploy.
-4. **Canonical no servidor de testes (achado da fase J)**: o canonical de `aculta.toca.net.br` e de
+3. **Canonical no servidor de testes (achado da fase J)**: o canonical de `aculta.toca.net.br` e de
    `apoio` aponta para o host de teste; o de WIKI, CURSOS e MAGAZINE aponta para produção. É estável
    (não é cache) e em produção o host da requisição é o canônico. Revisar no RC.
-5. **Ambiente PHP**: o runtime local é PHP 8.4.26; o AGENTS.md exige PHP 8.5. Os testes não
+4. **Ambiente PHP**: o runtime local é PHP 8.4.26; o AGENTS.md exige PHP 8.5. Os testes não
    dependem de recursos específicos, mas a bateria deve ser repetida em 8.5 antes do RC.
-6. **Search Console**: verificação de propriedade dos hosts é manual e fica fora do código (ADR-009).
-7. **Decisões do responsável**: `base_url` de teste permanente (runtime ou `settings.local.php`);
+5. **Search Console**: verificação de propriedade dos hosts é manual e fica fora do código (ADR-009).
+6. **Decisões do responsável**: `base_url` de teste permanente (runtime ou `settings.local.php`);
    `/wiki/verbetes` no sitemap ou não; remoção dos nós de teste 69 e 70 (despublicados).
 
 ## Estado por componente
