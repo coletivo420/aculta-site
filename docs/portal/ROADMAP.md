@@ -22,7 +22,7 @@ Core Drupal 11.3+ com verificação de APIs no Core instalado; preferir prática
 | P5.2–P5.7 e P5-R | Views, EntityQuery, controllers, storage e access | Revisada estaticamente; Homelab parcial (sessão de usuário comum pendente) |
 | P6 | Render API, cache, privacidade, Domain | P6.2 concluída (imagem DEFERRED); P6.1/P6.3–P6.6 verificadas no Homelab |
 | P7 | Subscribers, serviços, multidomínio | Concluída e verificada no Homelab; sobreposição de `entity.user.edit_form` mantida por defesa em profundidade |
-| P8 | Deprecações e prontidão D12/D13 | Planejada |
+| P8 | Deprecações e prontidão D12/D13 | Revisada estaticamente; 0 achados em código; pendências de Composer (`require.php`, `composer/semver`) e PHP 8.5 |
 | P9 | Hardening, segurança, documentação e gates | Planejada |
 | P10 | Codex/Homelab, homologação, correções e merge | Planejada |
 
