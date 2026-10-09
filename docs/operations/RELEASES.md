@@ -26,13 +26,12 @@ Branches devem ser curtas e nascer da `main` atual.
 
 ## Subversões do tema
 
-O tema usa subversões `-dev.N` por mudança principal validada, antes da tag final.
-O procedimento completo, incluindo a classificação de cada mudança antes de codar, está
-em [`web/themes/custom/aculta420/docs/versioning.md`](../../web/themes/custom/aculta420/docs/versioning.md).
+O tema marca a versão dentro do código (`aculta420.info.yml`, `CHANGELOG.md` e roadmap). Subversões
+`-dev.N` são marcadas por mudança principal validada. O procedimento completo está em
+[`web/themes/custom/aculta420/docs/versioning.md`](../../web/themes/custom/aculta420/docs/versioning.md).
 
 Mudanças do `aculta_portal` entram no `CHANGELOG.md` do módulo, citando a versão do tema
-em que foram entregues. Não há tag `portal-v*` ainda; a primeira release do Portal ainda
-precisa de decisão do responsável.
+em que foram entregues. A versão do Portal é marcada em `aculta_portal.info.yml`.
 
 ## Gate de release
 
@@ -107,11 +106,12 @@ Não copiar logs inteiros para documentação canônica.
 
 ## Tag e GitHub Release
 
-Tag somente no SHA aprovado:
+Tag não é criada por padrão. Criar somente quando o responsável pedir explicitamente, no SHA
+indicado por ele:
 
 ```sh
-git tag -a portal-v1.0.0 -m "ACULTA Portal 1.0.0"
-git push origin portal-v1.0.0
+git tag -a portal-vX.Y.Z -m "ACULTA Portal X.Y.Z"
+git push origin portal-vX.Y.Z
 ```
 
 Não mover/regravar tag publicada.
