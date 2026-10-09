@@ -34,6 +34,18 @@ final class FormHooks {
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
 
+    if ($formId === 'user_login_form') {
+      // Core reports blocked or unactivated accounts before the password check,
+      // which discloses that an address is registered. The Portal callback keeps
+      // them indistinguishable from unknown accounts.
+      $form['#validate'] = array_map(
+        static fn($validator) => $validator === '::validateAuthentication'
+          ? 'aculta_portal.form_callbacks:validateLoginAuthentication'
+          : $validator,
+        $form['#validate'] ?? [],
+      );
+    }
+
     if ($formId === 'change_mail_form'
       && $this->routeMatch->getRouteName() === 'aculta_portal.security') {
       $form['account']['mail']['#title'] = $this->translation->translate('Novo e-mail');

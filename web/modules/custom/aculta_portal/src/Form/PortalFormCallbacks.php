@@ -10,7 +10,9 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\profile\ProfileInterface;
+use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Dependency-injected callbacks used by altered Core/contrib forms.
@@ -23,7 +25,24 @@ final class PortalFormCallbacks {
     private readonly UserDataInterface $userData,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TranslationInterface $translation,
+    private readonly UserAuthenticationInterface $userAuth,
   ) {}
+
+  /**
+   * Authenticates the login form without disclosing blocked accounts.
+   *
+   * Blocked or unactivated accounts are skipped here, so validateFinal() gives
+   * them the same generic message and the same flood accounting as unknown
+   * accounts. Every other account goes through Core's validateAuthentication().
+   */
+  public function validateLoginAuthentication(array &$form, FormStateInterface $formState): void {
+    $name = trim((string) $formState->getValue('name'));
+    $account = $name !== '' ? $this->userAuth->lookupAccount($name) : FALSE;
+    if ($account instanceof UserInterface && $account->isBlocked()) {
+      return;
+    }
+    $formState->getFormObject()->validateAuthentication($form, $formState);
+  }
 
   /** Validates conditional Activity fields. */
   public function validateActivity(array &$form, FormStateInterface $formState): void {
