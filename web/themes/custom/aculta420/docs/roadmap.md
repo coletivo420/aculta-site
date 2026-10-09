@@ -62,7 +62,7 @@ Estruturas internas permanecem como rich text (ver `components.md`). A linha 0.4
 - Validadores `.mjs` sem porta nem origem fixas: leem `ACULTA_DEVTOOLS_PORT` e `ACULTA_SITE_ORIGIN` por `scripts/lib/browser-env.mjs`. Sem as variáveis, o validador para antes de conectar (DT-T09).
 - Gate `validate-browser-validators.php` reprova endpoint literal nos scripts.
 - Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts. Cumprido.
-- Dívida nova: `validate-institution-browser.mjs` espera `/apoie` no host principal e `aculta_favicon.ico`. A página de apoio agora fica no host SUPPORT (homelab `apoio.aculta.toca.net.br`; produção `apoio.aculta.org`), e o favicon oficial segue sem confirmação (DT-T18, aberta).
+- Dívida nova: `validate-institution-browser.mjs` espera `/apoie` no host principal e `aculta_favicon.ico`. A página de apoio fica no host SUPPORT (homelab `apoio.aculta.toca.net.br`; produção `apoio.aculta.org`), na rota `/apoio` (Portal 0.2.0-dev.3). Falta a reescrita de `supportLayout` e o favicon oficial (DT-T18, aberta).
 
 ### T5 — Portabilidade do conteúdo (DT-T10, DT-O03) — concluída em 0.4.1, reconstrução em ambiente novo DEFERRED
 

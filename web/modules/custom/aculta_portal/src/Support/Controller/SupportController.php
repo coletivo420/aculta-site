@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /** Presents support records owned by Commerce to the current account. */
 final class SupportController extends ControllerBase {
@@ -23,6 +24,11 @@ final class SupportController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
     );
+  }
+
+  /** Redirects the retired /apoie path to the public support page (/apoio). */
+  public function legacyRedirect(): RedirectResponse {
+    return new RedirectResponse(Url::fromRoute('aculta_portal.support_form')->toString(), 301);
   }
 
   public function mySupport(): array {
