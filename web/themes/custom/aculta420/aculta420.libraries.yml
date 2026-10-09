@@ -5,6 +5,7 @@ global:
       css/tokens.css: {}
       css/base.css: {}
       css/layout.css: {}
+      css/components/institution-bar.css: {}
       css/components/header.css: {}
       css/components/navigation.css: {}
       css/components/breadcrumb.css: {}

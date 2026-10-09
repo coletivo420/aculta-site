@@ -64,9 +64,6 @@
 /* Navigation is visible without JavaScript; collapse is progressive enhancement. */
 .aculta-navbar:not(.aculta-navigation-ready) .collapse { display: block; }
 .aculta-navbar:not(.aculta-navigation-ready) .aculta-menu-toggle { display: none; }
-.aculta-utility { color: var(--aculta-text-primary); background: var(--aculta-surface-raised); border-bottom: 1px solid var(--aculta-shell-border); }
-.aculta-utility .navbar-nav { flex-direction: row; justify-content: flex-end; flex-wrap: wrap; gap: 0.25rem 1rem; }
-.aculta-utility .nav-link { padding-block: 0.5rem; font: 500 0.875rem/1.6 var(--aculta-font-body); }
 
 @media (min-width: 1100px) {
   .aculta-navbar > .container { flex-wrap: nowrap; align-items: flex-start; gap: 1rem; }

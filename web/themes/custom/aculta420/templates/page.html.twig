@@ -1,4 +1,17 @@
 {# Semantic layout; Bootstrap5 remains the sole provider of Bootstrap assets. #}
+{# Institution Bar: global, institutional, no Domain/purpose decisions here. #}
+<div class="aculta-institution-bar">
+  <div class="container aculta-container aculta-institution-bar__inner">
+    <p class="aculta-institution-bar__brand">
+      <span class="aculta-institution-bar__name">ACULTA</span>
+      <span class="aculta-institution-bar__full">{{ 'Associação Cultural Antiproibicionista'|t }}</span>
+    </p>
+    {% if aculta_account_menu %}
+      <div class="aculta-utility">{{ aculta_account_menu }}</div>
+    {% endif %}
+  </div>
+</div>
+
 <header class="aculta-header">
   <div class="navbar aculta-navbar">
     <div class="container aculta-container">
@@ -27,12 +40,6 @@
     </div>
   </div>
 </header>
-
-{% if aculta_account_menu %}
-  <div class="aculta-utility">
-    <div class="container aculta-container">{{ aculta_account_menu }}</div>
-  </div>
-{% endif %}
 
 <main id="main-content" class="aculta-main flex-grow-1" tabindex="-1">
   <div class="container aculta-container">
