@@ -66,6 +66,14 @@ Um caminho que responde 404 para o anônimo não tem conteúdo indexável. A che
 esses status para que a lista de caminhos não precise espelhar rotas que não existem em
 produção. Um 200 sem noindex é sempre falha.
 
+## Painel do Portal (0.1.6)
+
+- `$CLI report` grava `var/deployer/status.json` (ignorado pelo Git). A página `/admin/config/aculta/deployer`
+  (permissão `administer aculta deployer`) lê esse arquivo e mostra fronteiras, correções abertas e credenciais
+  por nome e estado, com o mesmo sistema de status do diagnóstico (✔, ⚠, ✖).
+- Gere o relatório antes de consultar o painel. Sem o arquivo, a página informa que o relatório está indisponível.
+- O Portal não executa a ferramenta. Verificações de rede (sitemap e robots) continuam como comandos próprios.
+
 ## Credenciais locais (0.1.4)
 
 - Arquivo padrão: `secrets/aculta.secrets.env` na raiz do repositório (ignorado pelo Git; fora de `web/`;

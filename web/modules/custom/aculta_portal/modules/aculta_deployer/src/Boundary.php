@@ -33,6 +33,16 @@ final class Boundary {
           continue;
         }
         $text = (string) file_get_contents($file);
+        // Pasta de leitura neutra do painel: pode citar a ferramenta, mas não executá-la nem usar seu código.
+        $allowed = array_filter($this->rules['consumer_tool_reference_allowed'] ?? [], static fn(string $x): bool => str_starts_with($rel, $x . '/'));
+        if ($allowed !== []) {
+          foreach ($this->rules['consumer_allowed_forbidden'] ?? [] as $token) {
+            if (str_contains($text, $token)) {
+              $violations[] = $rel . " usa '$token' na pasta de leitura neutra; o Portal não executa a ferramenta";
+            }
+          }
+          continue;
+        }
         foreach ($this->rules['tool_terms'] as $term) {
           if (str_contains($text, $term)) {
             $violations[] = $this->rel($file) . " referencia a ferramenta ('$term'); consumidores não podem depender de o submódulo aculta_deployer";

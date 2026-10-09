@@ -33,5 +33,20 @@
   "consumer_exclude": [
     "web/modules/custom/aculta_portal/modules/aculta_deployer"
   ],
-  "tool_root": "web/modules/custom/aculta_portal/modules/aculta_deployer"
+  "tool_root": "web/modules/custom/aculta_portal/modules/aculta_deployer",
+  "consumer_tool_reference_allowed": [
+    "web/modules/custom/aculta_portal/src/Deployer"
+  ],
+  "consumer_allowed_forbidden": [
+    "exec(",
+    "shell_exec(",
+    "proc_open(",
+    "passthru(",
+    "system(",
+    "popen(",
+    "bin/aculta-deployer",
+    "tool_root",
+    "src/Cli.php",
+    "Cli("
+  ]
 }

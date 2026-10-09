@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.5';
+  public const VERSION = '0.1.6';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -33,6 +33,7 @@ final class Cli {
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
       'secrets' => $this->secrets((string) ($argv[2] ?? ''), $options),
+      'report' => $this->report($options),
       default => $this->help(),
     };
   }
@@ -223,6 +224,76 @@ final class Cli {
     }
     $this->say("sitemap ($env): " . ($code === 0 ? 'PASS' : 'FAIL'));
     return $code;
+  }
+
+  /**
+   * Relatório neutro para o painel do ACULTA Portal (var/deployer/status.json). Contém só nomes,
+   * contagens e estados: nunca valores de credenciais. Não faz rede; sitemap e robots são comandos
+   * próprios e não entram no relatório.
+   *
+   * @param array<string, string|bool> $o
+   */
+  private function report(array $o): int {
+    $out = is_string($o['out'] ?? null) ? $o['out'] : $this->repoRoot . '/var/deployer/status.json';
+    $file = is_string($o['file'] ?? null) ? $o['file'] : $this->repoRoot . '/secrets/aculta.secrets.env';
+    $registry = $this->registry();
+    $open = $registry->open();
+    $boundary = $this->boundaryViolations();
+    $contract = $this->json($this->repoRoot . '/config/secrets-contract.json');
+    $values = is_file($file) && is_readable($file) ? Secrets::parse((string) file_get_contents($file)) : null;
+    $environments = [];
+    foreach (['production', 'test'] as $env) {
+      $present = [];
+      $missing = [];
+      foreach (Secrets::requiredNames($contract, $env) as $name) {
+        if (isset($values[$name]) && $values[$name] !== '') {
+          $present[] = $name;
+        }
+        else {
+          $missing[] = $name;
+        }
+      }
+      $environments[$env] = ['present' => $present, 'missing' => $missing];
+    }
+    $report = [
+      'schema' => 1,
+      'tool' => 'aculta-deployer ' . self::VERSION,
+      'generated_at' => gmdate('c'),
+      'boundaries' => ['ok' => $boundary === [], 'violations' => count($boundary)],
+      'registry' => [
+        'open' => count($open),
+        'open_blocking' => count($registry->openBlocking()),
+        'entries' => array_map(static fn(array $e): array => [
+          'id' => (string) ($e['id'] ?? ''),
+          'kind' => (string) ($e['kind'] ?? ''),
+          'blocking' => ($e['blocking'] ?? FALSE) === TRUE,
+          'current' => (string) ($e['current'] ?? ''),
+        ], $open),
+      ],
+      'secrets' => ['file_present' => $values !== null, 'environments' => $environments],
+      'not_included' => ['network' => 'execute aculta-deployer sitemap e robots', 'values' => 'nunca incluídos'],
+    ];
+    $dir = dirname($out);
+    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+      $this->err('report: não foi possível criar a pasta de destino');
+      return 1;
+    }
+    $temp = $dir . DIRECTORY_SEPARATOR . '.status-' . bin2hex(random_bytes(6)) . '.tmp';
+    $fh = @fopen($temp, 'xb');
+    if ($fh === false) {
+      $this->err('report: não foi possível gravar o relatório');
+      return 1;
+    }
+    chmod($temp, 0640);
+    fwrite($fh, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
+    fclose($fh);
+    if (!rename($temp, $out)) {
+      @unlink($temp);
+      $this->err('report: falha ao publicar o relatório');
+      return 1;
+    }
+    $this->say("report: relatório gravado em $out (sem valores de credenciais)");
+    return 0;
   }
 
   /**
@@ -662,6 +733,7 @@ Uso:
   aculta-deployer register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]
   aculta-deployer build --out=DIR [--allow-open-blocking]
   aculta-deployer robots [--env=production|test]  GET somente leitura: X-Robots-Tag, caminhos privados e robots.txt (Sitemap)
+  aculta-deployer report [--out=PATH] [--file=PATH]  relatório neutro para o painel do Portal (sem valores)
   aculta-deployer secrets check [--env=production|test] [--file=PATH]  valida o arquivo local de credenciais (sem valores)
   aculta-deployer secrets export --env=production|test --out=PATH  grava cópia 0600 fora do repositório, para importação manual
   aculta-deployer sitemap [--env=production|test]  GET somente leitura: índice, filhos e hosts de conteúdo (cross-host)

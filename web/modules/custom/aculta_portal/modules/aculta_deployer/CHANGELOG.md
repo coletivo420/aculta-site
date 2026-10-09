@@ -1,5 +1,14 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.6 — complemento do Portal e relatório para o painel — 2026-10-09
+
+- Comando `report [--out] [--file]`: grava `var/deployer/status.json` (esquema 1) com fronteiras, correções abertas
+  e credenciais obrigatórias por ambiente (só nomes e estados). Sem rede e sem valores. Publicação atômica, 0640.
+- Declarado como complemento opcional do `aculta_portal` (`info.yml`). O Portal não depende do módulo.
+- Política de fronteira: a pasta de leitura do painel (`aculta_portal/src/Deployer`) pode citar a ferramenta, mas não
+  pode executá-la nem usar seu código (`consumer_tool_reference_allowed` e `consumer_allowed_forbidden`).
+- Testes: relatório sem valores, sobrescrita atômica e a exceção de fronteira.
+
 ## 0.1.5 — regra de permissão do arquivo de credenciais — 2026-10-09
 
 - `Secrets::modeProblem()` passa a recusar só escrita de grupo (0020) e acesso de outros (0007). Leitura de grupo

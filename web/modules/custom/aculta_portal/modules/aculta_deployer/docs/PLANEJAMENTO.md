@@ -110,6 +110,14 @@ Pendências desta fase (não fechadas):
 3. Decidir a `base_url` de teste de forma permanente (runtime hoje, `settings.local.php` como alternativa).
 4. ~~Revisão do gate S5 para a verificação de descoberta.~~ Feita em 0.1.3 (itens S4 e S5 acima).
 
+## Fase 8 — Painel do Portal e complemento (0.1.6)
+
+**Status: implementada no código e nos testes.**
+
+- Comando `report` e relatório neutro `var/deployer/status.json` (esquema 1, sem valores).
+- Página somente leitura no painel do `aculta_portal` e opções de sitemap na visão geral.
+- Declarado como complemento opcional do `aculta_portal`; o Portal não depende dele.
+
 ## Fase 6 — Release 0.2.0 (curta)
 
 - Atualizar CHANGELOG, VERSION e `info.yml`; a tag só é criada sob pedido do responsável.

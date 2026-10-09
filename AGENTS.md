@@ -542,5 +542,6 @@ Quando houver dúvida arquitetural importante, perguntar antes de fazer uma alte
   verificação. Se a ferramenta ainda não verifica um caso, registre-o no roadmap do deployer
   (`web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md`) e no
   `registry/deploy-registry.json`, em vez de deixar a divergência só na documentação.
+- O `aculta_deployer` é um complemento opcional do `aculta_portal` (submódulo, dependência do próprio módulo, desabilitado por padrão). O Portal não depende dele. Ele publica `var/deployer/status.json` e o painel do Portal lê esse arquivo; o Portal não executa a CLI.
 - O `aculta_deployer` está em desenvolvimento (0.1.x). O roadmap dele é `docs/PLANEJAMENTO.md`.
   Mudanças de descoberta e sitemap por ambiente pertencem à fase 7 desse roadmap.

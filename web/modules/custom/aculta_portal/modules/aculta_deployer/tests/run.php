@@ -265,5 +265,37 @@ $assert($rc5 !== 0, 'export não sobrescreve destino existente');
 @unlink($fakeIn); @unlink($fakeOut); @rmdir($fakeDir);
 $assert(!array_filter(array_merge($o1, $o2, $o3), static fn($l) => preg_match('/=[A-Za-z0-9_\-\/+]{12,}/', (string) $l) === 1), 'saída da CLI não contém valores de credencial');
 
+$rfDir = sys_get_temp_dir() . '/aculta-report-' . getmypid();
+@mkdir($rfDir, 0700);
+$rfIn = $rfDir . '/entrada.env';
+file_put_contents($rfIn, "GOOGLE_OAUTH_CLIENT_ID=valor-falso-id-123\nSMTP2GO_PASSWORD=valor-falso-senha-456\n");
+chmod($rfIn, 0600);
+$rfOut = $rfDir . '/status.json';
+exec($cli . ' report --file=' . escapeshellarg($rfIn) . ' --out=' . escapeshellarg($rfOut) . ' 2>&1', $o7, $rc7);
+$rfText = is_file($rfOut) ? (string) file_get_contents($rfOut) : '';
+$rfData = json_decode($rfText, true);
+$assert($rc7 === 0 && is_array($rfData) && ($rfData['schema'] ?? null) === 1, 'report grava JSON com esquema 1');
+$assert(!str_contains($rfText, 'valor-falso-id-123') && !str_contains($rfText, 'valor-falso-senha-456'), 'report não contém valores de credenciais');
+$assert(in_array('GOOGLE_OAUTH_CLIENT_ID', $rfData['secrets']['environments']['test']['present'] ?? [], true) && in_array('SMTP2GO_USERNAME', $rfData['secrets']['environments']['test']['missing'] ?? [], true), 'report lista presentes e ausentes só por nome');
+$assert(!str_contains(implode("\n", $o7), 'valor-falso'), 'saída do report não exibe valores');
+$o8 = []; exec($cli . ' report --file=' . escapeshellarg($rfIn) . ' --out=' . escapeshellarg($rfOut) . ' 2>&1', $o8, $rc8);
+$assert($rc8 === 0, 'report sobrescreve o próprio relatório (publicação atômica)');
+@unlink($rfIn); @unlink($rfOut); @rmdir($rfDir);
+
+// Fronteira: pasta de leitura neutra do Portal pode citar a ferramenta, mas não executá-la.
+$bRoot = sys_get_temp_dir() . '/aculta-boundary-' . getmypid();
+@mkdir($bRoot . '/web/modules/custom/aculta_portal/src/Deployer', 0700, true);
+@mkdir($bRoot . '/web/modules/custom/aculta_portal/src/Other', 0700, true);
+file_put_contents($bRoot . '/web/modules/custom/aculta_portal/src/Deployer/Ok.php', "<?php // texto: aculta-deployer report\n");
+file_put_contents($bRoot . '/web/modules/custom/aculta_portal/src/Deployer/Exec.php', "<?php shell_exec('x');\n");
+file_put_contents($bRoot . '/web/modules/custom/aculta_portal/src/Other/Bad.php', "<?php // aculta-deployer\n");
+$rules = json_decode((string) file_get_contents($toolRoot . '/config/boundary.json'), true);
+$rules['consumers'] = ['web/modules/custom/aculta_portal'];
+$bv = (new AcultaDeployer\Boundary($bRoot, $toolRoot, $rules))->check();
+$joined = implode("\n", $bv);
+$assert(str_contains($joined, 'Exec.php') && !str_contains($joined, 'Ok.php'), 'fronteira: pasta neutra aceita citação e recusa execução');
+$assert(str_contains($joined, 'Bad.php'), 'fronteira: citação da ferramenta fora da pasta neutra é recusada');
+exec('rm -rf ' . escapeshellarg($bRoot));
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

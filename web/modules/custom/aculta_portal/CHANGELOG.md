@@ -1,5 +1,15 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.10 — painel do ACULTA Deployer e opções de sitemap — 2026-10-09
+
+- Página `/admin/config/aculta/deployer` (somente leitura, permissão `administer aculta deployer`): lê o relatório neutro
+  `var/deployer/status.json` e mostra fronteiras, correções abertas e credenciais por nome e estado. Sem valores.
+- Visão geral (`/admin/config/aculta/portal`): links para o status do deployer, para importação de credenciais, para as
+  variantes de sitemap e para as configurações do sitemap.
+- Reconhecimento de complemento: o Portal não depende do submódulo `aculta_deployer`; sem o relatório, a página informa
+  "indisponível".
+- Fronteira: a pasta `src/Deployer` pode citar a ferramenta, mas não a executa.
+
 ## 0.2.0-dev.9 — importação de credenciais pelo painel (ACULTA Secrets Contract) — 2026-10-09
 
 - Painel `/admin/config/aculta/segredos` (permissão `administer aculta secrets`, restrita): mostra cada variável do contrato com ✔ OK / ⚠ Atenção / ✖ Erro (mesma biblioteca e legenda do diagnóstico do Portal). Nunca exibe valores.

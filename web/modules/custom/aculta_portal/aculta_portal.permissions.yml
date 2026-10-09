@@ -9,4 +9,8 @@ administer aculta secrets:
   title: Importar credenciais do ambiente
   description: Importar o arquivo de credenciais e apagar a origem. Nenhum valor é exibido.
   restrict access: true
+administer aculta deployer:
+  title: Ver o status do ACULTA Deployer
+  description: Consultar o relatório neutro de fronteiras, correções abertas e credenciais (somente leitura).
+  restrict access: true
 
