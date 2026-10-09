@@ -1,12 +1,11 @@
-## Unreleased — Wiki420 brand assets (draft)
+## 0.4.0-dev.6 — Logomarca Wiki420 no Domain Header (PR #112) — 2026-10-09
 
-- Prepara identidade Wiki420 via `DomainPresentationBuilder` e `regions.brand_media`, sem seletores por hostname no tema.
-- O header mantém o branding atual até `wiki420-horizontal-960w.webp` ser entregue e os testes Homelab passarem.
-- Novas diretrizes em `docs/branding-wiki420.md`; artefatos raster ainda precisam ser incorporados à branch.
+Classificação: MINOR da linha 0.4.0 (novo asset de identidade e apresentação por purpose); sem componente stable alterado.
 
-# CHANGELOG — ACULTA420
-
-Este changelog versiona o tema/design system ACULTA420.
+- Assets versionados em `assets/branding/wiki420/web/` (horizontal 480/720/960 WebP, empilhada 256/512 WebP, globo 32/48/96/192/512 PNG) e `source/` (masters 960 PNG e 512 PNG).
+- Cabeçalho da Wiki420 com `srcset` (480/720/960 px) e `sizes="18rem"`; carregamento eager e `fetchpriority=high`. Integração via `brand_media` do Portal; o tema não inspeciona purpose nem hostname.
+- Verificação: altura do cabeçalho igual nos modos claro e escuro (159/141 px), sem overflow horizontal em 1280/820/390 px, cache isolado entre Wiki e principal nas duas ordens de aquecimento.
+- Limites: masters são derivados (originais não vieram no pacote); razão de contraste da marca no modo escuro não medida; zoom real não testado; o Portal conhece o caminho dos assets (ver `docs/branding-wiki420.md`).
 
 ## 0.4.0-dev.5 — T3 concluída: CSS residual dos padrões nos SDCs — 2026-10-09
 
