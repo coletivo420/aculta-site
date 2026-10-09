@@ -70,9 +70,13 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
     'Purpose home URL is absolute and prepared by the Portal: ' . $purpose,
   );
   $assert(!$containsObject($theme), 'No object crosses the Portal -> theme boundary: ' . $purpose);
+  // brand_media has a real consumer only for the wiki purpose (DT-W01 / PR #112);
+  // navigation and actions stay deferred until their consumers exist.
+  $brand = $theme['regions']['brand_media'];
+  $brandIsWiki = $purpose === 'wiki' ? is_array($brand) : $brand === NULL;
   $assert(
-    $theme['regions'] === ['brand_media' => NULL, 'navigation' => NULL, 'actions' => NULL],
-    'B.2 does not anticipate visual regions before a real consumer: ' . $purpose,
+    $brandIsWiki && $theme['regions']['navigation'] === NULL && $theme['regions']['actions'] === NULL,
+    'Only brand_media is consumed, and only for wiki; navigation and actions stay deferred: ' . $purpose,
   );
 
   $contexts = $presentation->getCacheContexts();

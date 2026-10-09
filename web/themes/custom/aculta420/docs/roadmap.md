@@ -12,7 +12,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.2.0 | concluída (2026-10-09) | marcada no código | Shell multidomínio: Domain Presentation, Institution Bar, Domain Header, sticky, QA |
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
-| 0.4.0 | linha aberta, marcada em `0.4.0-dev.5` | marcada no código | Patterns v1; T2 e T3 concluídas; falta fechar T1 (decisões de estruturas internas) |
+| 0.4.0 | linha aberta, marcada em `0.4.0-dev.6` | marcada no código | Patterns v1; T2 e T3 concluídas; falta fechar T1 (decisões de estruturas internas) |
 
 Regras de versão em [`docs/versioning.md`](versioning.md). A versão atual fica marcada em
 `aculta420.info.yml`. Tags Git só são criadas sob pedido do responsável.

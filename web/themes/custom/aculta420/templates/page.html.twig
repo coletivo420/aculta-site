@@ -16,6 +16,13 @@
   <div class="navbar aculta-navbar">
     <div class="container aculta-container">
       <div class="aculta-branding">
+        {% if aculta_domain_brand_media %}
+          <div class="aculta-domain-brand-media">
+            <a href="{{ domain_presentation.identity.home_url }}" rel="home" aria-label="{{ domain_presentation.identity.title }}">
+              {{ aculta_domain_brand_media }}
+            </a>
+          </div>
+        {% endif %}
         {{ page.header }}
         {% if not aculta_has_system_branding and aculta_domain_brand_fallback %}
           <a href="{{ aculta_domain_brand_fallback.home_url }}"

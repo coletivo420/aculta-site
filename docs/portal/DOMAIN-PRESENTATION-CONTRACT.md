@@ -140,7 +140,7 @@ domain_presentation
 │   ├── home_url         string seguro
 │   └── logo_alt         string|null
 └── regions
-    ├── brand_media      render array|null
+    ├── brand_media      render array|null  (array só no purpose wiki, desde a PR #112; consumido pelo header)
     ├── navigation       render array|null
     └── actions          render array|null
 ```

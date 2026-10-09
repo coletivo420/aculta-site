@@ -1,5 +1,12 @@
 # Changelog — ACULTA Portal
 
+## 0.2.0-dev.2 — brand_media da Wiki420 no Domain Presentation (PR #112) — 2026-10-09
+
+- `DomainPresentationBuilder` monta `regions.brand_media` somente no purpose `wiki`, como render array `image` com `srcset` (480/720/960 px), `sizes`, `loading` eager e `fetchpriority` high, usando URL pública `base:`. Sem o arquivo de 960 px, nada é montado.
+- Cacheability: a presentation continua acumulando o cache de Domain; a escolha de identidade é do Portal, e o tema só apresenta.
+- Limite: o caminho dos assets fica no Portal e no tema; contrato de assets fica para fase futura.
+- Versão marcada em `aculta_portal.info.yml`; sem tag.
+
 ## 0.2.0-dev.1 — 2026-10-09 — LMS com slugs amigáveis (DT-P21)
 
 - Rota `lms.group.answer_form` servida em `/curso/{curso}/{lição}/{atividade}`, com slugs derivados dos títulos do curso, da lição e da atividade (sem campos novos). Posições duplicadas recebem sufixo `-2`, `-3` na ordem armazenada.
