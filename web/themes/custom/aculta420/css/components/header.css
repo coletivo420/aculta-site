@@ -26,7 +26,8 @@ html { scroll-padding-top: calc(var(--drupal-displace-offset-top, 0px) + 6rem); 
 .aculta-header .site-title:hover { color: var(--aculta-shell-domain-text); text-decoration: underline; }
 .aculta-header .site-slogan { margin: 0; color: var(--aculta-shell-domain-text); font: 500 0.75rem/1.3 var(--aculta-font-body); }
 .aculta-brand .site-logo { display: block; width: min(100%, 18rem); flex: 0 1 auto; }
-.aculta-brand .site-logo img { display: block; width: 100%; max-width: 18rem; height: auto; }
+/* Same size and box in both modes; only the semantic logo filter varies with the shell surface. */
+.aculta-brand .site-logo img { display: block; width: 100%; max-width: 18rem; height: auto; filter: var(--aculta-shell-logo-filter); }
 
 @media (min-width: 1100px) {
   .aculta-branding { flex-basis: 22%; }
