@@ -1,3 +1,12 @@
+## 0.5.1-dev.1 — F2 (ícones): Bootstrap Icons sem dependência nova — 2026-10-09
+
+Classificação: PATCH da linha 0.5 (gate e documentação; sem componente, template ou dependência novos).
+
+- Decisão: ícones pelo Bootstrap Icons 1.11.0, já presente em `bootstrap5` e carregado pela biblioteca global `bootstrap5/global-styling`.
+- Gate `validate-aculta420-design-foundations.php`: exige que os ícones cheguem pela biblioteca global e reprova SVG inline (`<svg>`) em templates `.twig` e `.html` do tema. Teste negativo: um template temporário com `<svg>` foi reprovado; sem ele, o gate passa.
+- Verificado no site público: a família `bootstrap-icons` carrega e `bi-house` renderiza o glifo.
+- Sem SDC de ícone: nenhum consumidor com contrato reutilizável ainda.
+
 ## 0.5.0 — F1 (modo de cor) concluída — 2026-10-09
 
 Classificação: MINOR da linha 0.5, release da F1. A partir de `dev.1`, a linha reunia medição, contrato do Portal (0.2.0-dev.17 e dev.18) e correção do atributo (dev.3).

@@ -134,6 +134,17 @@ foreach ($css_files as $path) {
   $check(!Aculta420DesignFoundationsAnalyzer::hasRawColorLiteral($source), 'CSS literals outside tokens.css need semantic tokens: ' . $relative . '.');
 }
 
+// F2 (ícones): os ícones vêm do Bootstrap Icons, carregado pela biblioteca global do bootstrap5.
+// Nenhum template ou componente do tema espalha SVG inline de ícone.
+$check(str_contains($theme_libraries, 'bootstrap5/global-styling'), 'Bootstrap Icons arrive through the global bootstrap5/global-styling library.');
+$inline_svg = [];
+foreach ($runtime_files as $path) {
+  if (in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), ['twig', 'html'], TRUE) && preg_match('/<svg[\s>]/i', (string) file_get_contents($path)) === 1) {
+    $inline_svg[] = substr($path, strlen($theme) + 1);
+  }
+}
+$check($inline_svg === [], 'Icons use Bootstrap Icons, not inline SVG in theme templates: ' . implode(', ', $inline_svg));
+
 $catch_all = [];
 foreach (['style.css', 'responsive.css'] as $name) {
   if (is_file($theme . '/css/' . $name)) {

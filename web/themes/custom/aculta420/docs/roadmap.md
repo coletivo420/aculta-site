@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.5.1-dev.1 | F2 (ícones): Bootstrap Icons, sem dependência nova; gate contra SVG inline no tema | marcada no código |
 | 0.5.0 | F1 (modo de cor) concluída: claro, escuro e automático; validada no Runtime oficial em 2026-10-09 | marcada no código (release) |
 | 0.5.0-dev.3 | F1 (modo de cor): atributo aplicado via `b5_theme_mode` (o Bootstrap 5 sobrescrevia `html_attributes`); verificado por requisição HTTP em cópia isolada do Runtime | marcada no código; RUNTIME STATUS DEFERRED |
 | 0.5.0-dev.2 | F1 (modo de cor): modo claro, escuro e automático com contrato do Portal; gate ajustado para o bloco automático e o ramo de contrato | marcada no código; RUNTIME STATUS DEFERRED |
@@ -118,8 +119,13 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 ### F2 — Ícones (DT-T13)
 
-- Ícones pela API oficial (Core Icon API, UI Icons ou Bootstrap Icons), sem SVG espalhado.
-- Pré-requisito: decisão de dependência, com justificativa.
+**Estado (2026-10-09): decisão tomada; Bootstrap Icons 1.11.0; sem dependência nova.**
+
+- Decisão do responsável: ícones pelo Bootstrap Icons.
+- Sem dependência nova: a fonte já vem do pacote `bootstrap5` (`dist/icons/1.11.0`) e é carregada em todas as páginas pela biblioteca `bootstrap5/global-styling`. Verificado no site público: a família `bootstrap-icons` carrega e `bi-house` renderiza o glifo.
+- Regra: ícone é `<i class="bi bi-NOME" aria-hidden="true"></i>` ao lado de texto visível (ou rótulo acessível no pai). Nenhum SVG inline de ícone nos templates do tema; o gate `validate-aculta420-design-foundations.php` reprova.
+- Sem SDC de ícone até haver consumidor com contrato reutilizável (AGENTS: não criar SDC só para substituir uma classe simples).
+- Fora do tema: o editor de fotos do Portal (`aculta-portal-photo-editor.html.twig`) tem um SVG inline. Não é tratado aqui, porque o Portal não referencia componentes do tema.
 
 ### F3 — Busca e feedback (DT-T13)
 
