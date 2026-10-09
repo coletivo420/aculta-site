@@ -1,33 +1,45 @@
 {
-  "schema": 1,
-  "entries": [
-    {
-      "id": "DEP-0001",
-      "kind": "canonical",
-      "status": "open",
-      "blocking": true,
-      "page": "Página de apoio, raiz do host SUPPORT (https://apoio.aculta.toca.net.br/)",
-      "current": "https://apoio.aculta.toca.net.br/",
-      "expected_production": "https://apoio.aculta.org/",
-      "reason": "O canonical é gerado a partir do host da requisição. No servidor de testes ele aponta para o alias de teste; a política do repositório exige o host de produção como canonical. Não é corrigível no código de apresentação: precisa de ajuste no deploy.",
-      "owner": "responsável do projeto",
-      "decision": "pendente",
-      "probe": "https://apoio.aculta.org/",
-      "expect": "<link rel=\"canonical\" href=\"https://apoio.aculta.org/\">"
-    },
-    {
-      "id": "DEP-0002",
-      "kind": "sitemap",
-      "status": "open",
-      "blocking": true,
-      "page": "sitemap.xml: página raiz do host SUPPORT (https://apoio.aculta.org/)",
-      "current": "ausente: o sitemap é único e lista URLs do domínio principal",
-      "expected_production": "https://apoio.aculta.org/ listado no sitemap do host de apoio",
-      "reason": "O simple_sitemap gera um sitemap só, com links internos; não aceita URL absoluta de outro host. Incluir o host de apoio exige variante de sitemap por domínio (módulo ou rota técnica), que é decisão de arquitetura.",
-      "owner": "responsável do projeto",
-      "decision": "pendente",
-      "probe": "https://apoio.aculta.org/sitemap.xml",
-      "expect": "<loc>https://apoio.aculta.org/</loc>"
-    }
-  ]
+    "schema": 1,
+    "entries": [
+        {
+            "id": "DEP-0001",
+            "kind": "canonical",
+            "status": "open",
+            "blocking": true,
+            "page": "Página de apoio, raiz do host SUPPORT (https://apoio.aculta.toca.net.br/)",
+            "current": "https://apoio.aculta.toca.net.br/",
+            "expected_production": "https://apoio.aculta.org/",
+            "reason": "O canonical é gerado a partir do host da requisição. No servidor de testes ele aponta para o alias de teste; a política do repositório exige o host de produção como canonical. Não é corrigível no código de apresentação: precisa de ajuste no deploy.",
+            "owner": "responsável do projeto",
+            "decision": "pendente",
+            "probe": "https://apoio.aculta.org/",
+            "expect": "<link rel=\"canonical\" href=\"https://apoio.aculta.org/\">"
+        },
+        {
+            "id": "DEP-0002",
+            "kind": "sitemap",
+            "status": "open",
+            "blocking": true,
+            "page": "sitemap.xml: página raiz do host SUPPORT (https://apoio.aculta.org/)",
+            "current": "ausente: o sitemap é único e lista URLs do domínio principal",
+            "expected_production": "https://apoio.aculta.org/ listado no sitemap do host de apoio",
+            "reason": "O simple_sitemap gera um sitemap só, com links internos; não aceita URL absoluta de outro host. Incluir o host de apoio exige variante de sitemap por domínio (módulo ou rota técnica), que é decisão de arquitetura.",
+            "owner": "responsável do projeto",
+            "decision": "pendente",
+            "probe": "https://apoio.aculta.org/sitemap.xml",
+            "expect": "<loc>https://apoio.aculta.org/</loc>"
+        },
+        {
+            "id": "DEP-0003",
+            "kind": "other",
+            "page": "Todas as páginas públicas do servidor de testes (VirtualHosts aculta.toca.net.br e toca.net.br)",
+            "current": "Apache: Header always set X-Robots-Tag \"noindex, nofollow, noarchive\" em todas as respostas",
+            "expected_production": "Nenhum X-Robots-Tag noindex no VirtualHost de produção; noindex permanece somente no Homelab",
+            "reason": "Regra de noindex do Homelab (environments.md). Se for copiada para produção, o site inteiro deixa de ser indexado. A configuração de Apache não está no repositório; o deploy precisa garantir a ausência do cabeçalho",
+            "owner": "responsável do projeto",
+            "blocking": true,
+            "status": "open",
+            "decision": "pendente"
+        }
+    ]
 }

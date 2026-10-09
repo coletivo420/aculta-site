@@ -21,3 +21,7 @@
    comentários, planilhas ou dívidas soltas: ficam em `registry/deploy-registry.json`.
    A dívida técnica de código correspondente é registrada em
    `docs/operations/DEBT-REGISTER.md`.
+9. **Indexação por ambiente.** Produção indexável em todos os domínios e subdomínios;
+   servidor de testes com noindex. `build` recusa política de produção com noindex e
+   `robots --env=production` deve passar antes de considerar o deploy concluído.
+   Páginas privadas da conta mantêm noindex no Portal.

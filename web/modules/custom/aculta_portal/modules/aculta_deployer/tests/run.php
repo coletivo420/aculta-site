@@ -175,5 +175,20 @@ ob_end_clean();
 $assert($rcVerify === 1 || $rcVerify === 0, 'verify executa e retorna código de saída válido');
 $assert(hash_file('sha256', $regPath) === $before, 'verify não altera o registro (somente leitura)');
 
+// Política de indexação: produção indexável; teste não indexável.
+$assert(AcultaDeployer\Verify::robotsHeader(['HTTP/1.1 200 OK', 'X-Robots-Tag: noindex, nofollow']) === 'noindex, nofollow', 'lê X-Robots-Tag do cabeçalho (case-insensitive)');
+$assert(AcultaDeployer\Verify::robotsHeader(['HTTP/1.1 200 OK', 'Content-Type: text/html']) === null, 'cabeçalho ausente resulta em null');
+$assert(AcultaDeployer\Verify::isNoindex('noindex, nofollow, noarchive') && !AcultaDeployer\Verify::isNoindex('index, follow') && !AcultaDeployer\Verify::isNoindex(null), 'detecta noindex e aceita ausência');
+$pol = $config['robots_policy'] ?? [];
+$assert(array_key_exists('x_robots_tag', $pol['production'] ?? []) && $pol['production']['x_robots_tag'] === null, 'política de produção não envia X-Robots-Tag');
+$assert(str_contains((string) ($pol['test']['x_robots_tag'] ?? ''), 'noindex'), 'política de teste envia noindex');
+$prodHosts = $pol['production']['hosts'] ?? [];
+$expectedProd = ['https://aculta.org/', 'https://conta.aculta.org/', 'https://apoio.aculta.org/', 'https://coletivo420.aculta.org/', 'https://wiki420.aculta.org/', 'https://loja.aculta.org/', 'https://cursos.aculta.org/'];
+$assert(sort($prodHosts) === true && $prodHosts === (function () use ($expectedProd) { sort($expectedProd); return $expectedProd; })(), 'todos os sete domínios de produção estão na política (um por purpose)');
+$assert(!array_filter($prodHosts, static fn($h) => str_contains($h, 'toca.net.br')), 'nenhum host de teste na política de produção');
+$badRobots = ['robots_policy' => ['production' => ['x_robots_tag' => 'noindex']]];
+$guard = AcultaDeployer\Verify::isNoindex($badRobots['robots_policy']['production']['x_robots_tag']);
+$assert($guard === true, 'trava de build detecta política de produção com noindex');
+
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

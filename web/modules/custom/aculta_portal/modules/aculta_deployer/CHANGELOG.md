@@ -1,5 +1,12 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.1 — política de indexação por ambiente — 2026-10-09
+
+- Comando `robots --env=production|test` (GET somente leitura) por host.
+- `build` grava `deploy-policy.json` e recusa política de produção com noindex.
+- Política: produção indexável nos sete domínios; teste com noindex.
+- Testes da leitura de cabeçalho, da detecção de noindex e da cobertura dos domínios.
+
 ## 0.1.0 — primeira versão — 2026-10-09
 
 - Submódulo do `aculta_portal` em `modules/aculta_deployer/`, descoberto e não habilitado.

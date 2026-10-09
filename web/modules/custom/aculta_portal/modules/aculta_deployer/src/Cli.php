@@ -7,7 +7,7 @@ namespace AcultaDeployer;
 /** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
-  public const VERSION = '0.1.0';
+  public const VERSION = '0.1.1';
 
   private readonly string $toolRoot;
   private readonly string $repoRoot;
@@ -30,6 +30,7 @@ final class Cli {
       'register' => $this->register($options),
       'build' => $this->build($options),
       'verify' => $this->verify(),
+      'robots' => $this->robots($options),
       default => $this->help(),
     };
   }
@@ -90,6 +91,37 @@ final class Cli {
       $this->say(sprintf('%s [%s] %s%s — %s', $e['id'], $e['status'], $e['kind'], ($e['blocking'] ?? false) ? ' (bloqueante)' : '', $e['page']));
     }
     return 0;
+  }
+
+  /**
+   * Política de indexação por ambiente: produção indexável em todos os hosts;
+   * teste com noindex. GET somente leitura.
+   *
+   * @param array<string, string|bool> $o
+   */
+  private function robots(array $o): int {
+    $env = is_string($o['env'] ?? null) ? $o['env'] : 'production';
+    $policy = $this->json($this->toolRoot . '/config/deploy.json')['robots_policy'][$env] ?? null;
+    if ($policy === null) {
+      $this->err("robots: ambiente desconhecido: $env");
+      return 1;
+    }
+    $code = 0;
+    foreach ($policy['hosts'] as $url) {
+      $res = Verify::fetchWithHeaders((string) $url);
+      if ($res === null) {
+        $this->say("FAIL $url: sem resposta");
+        $code = 1;
+        continue;
+      }
+      $value = Verify::robotsHeader($res['headers']);
+      $noindex = Verify::isNoindex($value);
+      $ok = $env === 'production' ? !$noindex : $noindex;
+      $this->say(sprintf('%s %s: X-Robots-Tag=%s', $ok ? 'PASS' : 'FAIL', $url, $value ?? '(ausente)'));
+      $code = $ok ? $code : 1;
+    }
+    $this->say("robots ($env): " . ($code === 0 ? 'PASS' : 'FAIL'));
+    return $code;
   }
 
   /** Fase 5: GET somente leitura nas entradas com probe e expect. */
@@ -216,6 +248,11 @@ final class Cli {
       return 1;
     }
     $maxBytes = (int) ($this->json($this->toolRoot . '/config/deploy.json')['max_bytes'] ?? 2097152);
+    $robots = $this->json($this->toolRoot . '/config/deploy.json')['robots_policy']['production'] ?? [];
+    if (Verify::isNoindex($robots['x_robots_tag'] ?? null)) {
+      $this->err('build: a política de produção envia noindex; o build de produção não é gerado');
+      return 1;
+    }
     $report = ['tool' => 'aculta-deployer ' . self::VERSION, 'target' => 'production', 'files' => [], 'dropped' => [], 'skipped_binary' => [], 'replacements' => 0];
     if (!is_dir($outAbs) && !mkdir($outAbs, 0775, true)) {
       $this->err('build: não foi possível criar o diretório de saída');
@@ -265,6 +302,7 @@ final class Cli {
       $this->err('build: ' . $e->getMessage() . ' (saída removida)');
       return 1;
     }
+    file_put_contents($outAbs . '/deploy-policy.json', json_encode(['robots' => $robots], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     file_put_contents($outAbs . '/deploy-report.json', json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     $this->say(sprintf('build: %d arquivos gravados, %d removidos, %d binários preservados, %d substituições de host em %s',
       count($report['files']), count($report['dropped']), count($report['skipped_binary']), $report['replacements'], $out));
@@ -375,6 +413,7 @@ Uso:
   aculta-deployer list                 lista as correções de deploy registradas
   aculta-deployer register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]
   aculta-deployer build --out=DIR [--allow-open-blocking]
+  aculta-deployer robots [--env=production|test]  GET somente leitura: confere X-Robots-Tag por host
   aculta-deployer version
 
 Códigos de saída: 0 sucesso; 1 erro de uso, validação ou fronteira; 2 bloqueado (entrada bloqueante aberta).
