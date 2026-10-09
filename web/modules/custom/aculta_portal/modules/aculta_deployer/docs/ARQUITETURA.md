@@ -5,7 +5,7 @@
 | Arquivo | Função |
 | --- | --- |
 | `bin/aculta-deployer` | Ponto de entrada da CLI. Carrega as classes de `src/`. |
-| `src/Cli.php` | Comandos: version, check, boundaries, list, register, build, verify, robots, sitemap, report, environment, schema, tool, boundaries, registry, secrets, environment. |
+| `src/Cli.php` | Comandos: `version`, `check`, `boundaries`, `list`, `register`, `build`, `verify`, `robots`, `sitemap`, `report`, `environment`. |
 | `src/Transform.php` | Escopo, remoção de aliases de teste e substituição de host. |
 | `src/Registry.php` | Leitura, validação e gravação de `registry/deploy-registry.json`. |
 | `src/Secrets.php` | Formato NAME=value e contrato de nomes; usados pelo relatório. Sem importação ou exportação de valores (0.1.7). |
