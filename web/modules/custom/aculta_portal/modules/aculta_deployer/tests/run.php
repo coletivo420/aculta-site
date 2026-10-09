@@ -209,6 +209,8 @@ $assert(AcultaDeployer\Verify::sitemapDirectives("User-agent: *\nSitemap: https:
 $assert(AcultaDeployer\Verify::sitemapDirectives("Disallow: /admin/\n") === [], 'robots sem Sitemap não gera diretiva');
 $assert(AcultaDeployer\Verify::disallowsRoot("User-agent: *\nDisallow: /\n") === true, 'detecta Disallow: / (site inteiro bloqueado)');
 $assert(AcultaDeployer\Verify::disallowsRoot("User-agent: *\nDisallow: /admin/\nDisallow:\n") === false, 'Disallow de caminho específico e Disallow vazio não bloqueiam o site');
+$assert(AcultaDeployer\Verify::testEquivalent('apoio.aculta.org') === 'apoio.aculta.toca.net.br' && AcultaDeployer\Verify::testEquivalent('aculta.org') === 'aculta.toca.net.br', 'equivalente de teste preserva o subdomínio');
+$assert(AcultaDeployer\Verify::testEquivalent('evil-aculta.org') === 'evil-aculta.org', 'equivalente de teste troca só o sufixo exato');
 $assert(AcultaDeployer\Verify::hostOf('https://APOIO.aculta.org/x?y=1') === 'apoio.aculta.org', 'hostOf normaliza a caixa e ignora caminho e query');
 $sm = $config['sitemap'] ?? [];
 $assert(AcultaDeployer\Verify::hostOf($sm['production']['index_url'] ?? '') === AcultaDeployer\Verify::hostOf($sm['production']['index_base'] ?? '1'), 'índice de produção está na base de produção');

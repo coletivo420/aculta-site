@@ -213,9 +213,11 @@ final class Cli {
       $this->say(sprintf('PASS %s: %d URL(s) de conteúdo', $child, count($locs)));
     }
     foreach (array_keys($contentHosts) as $h) {
-      $probe = Verify::fetchWithHeaders("https://$h/");
+      // No servidor de testes, o host de conteúdo é verificado pelo equivalente de teste.
+      $target = $env === 'test' ? Verify::testEquivalent((string) $h) : (string) $h;
+      $probe = Verify::fetchWithHeaders("https://$target/");
       $ok = $probe !== null && (Verify::statusCode($probe['headers']) ?? 500) < 400;
-      $this->say(sprintf('%s host de conteúdo %s responde %s', $ok ? 'PASS' : 'FAIL', $h, $probe === null ? 'sem resposta' : (string) Verify::statusCode($probe['headers'])));
+      $this->say(sprintf('%s host de conteúdo %s (%s) responde %s', $ok ? 'PASS' : 'FAIL', $h, $target, $probe === null ? 'sem resposta' : (string) Verify::statusCode($probe['headers'])));
       $code = $ok ? $code : 1;
     }
     $this->say("sitemap ($env): " . ($code === 0 ? 'PASS' : 'FAIL'));
