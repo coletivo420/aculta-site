@@ -8,3 +8,4 @@ dependencies:
   - aculta_portal:aculta_portal
   - simple_sitemap:simple_sitemap
   - domain:domain
+  - domain_config:domain_config

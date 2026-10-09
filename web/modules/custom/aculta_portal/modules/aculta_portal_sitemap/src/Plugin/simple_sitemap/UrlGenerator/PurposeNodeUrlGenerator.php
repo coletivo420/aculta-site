@@ -7,11 +7,14 @@ namespace Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountSwitcherInterface;
+use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\node\NodeInterface;
+use Drupal\path_alias\AliasManagerInterface;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorBase;
+use Drupal\domain_config\Config\DomainConfigCollectionUtils;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -37,11 +40,18 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
   public const PURPOSE_KEY = 'purpose';
 
   /**
-   * Purposes cuja página pública inicial é uma rota (não um nó). A raiz do host
-   * entra no sitemap do purpose como URL própria. SUPPORT: a página de apoio é
-   * a rota do formulário na raiz do subdomínio (ADR-009, DT-P23).
+   * Purposes com política de indexação ativa (ADR-009, 0.1.0-F). Controle
+   * explícito: existir como domínio não basta para ser indexável. SHOP fica fora
+   * até ter catálogo público; FORUM e ACCOUNT nunca entram.
    */
-  public const ROOT_PURPOSES = ['support'];
+  public const INDEXABLE_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses'];
+
+  /**
+   * Purposes cuja página pública inicial é uma rota (não um nó). A raiz do host
+   * entra no sitemap do purpose como URL própria. SUPPORT: página de apoio na raiz
+   * do subdomínio (DT-P23). MAGAZINE, WIKI e COURSES: home por front de rota.
+   */
+  public const ROOT_PURPOSES = ['support', 'magazine', 'wiki', 'courses'];
 
   /** Bundles elegíveis (matriz da política de indexação). */
   public const BUNDLES = ['page', 'project', 'activity', 'document', 'wiki_entry', 'article'];
@@ -55,6 +65,8 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     private readonly DomainPurposeManager $purposes,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountSwitcherInterface $accountSwitcher,
+    private readonly StorageInterface $configStorage,
+    private readonly AliasManagerInterface $aliasManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $settings);
   }
@@ -69,13 +81,18 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
       $container->get('aculta_portal.domain_purpose'),
       $container->get('entity_type.manager'),
       $container->get('account_switcher'),
+      $container->get('config.storage'),
+      $container->get('path_alias.manager'),
     );
   }
 
   /** {@inheritdoc} */
   public function getDataSets(): array {
     $purpose = $this->sitemapPurpose();
-    $domain = $purpose === NULL ? NULL : $this->purposes->getDomain($purpose);
+    if ($purpose === NULL || !in_array($purpose, self::INDEXABLE_PURPOSES, TRUE)) {
+      return [];
+    }
+    $domain = $this->purposes->getDomain($purpose);
     if ($domain === NULL) {
       return [];
     }
@@ -152,12 +169,32 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     if ($source !== $purpose) {
       return FALSE;
     }
+    // A página inicial do purpose é representada pela raiz do host (ROOT_PURPOSES).
+    // O nó que ocupa essa posição redireciona para a raiz; listá-lo duplicaria a URL.
+    if ($this->isPurposeFrontNode($node, $purpose)) {
+      return FALSE;
+    }
     // R5a: noindex declarado no metatag do nó.
     if ($node->hasField('field_meta_tags') && !$node->get('field_meta_tags')->isEmpty()
       && stripos((string) $node->get('field_meta_tags')->value, 'noindex') !== FALSE) {
       return FALSE;
     }
     return TRUE;
+  }
+
+  private function isPurposeFrontNode(NodeInterface $node, string $purpose): bool {
+    $domain = $this->purposes->getDomain($purpose);
+    if ($domain === NULL) {
+      return FALSE;
+    }
+    $front = $this->configStorage
+      ->createCollection(DomainConfigCollectionUtils::createDomainConfigCollectionName($domain->id()))
+      ->read('system.site')['page']['front'] ?? NULL;
+    if (!is_string($front) || $front === '') {
+      return FALSE;
+    }
+    $alias = $this->aliasManager->getAliasByPath('/node/' . $node->id());
+    return $front === $alias || $front === '/node/' . $node->id();
   }
 
   private function sitemapPurpose(): ?string {
