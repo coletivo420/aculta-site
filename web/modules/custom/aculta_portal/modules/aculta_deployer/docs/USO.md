@@ -40,3 +40,10 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
 ```
 php web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php
 ```
+
+## Indexação (política por ambiente)
+
+- `$CLI robots --env=production`: GET em todos os hosts de produção; espera **ausência** de
+  `X-Robots-Tag` com noindex.
+- `$CLI robots --env=test`: espera noindex nos hosts de teste.
+- A lista de hosts e a política ficam em `config/deploy.json` (`robots_policy`).

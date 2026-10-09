@@ -27,6 +27,46 @@ final class Verify {
     return $expect !== '' && str_contains($body, $expect);
   }
 
+  /** GET sem seguir redirecionamentos; devolve corpo e cabeçalhos ou null. */
+  public static function fetchWithHeaders(string $url): ?array {
+    if (!self::isAllowedUrl($url)) {
+      return null;
+    }
+    $context = self::context();
+    $body = @file_get_contents($url, false, $context, 0, self::MAX_BYTES);
+    if ($body === false) {
+      return null;
+    }
+    // file_get_contents grava os cabeçalhos da resposta neste escopo.
+    return ['body' => $body, 'headers' => $http_response_header ?? []];
+  }
+
+  private static function context() {
+    return stream_context_create(['http' => [
+      'method' => 'GET',
+      'timeout' => self::TIMEOUT_SECONDS,
+      'follow_location' => 0,
+      'ignore_errors' => true,
+      'user_agent' => 'aculta-deployer/' . Cli::VERSION,
+      'max_redirects' => 0,
+    ]]);
+  }
+
+  /** Valor do cabeçalho X-Robots-Tag, ou null se ausente. */
+  public static function robotsHeader(array $headers): ?string {
+    foreach ($headers as $line) {
+      if (preg_match('/^x-robots-tag:\s*(.+)$/i', trim((string) $line), $m) === 1) {
+        return trim($m[1]);
+      }
+    }
+    return null;
+  }
+
+  /** Verdadeiro quando o valor do cabeçalho impede indexação. */
+  public static function isNoindex(?string $value): bool {
+    return $value !== null && stripos($value, 'noindex') !== false;
+  }
+
   /** GET sem seguir redirecionamentos, com tempo limite e tamanho máximo. */
   public static function fetch(string $url): ?string {
     if (!self::isAllowedUrl($url)) {
