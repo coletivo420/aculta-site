@@ -1,3 +1,13 @@
+## 0.5.0 — F1 (modo de cor) concluída — 2026-10-09
+
+Classificação: MINOR da linha 0.5, release da F1. A partir de `dev.1`, a linha reunia medição, contrato do Portal (0.2.0-dev.17 e dev.18) e correção do atributo (dev.3).
+
+- Modo de cor com três estados: claro, escuro e automático. A escolha é da pessoa usuária em Minha Conta > Configurações; sem escolha, vale o padrão do site (claro, por padrão).
+- Aplicação por `b5_theme_mode`, com `automático` deixando o `data-bs-theme` vazio; `tokens.css` tem o bloco `prefers-color-scheme` espelhado do bloco escuro.
+- Validação no Runtime oficial (2026-10-09): roteiro automatizado 7/7; HTTP `light`/`dark`/`auto` correto; automático segue o sistema no navegador; contraste no escuro com 52 medidas, pior caso 8,82:1.
+- Gates da `main` passam: design, Foundation (310), SDC, validadores de navegador e Portal.
+- Sem teste humano (decisão do responsável). Tag não criada (não pedida).
+
 ## 0.5.0-dev.3 — F1 (modo de cor): atributo via b5_theme_mode — 2026-10-09
 
 RUNTIME STATUS: DEFERRED no Runtime oficial. Em cópia isolada do Runtime (com o Portal 0.2.0-dev.18), requisições HTTP anônimas à página inicial confirmaram o atributo nos três padrões do site, e a escolha de uma pessoa usuária sobrepôs o padrão.

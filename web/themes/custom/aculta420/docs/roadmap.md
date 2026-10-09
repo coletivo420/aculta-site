@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.5.0 | F1 (modo de cor) concluída: claro, escuro e automático; validada no Runtime oficial em 2026-10-09 | marcada no código (release) |
 | 0.5.0-dev.3 | F1 (modo de cor): atributo aplicado via `b5_theme_mode` (o Bootstrap 5 sobrescrevia `html_attributes`); verificado por requisição HTTP em cópia isolada do Runtime | marcada no código; RUNTIME STATUS DEFERRED |
 | 0.5.0-dev.2 | F1 (modo de cor): modo claro, escuro e automático com contrato do Portal; gate ajustado para o bloco automático e o ramo de contrato | marcada no código; RUNTIME STATUS DEFERRED |
 | 0.5.0-dev.1 | F1 (modo de cor): medição do modo escuro em navegador, pré-requisito atendido; tokens da barra sem alteração | marcada no código |
@@ -101,14 +102,19 @@ Nenhuma destas fases tem versão alvo de 1.0.
   autenticado na camada de conta, e local e sem quebra de cache para anônimo.
 - Pré-requisito: T2 (validação do modo escuro em navegador real).
 
-**Estado (2026-10-09): implementada no tema (0.5.0-dev.2) e no Portal (0.2.0-dev.17). RUNTIME STATUS: DEFERRED.**
+**Estado: concluída em 0.5.0 (2026-10-09), validada no Runtime oficial.**
 
-- Decisões do responsável: o controle fica em **Minha Conta > Configurações** (`/configuracoes`, no Portal); a preferência é gravada por usuário no banco (`user.data`); há três estados (claro, escuro, automático); o Portal tem um padrão global do site em `/admin/config/aculta/aparencia`, que vale para visitantes e para quem não escolheu.
-- Portal: `ColorModePreference` resolve o modo e publica o contrato neutro `aculta_color_mode` (`light`, `dark` ou `auto`). O tema não lê usuário nem configuração.
-- Tema: `ThemeHooks::preprocessHtml` define `b5_theme_mode` (`light`, `dark`, ou vazio em `auto`). O `html.html.twig` do Bootstrap 5 grava `data-bs-theme` a partir dessa variável e sobrescreve qualquer atributo em `html_attributes`. Em `auto` o atributo fica vazio e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`. O bloco automático espelha o bloco escuro e o gate verifica essa igualdade.
-- Sem JavaScript de modo: nenhuma troca no cliente, nenhum `localStorage`.
-- Medição: `scripts/validate-color-mode-browser.mjs` (52 medidas, pior caso 8,82:1). Teste de CSS com `prefers-color-scheme: dark` em Chromium: automático segue o sistema, `light` vence o sistema, `dark` força o escuro.
-- Pendências: validação no Runtime (Portal + tema) e QA visual das duas telas de configuração. Tokens da barra não mudaram.
+- Decisões do responsável: o controle fica em **Minha Conta > Configurações** (`/configuracoes`, no Portal); a preferência é gravada por usuário no banco (`user.data`); há três estados (claro, escuro, automático); o padrão global do site fica em `/admin/config/aculta/aparencia`.
+- Portal (0.2.0-dev.18): `ColorModePreference` resolve o modo e publica o contrato `aculta_color_mode`. O tema não lê usuário nem configuração.
+- Tema (0.5.0): `ThemeHooks::preprocessHtml` define `b5_theme_mode` (o `html.html.twig` do Bootstrap 5 grava `data-bs-theme` a partir dele). Em `auto` o atributo fica vazio, e `tokens.css` decide por `@media (prefers-color-scheme: dark)` guardado por `:root:not([data-bs-theme="light"])`.
+- Sem JavaScript de modo e sem `localStorage`. Tokens da barra institucional não foram alterados.
+- Evidência no Runtime oficial (`https://aculta.toca.net.br`, código da `main` em `ce87dcb`):
+  - roteiro automatizado: 7 de 7 checagens (padrão global, escolha da pessoa usuária, HTML anônimo e logado, cache invalidado após salvar);
+  - HTTP: `light` → `"light"`, `dark` → `"dark"`, `auto` → `""`;
+  - automático no navegador: sistema escuro → fundo `rgb(23,21,19)`; claro → `rgb(242,247,240)`;
+  - contraste no modo escuro: 52 medidas, pior caso 8,82:1, sem overflow.
+- Gates na `main`: design, Foundation (310), SDC, validadores de navegador e Portal, todos PASS.
+- Sem teste humano (decisão do responsável). Padrão inicial do site: `light`.
 
 ### F2 — Ícones (DT-T13)
 
