@@ -30,7 +30,7 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 
 | ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
-| DT-P01 | Classes de tema (`aculta-*`) em templates do módulo | `templates/aculta-portal-shell.html.twig` e `aculta-portal-photo-editor.html.twig` (14 ocorrências); viola a fronteira do `AGENTS.md` | Média | Não | S1 | Aberta |
+| DT-P01 | Classes de tema (`aculta-*`) em templates do módulo | corrigido em 0.2.0-dev.20: classes `portal-account*` no módulo; gate reprova `class="aculta-*"` em `templates/` | Média | Não | S1 | Resolvida |
 | DT-P02 | Arquivo sem `declare(strict_types=1)` | `src/Hook/PortalHooks.php` com `declare(strict_types=1)`; gate do Portal PASS (470 checagens) | Baixa | Não | S2 | Resolvida |
 | DT-P03 | Sem testes de Kernel para os serviços P5–P7 | `tests/` tem 7 arquivos unitários e nenhum Kernel; P10-R item "DEFERRED" | Média | Não | S2 | Aberta |
 | DT-P04 | PHP 8.5 não instalado nem testado | `P10-R-FINAL-AUDIT.md` item 4; `composer.json` declara `>=8.3` | Média | Não | S3 | Aberta |

@@ -1,3 +1,12 @@
+## 0.2.0-dev.20 — S1: fronteira de apresentação (DT-P01) — 2026-10-09
+
+Classificação: correção de fronteira (nomes de classe; sem mudança de comportamento, rota ou dado).
+
+- Classes `aculta-account*` (e IDs correspondentes) renomeadas para `portal-account*` nos templates, no CSS e no JS do próprio Portal, e nas classes PHP que as montam (`AccountShellBuilder`, `PortalController`, `AccountCoursesController`). Nenhuma classe do tema é usada pelo módulo.
+- Gate `validate-aculta-portal-drupal11.php`: reprova `class="...aculta-..."` em `templates/*.twig`. Sonda negativa testada (reprovada).
+- Atributos `data-aculta-*` permanecem: são contrato de JS, fora da regra de classes.
+- Verificado: as páginas de Minha Conta renderizam as classes `portal-account*` e nenhuma `aculta-account*` (ver validação no PR).
+
 ## 0.2.0-dev.19 — F3: busca pública pelo índice do Search API no banco — 2026-10-09
 
 RUNTIME STATUS: validada no Runtime oficial (2026-10-09), sem teste humano: `/busca` com resultados, aviso para termo curto e aviso sem resultado; `/busca/sugestoes` com sugestões por prefixo e sem acento; conteúdo não publicado fora dos resultados e das sugestões.

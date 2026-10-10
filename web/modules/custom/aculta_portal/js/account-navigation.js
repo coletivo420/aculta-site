@@ -44,10 +44,10 @@
   };
 
   const updatePanel = async (url, pushState) => {
-    const layout = document.querySelector('[data-aculta-account-layout]');
-    const panel = layout?.querySelector('[data-aculta-account-content]');
-    const status = layout?.querySelector('[data-aculta-account-status]');
-    const loading = layout?.querySelector('[data-aculta-account-loading]');
+    const layout = document.querySelector('[data-portal-account-layout]');
+    const panel = layout?.querySelector('[data-portal-account-content]');
+    const status = layout?.querySelector('[data-portal-account-status]');
+    const loading = layout?.querySelector('[data-portal-account-loading]');
     if (!layout || !panel) {
       window.location.assign(url);
       return;
@@ -59,7 +59,7 @@
     if (status) status.textContent = Drupal.t('Carregando conteúdo da seção.');
     try {
       const responseDocument = await requestDocument(url);
-      const replacement = responseDocument.querySelector('[data-aculta-account-content]');
+      const replacement = responseDocument.querySelector('[data-portal-account-content]');
       if (!replacement) throw new Error('Account content missing from response.');
       Drupal.detachBehaviors(panel, window.drupalSettings || {}, 'unload');
       panel.innerHTML = replacement.innerHTML;
@@ -86,9 +86,9 @@
   };
 
   const updateDataPanel = async (url, pushState) => {
-    const layout = document.querySelector('[data-aculta-account-layout]');
-    const dataPanel = layout?.querySelector('[data-aculta-account-data-content]');
-    const status = layout?.querySelector('[data-aculta-account-status]');
+    const layout = document.querySelector('[data-portal-account-layout]');
+    const dataPanel = layout?.querySelector('[data-portal-account-data-content]');
+    const status = layout?.querySelector('[data-portal-account-status]');
     if (!layout || !dataPanel) {
       await updatePanel(url, pushState);
       return;
@@ -97,13 +97,13 @@
     if (status) status.textContent = Drupal.t('Carregando seus dados.');
     try {
       const responseDocument = await requestDocument(url);
-      const replacement = responseDocument.querySelector('[data-aculta-account-data-content]');
+      const replacement = responseDocument.querySelector('[data-portal-account-data-content]');
       if (!replacement) throw new Error('Account data content missing from response.');
       Drupal.detachBehaviors(dataPanel, window.drupalSettings || {}, 'unload');
       dataPanel.innerHTML = replacement.innerHTML;
       updateTitle(responseDocument);
       if (pushState) window.history.pushState({ acultaAccount: true, acultaAccountData: true }, '', url);
-      layout.querySelectorAll('a[data-aculta-account-data-link]').forEach((link) => {
+      layout.querySelectorAll('a[data-portal-account-data-link]').forEach((link) => {
         const active = new URL(link.href).pathname === window.location.pathname;
         if (active) link.setAttribute('aria-current', 'page');
         else link.removeAttribute('aria-current');
@@ -129,9 +129,9 @@
 
   Drupal.behaviors.acultaPortalNavigation = {
     attach(context) {
-      once('aculta-portal-navigation', '[data-aculta-account-layout]', context).forEach((layout) => {
+      once('aculta-portal-navigation', '[data-portal-account-layout]', context).forEach((layout) => {
         layout.addEventListener('click', (event) => {
-          const nestedLink = event.target.closest('a[data-aculta-account-data-link]');
+          const nestedLink = event.target.closest('a[data-portal-account-data-link]');
           const portalLink = event.target.closest('a[data-aculta-portal-link]');
           const link = nestedLink || portalLink;
           if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target === '_blank') return;
@@ -161,7 +161,7 @@
         const dialog = editor.querySelector('[data-aculta-photo-dialog]');
         const trigger = editor.querySelector('[data-aculta-photo-open]');
         const closeButton = editor.querySelector('[data-aculta-photo-close]');
-        const heading = dialog?.querySelector('#aculta-account-photo-title');
+        const heading = dialog?.querySelector('#portal-account-photo-title');
         if (!dialog || !trigger || typeof dialog.showModal !== 'function') return;
 
         // The dialog starts open so its form remains available without JS.

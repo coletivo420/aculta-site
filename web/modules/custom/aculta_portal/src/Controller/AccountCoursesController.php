@@ -32,7 +32,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     $items = $view['items'];
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-account-courses']],
+      '#attributes' => ['class' => ['portal-account-courses']],
       '#cache' => [
         'contexts' => ['user', 'user.permissions'],
         'max-age' => 0,
@@ -58,7 +58,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     foreach ($items as $delta => $course) {
       $card = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-account-course']],
+        '#attributes' => ['class' => ['portal-account-course']],
         '#cache' => ['tags' => $course['cache_tags']],
         'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $course['title']],
       ];
@@ -67,7 +67,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
       }
       $card['meta'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-account-course__meta']],
+        '#attributes' => ['class' => ['portal-account-course__meta']],
         'status' => [
           '#plain_text' => (string) $this->translation->translate(
             'Status: @status',

@@ -86,18 +86,18 @@ final class PortalController extends ControllerBase {
       '#style_name' => 'aculta_avatar',
       '#uri' => $file->getFileUri(),
       '#alt' => $this->t('Foto de perfil de @name', ['@name' => $display_name]),
-      '#attributes' => ['class' => ['aculta-account__avatar']],
+      '#attributes' => ['class' => ['portal-account__avatar']],
     ] : [
       '#type' => 'html_tag',
       '#tag' => 'span',
       '#value' => mb_strtoupper(mb_substr($display_name, 0, 1)),
-      '#attributes' => ['class' => ['aculta-account__avatar', 'aculta-account__avatar--empty'], 'aria-hidden' => 'true'],
+      '#attributes' => ['class' => ['portal-account__avatar', 'portal-account__avatar--empty'], 'aria-hidden' => 'true'],
     ];
 
     return [
       'identity' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-account__identity']],
+        '#attributes' => ['class' => ['portal-account__identity']],
         'photo_editor' => [
           '#theme' => 'aculta_portal_photo_editor',
           '#photo' => $photo,
@@ -123,7 +123,7 @@ final class PortalController extends ControllerBase {
     $count = $this->accountCourses->countCourses($account);
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-account-courses-summary']],
+      '#attributes' => ['class' => ['portal-account-courses-summary']],
       'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Cursos')],
       'summary' => [
         '#plain_text' => $count === 1
@@ -328,7 +328,7 @@ final class PortalController extends ControllerBase {
         '#type' => 'link',
         '#title' => $tab['title'],
         '#url' => Url::fromRoute($tab['route']),
-        '#attributes' => ['data-aculta-account-data-link' => 'true', 'class' => ['aculta-account-data__link']],
+        '#attributes' => ['data-portal-account-data-link' => 'true', 'class' => ['portal-account-data__link']],
       ];
       if ($section === $key) {
         $link['#attributes']['aria-current'] = 'page';
@@ -340,16 +340,16 @@ final class PortalController extends ControllerBase {
       'description' => ['#plain_text' => $this->t('Mantenha suas informações pessoais e de contato atualizadas.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-account-data__nav'], 'aria-label' => $this->t('Seções de meus dados'), 'data-aculta-account-data-nav' => 'true'],
+        '#attributes' => ['class' => ['portal-account-data__nav'], 'aria-label' => $this->t('Seções de meus dados'), 'data-portal-account-data-nav' => 'true'],
         'links' => $links,
       ],
       'content' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-account-data__content'], 'data-aculta-account-data-content' => 'true', 'aria-busy' => 'false'],
+        '#attributes' => ['class' => ['portal-account-data__content'], 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
         'heading' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $title, '#attributes' => ['tabindex' => '-1']],
         'account_email' => $section === 'basics' ? [
           '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-account-data__email']],
+          '#attributes' => ['class' => ['portal-account-data__email']],
           'label' => ['#type' => 'html_tag', '#tag' => 'h4', '#value' => $this->t('E-mail')],
           'value' => ['#plain_text' => $account->getEmail()],
         ] : [],

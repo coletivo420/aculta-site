@@ -43,7 +43,7 @@ final class AccountShellBuilder {
     foreach ($sections as $section_route => $section) {
       $link = Link::fromTextAndUrl($section['title'], Url::fromRoute($section['route']))->toRenderable();
       $link['#attributes'] = [
-        'class' => ['aculta-account__link'],
+        'class' => ['portal-account__link'],
         'data-aculta-portal-link' => 'true',
       ];
       if ($route === $section_route) {
@@ -59,7 +59,7 @@ final class AccountShellBuilder {
       $this->translation->translate('Sair'),
       $logout->getUrlObject(),
     )->toRenderable();
-    $logout_link['#attributes'] = ['class' => ['aculta-account__link', 'aculta-account__logout']];
+    $logout_link['#attributes'] = ['class' => ['portal-account__link', 'portal-account__logout']];
     $items[] = $logout_link;
 
     $variables['page']['content'] = [
@@ -68,7 +68,7 @@ final class AccountShellBuilder {
       '#menu' => [
         '#theme' => 'item_list',
         '#items' => $items,
-        '#attributes' => ['class' => ['aculta-account__menu']],
+        '#attributes' => ['class' => ['portal-account__menu']],
       ],
       '#content' => $variables['page']['content'] ?? [],
       '#cache' => [
