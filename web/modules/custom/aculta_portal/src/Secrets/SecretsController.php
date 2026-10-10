@@ -8,16 +8,18 @@ use Drupal\aculta_portal\Secrets\Form\SecretClearForm;
 use Drupal\aculta_portal\Secrets\Form\SecretEditForm;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * "Credenciais do ambiente": uma seção para o ambiente de produção e outra para o de testes.
  * A troca de ambiente continua a cargo do ACULTA Deployer; o painel só mostra as duas seções.
  *
- * Botão de olho (valor completo sob demanda) e lápis (popup para alterar o valor). Os valores
- * nunca entram no HTML da página.
+ * Olho (popup com o valor completo, sob demanda), lápis (popup para alterar) e lixeira (popup para
+ * apagar). O valor só aparece dentro do popup, nunca no HTML da página.
  */
 final class SecretsController {
 
@@ -28,6 +30,7 @@ final class SecretsController {
   public function __construct(
     private readonly SecretsManager $secrets,
     private readonly FormBuilderInterface $formBuilder,
+    private readonly AccountInterface $account,
     TranslationInterface $translation,
   ) {
     $this->setStringTranslation($translation);
@@ -40,7 +43,7 @@ final class SecretsController {
     $page = [
       '#attached' => [
         // dialog.ajax: o lápis abre o popup por link use-ajax com data-dialog-type="modal".
-        'library' => ['aculta_portal/requirements-report', 'aculta_portal/secrets-reveal', 'core/drupal.dialog.ajax'],
+        'library' => ['aculta_portal/requirements-report', 'core/drupal.dialog.ajax'],
       ],
       'legend' => [
         '#type' => 'container',
@@ -62,6 +65,25 @@ final class SecretsController {
       ];
     }
     return $page;
+  }
+
+  /**
+   * Popup com o valor completo de uma credencial. Resposta do próprio popup (não fica no HTML da página),
+   * sem cache e registrada no log com o nome e o usuário.
+   *
+   * @return array<string, mixed>
+   */
+  public function show(string $name): array {
+    $value = $this->secrets->value($name);
+    if ($value === NULL) {
+      throw new NotFoundHttpException();
+    }
+    $this->secrets->logReveal($name, (string) $this->account->getAccountName());
+    return [
+      '#cache' => ['max-age' => 0, 'contexts' => ['user']],
+      'help' => ['#markup' => '<p>' . $this->t('Valor de @name. Feche este popup quando terminar.', ['@name' => $name]) . '</p>'],
+      'value' => ['#markup' => '<pre class="aculta-secret-popup__value">' . htmlspecialchars($value, ENT_QUOTES) . '</pre>'],
+    ];
   }
 
   /** Popup de alteração de uma credencial (rota com link use-ajax modal). */
@@ -150,18 +172,17 @@ final class SecretsController {
       $value = $this->secrets->value($name);
       $masked = $value === NULL ? '—' : SecretsManager::mask($value);
       // A rota tem _csrf_token: o gerador de URL já acrescenta ?token=. Não concatenar outro.
-      $url = Url::fromRoute('aculta_portal.secrets_reveal', ['name' => $name])->toString();
-      $cell['masked'] = ['#markup' => '<span class="aculta-secret-value__text" data-masked="' . htmlspecialchars($masked, ENT_QUOTES) . '">' . htmlspecialchars($masked, ENT_QUOTES) . '</span>'];
+      $cell['masked'] = ['#markup' => '<span class="aculta-secret-value__text">' . htmlspecialchars($masked, ENT_QUOTES) . '</span>'];
       $cell['eye'] = [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => '👁',
+        '#type' => 'link',
+        '#title' => '👁',
+        '#url' => Url::fromRoute('aculta_portal.secrets_show', ['name' => $name]),
         '#attributes' => [
-          'type' => 'button',
-          'class' => ['aculta-secret-value__eye'],
-          'data-reveal-url' => $url,
-          'aria-pressed' => 'false',
-          'aria-label' => (string) $this->t('Mostrar valor de @name', ['@name' => $name]),
+          'class' => ['aculta-secret-value__eye', 'use-ajax'],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => Json::encode(['width' => 480]),
+          'aria-label' => (string) $this->t('Mostrar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
+          'title' => (string) $this->t('Mostrar valor'),
         ],
       ];
     }

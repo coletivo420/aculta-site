@@ -52,3 +52,13 @@
     border-inline-start-color: CanvasText;
   }
 }
+
+/* Popup do olho: valor completo, sem quebrar a tela no celular. */
+.aculta-secret-popup__value {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: monospace;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  background-color: #f3f3f3;
+}
