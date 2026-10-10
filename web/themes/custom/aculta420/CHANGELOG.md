@@ -16,6 +16,16 @@ Classificação: PATCH (ferramenta de verificação; sem alteração de apresent
 - Apoio com gateway indisponível: a checagem de botão desabilitado só vale quando há botão.
 - Validação: `validate-institution-browser.mjs` com `ACULTA_SITE_ORIGIN` e `ACULTA_SUPPORT_ORIGIN` contra `https://aculta.toca.net.br`: exit 0 (sitemap pelo deployer PASS; apoio no estado indisponível; favicon 200).
 
+## 0.6.0-dev.3 — F4 concluída: UI Patterns Library com estados documentados — 2026-10-10
+
+Classificação: MINOR da linha 0.6 (biblioteca navegável e stories; sem alteração de markup nem de componente).
+
+- `ui_patterns` e `ui_patterns_library` passam a constar em `config/sync/core.extension.yml`. Antes estavam habilitados no Runtime e fora do sync, então um deploy novo ficaria sem a biblioteca.
+- Seis stories de estados novos, para os componentes do tema: grade de três colunas; seção na variante `participation` sem título; hero só com título; carrossel com um slide; cartão de projeto sem chamada; trilho vazio. Total: 15 stories em 7 componentes.
+- Verificado no Runtime de teste (kernel, administradora): visão geral `/painel-administrativo/aparencia/ui/components` 200 com 27 componentes; páginas dos 7 componentes do tema 200, com as stories novas visíveis.
+- Gates do tema: SDC schema PASS; design PASS.
+- Pendente (roteiro F4): consumidores em Views e Manage Display só quando houver uso real.
+
 ## 0.6.0-dev.1 — T5: reconstrução em ambiente novo verificada (ferramenta de conteúdo) — 2026-10-09
 
 Classificação: mudança de ferramenta (`scripts/content`), sem alteração de código do tema; versão vigente mantida.
