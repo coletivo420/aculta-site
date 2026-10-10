@@ -81,8 +81,8 @@ final class SecretsController {
     $this->secrets->logReveal($name, (string) $this->account->getAccountName());
     return [
       '#cache' => ['max-age' => 0, 'contexts' => ['user']],
-      'help' => ['#markup' => '<p>' . $this->t('Valor de @name. Feche este popup quando terminar.', ['@name' => $name]) . '</p>'],
-      'value' => ['#markup' => '<pre class="aculta-secret-popup__value">' . htmlspecialchars($value, ENT_QUOTES) . '</pre>'],
+      'value' => ['#markup' => '<p>' . $this->t('Valor de @name:', ['@name' => $name]) . '</p><pre class="aculta-secret-popup__value">' . htmlspecialchars($value, ENT_QUOTES) . '</pre>'],
+      'help' => ['#markup' => '<p class="aculta-secret-popup__hint">' . $this->t('Feche este popup quando terminar.') . '</p>'],
     ];
   }
 

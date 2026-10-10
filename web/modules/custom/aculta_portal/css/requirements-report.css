@@ -62,3 +62,9 @@
   border-radius: 0.25rem;
   background-color: #f3f3f3;
 }
+
+/* Aviso abaixo do valor, em destaque. */
+.aculta-secret-popup__hint {
+  color: #0b5394;
+  font-weight: 600;
+}
