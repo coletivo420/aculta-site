@@ -25,4 +25,9 @@ requirements-report:
     theme:
       css/requirements-report.css: {}
 
-
+search-preview:
+  js:
+    js/search-preview.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

@@ -146,6 +146,12 @@ aculta_portal.search_popup:
     _title: Buscar no site
   requirements:
     _permission: access content
+aculta_portal.search_preview:
+  path: /busca/previa
+  defaults:
+    _controller: 'aculta_portal.search_preview_controller:preview'
+  requirements:
+    _permission: access content
 aculta_portal.search_suggestions:
   path: /busca/sugestoes
   defaults:
