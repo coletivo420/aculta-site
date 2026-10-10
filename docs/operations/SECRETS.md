@@ -254,8 +254,8 @@ Página `/admin/config/aculta/segredos` (permissão `administer aculta secrets`,
    e o estado (✔ preenchida, ⚠ opcional sem valor, ✖ obrigatória sem valor). A troca de ambiente continua a cargo do
    ACULTA Deployer; o painel não troca nada, só mostra o ambiente atual declarado.
 2. Valores salvos aparecem **mascarados** (dois caracteres de cada ponta; valores curtos viram só bolinhas).
-   O botão 👁 pede o valor completo ao servidor por uma rota com token CSRF e sem cache; o botão de novo volta
-   à máscara. O valor completo nunca fica no HTML da página.
+   O botão 👁 abre um popup com o valor completo. O popup é carregado por uma rota com token CSRF, sem cache e
+   registrada no log (nome e usuário). O valor fica só dentro do popup: nunca no HTML da página.
 3. Cadastrar ou alterar: o ícone ✎ ao lado do olho abre um popup com um único campo de senha para aquela variável.
    Salvar grava só essa variável; as demais permanecem. O valor digitado não volta à tela nem ao log. O ✎ só
    aparece onde a gravação é possível (teste, arquivo de credenciais).

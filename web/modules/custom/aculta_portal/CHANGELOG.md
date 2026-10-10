@@ -1,3 +1,11 @@
+## 0.2.0-dev.37 — Valor da credencial em popup — 2026-10-10
+
+Classificação: mudança visual no painel (PATCH).
+
+- O botão 👁 de Credenciais do ambiente abre um popup com o valor completo, em vez de trocar a máscara na própria linha.
+- Rota `aculta_portal.secrets_show` (`/admin/config/aculta/segredos/mostrar/{name}`), permissão `administer aculta secrets`, sem cache, registrada no log com o nome e o usuário. O valor não entra no HTML da página.
+- Removidos por obsolescência: a rota JSON de revelação, `SecretsRevealController`, o serviço correspondente, a biblioteca `secrets-reveal` e o script inline.
+
 ## 0.2.0-dev.36 — Alinhamento do Mercado Pago com a documentação e o módulo — 2026-10-10
 
 Classificação: alinhamento e limpeza (PATCH).

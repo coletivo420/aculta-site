@@ -184,13 +184,13 @@ aculta_portal.secrets_edit:
   requirements:
     _permission: administer aculta secrets
     name: '[A-Z][A-Z0-9_]*'
-aculta_portal.secrets_reveal:
-  path: /admin/config/aculta/segredos/revelar/{name}
+aculta_portal.secrets_show:
+  path: /admin/config/aculta/segredos/mostrar/{name}
   defaults:
-    _controller: 'aculta_portal.secrets_reveal_controller:reveal'
+    _controller: 'aculta_portal.secrets_controller:show'
+    _title: Valor da credencial
   requirements:
     _permission: administer aculta secrets
-    _csrf_token: 'TRUE'
     name: '[A-Z][A-Z0-9_]*'
 aculta_portal.deployer_status:
   path: /admin/config/aculta/deployer
