@@ -39,6 +39,9 @@ services:
   aculta_portal.secrets_manager:
     class: Drupal\aculta_portal\Secrets\SecretsManager
     arguments: ['@key.repository', '@settings', '@logger.factory', '%app.root%']
+  aculta_portal.secrets_reveal_controller:
+    class: Drupal\aculta_portal\Secrets\SecretsRevealController
+    arguments: ['@aculta_portal.secrets_manager', '@current_user']
   aculta_portal.auth_integration:
     class: Drupal\aculta_portal\Auth\AuthIntegrationManager
     arguments: ['@config.factory']

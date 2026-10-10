@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Secrets;
 
 use Drupal\Core\Session\AccountInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Revela o valor completo de uma credencial sob demanda (botão de olho). Rota com token CSRF,
  * permissão restrita e resposta sem cache. Registra no log só o nome e o usuário.
+ *
+ * Registrado como serviço (aculta_portal.secrets_reveal_controller): a rota referencia o serviço,
+ * porque o resolvedor de controller por classe não injeta dependências no construtor.
  */
 final class SecretsRevealController {
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.secrets_manager')]
     private readonly SecretsManager $secrets,
-    #[Autowire(service: 'current_user')]
     private readonly AccountInterface $account,
   ) {}
 

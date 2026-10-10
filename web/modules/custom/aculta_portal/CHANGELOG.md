@@ -1,3 +1,13 @@
+## 0.2.0-dev.30 — Botão de exibir chave em Credenciais do ambiente — 2026-10-10
+
+Classificação: correção (PATCH).
+
+- O botão de olho do painel "Credenciais do ambiente" mostra o valor completo. Antes, a rota de revelação falhava com 500 (o construtor do controller não recebia as dependências, porque a rota apontava para a classe e não para um serviço) e o botão exibia "indisponível".
+- O controller é serviço (`aculta_portal.secrets_reveal_controller`) e a rota usa `service:method`. Resposta de sucesso 200 com `name` e `value`, sem cache; credencial sem valor responde 404 controlado.
+- O valor continua fora do HTML; o log registra só o nome da credencial e o usuário.
+- Validação: no Runtime de teste, a rota revelou `GOOGLE_OAUTH_CLIENT_ID` (200, `no-store`) e respondeu 404 controlado para `TURNSTILE_KEYS_JSON` (sem valor no ambiente). Clique no navegador não foi feito pela automação.
+- Gate do Portal: PASS (502 checagens).
+
 ## 0.2.0-dev.29 — Sanfona com uma seção aberta por vez — 2026-10-10
 
 - No celular, ao abrir uma seção da sanfona, as demais que estavam abertas recolhem. Implementado no JavaScript da sanfona, valendo para todos os navegadores.
