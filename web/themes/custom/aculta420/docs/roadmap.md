@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.6.0-dev.1 | F4 (UI Patterns): biblioteca de componentes com 9 stories; ui_patterns ^2.0 | marcada no código |
 | 0.5.1 | F2 (ícones) concluída: Bootstrap Icons, sem dependência nova; gate contra SVG inline no tema | marcada no código (release) |
 | 0.5.0 | F1 (modo de cor) concluída: claro, escuro e automático; validada no Runtime oficial em 2026-10-09 | marcada no código (release) |
 | 0.5.0-dev.3 | F1 (modo de cor): atributo aplicado via `b5_theme_mode` (o Bootstrap 5 sobrescrevia `html_attributes`); verificado por requisição HTTP em cópia isolada do Runtime | marcada no código; RUNTIME STATUS DEFERRED |
