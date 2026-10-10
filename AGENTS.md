@@ -344,7 +344,7 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 
 ## Bancos e Sistema de Estados
 
-- Desenvolvimento (Homelab) usa o MariaDB `aculta_runtime`, carregado a partir de uma cópia SQLite restaurada de `estados/`. O `var/database/aculta-runtime.sqlite` é só a cópia de segurança da migração.
+- Desenvolvimento (Homelab) usa o MariaDB `aculta_runtime`. Estados (`estados/`) são backups privados e não ficam no disco local; restaurações são carregadas no Runtime MariaDB.
 - `estados/*.sqlite` são snapshots imutáveis e integrais; não são sanitizados.
 - Estados são backups privados dos servidores e não são versionados neste repositório: `estados/*.sqlite` está no `.gitignore`. Apenas o README e o `manifesto.yml` ficam no Git. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
 - Produção continua usando MariaDB. Nunca implantar `estados/*.sqlite` nem apontar produção para o Runtime.

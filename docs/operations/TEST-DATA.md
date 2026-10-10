@@ -6,9 +6,10 @@ senhas e não deve ser usado como fonte de credenciais.
 
 ## Escopo e limites
 
-- Vale apenas para o **Runtime Homelab** (`var/database/aculta-runtime.sqlite`,
-  ignorado pelo Git). Nunca produção, Hostinger ou VPS.
-- Não altera os snapshots de `estados/`, que são imutáveis.
+- Vale apenas para o **Runtime Homelab** (banco MariaDB `aculta_runtime`, com
+  credenciais fora do Git). Nunca produção, Hostinger ou VPS.
+- Não altera os Estados (`estados/`), que são backups imutáveis e ficam fora do
+  disco local e do Git.
 - Não usa `drush cim`, `cex` ou `updb`.
 - Todos os e-mails são fictícios, no domínio reservado `@example.invalid`.
 - Títulos de conteúdo e de curso começam com `[EXEMPLO]`, para facilitar a remoção.

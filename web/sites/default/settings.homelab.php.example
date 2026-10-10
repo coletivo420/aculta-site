@@ -12,11 +12,13 @@ if ($aculta_environment !== 'homelab') {
   return;
 }
 
-$databases['default']['default'] = [
-  'driver' => 'sqlite',
-  'database' => dirname(DRUPAL_ROOT) . '/var/database/aculta-runtime.sqlite',
-  'prefix' => '',
-];
+// Runtime MariaDB do Homelab (banco aculta_runtime). O arquivo de credenciais fica em secrets/,
+// fora do Git, e deve retornar o array de conexão. Sem ele, o Drupal não conecta.
+$aculta_runtime_db = dirname(DRUPAL_ROOT) . '/secrets/aculta-runtime-db.php';
+if (is_file($aculta_runtime_db) && is_readable($aculta_runtime_db)) {
+  $databases['default']['default'] = include $aculta_runtime_db;
+}
+unset($aculta_runtime_db);
 
 // The seven homelab hostnames are handled by the project's normal local
 // settings and Domain aliases. No production hostname is redirected here.
