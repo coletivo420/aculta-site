@@ -17,6 +17,8 @@
 - [CROSS-DOMAIN-REQUEST-POLICY.md](CROSS-DOMAIN-REQUEST-POLICY.md) — requisições entre purposes.
 - [PAYMENT-DOMAIN-POLICY.md](PAYMENT-DOMAIN-POLICY.md) — carrinho, checkout e pagamento no MAIN.
 - [FRIENDLY-PORTUGUESE-SLUGS.md](FRIENDLY-PORTUGUESE-SLUGS.md) — URLs e slugs em português.
+- [TURNSTILE.md](TURNSTILE.md) — anti-bot: pontos de CAPTCHA, chaves de teste e produção, caixa de ativação.
+- [ACCOUNT-MENU.md](ACCOUNT-MENU.md) — menu da Minha conta: lista no desktop e sanfona no celular.
 
 ## Contratos
 

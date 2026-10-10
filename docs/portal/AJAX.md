@@ -76,6 +76,10 @@ Decisão:
 - manter formulários essenciais como Form API com fallback normal;
 - não interceptar OAuth/checkout/confirmations com fetch próprio.
 
+### Sanfona do celular (0.2.0-dev.27 a dev.29)
+
+No celular, cada item da sanfona da Minha conta carrega o conteúdo completo da seção ao ser aberto, pela mesma requisição (`requestDocument`). Uma seção aberta por vez. Detalhes em `ACCOUNT-MENU.md`.
+
 ## CEP
 
 `cep-address.js` tem regra diferente de `account-navigation.js`.

@@ -70,3 +70,14 @@ Esta política não restringe leitura pública da wiki nem páginas instituciona
 - O reenvio é limitado pelo intervalo de `resendrequest_delay`.
 - A confirmação segue o hash de 43 caracteres de uso único e com validade; o login automático na confirmação está
   registrado em `docs/portal/` como risco aceito (ver CHANGELOG do Portal 0.2.0-dev.14).
+
+## 8. Cadastro com e-mail já cadastrado (0.2.0-dev.22, DT-P06)
+
+Decisão do responsável (2026-10-09): a resposta do cadastro não revela se o e-mail já tem conta.
+
+- **Mensagem única** para e-mail novo e já cadastrado: "Se este e-mail ainda não estiver cadastrado, enviaremos um link para confirmar o seu cadastro. Se ele já estiver cadastrado, enviaremos um aviso com as opções para acessar a sua conta. Verifique a caixa de entrada e a pasta de spam." Mesmo destino (página inicial).
+- **Com e-mail já cadastrado:** nenhuma conta é criada, ninguém é logado, e o dono da conta recebe um e-mail (`registration_existing_mail`) com o link para entrar, o link para recuperar a senha e a orientação de que não é preciso fazer nada se não foi ele.
+- **Com e-mail novo:** o cadastro segue como antes (conta bloqueada até a confirmação), só com a mensagem única.
+- **Implementação:** o erro "already taken" do Core sai do formulário (`validateRegistrationMail`); o botão usa `saveRegistration` no lugar de `::save`; a busca e o aviso ficam em `RegistrationMailPolicy`; o texto do aviso está no hook `mail` do módulo. Callbacks que gravam dados ignoram o caso de e-mail existente.
+- **Limites:** (1) o tempo de resposta difere quando o aviso é enviado na mesma requisição; (2) o aviso pode ser usado para incomodar um endereço alheio, por isso o CAPTCHA do cadastro continua obrigatório (ver `TURNSTILE.md`); (3) o aviso não é enfileirado; (4) o aviso depende do SMTP, ainda não validado em produção (DT-P05).
+
