@@ -21,12 +21,12 @@
             "status": "open",
             "blocking": true,
             "page": "sitemap.xml: página raiz do host SUPPORT (https://apoio.aculta.org/)",
-            "current": "servidor de testes: /support/sitemap.xml (filho do índice https://aculta.toca.net.br/sitemap.xml) lista https://apoio.aculta.org/ (aculta_deployer sitemap --env=test: PASS)",
+            "current": "servidor de testes (verificado em 2026-10-10 com sitemap --env=test: PASS): o índice /sitemap.xml aponta para /support/sitemap.xml, que lista https://apoio.aculta.org/; o host de conteúdo apoio.aculta.org responde 200.",
             "expected_production": "https://apoio.aculta.org/ listado no sitemap do host de apoio",
-            "reason": "O simple_sitemap gera um sitemap só, com links internos; não aceita URL absoluta de outro host. Incluir o host de apoio exige variante de sitemap por domínio (módulo ou rota técnica), que é decisão de arquitetura.",
+            "reason": "O sitemap de cada purpose é gerado pelo simple_sitemap como variante (/<purpose>/sitemap.xml), e o filho de SUPPORT lista a raiz com o host de produção. A sonda anterior apontava para apoio.aculta.org/sitemap.xml, caminho que não existe no desenho (índice central em aculta.org/sitemap.xml). A correção está verificada no teste; falta a verificação em produção depois do deploy.",
             "owner": "responsável do projeto",
-            "decision": "pendente",
-            "probe": "https://apoio.aculta.org/sitemap.xml",
+            "decision": "Sonda corrigida para o filho de produção (aculta.org/support/sitemap.xml). Mantida aberta até a verificação em produção (REGISTRO.md, ciclo de vida: resolved após deploy e verificação).",
+            "probe": "https://aculta.org/support/sitemap.xml",
             "expect": "<loc>https://apoio.aculta.org/</loc>"
         },
         {

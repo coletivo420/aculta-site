@@ -1,5 +1,11 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.12 — correção da sonda de sitemap de SUPPORT (DEP-0002) — 2026-10-10
+
+- DEP-0002: a sonda apontava para `apoio.aculta.org/sitemap.xml`, caminho fora do desenho. O sitemap de SUPPORT é o filho `/support/sitemap.xml` do índice central. A sonda passa a `https://aculta.org/support/sitemap.xml`, e o motivo e a decisão do registro foram atualizados.
+- Verificado no servidor de testes com `sitemap --env=test` (PASS): o filho de SUPPORT lista `https://apoio.aculta.org/`, e o host responde 200.
+- A entrada continua aberta e bloqueante até a verificação em produção depois do deploy (REGISTRO.md). Nenhuma mudança de código.
+
 ## 0.1.11 — perfis por ambiente e guardrail de transição teste → produção — 2026-10-10
 
 - `config/deploy.json`: `environment_bound` (arquivos que mudam entre ambientes) e `profiles` (`production` e `test`) com regras de linha (`file`, `pattern`, `with`).
