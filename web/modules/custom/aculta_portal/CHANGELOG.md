@@ -1,3 +1,11 @@
+## 0.2.0-dev.26 — Menu da Minha conta no celular: lista com ícones — 2026-10-10
+
+Classificação: apresentação (somente mobile; desktop sem mudança).
+
+- Itens do menu da conta com ícone (Bootstrap Icons), rótulo e seta. No celular (até 767px) viram uma lista vertical com divisórias, como no protótipo. No desktop, ícones e setas ficam ocultos.
+- Os itens continuam links para as mesmas páginas; o item da página atual segue marcado. Sem sanfona: a versão com expansão de conteúdo não foi adotada.
+- A ordem e as rotas não mudam. O CSS de duas colunas no celular foi substituído.
+
 ## 0.2.0-dev.25 — Correção: Turnstile com dois ambientes (teste e produção) — 2026-10-09
 
 - Remove a chave de desenvolvimento do Turnstile (`TURNSTILE_DEV_KEYS_JSON`, Key `turnstile_dev`). O projeto tem só dois ambientes: teste e produção. O ambiente local é do tipo teste.
