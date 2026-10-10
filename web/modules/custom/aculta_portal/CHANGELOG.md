@@ -1,3 +1,12 @@
+## 0.2.0-dev.43 — Prévia de resultados no popup de busca e pesquisa completa — 2026-10-10
+
+Classificação: funcionalidade (PATCH).
+
+- Prévia por AJAX enquanto a pessoa digita (a partir de 3 caracteres), com até 8 resultados: título e tipo, cada um com link para o host do próprio conteúdo. A consulta roda no host atual, porque o índice é do site inteiro.
+- Rodapé como na Wikipedia (última linha da lista de sugestões): «Pesquisa completa por «termo» (N resultados)», que leva à busca central no MAIN com o mesmo termo. O total vem do índice, já filtrado por acesso.
+- `SearchResults::search()` devolve total e itens; o link por propósito fica no mesmo serviço.
+- Verificado no Runtime de teste (MAIN e apoio): prévia com dois itens para «Notícias» e rodapé «Pesquisa completa por «Notícias» (2 resultados)» apontando para `aculta.toca.net.br/busca?q=`.
+
 ## 0.2.0-dev.42 — Ícone de busca na barra multidomínio (popup AJAX) — 2026-10-10
 
 Classificação: funcionalidade pequena no shell (PATCH).
