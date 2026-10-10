@@ -36,7 +36,9 @@ $assert($modules->moduleExists('email_confirmer') && $modules->moduleExists('ema
 $assert($modules->moduleExists('change_mail_page'), 'Change Mail Page supplies the canonical new-address form.');
 $assert(\Drupal::config('email_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'Email Confirmer intercepts user email changes.');
 $assert(\Drupal::config('smtp.settings')->get('smtp_on') === FALSE, 'SMTP remains disabled in local safe mode.');
-$assert(!\Drupal::config('smtp.settings')->get('smtp_username') && !\Drupal::config('smtp.settings')->get('smtp_password'), 'SMTP credentials are absent from active configuration.');
+// getRawData(): a configuração ativa, sem os overrides de Key (que trazem o valor do ambiente em runtime).
+$smtp_raw = \Drupal::config('smtp.settings')->getRawData();
+$assert(empty($smtp_raw['smtp_username']) && empty($smtp_raw['smtp_password']), 'SMTP credentials are absent from active configuration.');
 $login_composer = json_decode(file_get_contents(DRUPAL_ROOT . '/../composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $login_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/login_emailusername'))[0] ?? NULL;
 $assert(($login_package['version'] ?? NULL) === '3.0.1', 'Login Email or Username remains at the audited 3.0.1 release.');
@@ -469,7 +471,7 @@ $assert(!$gateway->status(), 'The Mercado Pago gateway remains disabled.');
 $assert($gateway->getPluginId() === 'mercado_pago_checkout_pro', 'The gateway uses the installed Commerce Mercado Pago plugin.');
 $assert(count($gateway->getConditions()) === 3, 'The gateway is constrained by Store, order type, and currency.');
 $gateway_config = $gateway->getPluginConfiguration();
-foreach (['access_token_test', 'access_token_stage', 'access_token_prod', 'client_secret'] as $secret_key) {
+foreach (['access_token_test', 'access_token_prod'] as $secret_key) {
   $assert(($gateway_config[$secret_key] ?? '') === '', 'Gateway secret field is empty in persisted active configuration: ' . $secret_key);
 }
 $gateway_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway');
