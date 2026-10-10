@@ -171,7 +171,7 @@ aculta_portal.secrets_import:
 aculta_portal.secrets_reveal:
   path: /admin/config/aculta/segredos/revelar/{name}
   defaults:
-    _controller: '\Drupal\aculta_portal\Secrets\SecretsRevealController::reveal'
+    _controller: 'aculta_portal.secrets_reveal_controller:reveal'
   requirements:
     _permission: administer aculta secrets
     _csrf_token: 'TRUE'
