@@ -1,4 +1,7 @@
 services:
+  aculta_portal.turnstile_toggle:
+    class: Drupal\aculta_portal\Captcha\TurnstileToggle
+    arguments: ['@config.factory', '@entity_type.manager', '@key.repository', '@logger.factory']
   aculta_portal.registration_mail_policy:
     class: Drupal\aculta_portal\Account\RegistrationMailPolicy
     arguments: ['@entity_type.manager', '@plugin.manager.mail']
