@@ -4,9 +4,22 @@
   gap: 0.5rem;
 }
 
-.aculta-secret-value__edit {
+.aculta-secret-value__edit,
+.aculta-secret-value__clear {
   text-decoration: none;
   font-size: 1.1rem;
+}
+
+/* Apagar valor é sempre vermelho (ação destrutiva), também em foco e hover. */
+.aculta-secret-value__clear,
+.aculta-secret-value__clear:link,
+.aculta-secret-value__clear:visited {
+  color: #b3261e;
+}
+
+.aculta-secret-value__clear:hover,
+.aculta-secret-value__clear:focus-visible {
+  color: #8c1d18;
 }
 
 .aculta-portal-requirements__status--ok {

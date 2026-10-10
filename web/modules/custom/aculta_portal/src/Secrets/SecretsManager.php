@@ -148,6 +148,35 @@ final class SecretsManager {
       }
       $changes[$name] = $value;
     }
+    return $this->persist($changes, []);
+  }
+
+  /**
+   * Apaga o valor de uma variável do contrato: a linha sai do arquivo de credenciais. Só o nome vai ao log.
+   *
+   * @return array{ok: bool, message: string, updated: string[]}
+   */
+  public function clear(string $name): array {
+    if (!$this->canSaveHere()) {
+      return ['ok' => FALSE, 'message' => 'Armazenamento em banco de dados: o provisionamento é feito pelo ACULTA Deployer após o deploy.', 'updated' => []];
+    }
+    if (!in_array($name, SecretsFormat::allowedNames($this->contract()), TRUE)) {
+      return ['ok' => FALSE, 'message' => 'Variável fora do contrato: ' . $name . '.', 'updated' => []];
+    }
+    return $this->persist([], [$name]);
+  }
+
+  /**
+   * Única escrita do arquivo de credenciais: aplica alterações e remoções sobre o conteúdo atual,
+   * na ordem do contrato, de forma atômica.
+   *
+   * @param array<string, string> $changes nome => valor novo
+   * @param string[] $removals nomes a apagar
+   * @return array{ok: bool, message: string, updated: string[]}
+   */
+  private function persist(array $changes, array $removals): array {
+    $fail = static fn(string $message): array => ['ok' => FALSE, 'message' => $message, 'updated' => []];
+    $allowed = SecretsFormat::allowedNames($this->contract());
     $store = $this->storePath();
     $current = [];
     if (is_file($store)) {
@@ -157,7 +186,7 @@ final class SecretsManager {
       }
       $current = $parsed;
     }
-    $merged = array_merge($current, $changes);
+    $merged = array_diff_key(array_merge($current, $changes), array_flip($removals));
     $lines = [];
     foreach ($allowed as $name) {
       if (isset($merged[$name]) && $merged[$name] !== '') {
@@ -168,6 +197,14 @@ final class SecretsManager {
       return $fail('Não foi possível gravar o arquivo de credenciais.');
     }
     $updated = array_keys($changes);
+    if ($removals !== []) {
+      $this->logger->notice('Credenciais do ambiente: valor apagado (@names).', ['@names' => implode(', ', $removals)]);
+      return [
+        'ok' => TRUE,
+        'message' => 'Valor apagado. A mudança vale a partir da próxima requisição.',
+        'updated' => $removals,
+      ];
+    }
     $this->logger->notice('Credenciais do ambiente: @count variável(eis) atualizada(s) (@names).', [
       '@count' => count($updated),
       '@names' => $updated === [] ? 'nenhuma' : implode(', ', $updated),
