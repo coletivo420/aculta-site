@@ -159,7 +159,12 @@
       if (details.dataset.acultaAccordion === '1') return;
       details.dataset.acultaAccordion = '1';
       details.addEventListener('toggle', () => {
-        if (details.open) loadAccordionItem(details);
+        if (!details.open) return;
+        // Só uma sanfona expandida por vez: as outras da mesma conta recolhem.
+        layout.querySelectorAll('.portal-account__item[open]').forEach((other) => {
+          if (other !== details) other.open = false;
+        });
+        loadAccordionItem(details);
       });
       if (details.open) loadAccordionItem(details);
     });
