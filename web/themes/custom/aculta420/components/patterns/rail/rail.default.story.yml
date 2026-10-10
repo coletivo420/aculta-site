@@ -1,0 +1,9 @@
+name: Padrão
+description: Trilho horizontal com rótulo e itens.
+component: aculta420:rail
+props:
+  label: Cursos
+slots:
+  items:
+    markup: <div class="card"><div class="card-body">Curso um</div></div><div class="card"><div
+      class="card-body">Curso dois</div></div>
