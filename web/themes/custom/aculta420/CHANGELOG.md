@@ -7,24 +7,6 @@ Classificação: PATCH (ajuste visual; sem componente novo).
 - Verificado no Runtime de teste (MAIN e apoio): centro do ícone, da marca e dos links da conta iguais ao centro da barra. Gate de design PASS.
 - Depende da PR #180 (F4, 0.6.0-dev.3): ao mesclar, ajustar a sequência de versões.
 
-## 0.6.0-dev.2 — Validador de navegador: regras de barra, sigla e apoio indisponível — 2026-10-09
-
-Classificação: PATCH (ferramenta de verificação; sem alteração de apresentação, componente ou dependência). Substitui o PR #143 (0.4.6), refeito sobre a `main` para não regredir a versão.
-
-- Regra da sigla: reprova só quando "ACULTA" aparece sem o nome completo "Associação Cultural Antiproibicionista" (`shell.md`: marca "ACULTA + nome completo").
-- Barra de conta (`.aculta-utility`, "quando existir"): a presença não reprova mais. A barra não foi alterada.
-- Apoio com gateway indisponível: a checagem de botão desabilitado só vale quando há botão.
-- Validação: `validate-institution-browser.mjs` com `ACULTA_SITE_ORIGIN` e `ACULTA_SUPPORT_ORIGIN` contra `https://aculta.toca.net.br`: exit 0 (sitemap pelo deployer PASS; apoio no estado indisponível; favicon 200).
-
-## 0.6.0-dev.2 — Validador de navegador: regras de barra, sigla e apoio indisponível — 2026-10-09
-
-Classificação: PATCH (ferramenta de verificação; sem alteração de apresentação, componente ou dependência). Substitui o PR #143 (0.4.6), refeito sobre a `main` para não regredir a versão.
-
-- Regra da sigla: reprova só quando "ACULTA" aparece sem o nome completo "Associação Cultural Antiproibicionista" (`shell.md`: marca "ACULTA + nome completo").
-- Barra de conta (`.aculta-utility`, "quando existir"): a presença não reprova mais. A barra não foi alterada.
-- Apoio com gateway indisponível: a checagem de botão desabilitado só vale quando há botão.
-- Validação: `validate-institution-browser.mjs` com `ACULTA_SITE_ORIGIN` e `ACULTA_SUPPORT_ORIGIN` contra `https://aculta.toca.net.br`: exit 0 (sitemap pelo deployer PASS; apoio no estado indisponível; favicon 200).
-
 ## 0.6.0-dev.3 — F4 concluída: UI Patterns Library com estados documentados — 2026-10-10
 
 Classificação: MINOR da linha 0.6 (biblioteca navegável e stories; sem alteração de markup nem de componente).
@@ -34,6 +16,15 @@ Classificação: MINOR da linha 0.6 (biblioteca navegável e stories; sem altera
 - Verificado no Runtime de teste (kernel, administradora): visão geral `/painel-administrativo/aparencia/ui/components` 200 com 27 componentes; páginas dos 7 componentes do tema 200, com as stories novas visíveis.
 - Gates do tema: SDC schema PASS; design PASS.
 - Pendente (roteiro F4): consumidores em Views e Manage Display só quando houver uso real.
+
+## 0.6.0-dev.2 — Validador de navegador: regras de barra, sigla e apoio indisponível — 2026-10-09
+
+Classificação: PATCH (ferramenta de verificação; sem alteração de apresentação, componente ou dependência). Substitui o PR #143 (0.4.6), refeito sobre a `main` para não regredir a versão.
+
+- Regra da sigla: reprova só quando "ACULTA" aparece sem o nome completo "Associação Cultural Antiproibicionista" (`shell.md`: marca "ACULTA + nome completo").
+- Barra de conta (`.aculta-utility`, "quando existir"): a presença não reprova mais. A barra não foi alterada.
+- Apoio com gateway indisponível: a checagem de botão desabilitado só vale quando há botão.
+- Validação: `validate-institution-browser.mjs` com `ACULTA_SITE_ORIGIN` e `ACULTA_SUPPORT_ORIGIN` contra `https://aculta.toca.net.br`: exit 0 (sitemap pelo deployer PASS; apoio no estado indisponível; favicon 200).
 
 ## 0.6.0-dev.1 — T5: reconstrução em ambiente novo verificada (ferramenta de conteúdo) — 2026-10-09
 
