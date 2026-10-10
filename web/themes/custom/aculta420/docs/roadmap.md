@@ -139,6 +139,8 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 ### F4 — Padrões de Drupal UI e biblioteca de componentes (DT-T13)
 
+**Estado: concluída em 0.6.0-dev.3 (biblioteca UI Patterns Library com estados documentados).** Consumidores em Views e Manage Display ficam para quando houver uso real.
+
 - UI Patterns para Views e Manage Display onde houver consumidor real.
 - Biblioteca navegável dos componentes (UI Patterns Library ou UI Examples), com estados
   documentados.

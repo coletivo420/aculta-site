@@ -1,0 +1,8 @@
+name: Três colunas
+description: Grade de três colunas com itens.
+component: aculta420:content-grid
+props:
+  columns: 3
+slots:
+  items:
+    markup: <div class="card"><div class="card-body">Item um</div></div><div class="card"><div class="card-body">Item dois</div></div><div class="card"><div class="card-body">Item três</div></div>
