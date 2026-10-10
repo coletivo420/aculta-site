@@ -60,6 +60,16 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `turnstile` | `TURNSTILE_KEYS_JSON` | Sim, contém secret (produção) | Base64 |
 | `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Sim, contém secret (teste) | Base64 |
 
+## Regra ao incluir uma variável
+
+Uma variável nova exige, no mesmo PR, três alterações:
+
+1. `config/secrets-contract.json` (nome, Key e ambientes);
+2. a lista de variáveis permitidas em `web/sites/default/aculta.secrets.php`. Sem ela, o carregador recusa o arquivo inteiro e o site responde 500 (incidente do login com Turnstile, corrigido na PR #164);
+3. a tabela desta página.
+
+Depois do deploy, importar a Key correspondente (`config:import`) e conferir com `key.repository`.
+
 ## Arquitetura
 
 ```text
