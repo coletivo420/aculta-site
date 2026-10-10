@@ -730,9 +730,8 @@ $viewsWrapperCeilings = [
 ];
 $staticLoadCeilings = [
 ];
-$strictTypesDebt = [
-  'src/Hook/PortalHooks.php',
-];
+// S2 (DT-P02): teto vazio. Todo arquivo de src/ declara strict_types=1.
+$strictTypesDebt = [];
 
 $phpFiles = [];
 $iterator = new RecursiveIteratorIterator(

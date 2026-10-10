@@ -31,8 +31,8 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
 | DT-P01 | Classes de tema (`aculta-*`) em templates do módulo | corrigido em 0.2.0-dev.20: classes `portal-account*` no módulo; gate reprova `class="aculta-*"` em `templates/` | Média | Não | S1 | Resolvida |
-| DT-P02 | Arquivo sem `declare(strict_types=1)` | `src/Hook/PortalHooks.php` com `declare(strict_types=1)`; gate do Portal PASS (470 checagens) | Baixa | Não | S2 | Resolvida |
-| DT-P03 | Sem testes de Kernel para os serviços P5–P7 | `tests/` tem 7 arquivos unitários e nenhum Kernel; P10-R item "DEFERRED" | Média | Não | S2 | Aberta |
+| DT-P02 | Arquivo sem `declare(strict_types=1)` | `strict_types=1` em todo `src/`; teto vazio no gate (0.2.0-dev.21) | Baixa | Não | S2 | Resolvida |
+| DT-P03 | Sem testes de Kernel para os serviços P5–P7 | 1 teste de Kernel (login: `EmailConfirmationPolicy`, 0.2.0-dev.21). Pendentes: domínio (`DomainPurposeManager`, precisa do módulo Domain) e pagamento (`WebhookGuard` é coberto por teste unitário) | Média | Não | S2 | Aberta (parcial) |
 | DT-P04 | PHP 8.5 não instalado nem testado | `P10-R-FINAL-AUDIT.md` item 4; `composer.json` declara `>=8.3` | Média | Não | S3 | Aberta |
 | DT-P05 | Entrega de e-mail em produção não validada; `smtp.settings` e `system.mail` não importados | `P10-R` seção 10, risco 1 e seção 14 | Alta | Não (depende de deploy) | S3 | Aberta |
 | DT-P06 | Enumeração de contas pelo cadastro | `P10-R` seção 14: risco aceito pelo responsável | Média | Decisão registrada | S4 | Decisão registrada (reabrir em revisão) |
