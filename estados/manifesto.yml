@@ -1,5 +1,6 @@
 version: 1
 state_type: integral
+storage: local-backup-not-versioned
 states:
   - file: 2026-10-04_aculta_estado_fase8-integral-v1.sqlite
     milestone: fase8-integral

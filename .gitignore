@@ -76,6 +76,10 @@ __pycache__/
 
 # Active SQLite runtime databases are private mutable working copies.
 /var/database/*.sqlite
+# Estados são backups privados dos servidores: ficam no disco, fora do Git (ver estados/README.md).
+/estados/*.sqlite
+/estados/*.sqlite-wal
+/estados/*.sqlite-shm
 /var/database/*.sqlite-wal
 /var/database/*.sqlite-shm
 /var/database/*.db
