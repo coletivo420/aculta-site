@@ -1,5 +1,13 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.13 — hostnames dos domínios por ambiente (perfis) — 2026-10-10
+
+- Os sete registros `domain.record.*` passam a `environment_bound`, com regra nos perfis `production` (host de produção) e `test` (host de teste). O simple_sitemap usa esse hostname nas URLs dos filhos, então o sitemap de teste passa a listar os hosts de teste depois da aplicação do perfil no Runtime.
+- DEP-0002 atualizada: motivo e decisão refletem que o host de produção no sitemap de teste vinha do registro de domínio e é resolvível pelo perfil. Continua aberta até aplicar o perfil de teste no Runtime e verificar a produção.
+- Separação de domínios feita pelo deployer: os aliases de teste (`*.aculta.toca.net.br` e `*_test_8080`) continuam no `config/sync` como fonte única. O build de produção os remove (regra `drop`) e não sobra host de teste; o build de teste os mantém. Verificado: 14 aliases no build de teste, 0 no de produção.
+- Nota do sitemap de teste em `deploy.json` corrigida (antes dizia que os filhos mantinham URLs de produção de propósito).
+- Verificado: `build --target=test` gera `hostname: apoio.aculta.toca.net.br`; `build --target=production` mantém `apoio.aculta.org`; `check` e testes PASS.
+
 ## 0.1.12 — correção da sonda de sitemap de SUPPORT (DEP-0002) — 2026-10-10
 
 - DEP-0002: a sonda apontava para `apoio.aculta.org/sitemap.xml`, caminho fora do desenho. O sitemap de SUPPORT é o filho `/support/sitemap.xml` do índice central. A sonda passa a `https://aculta.org/support/sitemap.xml`, e o motivo e a decisão do registro foram atualizados.
