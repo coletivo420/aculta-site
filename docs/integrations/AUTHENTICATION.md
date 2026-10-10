@@ -24,7 +24,7 @@ mesmo path **e query** em vez de sobrescrevê-lo com ACCOUNT. Quando não há p�
 a raiz do Domain ACCOUNT (`/` em `conta.aculta.org` ou no alias Homelab).
 A visão geral (rota `aculta_portal.dashboard`) é servida somente nessa raiz.
 O caminho técnico `/conta-interna` não é público: requisição direta responde 404
-(guarda em `DomainPurposeRequestSubscriber::onRequest`), no mesmo padrão de `/apoio`.
+(guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter`), no mesmo padrão de `/apoio`.
 Nenhum link gerado aponta para esse caminho.
 
 A página genérica de perfil do Drupal não é publicada. A rota técnica
