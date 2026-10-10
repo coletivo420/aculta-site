@@ -1,3 +1,11 @@
+## 0.2.0-dev.39 — Guarda da raiz antes do controle de acesso — 2026-10-10
+
+Classificação: correção de ordem na guarda de rota (PATCH).
+
+- Verificação no Runtime (`https://conta.aculta.toca.net.br/conta-interna`) mostrou 403 em vez de 404: a rota da visão geral exige permissão, e o Core nega o acesso durante o casamento da rota, antes da guarda em `onRequest`.
+- A guarda passa a `onRequestBeforeRouter`, com a mesma regra: qualquer caminho original diferente de `/` responde 404 para `aculta_portal.dashboard`.
+- O gate `validate-aculta-portal-conta-root.php` passa a exigir a guarda nos dois pontos.
+
 ## 0.2.0-dev.38 — Raiz pública da conta (sem /conta-interna) — 2026-10-10
 
 Classificação: correção de rota e de links (PATCH).

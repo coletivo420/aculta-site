@@ -1,6 +1,6 @@
 # Menu da Minha conta
 
-Data da revisão: 2026-10-10. Versões: `0.2.0-dev.26` a `0.2.0-dev.38`.
+Data da revisão: 2026-10-10. Versões: `0.2.0-dev.26` a `0.2.0-dev.39`.
 
 A visão geral é a raiz do Domain ACCOUNT (`/`). O caminho técnico `/conta-interna` não é público e responde 404; nenhum link o usa (`docs/integrations/AUTHENTICATION.md`).
 
@@ -56,7 +56,7 @@ Sanfona nativa (`details`/`summary`, sem JavaScript de abertura):
 
 Uma única URL pública por destino evita conteúdo duplicado, links antigos que chegam a um caminho técnico e a dependência de o usuário lembrar um nome interno. O mesmo princípio vale para `/apoio`, que é servido somente em `/` no host SUPPORT.
 
-O caminho `/conta-interna` continua existindo só como identificador da rota `aculta_portal.dashboard`. Ele não é público: a guarda em `DomainPurposeRequestSubscriber::onRequest` responde 404 para qualquer requisição cujo caminho original não seja `/`.
+O caminho `/conta-interna` continua existindo só como identificador da rota `aculta_portal.dashboard`. Ele não é público: a guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter` responde 404 para qualquer requisição cujo caminho original não seja `/`.
 
 ## Barreira anti-regressão
 

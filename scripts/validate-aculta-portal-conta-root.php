@@ -56,8 +56,13 @@ if (!preg_match('#aculta_portal\.email_resend:\s*\n\s+path:\s*/confirmar-email/r
 // 3. The request guard of the overview route must stay in place.
 $checks++;
 $subscriber = $read('web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php');
-if (!str_contains($subscriber, "'aculta_portal.dashboard' && \$request->getPathInfo() !== '/'")) {
-  $failures[] = 'subscriber: DomainPurposeRequestSubscriber::onRequest must return 404 for aculta_portal.dashboard outside the root';
+// The guard must run before Core matches the route: the overview requires a permission, so a
+// request to the internal path would otherwise be denied (403) instead of hidden (404).
+if (!str_contains($subscriber, "\$matched['_route'] === 'aculta_portal.dashboard' && \$event->getRequest()->getPathInfo() !== '/'")) {
+  $failures[] = 'subscriber: onRequestBeforeRouter must return 404 for aculta_portal.dashboard outside the root (before the 403 of the permission check)';
+}
+if (!str_contains($subscriber, "\$request->getPathInfo() !== '/'") || !str_contains($subscriber, "'aculta_portal.dashboard'")) {
+  $failures[] = 'subscriber: onRequest must also return 404 for aculta_portal.dashboard outside the root';
 }
 
 // 4. No literal link to the internal path in code, templates, assets or exported configuration.

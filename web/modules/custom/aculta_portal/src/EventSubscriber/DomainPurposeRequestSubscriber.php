@@ -120,6 +120,13 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       }
       return;
     }
+    // The overview route requires a permission, so Core denies it (403) during
+    // matching, before onRequest runs. Its internal path must fail closed as 404
+    // first, the same way the support route is handled.
+    if ($matched['_route'] === 'aculta_portal.dashboard' && $event->getRequest()->getPathInfo() !== '/') {
+      $event->setResponse($this->notFoundResponse());
+      return;
+    }
     $route = $this->routeProvider->getRouteByName($matched['_route']);
     $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
       $route,
