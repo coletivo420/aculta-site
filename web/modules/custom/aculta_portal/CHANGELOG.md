@@ -1,3 +1,10 @@
+## 0.2.0-dev.45 — Pesquisa completa em botão centralizado; lista da prévia sem marcadores — 2026-10-10
+
+Classificação: ajuste visual (PATCH).
+
+- «Pesquisa completa por «termo» (N resultados)» vira botão centralizado, menor e com contorno, diferente do botão Buscar (preenchido). O tamanho menor exige CSS do Portal: a regra geral `.btn` do tema sobrepõe `btn-sm`.
+- A lista da prévia não mostra marcadores (`list-unstyled`).
+
 ## 0.2.0-dev.44 — Prévia da busca sem callback AJAX no Form API; atraso de 300 ms — 2026-10-10
 
 Classificação: correção (PATCH).

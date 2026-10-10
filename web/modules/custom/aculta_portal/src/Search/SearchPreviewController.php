@@ -79,12 +79,16 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     $full->setOption('query', ['q' => $term]);
     return [
       '#cache' => ['max-age' => 0, 'contexts' => ['domain', 'user.permissions']],
-      'list' => ['#theme' => 'item_list', '#items' => $items, '#attributes' => ['class' => ['aculta-search-preview__list']]],
+      'list' => ['#theme' => 'item_list', '#items' => $items, '#attributes' => ['class' => ['aculta-search-preview__list', 'list-unstyled']]],
       'full' => [
-        '#type' => 'link',
-        '#title' => $this->t('Pesquisa completa por «@term» (@total resultados)', ['@term' => $term, '@total' => $preview['total']]),
-        '#url' => $full,
-        '#attributes' => ['class' => ['aculta-search-preview__full']],
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-search-preview__footer', 'd-flex', 'justify-content-center', 'mt-2']],
+        'link' => [
+          '#type' => 'link',
+          '#title' => $this->t('Pesquisa completa por «@term» (@total resultados)', ['@term' => $term, '@total' => $preview['total']]),
+          '#url' => $full,
+          '#attributes' => ['class' => ['aculta-search-preview__full', 'btn', 'btn-outline-primary', 'btn-sm']],
+        ],
       ],
     ];
   }
