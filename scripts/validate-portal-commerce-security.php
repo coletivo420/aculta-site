@@ -35,7 +35,10 @@ $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email
 $assert($modules->moduleExists('email_confirmer') && $modules->moduleExists('email_confirmer_user'), 'Email Confirmer and its user integration are enabled.');
 $assert($modules->moduleExists('change_mail_page'), 'Change Mail Page supplies the canonical new-address form.');
 $assert(\Drupal::config('email_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'Email Confirmer intercepts user email changes.');
-$assert(\Drupal::config('smtp.settings')->get('smtp_on') === FALSE, 'SMTP remains disabled in local safe mode.');
+// SMTP segue o ambiente: ligado somente quando as credenciais SMTP2GO existem como Key/env deste ambiente.
+$smtp_secrets = \Drupal::service('aculta_portal.secrets_manager');
+$smtp_credentials_present = $smtp_secrets->value('SMTP2GO_USERNAME') !== NULL && $smtp_secrets->value('SMTP2GO_PASSWORD') !== NULL;
+$assert((bool) \Drupal::config('smtp.settings')->get('smtp_on') === $smtp_credentials_present, 'SMTP is enabled exactly when its SMTP2GO credentials exist in this environment.');
 // getRawData(): a configuração ativa, sem os overrides de Key (que trazem o valor do ambiente em runtime).
 $smtp_raw = \Drupal::config('smtp.settings')->getRawData();
 $assert(empty($smtp_raw['smtp_username']) && empty($smtp_raw['smtp_password']), 'SMTP credentials are absent from active configuration.');
@@ -47,12 +50,14 @@ $change_mail_package = array_values(array_filter($login_composer['packages'], st
 $assert(($confirmer_package['version'] ?? NULL) === '1.0.0', 'Email Confirmer remains on its stable 1.0.0 release.');
 $assert(($change_mail_package['version'] ?? NULL) === '1.0.2', 'Change Mail Page remains on its stable 1.0.2 release.');
 $smtp_mail_config = \Drupal::config('system.mail');
-$assert(\Drupal::config('smtp.settings')->get('smtp_on') === FALSE && $smtp_mail_config->get('interface.default') !== 'SMTPMailSystem', 'SMTP safe mode has both contrib disabled and a non-SMTP default mail backend.');
+$smtp_on = (bool) \Drupal::config('smtp.settings')->get('smtp_on');
+$assert($smtp_on === ($smtp_mail_config->get('interface.default') === 'SMTPMailSystem'), 'The default mail backend is SMTPMailSystem exactly when SMTP is enabled.');
+$assert(!$smtp_on || \Drupal::moduleHandler()->moduleExists('smtp'), 'SMTP delivery requires the enabled SMTP module.');
 $portal_controller_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Controller/PortalController.php');
 $assert(str_contains($portal_controller_source, "moduleExists('smtp')") && str_contains($portal_controller_source, "get('interface.default')") && str_contains($portal_controller_source, "=== 'SMTPMailSystem'"), 'Security only enables email change when the SMTP contrib transport is selected and configured.');
 $assert(str_contains($portal_controller_source, "getForm(\$account, 'default')") && !str_contains($portal_controller_source, "getForm(\$account, 'edit')"), 'Portal account forms use the Drupal User entity type supported default form operation.');
 $assert(str_contains($portal_controller_source, "\$parameters->set('user', \$account)") && str_contains($portal_controller_source, "unset(\$form['social_auth'])") && str_contains($portal_controller_source, "\$parameters->remove('user')"), 'The Portal supplies Social Auth’s expected route parameter only while building Core User forms and removes its duplicate account section.');
-$assert(\Drupal::config('system.logging')->get('error_level') === 'verbose' && str_contains(file_get_contents(DRUPAL_ROOT . '/../config/sync/system.logging.yml'), 'error_level: verbose'), 'Verbose error display is intentionally enabled in active and synchronized configuration for local debugging.');
+$assert(\Drupal::config('system.logging')->get('error_level') === 'hide' && str_contains(file_get_contents(DRUPAL_ROOT . '/../config/sync/system.logging.yml'), 'error_level: hide'), 'Detailed errors are hidden on screen in active and synchronized configuration (hardening: nao exibir erros detalhados).');
 $route_subscriber_source = file_get_contents(DRUPAL_ROOT . '/modules/custom/aculta_portal/src/EventSubscriber/AccountRouteSubscriber.php');
 $assert(str_contains($route_subscriber_source, "get('_raw_variables')") && str_contains($route_subscriber_source, 'isValidCorePasswordResetRequest'), 'Account route guard can identify raw user IDs before parameter conversion and delegates password-reset exception to a Core token check.');
 $assert(str_contains($route_subscriber_source, "get('pass-reset-token')") && str_contains($route_subscriber_source, "get('pass_reset_" ) && str_contains($route_subscriber_source, 'hash_equals'), 'The account edit exception requires Drupal Core\'s session-bound one-time token.');
@@ -274,20 +279,21 @@ $assert((bool) \Drupal::entityTypeManager()->getStorage('image_style')->load('ac
 
 $registration = \Drupal::config('user.settings');
 // Public registration is open by decision: visitors create accounts without
-// administrative approval, and every account must confirm its e-mail
-// (verify_mail). Closed registration (admin_only) is also accepted.
+// administrative approval, and every account confirms its e-mail through
+// email_confirmer (realm aculta_registration), not the Core verify_mail flag
+// (docs/portal/EMAIL-CONFIRMATION-POLICY.md). Closed registration (admin_only) is also accepted.
 $register_mode = $registration->get('register');
 $assert(in_array($register_mode, ['admin_only', 'visitors'], TRUE), 'Public registration mode is one of the reviewed values.');
-$assert($register_mode === 'admin_only' || $registration->get('verify_mail') === TRUE, 'Public registration requires e-mail verification (verify_mail).');
+$assert($registration->get('verify_mail') === FALSE, 'Core verify_mail stays off: registration is confirmed by email_confirmer (EMAIL-CONFIRMATION-POLICY).');
 $assert($registration->get('notify.register_no_approval_required') === TRUE, 'Registration needs no administrative approval (decision: e-mail verification only).');
-$assert($registration->get('verify_mail') === TRUE, 'Registration email verification remains enabled.');
-$assert(\Drupal::config('smtp.settings')->get('smtp_on') === FALSE, 'SMTP2GO delivery is not claimed functional without credentials.');
-$assert(\Drupal::config('smtp.settings')->get('smtp_password') === '', 'SMTP password is absent from active ordinary configuration.');
-$assert(\Drupal::config('smtp.settings')->get('smtp_username') === '', 'SMTP username is absent from active ordinary configuration.');
+$assert(!(bool) \Drupal::config('smtp.settings')->get('smtp_on') || $smtp_credentials_present, 'SMTP2GO delivery is claimed only with its credentials present.');
+$assert(($smtp_raw['smtp_password'] ?? '') === '' && ($smtp_raw['smtp_username'] ?? '') === '', 'SMTP username and password are absent from active ordinary configuration.');
 
 $captcha = \Drupal::config('captcha.settings');
 $assert((int) $captcha->get('enable_globally') === 1, 'Turnstile is globally enabled for anonymous forms.');
-$assert(\Drupal\user\Entity\Role::load('authenticated')?->hasPermission('skip CAPTCHA') === TRUE, 'Authenticated users can skip the global CAPTCHA challenge.');
+// Só quem confirmou o e-mail (papel email_confirmed) pula o desafio; logado sem confirmação recebe Turnstile (6049919).
+$assert(\Drupal\user\Entity\Role::load('email_confirmed')?->hasPermission('skip CAPTCHA') === TRUE, 'Confirmed-email users can skip the global CAPTCHA challenge.');
+$assert(\Drupal\user\Entity\Role::load('authenticated')?->hasPermission('skip CAPTCHA') !== TRUE, 'Authenticated users without confirmed e-mail still receive the CAPTCHA challenge.');
 $expected_forms = [
   'user_login_form',
   'user_register_form',
@@ -303,7 +309,10 @@ foreach (['node_activity_form', 'node_article_form', 'node_project_form', 'conta
   $point = \Drupal::entityTypeManager()->getStorage('captcha_point')->load($excluded_form);
   $assert(!$point || !$point->status(), 'Turnstile is not attached to excluded/internal form: ' . $excluded_form);
 }
-$assert(\Drupal::config('turnstile.settings')->get('keys') === 'turnstile', 'Turnstile obtains credentials through the Key reference.');
+// Versionado: chave de produção (turnstile). Em runtime, TurnstileKeyOverride escolhe a chave do ambiente declarado pelo Deployer.
+$turnstile_env = \Drupal\aculta_portal\Environment\DeployerEnvironment::current(dirname(DRUPAL_ROOT), 'production');
+$assert(\Drupal::service('config.storage.sync')->read('turnstile.settings')['keys'] === 'turnstile', 'Versioned Turnstile key reference is the production Key.');
+$assert(\Drupal::config('turnstile.settings')->get('keys') === ($turnstile_env === 'test' ? 'turnstile_test' : 'turnstile'), 'Turnstile Key reference matches the environment declared by the Deployer.');
 $assert(\Drupal::config('turnstile.settings')->get('testing_secret_key') === '', 'No Turnstile test secret is saved in configuration.');
 
 $key_storage = \Drupal::entityTypeManager()->getStorage('key');
@@ -470,7 +479,8 @@ $assert((bool) $gateway, 'The Commerce Mercado Pago gateway config entity exists
 $assert(!$gateway->status(), 'The Mercado Pago gateway remains disabled.');
 $assert($gateway->getPluginId() === 'mercado_pago_checkout_pro', 'The gateway uses the installed Commerce Mercado Pago plugin.');
 $assert(count($gateway->getConditions()) === 3, 'The gateway is constrained by Store, order type, and currency.');
-$gateway_config = $gateway->getPluginConfiguration();
+// Configuração persistida (sem os overrides de ambiente, que trazem a credencial em runtime).
+$gateway_config = \Drupal::config('commerce_payment.commerce_payment_gateway.mercado_pago')->getRawData()['configuration'] ?? [];
 foreach (['access_token_test', 'access_token_prod'] as $secret_key) {
   $assert(($gateway_config[$secret_key] ?? '') === '', 'Gateway secret field is empty in persisted active configuration: ' . $secret_key);
 }
