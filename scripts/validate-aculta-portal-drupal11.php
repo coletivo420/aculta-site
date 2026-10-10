@@ -783,6 +783,18 @@ foreach ($phpFiles as $path) {
   }
 }
 
+// S1 (DT-P01): templates do módulo não usam classes do tema (aculta-*). A apresentação do Portal usa
+// nomes neutros de contrato (portal-*). Atributos data-aculta-* são contrato de JS e ficam fora desta regra.
+$templateDir = $moduleRoot . '/templates';
+foreach (glob($templateDir . '/*.twig') ?: [] as $template) {
+  $source = (string) file_get_contents($template);
+  $relative = substr($template, strlen($root) + 1);
+  $check(
+    preg_match('/\bclass\s*=\s*"[^"]*\baculta-/', $source) !== 1,
+    $relative . ' must not use aculta-* classes (S1 / DT-P01).',
+  );
+}
+
 if ($failures !== []) {
   fwrite(STDERR, "ACULTA PORTAL DRUPAL 11+ GATE: FAIL\n");
   foreach ($failures as $failure) {

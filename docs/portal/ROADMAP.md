@@ -33,7 +33,7 @@ versão alvo, validar e só então taguear.
 - Corrigir referências a PRs e estados obsoletos (DT-P16, DT-P17, DT-P18).
 - Critério: `rg "PR #63|em integração|P10-R.*próxima"` vazio nos documentos atuais.
 
-### S1 — Fronteira de apresentação (DT-P01)
+### S1 — Fronteira de apresentação (DT-P01) — concluída em 0.2.0-dev.20
 
 - As duas páginas de template do módulo (`aculta-portal-shell`, `aculta-portal-photo-editor`)
   usam classes `aculta-*` do tema. Mover a apresentação para o tema, ou trocar essas classes por
