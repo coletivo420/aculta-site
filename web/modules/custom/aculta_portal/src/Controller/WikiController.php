@@ -56,6 +56,7 @@ final class WikiController extends ControllerBase {
         '#attributes' => ['role' => 'search', 'class' => ['aculta-wiki-search']],
         'q' => [
           '#type' => 'textfield',
+          '#name' => 'q',
           '#title' => $this->t('Buscar verbetes'),
           '#size' => 40,
           '#maxlength' => 100,
@@ -98,7 +99,7 @@ final class WikiController extends ControllerBase {
         '#method' => 'get',
         '#action' => Url::fromRoute('aculta_portal.wiki_search')->toString(),
         '#attributes' => ['role' => 'search'],
-        'q' => ['#type' => 'textfield', '#title' => $this->t('Termo de busca'), '#default_value' => $term, '#maxlength' => 100, '#required' => TRUE],
+        'q' => ['#type' => 'textfield', '#name' => 'q', '#title' => $this->t('Termo de busca'), '#default_value' => $term, '#maxlength' => 100, '#required' => TRUE],
         'submit' => ['#type' => 'submit', '#value' => $this->t('Buscar')],
       ],
     ];

@@ -1,3 +1,12 @@
+## 0.6.0-dev.4 — Ícone de busca na barra multidomínio e alinhamento da barra — 2026-10-10
+
+Classificação: PATCH (ajuste visual; sem componente novo).
+
+- `page.html.twig`: a barra institucional imprime `aculta_search_utility` (ícone de busca, montado pelo Portal) antes do menu da conta.
+- `institution-bar.css`: o contêiner de utilidades vira flex com alinhamento vertical centralizado. Antes, o ícone ficava colado no topo, acima de "Minha conta" e "Sair".
+- Verificado no Runtime de teste (MAIN e apoio): centro do ícone, da marca e dos links da conta iguais ao centro da barra. Gate de design PASS.
+- Depende da PR #180 (F4, 0.6.0-dev.3): ao mesclar, ajustar a sequência de versões.
+
 ## 0.6.0-dev.2 — Validador de navegador: regras de barra, sigla e apoio indisponível — 2026-10-09
 
 Classificação: PATCH (ferramenta de verificação; sem alteração de apresentação, componente ou dependência). Substitui o PR #143 (0.4.6), refeito sobre a `main` para não regredir a versão.
