@@ -5,6 +5,8 @@
 - `transition --target=production|test --out=DIR`: gera o build do alvo e grava `transition-plan.json` com os arquivos de `config/sync` que mudam, os passos de importação parcial, verificação e rollback. Não altera nenhum Runtime.
 - `sitemap --env=test`: a lista de hosts permitidos passa a usar os equivalentes de teste (antes comparava com os hosts de produção e reprovava os hosts de teste).
 - DEP-0002 resolvida pelo responsável em 2026-10-10: registros de domínio por ambiente importados no Runtime de teste; `sitemap --env=test` PASS. A sonda de produção segue registrada para a verificação pós-deploy.
+- DEP-0001 resolvida pelo responsável em 2026-10-10: canonical da página de apoio no teste = `https://apoio.aculta.toca.net.br/` (hostname do registro de domínio por ambiente). A sonda de produção segue para a verificação pós-deploy.
+- Correção de fronteira: o plano de transição não cita mais a ferramenta do Drupal no código standalone.
 - Testes: PASS; `check`: PASS.
 
 ## 0.1.13 — hostnames dos domínios por ambiente (perfis) — 2026-10-10
