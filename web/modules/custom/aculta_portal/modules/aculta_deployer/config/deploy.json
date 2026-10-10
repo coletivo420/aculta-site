@@ -65,7 +65,7 @@
     "test": {
       "index_url": "https://aculta.toca.net.br/sitemap.xml",
       "index_base": "https://aculta.toca.net.br",
-      "note": "Índice no servidor de testes. Os filhos continuam com URLs canônicas de produção (noindex no servidor de testes)."
+      "note": "Índice no servidor de testes. Os filhos listam os hosts de teste (perfil test, registros de domínio por ambiente); a produção lista os hosts de produção."
     }
   },
   "environments": {
@@ -100,6 +100,34 @@
     {
       "file": "config/sync/system.logging.yml",
       "reason": "erros ocultos na tela em todos os ambientes"
+    },
+    {
+      "file": "config/sync/domain.record.aculta_org.yml",
+      "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
+    },
+    {
+      "file": "config/sync/domain.record.apoio_aculta_org.yml",
+      "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
+    },
+    {
+      "file": "config/sync/domain.record.conta_aculta_org.yml",
+      "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
+    },
+    {
+      "file": "config/sync/domain.record.coletivo420_aculta_org.yml",
+      "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
+    },
+    {
+      "file": "config/sync/domain.record.wiki420_aculta_org.yml",
+      "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
+    },
+    {
+      "file": "config/sync/domain.record.loja_aculta_org.yml",
+      "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
+    },
+    {
+      "file": "config/sync/domain.record.cursos_aculta_org.yml",
+      "reason": "hostname do domínio por ambiente: sitemaps, canonical e links usam o host do registro"
     }
   ],
   "profiles": {
@@ -145,6 +173,41 @@
           "file": "config/sync/system.logging.yml",
           "pattern": "^error_level: .*$",
           "with": "error_level: hide"
+        },
+        {
+          "file": "config/sync/domain.record.aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: aculta.org"
+        },
+        {
+          "file": "config/sync/domain.record.apoio_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: apoio.aculta.org"
+        },
+        {
+          "file": "config/sync/domain.record.conta_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: conta.aculta.org"
+        },
+        {
+          "file": "config/sync/domain.record.coletivo420_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: coletivo420.aculta.org"
+        },
+        {
+          "file": "config/sync/domain.record.wiki420_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: wiki420.aculta.org"
+        },
+        {
+          "file": "config/sync/domain.record.loja_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: loja.aculta.org"
+        },
+        {
+          "file": "config/sync/domain.record.cursos_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: cursos.aculta.org"
         }
       ]
     },
@@ -190,6 +253,41 @@
           "file": "config/sync/system.logging.yml",
           "pattern": "^error_level: .*$",
           "with": "error_level: hide"
+        },
+        {
+          "file": "config/sync/domain.record.aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain.record.apoio_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: apoio.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain.record.conta_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: conta.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain.record.coletivo420_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: coletivo420.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain.record.wiki420_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: wiki420.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain.record.loja_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: loja.aculta.toca.net.br"
+        },
+        {
+          "file": "config/sync/domain.record.cursos_aculta_org.yml",
+          "pattern": "^hostname: .*$",
+          "with": "hostname: cursos.aculta.toca.net.br"
         }
       ]
     }
