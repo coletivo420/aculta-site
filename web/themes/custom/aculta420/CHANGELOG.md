@@ -1,3 +1,14 @@
+## 0.6.0-dev.5 — F3: apresentação da busca (página, popup e resultados) — 2026-10-10
+
+Classificação: PATCH (apresentação; sem componente, template, contrato Portal → tema ou dependência novos).
+
+- `css/components/search.css`: formulário da página `/busca`, lista de resultados, popup da barra (`.aculta-search-preview`) e botão "pesquisa completa", com tokens semânticos. Carregado pela biblioteca global.
+- Botão "pesquisa completa" do popup estilizado com tokens; a regra equivalente do `aculta_portal` (`search-preview.css`) usa cores hexadecimais fixas. A regra do tema tem seletor mais específico (`.aculta-search-preview .aculta-search-preview__full.btn`), então prevalece sem alterar o Portal. Remover a regra do Portal segue como dívida do Portal.
+- Foco por teclado com `--aculta-focus-ring`; movimento reduzido sem transição no botão de envio.
+- Lista de resultados sem recuo do Drupal (`.item-list`), ajustada após a captura de tela.
+- Gates: SDC schema PASS (98 checagens); design foundations PASS (1508 checagens, contraste dark incluído); browser validators PASS. Gates de Foundation e shell-contract dependem de bootstrap do Drupal (Drush) e não rodaram aqui.
+- Verificado no servidor de testes (2026-10-10): `/busca?q=aculta` renderiza com o formulário, o resultado e o `search.css` na agregação, em 1280 px (captura de tela; 390 px antes do ajuste da lista, sem nova captura). Popup da barra e teste com teclado ficam DEFERRED.
+
 ## 0.6.0-dev.4 — Ícone de busca na barra multidomínio e alinhamento da barra — 2026-10-10
 
 Classificação: PATCH (ajuste visual; sem componente novo).

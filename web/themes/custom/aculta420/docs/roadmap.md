@@ -13,6 +13,7 @@ Este roadmap planeja o saneamento primeiro e as features de produto depois. Não
 | 0.3.0 | concluída (2026-10-09) | marcada no código | Card System v1: `editorial-card` stable, `project-card` experimental, skin do curso |
 | 0.3.1 | concluída (2026-10-09) | marcada no código | Padrões SDC: seções, hero, grade, carrossel e cabeçalho por purpose |
 | 0.4.0 | linha 0.4.x fechada em 0.4.5 (2026-10-09), sem versão 0.4.0 retroativa (decisão do responsável) | sem tag | Patterns v1; T1 a T6 com decisão ou conclusão registradas (T5 com reconstrução em ambiente novo DEFERRED) |
+| 0.6.0-dev.5 | F3 (busca): apresentação da página `/busca`, do popup e dos resultados com tokens do tema | marcada no código; `/busca` verificada no servidor de testes; popup e teclado DEFERRED |
 | 0.6.0-dev.2 | validador de navegador: regras de barra e sigla ajustadas ao shell; apoio indisponível aceito; PASS no site público | marcada no código |
 | 0.6.0-dev.1 | F4 (UI Patterns): biblioteca de componentes com 9 stories; ui_patterns ^2.0 | marcada no código |
 | 0.5.1 | F2 (ícones) concluída: Bootstrap Icons, sem dependência nova; gate contra SVG inline no tema | marcada no código (release) |
@@ -135,6 +136,7 @@ Nenhuma destas fases tem versão alvo de 1.0.
 - **Estado: backend e página entregues no Portal 0.2.0-dev.19 e validados no Runtime oficial** (`/busca`, sugestões do Core, avisos por Messenger; conteúdo não publicado excluído). Pendências: `content_access` no índice e testes de Kernel.
 - Apresentação de busca com Search API e Autocomplete; mensagens por toast e alert com
   Messenger. Backend e índices ficam no Portal e no Core.
+- **Apresentação no tema (0.6.0-dev.5):** `css/components/search.css` (página, popup e resultados). Pendente: verificação do popup e do teclado no servidor de testes (`/busca` já verificada em 1280 px) e remoção, no Portal, da regra com cores fixas em `search-preview.css`.
 - Pré-requisito: F2 (concluída em 0.5.1). Verificar, antes de implementar, se o backend de banco atende a relevância e a latência esperadas.
 
 ### F4 — Padrões de Drupal UI e biblioteca de componentes (DT-T13)
