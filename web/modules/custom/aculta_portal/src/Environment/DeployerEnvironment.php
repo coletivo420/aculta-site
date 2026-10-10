@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_portal\Environment;
+
+/**
+ * Ambiente do site definido pelo ACULTA Deployer (arquivo neutro var/deployer/environment.json).
+ *
+ * Único ponto de leitura do ambiente para o Portal. Valores fora de production|test caem no padrão informado.
+ */
+final class DeployerEnvironment {
+
+  public const VALUES = ['production', 'test'];
+
+  /** @param string $projectRoot raiz do projeto (acima de web/) */
+  public static function current(string $projectRoot, string $fallback = 'production'): string {
+    $file = rtrim($projectRoot, '/') . '/var/deployer/environment.json';
+    $data = is_file($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
+    if (is_array($data) && ($data['schema'] ?? NULL) === 1 && in_array($data['environment'] ?? NULL, self::VALUES, TRUE)) {
+      return (string) $data['environment'];
+    }
+    return in_array($fallback, self::VALUES, TRUE) ? $fallback : 'production';
+  }
+
+}

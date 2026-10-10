@@ -1,4 +1,9 @@
 services:
+  aculta_portal.turnstile_key_override:
+    class: Drupal\aculta_portal\Captcha\TurnstileKeyOverride
+    arguments: ['%app.root%']
+    tags:
+      - { name: config.factory.override, priority: 90 }
   aculta_portal.turnstile_toggle:
     class: Drupal\aculta_portal\Captcha\TurnstileToggle
     arguments: ['@config.factory', '@entity_type.manager', '@key.repository', '@logger.factory']

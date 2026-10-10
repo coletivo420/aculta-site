@@ -35,7 +35,8 @@ Passos que cada ambiente precisa, além do código e da configuração:
 1. **Serviço do site (CEP).** Em `settings.php` ou no arquivo de settings do ambiente, incluir:
    `$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.aculta.yml';`
    Sem a linha, um site novo montado a partir de `config/sync` não instala (o `cep_autocomplete` precisa do canal definido em `services.aculta.yml`). Verificação: `drush php:eval 'print (int) \Drupal::hasService("logger.channel.cep_autocomplete");'` deve imprimir `1`.
-2. **Busca (F3).** Depois do `config:import`, reindexar: `drush search-api:index aculta_conteudo`. A consulta usa o banco; não há serviço externo.
+2. **Turnstile.** Cada ambiente usa a própria chave: produção `TURNSTILE_KEYS_JSON`; teste `TURNSTILE_TEST_KEYS_JSON`. A escolha é automática pelo `aculta-deployer environment set`. Nunca copiar a chave de teste para produção.
+3. **Busca (F3).** Depois do `config:import`, reindexar: `drush search-api:index aculta_conteudo`. A consulta usa o banco; não há serviço externo.
 3. **Conteúdo da home.** Dry-run: `php ../vendor/drush/drush/drush.php php:script load-home-content --script-path=../scripts/content/institution`. Aplicar com `ACULTA_APPLY=1` no mesmo comando. Uma segunda execução não deve alterar nada.
 4. **Dependências.** `composer install` com scripts. O scaffold preserva `web/robots.txt` (a linha de Sitemap do projeto) desde o PR da F3.
 
