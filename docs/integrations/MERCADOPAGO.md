@@ -12,14 +12,11 @@ Documentação oficial: [Credenciais](https://www.mercadopago.com.br/developers/
 | --- | --- | --- | --- |
 | Public Key | frontend (meios de pagamento, criptografia dos dados do cartão) | teste e produção, valores diferentes | `MERCADOPAGO_TEST_PUBLIC_KEY` / `MERCADOPAGO_PRODUCTION_PUBLIC_KEY` |
 | Access Token | backend (gera pagamentos); chave privada | teste e produção, valores diferentes | `MERCADOPAGO_TEST_ACCESS_TOKEN` / `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` |
-| Client ID | identifica a integração (aplicação) | compartilhado | `MERCADOPAGO_CLIENT_ID` |
-| Client Secret | chave privada da aplicação (OAuth, client credentials) | compartilhado | `MERCADOPAGO_CLIENT_SECRET` |
 | Assinatura do webhook | valida notificações recebidas | hoje só produção | `MERCADOPAGO_WEBHOOK_SECRET` |
 
 Observações:
-- A documentação oficial mostra Client ID e Client Secret nas credenciais de produção e não confirma se
-  aparecem também nas de teste. Por isso são tratados como da aplicação, válidos para os dois ambientes.
-  Confirmar no painel do Mercado Pago antes de tratar como definitivo.
+- Client ID e Client Secret não são usados pela integração Checkout Pro: o Public Key e o Access Token bastam.
+  Não entram no contrato nem no painel. Só existem no formulário de configuração do módulo, que os deixa vazios.
 - Credenciais de teste não precisam de ativação. Credenciais de produção exigem ativação na aplicação.
 - A documentação não diz se o webhook tem segredo separado por ambiente. Enquanto não houver teste de
   notificação, `MERCADOPAGO_WEBHOOK_SECRET` continua só no ambiente de produção. Decisão pendente.
@@ -36,7 +33,6 @@ O ambiente vem do ACULTA Deployer (`var/deployer/environment.json`). Nenhuma par
 - O modo `stage` do módulo (conta de produção com credenciais de teste) não é usado.
 - Os valores entram por `MercadoPagoEnvironmentOverride` (`aculta_portal`) em memória. Não são exportados
   nem gravados na configuração do gateway.
-- `Client ID` e `Client Secret` entram nos dois ambientes quando preenchidos.
 - Campo ausente fica vazio no gateway. Com a validação `EntitySaveHooks` (`entity_presave`), o gateway não pode
   ser ativado num ambiente sem Public Key e Access Token do modo correspondente.
 

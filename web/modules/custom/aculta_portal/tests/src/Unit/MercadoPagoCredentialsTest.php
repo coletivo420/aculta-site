@@ -20,8 +20,6 @@ final class MercadoPagoCredentialsTest extends UnitTestCase {
     'MERCADOPAGO_TEST_ACCESS_TOKEN',
     'MERCADOPAGO_PRODUCTION_PUBLIC_KEY',
     'MERCADOPAGO_PRODUCTION_ACCESS_TOKEN',
-    'MERCADOPAGO_CLIENT_ID',
-    'MERCADOPAGO_CLIENT_SECRET',
   ];
 
   protected function setUp(): void {
@@ -65,10 +63,10 @@ final class MercadoPagoCredentialsTest extends UnitTestCase {
     $this->assertArrayNotHasKey('access_token_test', $configuration);
   }
 
-  public function testApplicationCredentialsAreSharedAndOmittedWhenEmpty(): void {
-    $this->set('MERCADOPAGO_CLIENT_ID', 'app-id');
+  public function testApplicationCredentialsAreNotRead(): void {
+    $this->set('MERCADOPAGO_TEST_PUBLIC_KEY', 'test-public');
     $configuration = MercadoPagoCredentials::configuration('test');
-    $this->assertSame('app-id', $configuration['client_id']);
+    $this->assertArrayNotHasKey('client_id', $configuration);
     $this->assertArrayNotHasKey('client_secret', $configuration);
   }
 

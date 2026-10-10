@@ -12,10 +12,10 @@ use Drupal\aculta_portal\Environment\DeployerEnvironment;
  * O ambiente vem do ACULTA Deployer (var/deployer/environment.json); aqui não há troca de ambiente.
  * - Ambiente de testes: modo `test` do gateway, com as credenciais de teste.
  * - Ambiente de produção: modo `live` do gateway, com as credenciais de produção.
- * Client ID e Client Secret identificam a aplicação e valem para os dois ambientes.
  *
  * Os valores ficam fora da configuração exportada. Campo ausente vira campo vazio no gateway,
- * que falha fechado (ver EntitySaveHooks).
+ * que falha fechado (ver EntitySaveHooks). Client ID e Client Secret não são usados pela integração
+ * Checkout Pro (só existem no formulário de configuração do módulo), por isso não entram aqui.
  */
 final class MercadoPagoCredentials {
 
@@ -54,8 +54,6 @@ final class MercadoPagoCredentials {
     $sources = [
       $spec['public_key_field'] => $spec['public_key_variable'],
       $spec['access_token_field'] => $spec['access_token_variable'],
-      'client_id' => 'MERCADOPAGO_CLIENT_ID',
-      'client_secret' => 'MERCADOPAGO_CLIENT_SECRET',
     ];
     foreach ($sources as $field => $variable) {
       $value = self::read($variable);

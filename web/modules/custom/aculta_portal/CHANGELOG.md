@@ -1,3 +1,9 @@
+## 0.2.0-dev.34 — Remove Client ID e Client Secret do Mercado Pago — 2026-10-10
+
+Classificação: limpeza de contrato (PATCH).
+
+- Client ID e Client Secret não são usados pela integração Checkout Pro. Verificado no código do módulo `commerce_mercado_pago`: só aparecem no formulário de configuração, que os deixa vazios. Removidos do contrato, do carregador, do gate, do painel, da documentação e das Keys (arquivos e Runtime de teste). Mantidos apenas Public Key e Access Token por ambiente.
+
 ## 0.2.0-dev.33 — Mercado Pago por ambiente e credenciais em duas seções — 2026-10-10
 
 Classificação: correção de integração e de painel (PATCH, sem API pública nova).
