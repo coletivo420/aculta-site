@@ -1,3 +1,19 @@
+## 0.2.0-dev.33 — Mercado Pago por ambiente e credenciais em duas seções — 2026-10-10
+
+Classificação: correção de integração e de painel (PATCH, sem API pública nova).
+
+- Mercado Pago: o override lia `MERCADOPAGO_PUBLIC_KEY` e `MERCADOPAGO_ACCESS_TOKEN`, nomes que não estavam no contrato nem no carregador, e nunca chegavam ao ambiente. Client ID e Client Secret não eram ligados ao gateway. Corrigido.
+- Ambiente de testes usa o modo `test` do gateway com `MERCADOPAGO_TEST_PUBLIC_KEY` e `MERCADOPAGO_TEST_ACCESS_TOKEN`. Ambiente de produção usa o modo `live` com `MERCADOPAGO_PRODUCTION_PUBLIC_KEY` e `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN`. Client ID e Client Secret são da aplicação e valem para os dois.
+- O ambiente vem do ACULTA Deployer. `MercadoPagoCredentials` é o resolvedor único, usado pelo override e pelo guard de ativação (`entity_presave`), que continua fechado sem credenciais do ambiente atual.
+- Contrato (`config/secrets-contract.json`): campo `environments` por variável. Novas variáveis e Keys (`provider env`) de Mercado Pago. Gate do contrato atualizado: aceita as sete Keys de credenciais e as duas de Turnstile (antes falhava por `turnstile_test` fora da lista aprovada).
+- Painel "Credenciais do ambiente": duas seções fixas, **Ambiente de Produção** e **Ambiente de Testes**. Variáveis compartilhadas aparecem nas duas. A troca de ambiente segue com o Deployer.
+- Senha do comprador de teste guardada na variável `MERCADOPAGO_TEST_BUYER_PASSWORD` (painel, seção de testes). Não entra no repositório.
+- Documentação: `docs/integrations/MERCADOPAGO.md` com a matriz de credenciais, o mapeamento para o gateway e os cartões, status e usuário de teste.
+- Gates: `validate-aculta-portal-drupal11.php` PASS (510 checagens); `validate-secrets-contract.php` PASS. Testes unitários de Mercado Pago: 14 OK (5 novos em `MercadoPagoCredentialsTest`).
+- Validação no Runtime de teste (`aculta.toca.net.br`): sete Keys novas importadas; painel com duas seções (10 linhas em cada); campo de senha ausente na página; `MERCADOPAGO_TEST_BUYER_PASSWORD` gravada pelo mesmo caminho do painel; gateway em modo `test`, desativado, sem credenciais de teste (esperado até o responsável informar as chaves); guard de ativação bloqueia com a mensagem do ambiente.
+- Não validado: Checkout Pro ponta a ponta (depende das chaves de teste de Public Key e Access Token); credenciais de produção (provisionamento pelo Deployer).
+- Gate `validate-portal-commerce-security.php` não passa neste Runtime: a verificação "SMTP remains disabled in local safe mode" falha porque o SMTP2GO está ligado no ambiente de testes. Pré-existente à mudança; não alterado.
+
 ## 0.2.0-dev.32 — Alterar credencial por popup — 2026-10-10
 
 Classificação: mudança de interação no painel administrativo (PATCH, sem API pública nova).

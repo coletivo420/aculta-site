@@ -21,10 +21,18 @@ $parse = static function (string $path) use ($assert): array {
 $expected = [
   'google_oauth_client_id' => ['GOOGLE_OAUTH_CLIENT_ID', FALSE],
   'google_oauth_client_secret' => ['GOOGLE_OAUTH_CLIENT_SECRET', FALSE],
+  'mercadopago_client_id' => ['MERCADOPAGO_CLIENT_ID', FALSE],
+  'mercadopago_client_secret' => ['MERCADOPAGO_CLIENT_SECRET', FALSE],
+  'mercadopago_production_public_key' => ['MERCADOPAGO_PRODUCTION_PUBLIC_KEY', FALSE],
+  'mercadopago_production_access_token' => ['MERCADOPAGO_PRODUCTION_ACCESS_TOKEN', FALSE],
+  'mercadopago_test_public_key' => ['MERCADOPAGO_TEST_PUBLIC_KEY', FALSE],
+  'mercadopago_test_access_token' => ['MERCADOPAGO_TEST_ACCESS_TOKEN', FALSE],
+  'mercadopago_test_buyer_password' => ['MERCADOPAGO_TEST_BUYER_PASSWORD', FALSE],
   'mercadopago_webhook_secret' => ['MERCADOPAGO_WEBHOOK_SECRET', FALSE],
   'smtp2go_username' => ['SMTP2GO_USERNAME', FALSE],
   'smtp2go_password' => ['SMTP2GO_PASSWORD', FALSE],
   'turnstile' => ['TURNSTILE_KEYS_JSON', TRUE],
+  'turnstile_test' => ['TURNSTILE_TEST_KEYS_JSON', TRUE],
 ];
 
 $key_files = glob($root . '/config/sync/key.key.*.yml') ?: [];
@@ -44,7 +52,23 @@ foreach ($key_files as $path) {
 sort($actual_ids);
 $expected_ids = array_keys($expected);
 sort($expected_ids);
-$assert($actual_ids === $expected_ids, 'All and only the six approved Key IDs are versioned.');
+$assert($actual_ids === $expected_ids, 'All and only the approved Key IDs are versioned.');
+
+$contract = json_decode((string) file_get_contents($root . '/config/secrets-contract.json'), TRUE);
+$assert(is_array($contract) && is_array($contract['variables'] ?? NULL), 'Secrets contract JSON is readable.');
+$contract_names = [];
+foreach ($contract['variables'] as $variable) {
+  $name = (string) ($variable['name'] ?? '');
+  $contract_names[] = $name;
+  $environments = (array) ($variable['environments'] ?? []);
+  $assert($environments !== [] && array_diff($environments, ['production', 'test']) === [], 'Contract environments are production or test: ' . $name);
+  $assert(array_diff((array) ($variable['required_in'] ?? []), $environments) === [], 'Contract required_in is a subset of environments: ' . $name);
+  $assert(isset($expected[(string) ($variable['key_id'] ?? '')]) && $expected[$variable['key_id']][0] === $name, 'Contract variable matches the approved Key and name: ' . $name);
+}
+sort($contract_names);
+$expected_names = array_map(static fn(array $pair): string => $pair[0], array_values($expected));
+sort($expected_names);
+$assert($contract_names === $expected_names, 'Contract variables and approved Keys are the same set.');
 
 $google_sync = $parse($root . '/config/sync/social_auth_google.settings.yml');
 $assert(trim((string) ($google_sync['client_id'] ?? '')) === '', 'Google OAuth client ID is empty in sync.');

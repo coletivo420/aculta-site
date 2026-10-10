@@ -247,9 +247,9 @@ $check(
 );
 foreach ([
   "'commerce_payment_gateway'",
-  "'mercado_pago'",
-  'MERCADOPAGO_PUBLIC_KEY',
-  'MERCADOPAGO_ACCESS_TOKEN',
+  'MercadoPagoCredentials::GATEWAY_ID',
+  'MercadoPagoCredentials::hasRuntimeCredentials',
+  'MercadoPagoCredentials::currentEnvironment',
   'LogicException',
 ] as $invariant) {
   $check(
@@ -431,8 +431,8 @@ $check(
   'P4-R password-reset neutral access must remain request-sensitive and uncacheable.',
 );
 $check(
-  str_contains($entitySaveHooksSource, "getenv('MERCADOPAGO_PUBLIC_KEY')")
-    && str_contains($entitySaveHooksSource, "getenv('MERCADOPAGO_ACCESS_TOKEN')")
+  str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::hasRuntimeCredentials')
+    && str_contains($entitySaveHooksSource, 'MercadoPagoCredentials::currentEnvironment')
     && str_contains($entitySaveHooksSource, 'throw new \\LogicException'),
   'P4-R Mercado Pago presave guard must remain fail-closed on missing runtime credentials.',
 );

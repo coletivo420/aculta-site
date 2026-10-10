@@ -4,19 +4,25 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Config;
 
+use Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoCredentials;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 
 /**
- * Supplies Mercado Pago credentials from the process environment at runtime.
+ * Supplies the Mercado Pago gateway fields for the current environment at runtime.
  *
- * The contrib gateway stores credentials in its configuration entity by
- * default. This override keeps those values out of active/exported config.
+ * The contrib gateway stores credentials in its configuration entity by default. This override
+ * keeps those values out of active/exported config and selects test or production fields from the
+ * environment declared by the ACULTA Deployer.
  */
 final class MercadoPagoEnvironmentOverride implements ConfigFactoryOverrideInterface {
 
   private const CONFIG_NAME = 'commerce_payment.commerce_payment_gateway.mercado_pago';
+
+  public function __construct(
+    private readonly string $appRoot,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -26,22 +32,12 @@ final class MercadoPagoEnvironmentOverride implements ConfigFactoryOverrideInter
       return [];
     }
 
-    $configuration = [];
-    foreach ([
-      'MERCADOPAGO_PUBLIC_KEY' => 'public_key_test',
-      'MERCADOPAGO_ACCESS_TOKEN' => 'access_token_test',
-    ] as $environment_name => $configuration_name) {
-      $value = getenv($environment_name);
-      if ($value !== FALSE && $value !== '') {
-        $configuration[$configuration_name] = $value;
-      }
-    }
-
-    return $configuration ? [
+    $environment = MercadoPagoCredentials::currentEnvironment(dirname($this->appRoot));
+    return [
       self::CONFIG_NAME => [
-        'configuration' => $configuration,
+        'configuration' => MercadoPagoCredentials::configuration($environment),
       ],
-    ] : [];
+    ];
   }
 
   /**
