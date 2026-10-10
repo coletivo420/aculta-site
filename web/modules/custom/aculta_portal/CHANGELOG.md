@@ -1,3 +1,21 @@
+## 0.2.0-dev.41 — Busca centralizada no MAIN, resultados no host do conteúdo — 2026-10-10
+
+Classificação: correção de comportamento de busca (PATCH).
+
+- A busca geral segue centralizada no MAIN (`/busca`). Cada resultado passa a abrir no host do próprio conteúdo, pelo purpose do nó (`field_domain_source`). Antes, o link era o caminho relativo do host onde a busca rodava.
+- A Wiki420 mantém o próprio motor (`/wiki/busca`, `WikiController::search`); os verbetes `wiki_entry` não entram no índice geral.
+- Política em `docs/portal/SEARCH.md`.
+- Verificado no Runtime de teste: resultado de "Notícias" abre em `coletivo420.aculta.toca.net.br/noticias`.
+
+## 0.2.0-dev.40 — F3: busca com content_access e testes de Kernel — 2026-10-10
+
+Classificação: correção e cobertura de teste (PATCH).
+
+- Índice `aculta_conteudo` passa a aplicar o processador `content_access`. O filtro de acesso sai do controller e passa para a própria consulta do índice: visitante só recebe conteúdo que pode ver, e total e paginação batem com a lista exibida. O controller mantém a conferência `node->access('view')` por segurança.
+- Teste de Kernel `SearchContentAccessKernelTest`: índice de banco com `content_access` e processadores de texto como na produção; um nó publicado e um rascunho; visitante anônimo (papel `anonymous` com `access content`, como no site) vê só o publicado; total igual à lista. Teste de mutação: sem `content_access`, o rascunho aparece e o teste falha.
+- Configuração de teste: os processadores e o tracker seguem o schema padrão; o `status` e o `settings` usados no YAML de produção não têm schema neste `search_api` e só são usados como chave de presença.
+- Pendências da F3 fechadas no Portal (ver `docs/operations/DEBT-REGISTER.md`, DT-T13).
+
 ## 0.2.0-dev.39 — Guarda da raiz antes do controle de acesso — 2026-10-10
 
 Classificação: correção de ordem na guarda de rota (PATCH).

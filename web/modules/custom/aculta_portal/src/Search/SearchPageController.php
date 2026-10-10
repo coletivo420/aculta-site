@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -36,12 +37,14 @@ final class SearchPageController implements ContainerInjectionInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MessengerInterface $messenger,
+    private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('messenger'),
+      $container->get('aculta_portal.domain_purpose'),
     );
   }
 
@@ -88,7 +91,7 @@ final class SearchPageController implements ContainerInjectionInterface {
         continue;
       }
       $cache->addCacheableDependency($node);
-      $links[] = ['#type' => 'link', '#title' => $node->label(), '#url' => $node->toUrl()];
+      $links[] = ['#type' => 'link', '#title' => $node->label(), '#url' => $this->resultUrl($node)];
     }
     $cache->applyTo($build);
 
@@ -129,6 +132,18 @@ final class SearchPageController implements ContainerInjectionInterface {
       $suggestions[] = ['value' => $node->label(), 'label' => $node->label()];
     }
     return new JsonResponse($suggestions);
+  }
+
+  /**
+   * Link do resultado no host do conteúdo: a busca é centralizada no MAIN, mas cada item abre no purpose
+   * ao qual pertence (field_domain_source). Sem purpose conhecido, usa o caminho do próprio host.
+   */
+  private function resultUrl(NodeInterface $node): Url {
+    $relative = $node->toUrl();
+    $domainId = $node->hasField('field_domain_source') ? $node->get('field_domain_source')->target_id : NULL;
+    $purpose = is_string($domainId) ? $this->domainPurposeManager->getPurposeForDomainId($domainId) : NULL;
+    $absolute = $purpose !== NULL ? $this->domainPurposeManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
+    return $absolute ?? $relative;
   }
 
 }
