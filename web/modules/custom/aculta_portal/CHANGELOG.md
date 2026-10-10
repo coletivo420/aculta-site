@@ -1,3 +1,12 @@
+## 0.2.0-dev.21 — S2: tipagem e primeiro teste de Kernel (DT-P02, DT-P03) — 2026-10-09
+
+Classificação: testes e gate (sem mudança de comportamento).
+
+- Gate: teto de `strict_types` vazio. Todo arquivo de `src/` declara `strict_types=1` (DT-P02).
+- Primeiro teste de Kernel do Portal: `EmailConfirmationPolicyKernelTest` (login: confirmação de e-mail concede e remove o papel `email_confirmed`, que pula o CAPTCHA; uid anônimo ignorado). Atributos `#[Group]` e `#[RunTestsInSeparateProcesses]` (Drupal 11.3+).
+- Execução: `SIMPLETEST_DB="sqlite://localhost/<caminho>.sqlite" vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests/src/Kernel`. Resultado: 3 testes, 16 asserções, OK.
+- Pendente de S2: Kernel para a política de domínio (`DomainPurposeManager`, precisa do módulo Domain) e para o pagamento. O webhook (`WebhookGuard`) não depende do container; o fail-closed já tem teste unitário.
+
 ## 0.2.0-dev.20 — S1: fronteira de apresentação (DT-P01) — 2026-10-09
 
 Classificação: correção de fronteira (nomes de classe; sem mudança de comportamento, rota ou dado).
