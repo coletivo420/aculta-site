@@ -269,9 +269,30 @@ if ($envBefore === null) { @unlink($envFile); } else { file_put_contents($envFil
 // Verify no ambiente de teste: hosts de produção viram os de teste; host parecido não muda.
 $assert(AcultaDeployer\Verify::toTestEnvironment('<link rel="canonical" href="https://apoio.aculta.org/">') === '<link rel="canonical" href="https://apoio.aculta.toca.net.br/">', 'verify teste: canonical de produção vira o host de teste');
 $assert(AcultaDeployer\Verify::toTestEnvironment('https://evil-aculta.org/ https://aculta.org/x') === 'https://evil-aculta.org/ https://aculta.toca.net.br/x', 'verify teste: host parecido com produção não é alterado');
-// build é só de produção: --env=test é recusado sem gerar saída.
-exec($cli . ' build --env=test --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);
-$assert($brc1 !== 0, 'build recusa --env=test (saída só de produção)');
+// Perfis por ambiente: o deploy.json atual é válido e cobre todos os arquivos dependentes de ambiente.
+$assert($t->validateProfiles() === [], 'perfis: deploy.json atual cobre todos os arquivos dependentes de ambiente');
+// Guardrail: um arquivo dependente de ambiente sem regra em um perfil falha a validação.
+$broken = $config;
+$broken['profiles']['test']['rules'] = array_values(array_filter($config['profiles']['test']['rules'], static fn(array $r): bool => $r['file'] !== 'config/sync/system.mail.yml'));
+$assert(count(array_filter((new Transform($broken))->validateProfiles(), static fn(string $e): bool => str_contains($e, 'system.mail.yml'))) === 1, 'perfis: arquivo sem regra no perfil de teste é recusado');
+$noBound = $config;
+$noBound['environment_bound'] = [];
+$assert((new Transform($noBound))->validateProfiles() !== [], 'perfis: environment_bound vazio é recusado');
+// Aplicação de regra: exatamente uma linha casa; zero ou várias recusam o build.
+$assert($t->applyProfile("smtp_on: false\nx: 1\n", [['pattern' => '^smtp_on: .*$', 'with' => 'smtp_on: true']], 'f') === "smtp_on: true\nx: 1\n", 'perfis: regra troca a linha casada');
+$threw = static function (callable $fn): bool { try { $fn(); return false; } catch (\RuntimeException $e) { return true; } };
+$assert($threw(fn() => $t->applyProfile("x: 1\n", [['pattern' => '^smtp_on: .*$', 'with' => 'smtp_on: true']], 'f')), 'perfis: regra sem linha correspondente falha');
+$assert($threw(fn() => $t->applyProfile("a\na\n", [['pattern' => '^a$', 'with' => 'b']], 'f')), 'perfis: regra ambígua (duas linhas) falha');
+// Build de teste: gera a saída do ambiente de teste (hosts de teste preservados, SMTP no system.mail).
+$outTest = sys_get_temp_dir() . '/aculta-build-test-' . getmypid();
+exec($cli . ' build --target=test --out=' . escapeshellarg($outTest) . ' 2>&1', $bt, $btrc);
+$mailTest = is_file($outTest . '/config/sync/system.mail.yml') ? (string) file_get_contents($outTest . '/config/sync/system.mail.yml') : '';
+$assert($btrc === 0 && str_contains($mailTest, '  default: SMTPMailSystem') && str_contains($mailTest, '  webform: SMTPMailSystem'), 'build --target=test: system.mail em SMTP');
+$smtpTest = is_file($outTest . '/config/sync/smtp.settings.yml') ? (string) file_get_contents($outTest . '/config/sync/smtp.settings.yml') : '';
+$assert(str_contains($smtpTest, "smtp_from: 'naoresponda@toca.net.br'"), 'build --target=test: remetente de teste');
+// Alvo e ambiente divergentes são recusados sem gerar saída.
+exec($cli . ' build --env=test --target=production --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);
+$assert($brc1 !== 0, 'build recusa --env diferente de --target');
 
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);

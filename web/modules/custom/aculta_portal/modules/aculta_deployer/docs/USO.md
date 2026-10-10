@@ -14,7 +14,8 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
 - `$CLI list`: lista as entradas do registro.
 - `$CLI register --kind=K --page=P --current=C --expected=E --reason=R --owner=O [--blocking]`:
   acrescenta uma entrada. Os campos são validados antes de gravar.
-- `$CLI build --out=DIR [--allow-open-blocking]`: gera a árvore de produção em `DIR`.
+- `$CLI build --target=production --out=DIR [--allow-open-blocking]`: gera a árvore de produção em `DIR`, com a troca de hosts e o perfil `production`.
+- `$CLI build --target=test --out=DIR`: gera a árvore de teste com o perfil `test` (hosts de teste preservados).
   - `DIR` não pode ficar dentro do repositório.
   - Com entradas bloqueantes abertas, o build é recusado. `--allow-open-blocking` serve
     só para ensaio, e não para publicar.
@@ -80,12 +81,22 @@ produção. Um 200 sem noindex é sempre falha.
 | `robots` | confere noindex nos hosts de teste | confere ausência de noindex e `Sitemap:` do índice | `--env` ou arquivo |
 | `sitemap` | confere o índice na base de teste | confere o índice na base de produção | `--env` ou arquivo |
 | `report` | ambiente e endereço de teste | ambiente e endereço de produção | sem rede, sem valores |
-| `build` | recusado (`--env=test`) | gera a saída de produção | recusa saída dentro do repositório |
+| `build` | `--target=test` gera a saída de teste | `--target=production` (padrão) gera a saída de produção | recusa saída dentro do repositório |
 | `verify` | probes do registro convertidas para os hosts de teste | probes do registro de produção | somente leitura |
 | `check` | valida o registro e o escopo | valida o registro e o escopo | não depende do ambiente |
 | `boundaries` | independe do ambiente | independe do ambiente | |
 
-`build` é só de produção. `verify` respeita o ambiente.
+`build` aceita `--target`; `--env`, se informado, deve ser igual ao alvo. `verify` respeita o ambiente.
+
+## Perfis por ambiente (guardrail)
+
+Configuração que muda entre teste e produção não é editada à mão: está em `config/deploy.json`.
+
+- `environment_bound` lista os arquivos do `config/sync` que dependem de ambiente (SMTP, backend de e-mail, e-mail do site e do formulário, gateway Mercado Pago, nível de erro).
+- `profiles.production` e `profiles.test` têm uma regra por linha alterada (`file`, `pattern`, `with`).
+- O `build` aplica o perfil do alvo. Cada regra precisa casar exatamente uma linha; caso contrário, o build é recusado.
+- O `check` é o guardrail: falha se um arquivo de `environment_bound` não tiver regra em todos os perfis, se um endereço fixo de domínio do projeto aparecer em arquivo que não é dependente de ambiente, ou se alguma regra deixar de casar.
+- Para incluir uma nova configuração dependente de ambiente: declare o arquivo em `environment_bound` e crie a regra nos dois perfis no mesmo PR.
 
 ## Painel do Portal (0.1.6)
 

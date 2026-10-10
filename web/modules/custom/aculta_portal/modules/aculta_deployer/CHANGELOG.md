@@ -1,5 +1,13 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.11 — perfis por ambiente e guardrail de transição teste → produção — 2026-10-10
+
+- `config/deploy.json`: `environment_bound` (arquivos que mudam entre ambientes) e `profiles` (`production` e `test`) com regras de linha (`file`, `pattern`, `with`).
+- `build --target=production|test` (padrão: production). O build aplica as regras do perfil de cada arquivo. Cada regra precisa casar exatamente uma linha; zero ou mais de uma recusa o build. Produção mantém a troca de hosts e a remoção de aliases de teste; teste preserva os hosts de teste.
+- `system.mail` em `SMTPMailSystem` (`default` e `webform`) nos dois perfis; remetente por ambiente (`aculta.org` ou `toca.net.br`); gateway Mercado Pago ativo; erros ocultos na tela.
+- Guardrail no `check`: falha se um arquivo dependente de ambiente não tiver regra em todos os perfis; se houver endereço fixo de `aculta`/`toca` em arquivo fora de `environment_bound`; se alguma regra não casar exatamente uma vez no `config/sync`.
+- Testes: cobertura de perfil, guardrail, aplicação estrita de regra e build de teste.
+
 ## 0.1.10 — verify por ambiente; build somente de produção (fase 10) — 2026-10-09
 
 - `verify` respeita o ambiente (`--env` ou o arquivo): no teste, as sondas e os valores esperados do registro são

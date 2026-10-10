@@ -52,6 +52,13 @@ Regras:
 - comparar paths inesperados antes de importar/exportar;
 - conteúdo Drupal não é substituído por configuração.
 
+## Transição teste → produção (perfis do deployer)
+
+Configuração que muda entre ambientes (SMTP e backend de e-mail, remetente, gateway Mercado Pago, nível de erro)
+é de responsabilidade do `aculta_deployer`, não de edição manual. O `build --target=production` aplica o perfil
+de produção no deploy, e `build --target=test` aplica o de teste. O `check` falha se algum arquivo dependente de
+ambiente não estiver coberto nos dois perfis. Detalhes e regra para novas configurações: `aculta_deployer/docs/USO.md`.
+
 ## Multidomínio
 
 Todos os purposes ativos apontam para a mesma aplicação Drupal, banco e sessão:
