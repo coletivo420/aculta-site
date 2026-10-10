@@ -29,6 +29,7 @@ final class Cli {
       'list' => $this->list(),
       'register' => $this->register($options),
       'build' => $this->build($options),
+      'transition' => $this->transition($options),
       'verify' => $this->verify($options),
       'robots' => $this->robots($options),
       'sitemap' => $this->sitemap($options),
@@ -189,9 +190,11 @@ final class Cli {
       $this->err("sitemap: ambiente desconhecido: $env");
       return 1;
     }
+    // A política de hosts é a de produção; no teste, cada host permitido é comparado pelo equivalente de teste.
     $allowed = [];
     foreach ($cfg['robots_policy']['production']['hosts'] ?? [] as $url) {
-      $allowed[] = Verify::hostOf((string) $url);
+      $host = (string) Verify::hostOf((string) $url);
+      $allowed[] = $env === 'test' ? Verify::testEquivalent($host) : $host;
     }
     $base = Verify::hostOf((string) $policy['index_base']);
     $code = 0;
@@ -576,6 +579,60 @@ final class Cli {
     file_put_contents($outAbs . '/deploy-report.json', json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     $this->say(sprintf('build (%s): %d arquivos gravados, %d removidos, %d binários preservados, %d substituições de host, %d regras de perfil em %s',
       $target, count($report['files']), count($report['dropped']), count($report['skipped_binary']), $report['replacements'], $report['profile_rules'], $out));
+    return 0;
+  }
+
+  /**
+   * Plano de transição para um ambiente: gera o build do alvo, lista os arquivos de config/sync que mudam
+   * em relação ao repositório e grava transition-plan.json com a importação parcial e o rollback.
+   * Não altera nenhum Runtime.
+   */
+  private function transition(array $o): int {
+    $target = is_string($o['target'] ?? null) ? $o['target'] : '';
+    if (!in_array($target, ['production', 'test'], true)) {
+      $this->err('transition: informe --target=production ou --target=test');
+      return 1;
+    }
+    $out = $o['out'] ?? null;
+    if (!is_string($out) || $out === '') {
+      $this->err('transition: --out=DIR é obrigatório');
+      return 1;
+    }
+    $buildOptions = ['target' => $target, 'out' => $out];
+    if (isset($o['allow-open-blocking'])) {
+      $buildOptions['allow-open-blocking'] = true;
+    }
+    if ($this->build($buildOptions) !== 0) {
+      return 1;
+    }
+    $outAbs = $this->absolute($out);
+    $changed = [];
+    foreach (glob($outAbs . '/config/sync/*.yml') ?: [] as $file) {
+      $rel = 'config/sync/' . basename($file);
+      $repo = $this->repoRoot . '/' . $rel;
+      if (!is_file($repo) || file_get_contents($repo) !== file_get_contents($file)) {
+        $changed[] = $rel;
+      }
+    }
+    sort($changed);
+    $plan = [
+      'tool' => 'aculta-deployer ' . self::VERSION,
+      'target' => $target,
+      'changed_files' => $changed,
+      'steps' => [
+        'backup' => 'drush config:export --destination=DIR_BACKUP -y (estado atual do Runtime, para rollback)',
+        'import' => 'copie somente changed_files para DIR_IMPORT e rode drush config:import --partial --source=DIR_IMPORT -y',
+        'caches' => 'drush cr',
+        'sitemap' => $target === 'test' ? 'drush simple-sitemap:generate; aculta-deployer sitemap --env=test' : 'após o deploy: aculta-deployer sitemap --env=production',
+        'rollback' => 'importe novamente o backup com drush config:import --partial --source=DIR_BACKUP -y e rode drush cr',
+      ],
+      'not_done' => 'nenhum Runtime foi alterado por este comando',
+    ];
+    file_put_contents($outAbs . '/transition-plan.json', json_encode($plan, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    $this->say(sprintf('transition (%s): %d arquivo(s) de config/sync mudam; plano em %s/transition-plan.json', $target, count($changed), $out));
+    foreach ($changed as $rel) {
+      $this->say("  $rel");
+    }
     return 0;
   }
 

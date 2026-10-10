@@ -1,5 +1,12 @@
 # Changelog — ACULTA Deployer
 
+## 0.1.14 — transição de ambiente (plano) e sitemap de teste — 2026-10-10
+
+- `transition --target=production|test --out=DIR`: gera o build do alvo e grava `transition-plan.json` com os arquivos de `config/sync` que mudam, os passos de importação parcial, verificação e rollback. Não altera nenhum Runtime.
+- `sitemap --env=test`: a lista de hosts permitidos passa a usar os equivalentes de teste (antes comparava com os hosts de produção e reprovava os hosts de teste).
+- DEP-0002 resolvida pelo responsável em 2026-10-10: registros de domínio por ambiente importados no Runtime de teste; `sitemap --env=test` PASS. A sonda de produção segue registrada para a verificação pós-deploy.
+- Testes: PASS; `check`: PASS.
+
 ## 0.1.13 — hostnames dos domínios por ambiente (perfis) — 2026-10-10
 
 - Os sete registros `domain.record.*` passam a `environment_bound`, com regra nos perfis `production` (host de produção) e `test` (host de teste). O simple_sitemap usa esse hostname nas URLs dos filhos, então o sitemap de teste passa a listar os hosts de teste depois da aplicação do perfil no Runtime.
