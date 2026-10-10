@@ -6,8 +6,8 @@
       <span class="aculta-institution-bar__name">ACULTA</span>
       <span class="aculta-institution-bar__full">{{ 'Associação Cultural Antiproibicionista'|t }}</span>
     </p>
-    {% if aculta_account_menu %}
-      <div class="aculta-utility">{{ aculta_account_menu }}</div>
+    {% if aculta_search_utility or aculta_account_menu %}
+      <div class="aculta-utility">{{ aculta_search_utility }}{{ aculta_account_menu }}</div>
     {% endif %}
   </div>
 </div>

@@ -78,6 +78,8 @@ final class PortalHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
+    #[Autowire(service: 'aculta_portal.search_utility')]
+    private readonly \Drupal\aculta_portal\Search\SearchUtility $searchUtility,
     #[Autowire(service: 'extension.list.module')]
     private readonly ModuleExtensionList $moduleList,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
@@ -104,6 +106,7 @@ final class PortalHooks {
   public function preprocessPage(array &$variables): void {
     $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
     $variables['domain_presentation'] = $domainPresentation?->toThemeArray();
+    $variables['aculta_search_utility'] = $this->searchUtility->build();
     if ($domainPresentation !== NULL
       && isset($variables['page'])
       && is_array($variables['page'])) {

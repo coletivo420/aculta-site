@@ -1,3 +1,38 @@
+## 0.2.0-dev.45 — Pesquisa completa em botão centralizado; lista da prévia sem marcadores — 2026-10-10
+
+Classificação: ajuste visual (PATCH).
+
+- «Pesquisa completa por «termo» (N resultados)» vira botão centralizado, menor e com contorno, diferente do botão Buscar (preenchido). O tamanho menor exige CSS do Portal: a regra geral `.btn` do tema sobrepõe `btn-sm`.
+- A lista da prévia não mostra marcadores (`list-unstyled`).
+
+## 0.2.0-dev.44 — Prévia da busca sem callback AJAX no Form API; atraso de 300 ms — 2026-10-10
+
+Classificação: correção (PATCH).
+
+- Corrigido o erro "Oops, something went wrong" no popup: o callback AJAX do formulário (0.2.0-dev.43) rodava com o objeto restaurado do cache sem as dependências injetadas (`Typed property ... must not be accessed before initialization`), e respondia 500. A prévia saiu do Form API.
+- Nova rota `/busca/previa` (`SearchPreviewController`): devolve o HTML da prévia (até 8 resultados, rodapé com a pesquisa completa e o total). Sem sessão de formulário; resposta `no-store`.
+- O script `search-preview.js` espera 300 ms sem digitação, busca a prévia no mesmo host e mostra só a resposta mais recente; em falha, mostra uma mensagem na caixa.
+- Verificado no Runtime de teste como visitante anônimo (MAIN e apoio): termos «Not&cia», «a» e «Projetos» com respostas 200, prévias corretas e sem erro de JavaScript.
+
+## 0.2.0-dev.43 — Prévia de resultados no popup de busca e pesquisa completa — 2026-10-10
+
+Classificação: funcionalidade (PATCH).
+
+- Prévia por AJAX enquanto a pessoa digita (a partir de 3 caracteres), com até 8 resultados: título e tipo, cada um com link para o host do próprio conteúdo. A consulta roda no host atual, porque o índice é do site inteiro.
+- Rodapé como na Wikipedia (última linha da lista de sugestões): «Pesquisa completa por «termo» (N resultados)», que leva à busca central no MAIN com o mesmo termo. O total vem do índice, já filtrado por acesso.
+- `SearchResults::search()` devolve total e itens; o link por propósito fica no mesmo serviço.
+- Verificado no Runtime de teste (MAIN e apoio): prévia com dois itens para «Notícias» e rodapé «Pesquisa completa por «Notícias» (2 resultados)» apontando para `aculta.toca.net.br/busca?q=`.
+
+## 0.2.0-dev.42 — Ícone de busca na barra multidomínio (popup AJAX) — 2026-10-10
+
+Classificação: funcionalidade pequena no shell (PATCH).
+
+- Ícone de busca na barra institucional, em todos os hosts. Abre um popup por AJAX (modal do Core), no host atual.
+- Formulário `SearchPopupForm` (GET) em `/busca/popup`. No MAIN, o campo tem sugestões (Core autocomplete sobre a busca do índice). Fora do MAIN, o campo envia direto para `/busca` do MAIN: sugestões são AJAX de mesma origem e não cruzam domínio.
+- Verificado no Runtime de teste: popup abre em MAIN e em apoio; envio leva para `/busca?q=`; ícone centralizado na barra.
+- Correção: o campo de busca da Wiki saía sem `name`, então a busca da Wiki não recebia o termo. Corrigido com `#name => 'q'`; o motor próprio da Wiki segue como está.
+- Contrib: não foi necessário. Core cobre o modal e o autocomplete. Alternativa avaliada: `search_api_autocomplete` (estável para Drupal 11), que daria sugestões mais ricas; não adotado por enquanto.
+
 ## 0.2.0-dev.41 — Busca centralizada no MAIN, resultados no host do conteúdo — 2026-10-10
 
 Classificação: correção de comportamento de busca (PATCH).

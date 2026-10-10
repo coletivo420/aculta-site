@@ -139,6 +139,19 @@ aculta_portal.search:
     _title: Buscar
   requirements:
     _permission: access content
+aculta_portal.search_popup:
+  path: /busca/popup
+  defaults:
+    _form: '\Drupal\aculta_portal\Search\Form\SearchPopupForm'
+    _title: Buscar no site
+  requirements:
+    _permission: access content
+aculta_portal.search_preview:
+  path: /busca/previa
+  defaults:
+    _controller: 'aculta_portal.search_preview_controller:preview'
+  requirements:
+    _permission: access content
 aculta_portal.search_suggestions:
   path: /busca/sugestoes
   defaults:
