@@ -59,7 +59,6 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `smtp2go_password` | `SMTP2GO_PASSWORD` | Sim | plain |
 | `turnstile` | `TURNSTILE_KEYS_JSON` | Sim, contém secret (produção) | Base64 |
 | `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Sim, contém secret (teste) | Base64 |
-| `turnstile_dev` | `TURNSTILE_DEV_KEYS_JSON` | Sim, contém secret (desenvolvimento) | Base64 |
 
 ## Arquitetura
 

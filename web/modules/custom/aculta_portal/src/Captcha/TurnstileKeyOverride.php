@@ -11,10 +11,8 @@ use Drupal\Core\Config\StorableConfigBase;
 /**
  * Escolhe a chave do Turnstile pelo ambiente do deployer, sem gravar nada na configuração.
  *
- * production → chave de produção (Key "turnstile", TURNSTILE_KEYS_JSON, no banco criptografado).
- * test       → chave de teste (Key "turnstile_test", TURNSTILE_TEST_KEYS_JSON).
- * Desenvolvimento (Key "turnstile_dev") fica disponível no contrato; a troca automática por ele depende de o
- * deployer ganhar esse ambiente (ver DEPLOYMENT.md).
+ * Dois ambientes: production → chave de produção (Key "turnstile", TURNSTILE_KEYS_JSON, no banco criptografado);
+ * test → chave de teste (Key "turnstile_test", TURNSTILE_TEST_KEYS_JSON). O ambiente local é do tipo teste.
  */
 final class TurnstileKeyOverride implements ConfigFactoryOverrideInterface {
 
