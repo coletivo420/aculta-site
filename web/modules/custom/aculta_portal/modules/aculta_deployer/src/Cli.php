@@ -56,6 +56,19 @@ final class Cli {
       $this->err("configuração: $e");
       $code = 1;
     }
+    // Guardrail de ambiente: arquivos que mudam entre teste e produção precisam de perfil em todos os ambientes.
+    foreach ($transform->validateProfiles() as $e) {
+      $this->err("perfil: $e");
+      $code = 1;
+    }
+    foreach ($this->unboundEnvironmentValues() as $rel => $email) {
+      $this->err("perfil: $rel tem endereço fixo ($email) e não está em environment_bound; declare o arquivo e crie regras nos perfis");
+      $code = 1;
+    }
+    foreach ($this->profileRuleFailures($transform) as $e) {
+      $this->err("perfil: $e");
+      $code = 1;
+    }
     $stats = $this->scan($transform);
     $this->say(sprintf('escopo: %d arquivos; %d com host de teste; %d removidos no build de produção',
       $stats['scope'], $stats['with_test_host'], $stats['dropped']));
@@ -452,8 +465,13 @@ final class Cli {
 
   /** @param array<string, string|bool> $o */
   private function build(array $o): int {
-    if (is_string($o['env'] ?? null) && $o['env'] !== 'production') {
-      $this->err('build: gera somente a saída de produção; use --env=production ou omita a opção');
+    $target = is_string($o['target'] ?? null) ? $o['target'] : 'production';
+    if (!in_array($target, ['production', 'test'], true)) {
+      $this->err('build: --target aceita production ou test');
+      return 1;
+    }
+    if (is_string($o['env'] ?? null) && $o['env'] !== $target) {
+      $this->err("build: --env={$o['env']} diverge de --target=$target");
       return 1;
     }
     $out = $o['out'] ?? null;
@@ -479,7 +497,7 @@ final class Cli {
       return 1;
     }
     $blocking = $this->registry()->openBlocking();
-    if ($blocking !== [] && !isset($o['allow-open-blocking'])) {
+    if ($target === 'production' && $blocking !== [] && !isset($o['allow-open-blocking'])) {
       $this->err('build: existem entradas bloqueantes abertas; resolva-as ou use --allow-open-blocking para um build de ensaio');
       foreach ($blocking as $e) {
         $this->err("  {$e['id']} ({$e['kind']}): {$e['page']}");
@@ -487,24 +505,24 @@ final class Cli {
       return 2;
     }
     $transform = $this->transform();
-    if ($transform->validate() !== []) {
-      $this->err('build: configuração de escopo inválida; rode check para detalhes');
+    if ($transform->validate() !== [] || $transform->validateProfiles() !== []) {
+      $this->err('build: configuração de escopo ou de perfis inválida; rode check para detalhes');
       return 1;
     }
     $maxBytes = (int) ($this->json($this->toolRoot . '/config/deploy.json')['max_bytes'] ?? 2097152);
     $robots = $this->json($this->toolRoot . '/config/deploy.json')['robots_policy']['production'] ?? [];
-    if (Verify::isNoindex($robots['x_robots_tag'] ?? null)) {
+    if ($target === 'production' && Verify::isNoindex($robots['x_robots_tag'] ?? null)) {
       $this->err('build: a política de produção envia noindex; o build de produção não é gerado');
       return 1;
     }
-    $report = ['tool' => 'aculta-deployer ' . self::VERSION, 'target' => 'production', 'files' => [], 'dropped' => [], 'skipped_binary' => [], 'replacements' => 0];
+    $report = ['tool' => 'aculta-deployer ' . self::VERSION, 'target' => $target, 'files' => [], 'dropped' => [], 'skipped_binary' => [], 'replacements' => 0, 'profile_rules' => 0];
     if (!is_dir($outAbs) && !mkdir($outAbs, 0775, true)) {
       $this->err('build: não foi possível criar o diretório de saída');
       return 1;
     }
     try {
       foreach ($this->scopeFiles() as $rel) {
-        if ($transform->isDropped($rel)) {
+        if ($target === 'production' && $transform->isDropped($rel)) {
           $report['dropped'][] = $rel;
           continue;
         }
@@ -521,19 +539,27 @@ final class Cli {
           $content = $raw;
           $count = 0;
           $report['skipped_binary'][] = $rel;
-        } else {
+        } elseif ($target === 'production') {
           [$content, $count] = $transform->applyHosts($raw);
+        } else {
+          $content = $raw;
+          $count = 0;
         }
-        $target = $outAbs . '/' . $rel;
-        if (!is_dir(dirname($target)) && !mkdir(dirname($target), 0775, true)) {
+        $profileRules = $transform->profileRules($target, $rel);
+        if ($profileRules !== []) {
+          $content = $transform->applyProfile($content, $profileRules, $rel);
+          $report['profile_rules'] += count($profileRules);
+        }
+        $file = $outAbs . '/' . $rel;
+        if (!is_dir(dirname($file)) && !mkdir(dirname($file), 0775, true)) {
           throw new \RuntimeException("não foi possível criar diretório para $rel");
         }
-        file_put_contents($target, $content);
+        file_put_contents($file, $content);
         $report['files'][] = ['path' => $rel, 'replacements' => $count, 'sha256' => hash('sha256', $content)];
         $report['replacements'] += $count;
       }
-      // Autoverificação: nenhum host de teste pode restar nos arquivos gerados.
-      foreach ($report['files'] as $f) {
+      // Autoverificação: nenhum host de teste pode restar nos arquivos gerados de produção.
+      foreach ($target === 'production' ? $report['files'] : [] as $f) {
         if (in_array($f['path'], $report['skipped_binary'], true)) {
           continue;
         }
@@ -548,8 +574,8 @@ final class Cli {
     }
     file_put_contents($outAbs . '/deploy-policy.json', json_encode(['robots' => $robots], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     file_put_contents($outAbs . '/deploy-report.json', json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
-    $this->say(sprintf('build: %d arquivos gravados, %d removidos, %d binários preservados, %d substituições de host em %s',
-      count($report['files']), count($report['dropped']), count($report['skipped_binary']), $report['replacements'], $out));
+    $this->say(sprintf('build (%s): %d arquivos gravados, %d removidos, %d binários preservados, %d substituições de host, %d regras de perfil em %s',
+      $target, count($report['files']), count($report['dropped']), count($report['skipped_binary']), $report['replacements'], $report['profile_rules'], $out));
     return 0;
   }
 
@@ -568,6 +594,52 @@ final class Cli {
   private function boundaryViolations(): array {
     $rules = $this->json($this->toolRoot . '/config/boundary.json');
     return (new Boundary($this->repoRoot, $this->toolRoot, $rules))->check();
+  }
+
+  /**
+   * Arquivos do escopo com e-mail fixo dos domínios do projeto que não estão em environment_bound.
+   *
+   * @return array<string, string> caminho => primeiro endereço encontrado
+   */
+  private function unboundEnvironmentValues(): array {
+    $config = $this->json($this->toolRoot . '/config/deploy.json');
+    $bound = array_map(static fn(array $e): string => (string) ($e['file'] ?? ''), $config['environment_bound'] ?? []);
+    $found = [];
+    foreach ($this->scopeFiles() as $rel) {
+      if (in_array($rel, $bound, true)) {
+        continue;
+      }
+      $raw = (string) file_get_contents($this->repoRoot . '/' . $rel);
+      if (preg_match('/[A-Za-z0-9._%+-]+@(?:aculta|toca)\.[a-z.]+/', $raw, $m) === 1) {
+        $found[$rel] = $m[0];
+      }
+    }
+    return $found;
+  }
+
+  /**
+   * Regras de perfil que não casam exatamente uma vez no config/sync atual (regra morta ou ambígua).
+   *
+   * @return string[]
+   */
+  private function profileRuleFailures(Transform $transform): array {
+    $errors = [];
+    $config = $this->json($this->toolRoot . '/config/deploy.json');
+    foreach (array_keys($config['profiles'] ?? []) as $target) {
+      foreach ($config['profiles'][$target]['rules'] ?? [] as $i => $rule) {
+        $file = $this->repoRoot . '/' . ($rule['file'] ?? '');
+        if (!is_file($file)) {
+          $errors[] = "$target regra $i: arquivo inexistente {$rule['file']}";
+          continue;
+        }
+        try {
+          $transform->applyProfile((string) file_get_contents($file), [['pattern' => (string) $rule['pattern'], 'with' => (string) $rule['with']]], (string) $rule['file']);
+        } catch (\RuntimeException $e) {
+          $errors[] = "$target regra $i: " . $e->getMessage();
+        }
+      }
+    }
+    return $errors;
   }
 
   private function transform(): Transform {

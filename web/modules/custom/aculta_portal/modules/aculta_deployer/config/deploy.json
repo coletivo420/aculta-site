@@ -75,5 +75,123 @@
     "test": {
       "site": "https://aculta.toca.net.br"
     }
+  },
+  "environment_bound": [
+    {
+      "file": "config/sync/smtp.settings.yml",
+      "reason": "SMTP2GO ligado e remetente por ambiente"
+    },
+    {
+      "file": "config/sync/system.mail.yml",
+      "reason": "backend de e-mail: SMTP em produção e teste"
+    },
+    {
+      "file": "config/sync/system.site.yml",
+      "reason": "e-mail do site por ambiente"
+    },
+    {
+      "file": "config/sync/webform.webform.aculta_contact.yml",
+      "reason": "remetente do formulário de contato por ambiente"
+    },
+    {
+      "file": "config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml",
+      "reason": "gateway Mercado Pago ativo quando as credenciais do ambiente existem"
+    },
+    {
+      "file": "config/sync/system.logging.yml",
+      "reason": "erros ocultos na tela em todos os ambientes"
+    }
+  ],
+  "profiles": {
+    "production": {
+      "description": "Transição para produção no build de produção (aculta-deployer build --target production).",
+      "rules": [
+        {
+          "file": "config/sync/smtp.settings.yml",
+          "pattern": "^smtp_on: .*$",
+          "with": "smtp_on: true"
+        },
+        {
+          "file": "config/sync/smtp.settings.yml",
+          "pattern": "^smtp_from: .*$",
+          "with": "smtp_from: 'naoresponda@aculta.org'"
+        },
+        {
+          "file": "config/sync/system.mail.yml",
+          "pattern": "^  default: .*$",
+          "with": "  default: SMTPMailSystem"
+        },
+        {
+          "file": "config/sync/system.mail.yml",
+          "pattern": "^  webform: .*$",
+          "with": "  webform: SMTPMailSystem"
+        },
+        {
+          "file": "config/sync/system.site.yml",
+          "pattern": "^mail: .*$",
+          "with": "mail: naoresponda@aculta.org"
+        },
+        {
+          "file": "config/sync/webform.webform.aculta_contact.yml",
+          "pattern": "^      from_mail: .*$",
+          "with": "      from_mail: naoresponda@aculta.org"
+        },
+        {
+          "file": "config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml",
+          "pattern": "^status: .*$",
+          "with": "status: true"
+        },
+        {
+          "file": "config/sync/system.logging.yml",
+          "pattern": "^error_level: .*$",
+          "with": "error_level: hide"
+        }
+      ]
+    },
+    "test": {
+      "description": "Configuração do servidor de testes (aculta-deployer build --target test). Remetente de teste.",
+      "rules": [
+        {
+          "file": "config/sync/smtp.settings.yml",
+          "pattern": "^smtp_on: .*$",
+          "with": "smtp_on: true"
+        },
+        {
+          "file": "config/sync/smtp.settings.yml",
+          "pattern": "^smtp_from: .*$",
+          "with": "smtp_from: 'naoresponda@toca.net.br'"
+        },
+        {
+          "file": "config/sync/system.mail.yml",
+          "pattern": "^  default: .*$",
+          "with": "  default: SMTPMailSystem"
+        },
+        {
+          "file": "config/sync/system.mail.yml",
+          "pattern": "^  webform: .*$",
+          "with": "  webform: SMTPMailSystem"
+        },
+        {
+          "file": "config/sync/system.site.yml",
+          "pattern": "^mail: .*$",
+          "with": "mail: naoresponda@toca.net.br"
+        },
+        {
+          "file": "config/sync/webform.webform.aculta_contact.yml",
+          "pattern": "^      from_mail: .*$",
+          "with": "      from_mail: naoresponda@toca.net.br"
+        },
+        {
+          "file": "config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml",
+          "pattern": "^status: .*$",
+          "with": "status: true"
+        },
+        {
+          "file": "config/sync/system.logging.yml",
+          "pattern": "^error_level: .*$",
+          "with": "error_level: hide"
+        }
+      ]
+    }
   }
 }
