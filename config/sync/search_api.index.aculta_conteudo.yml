@@ -69,6 +69,9 @@ datasource_settings:
 processor_settings:
   add_url: {  }
   aggregated_field: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
   custom_value: {  }
   entity_type: {  }
   html_filter:
