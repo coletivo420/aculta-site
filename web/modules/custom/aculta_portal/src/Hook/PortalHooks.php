@@ -524,6 +524,7 @@ final class PortalHooks {
         'variables' => [
           'section_title' => NULL,
           'menu' => NULL,
+          'menu_accordion' => NULL,
           'content' => NULL,
         ],
         'template' => 'aculta-portal-shell',
