@@ -21,13 +21,11 @@ final class SecretsForm extends FormBase implements ContainerInjectionInterface 
 
   public function __construct(
     private readonly SecretsManager $secrets,
-    private readonly \Drupal\Core\Access\CsrfTokenGenerator $csrf,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.secrets_manager'),
-      $container->get('csrf_token'),
     );
   }
 
@@ -128,8 +126,8 @@ final class SecretsForm extends FormBase implements ContainerInjectionInterface 
     }
     $value = $this->secrets->value($name);
     $masked = $value === NULL ? '—' : SecretsManager::mask($value);
+    // A rota tem _csrf_token: o gerador de URL já acrescenta ?token=. Não concatenar outro.
     $url = Url::fromRoute('aculta_portal.secrets_reveal', ['name' => $name])->toString();
-    $token = $this->csrf->get(ltrim($url, '/'));
     return [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-secret-value']],
@@ -141,7 +139,7 @@ final class SecretsForm extends FormBase implements ContainerInjectionInterface 
         '#attributes' => [
           'type' => 'button',
           'class' => ['aculta-secret-value__eye'],
-          'data-reveal-url' => $url . '?token=' . $token,
+          'data-reveal-url' => $url,
           'aria-pressed' => 'false',
           'aria-label' => (string) $this->t('Mostrar valor de @name', ['@name' => $name]),
         ],

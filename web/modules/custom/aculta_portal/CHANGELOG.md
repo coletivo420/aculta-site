@@ -1,11 +1,16 @@
-## 0.2.0-dev.30 — Botão de exibir chave em Credenciais do ambiente — 2026-10-10
+## 0.2.0-dev.31 — Botão de exibir chave em Credenciais do ambiente — 2026-10-10
 
 Classificação: correção (PATCH).
 
-- O botão de olho do painel "Credenciais do ambiente" mostra o valor completo. Antes, a rota de revelação falhava com 500 (o construtor do controller não recebia as dependências, porque a rota apontava para a classe e não para um serviço) e o botão exibia "indisponível".
-- O controller é serviço (`aculta_portal.secrets_reveal_controller`) e a rota usa `service:method`. Resposta de sucesso 200 com `name` e `value`, sem cache; credencial sem valor responde 404 controlado.
-- O valor continua fora do HTML; o log registra só o nome da credencial e o usuário.
-- Validação: no Runtime de teste, a rota revelou `GOOGLE_OAUTH_CLIENT_ID` (200, `no-store`) e respondeu 404 controlado para `TURNSTILE_KEYS_JSON` (sem valor no ambiente). Clique no navegador não foi feito pela automação.
+- O botão de olho do painel "Credenciais do ambiente" mostra o valor completo. Antes ele exibia "indisponível". Duas causas, ambas corrigidas:
+  1. A rota de revelação apontava para a classe do controller, sem injeção de dependências: o construtor falhava com 500. Agora o controller é serviço (`aculta_portal.secrets_reveal_controller`) e a rota usa `service:method`.
+  2. A URL do botão recebia um segundo `?token=`. A rota tem `_csrf_token`, e o gerador de URL do Core já acrescenta o token; a concatenação manual duplicava o parâmetro e a rota negava o acesso (403). Agora o `SecretsForm` usa a URL gerada e não depende mais do serviço `csrf_token`.
+- O valor continua fora do HTML; o log registra só o nome da credencial e o usuário. Resposta de revelação sem cache; credencial sem valor responde 404 controlado.
+- Validação no Runtime de teste (`aculta.toca.net.br`), com sessão de administrador:
+  - página de segredos: 200, uma URL de revelação por credencial, cada uma com um único `token`;
+  - rota de revelação: 200, `application/json`, chaves `name` e `value` (conferido por HTTP em todas as credenciais renderizadas);
+  - navegador headless (Chromium, DevTools): clique no botão de olho revela o valor (72 caracteres para `GOOGLE_OAUTH_CLIENT_ID`, `aria-pressed=true`, sem "indisponível");
+  - não testado: o segundo clique que volta à máscara.
 - Gate do Portal: PASS (502 checagens).
 
 ## 0.2.0-dev.29 — Sanfona com uma seção aberta por vez — 2026-10-10
