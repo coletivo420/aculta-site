@@ -1,3 +1,13 @@
+## 0.6.0-dev.1 — F4: UI Patterns e biblioteca de componentes — 2026-10-09
+
+Classificação: MINOR (dependência nova e biblioteca navegável; sem alteração de markup nem de componentes).
+
+- Dependências: `drupal/ui_patterns` ^2.0 (2.0.22), com `justinrainbow/json-schema` (validação de props, exigida pelo pacote). Justificativa: decisão do responsável; a biblioteca gera as páginas a partir dos SDCs do tema, sem páginas de exemplo escritas à mão.
+- Stories: 9 arquivos `*.story.yml` em `components/` (padrão para os 7 componentes, mais hero sem ações e cartão editorial sem chamada).
+- Verificado (kernel, administradora): `/painel-administrativo/aparencia/ui/components` 200; cada componente do tema 200 e com o conteúdo das stories renderizado; páginas públicas 200.
+- Gates: design PASS; SDC schema PASS (7 componentes); Foundation via Drush.
+- Pendente: consumidores em Views e Manage Display (sem uso real identificado).
+
 ## 0.5.1 — F2 (ícones) concluída: Bootstrap Icons sem dependência nova — 2026-10-09
 
 Classificação: PATCH da linha 0.5 (gate e documentação; sem componente, template ou dependência novos).
