@@ -246,7 +246,9 @@ Página `/admin/config/aculta/segredos` (permissão `administer aculta secrets`,
 2. Valores salvos aparecem **mascarados** (dois caracteres de cada ponta; valores curtos viram só bolinhas).
    O botão 👁 pede o valor completo ao servidor por uma rota com token CSRF e sem cache; o botão de novo volta
    à máscara. O valor completo nunca fica no HTML da página.
-3. Campos de digitação (senha) para cadastrar ou alterar. Campo vazio mantém o valor atual.
+3. Cadastrar ou alterar: o ícone ✎ ao lado do olho abre um popup com um único campo de senha para aquela variável.
+   Salvar grava só essa variável; as demais permanecem. O valor digitado não volta à tela nem ao log. O ✎ só
+   aparece onde a gravação é possível (teste, arquivo de credenciais).
 4. Salvar grava o arquivo de credenciais de forma atômica (modo 0640 em teste). Só nomes do contrato são aceitos,
    valores com quebra de linha são recusados e o tamanho é limitado a 4 KiB.
 5. Cada revelação e cada salvamento geram entrada no log com nomes e usuário. Nenhum valor vai para o log, o

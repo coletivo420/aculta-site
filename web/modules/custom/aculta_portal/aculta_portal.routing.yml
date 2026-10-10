@@ -164,10 +164,18 @@ aculta_portal.courses_home:
 aculta_portal.secrets_import:
   path: /admin/config/aculta/segredos
   defaults:
-    _form: '\Drupal\aculta_portal\Secrets\Form\SecretsForm'
+    _controller: 'aculta_portal.secrets_controller:page'
     _title: Credenciais do ambiente
   requirements:
     _permission: administer aculta secrets
+aculta_portal.secrets_edit:
+  path: /admin/config/aculta/segredos/editar/{name}
+  defaults:
+    _controller: 'aculta_portal.secrets_controller:edit'
+    _title: Alterar credencial
+  requirements:
+    _permission: administer aculta secrets
+    name: '[A-Z][A-Z0-9_]*'
 aculta_portal.secrets_reveal:
   path: /admin/config/aculta/segredos/revelar/{name}
   defaults:
