@@ -5,17 +5,20 @@ primeiro Estado ACULTA é **integral**: preserva todas as tabelas e registros
 do banco MariaDB fonte, incluindo sessões, caches, logs, tokens já persistidos,
 usuários e dados pessoais. Ele não é um fixture, nem backup de produção.
 
-O repositório que contém um Estado integral precisa permanecer **privado**.
-Não publique esse arquivo em repositório público, release, issue ou artefato de
-CI. O gate de privacidade precisa ser confirmado antes de qualquer commit que
-inclua o banco.
+**Os Estados são backups privados dos servidores e não são versionados.** Os
+arquivos `estados/*.sqlite` não ficam no repositório nem no disco local de
+desenvolvimento: foram removidos em 2026-10-10, e o `.gitignore` continua
+ignorando esse padrão. Eles não entram em release, issue ou artefato de CI. O
+repositório público contém apenas este README e `manifesto.yml`, com o
+inventário e o SHA-256 de cada Estado. A guarda das cópias físicas (backups dos
+servidores) tem restrição de acesso e retenção definidas pelo responsável.
 
-O arquivo em `estados/` nunca é aberto pelo Drupal. Restaure-o para a cópia
-mutável `var/database/aculta-runtime.sqlite`; o Drupal só usa o Runtime.
+O arquivo em `estados/` nunca é aberto pelo Drupal. Para restaurar, carregue-o
+no Runtime MariaDB (`aculta_runtime`); o Drupal só usa o Runtime.
 Arquivos físicos `public://` e `private://` são complementares e não ficam
 dentro do SQLite.
 
 Produção continua MariaDB. Nunca envie `estados/*.sqlite` para produção nem os
 use como banco de produção.
 
-Veja `manifesto.yml` para o inventário e SHA-256 do primeiro Estado.
+Veja `manifesto.yml` para o inventário e SHA-256 de cada Estado; use-o para verificar qualquer cópia restaurada dos backups dos servidores.

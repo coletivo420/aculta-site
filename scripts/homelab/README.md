@@ -33,8 +33,8 @@ O VirtualHost Apache deve apontar o DocumentRoot para `web/`, preservar
 Apache válida, `mod_rewrite`, `mod_headers` e `proxy_fcgi`, e falha se
 encontrar um processo Nginx ativo.
 
-Estados integrais podem ser versionados publicamente por decisão explícita do
-projeto e não são sanitizados. Não adicione deliberadamente credenciais
+Estados são backups privados dos servidores: não são versionados no Git
+(`estados/*.sqlite` no `.gitignore`) e não são sanitizados. Não adicione deliberadamente credenciais
 externas ou de produção ao Runtime/Estado; nenhum Estado que contenha secret
 persistido pode ser versionado ou publicado. O banco e os settings de produção
 continuam ativos separados em MariaDB.

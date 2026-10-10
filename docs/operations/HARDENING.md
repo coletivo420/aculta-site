@@ -115,7 +115,7 @@ correção, retest e status.
   environment nativo não vazio.
 - Cópias de backup anteriores à limpeza do storage continuam sendo material
   sensível e precisam de inventário, retenção e permissões restritas.
-- Antes de publicar um Estado SQLite, verificar que nenhum secret está
-  persistido no banco; Estado contendo credencial não pode ser versionado ou
-  publicado, ainda que outros Estados possam ser públicos por decisão do
-  projeto.
+- Estados são backups privados dos servidores e não são versionados. Antes de
+  qualquer cópia para fora do servidor, verificar que nenhum secret está
+  persistido no banco; Estado contendo credencial não pode ser copiado para
+  repositórios, releases ou artefatos de CI.

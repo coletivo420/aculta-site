@@ -20,7 +20,7 @@ O objetivo inicial é construir um site institucional profissional, acessível, 
 - PHP 8.5
 - Apache como baseline definitivo de servidor web
 - PHP-FPM no Homelab
-- SQLite para o Runtime de desenvolvimento e Estados versionados
+- MariaDB para o Runtime de desenvolvimento (Homelab, banco `aculta_runtime`); SQLite apenas para Estados (backups privados locais, não versionados)
 - MariaDB em produção
 - Composer
 - Drush
@@ -344,9 +344,9 @@ ACULTA Secrets Contract, gate anti-regressão e provisioning por ambiente.
 
 ## Bancos e Sistema de Estados
 
-- Desenvolvimento usa `var/database/aculta-runtime.sqlite`, uma cópia mutável restaurada de `estados/`.
+- Desenvolvimento (Homelab) usa o MariaDB `aculta_runtime`. Estados (`estados/`) são backups privados e não ficam no disco local; restaurações são carregadas no Runtime MariaDB.
 - `estados/*.sqlite` são snapshots imutáveis e integrais; não são sanitizados.
-- Por decisão explícita do projeto, Estados integrais podem ser versionados neste repositório público. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
+- Estados são backups privados dos servidores e não são versionados neste repositório: `estados/*.sqlite` está no `.gitignore`. Apenas o README e o `manifesto.yml` ficam no Git. Nunca adicionar deliberadamente senhas, API keys, tokens de serviços externos ou credenciais de produção ao Runtime/Estado.
 - Produção continua usando MariaDB. Nunca implantar `estados/*.sqlite` nem apontar produção para o Runtime.
 - Não editar um Estado imutável. Mudanças operacionais depois do restore pertencem somente ao Runtime.
 - Código custom deve utilizar APIs Drupal para acesso a dados. A portabilidade/migração entre SQLite e MariaDB não é responsabilidade de `aculta_portal`; pertence ao projeto independente **DBTNG-2**.
