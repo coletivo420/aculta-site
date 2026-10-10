@@ -1,3 +1,12 @@
+## 0.2.0-dev.41 — Busca centralizada no MAIN, resultados no host do conteúdo — 2026-10-10
+
+Classificação: correção de comportamento de busca (PATCH).
+
+- A busca geral segue centralizada no MAIN (`/busca`). Cada resultado passa a abrir no host do próprio conteúdo, pelo purpose do nó (`field_domain_source`). Antes, o link era o caminho relativo do host onde a busca rodava.
+- A Wiki420 mantém o próprio motor (`/wiki/busca`, `WikiController::search`); os verbetes `wiki_entry` não entram no índice geral.
+- Política em `docs/portal/SEARCH.md`.
+- Verificado no Runtime de teste: resultado de "Notícias" abre em `coletivo420.aculta.toca.net.br/noticias`.
+
 ## 0.2.0-dev.40 — F3: busca com content_access e testes de Kernel — 2026-10-10
 
 Classificação: correção e cobertura de teste (PATCH).
