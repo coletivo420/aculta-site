@@ -50,15 +50,23 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 
 ## Variáveis atuais
 
-| Key ID | Environment | Sensível | Encoding |
-| --- | --- | --- | --- |
-| `google_oauth_client_id` | `GOOGLE_OAUTH_CLIENT_ID` | Não, identificador público | plain |
-| `google_oauth_client_secret` | `GOOGLE_OAUTH_CLIENT_SECRET` | Sim | plain |
-| `mercadopago_webhook_secret` | `MERCADOPAGO_WEBHOOK_SECRET` | Sim | plain |
-| `smtp2go_username` | `SMTP2GO_USERNAME` | Sim, credencial | plain |
-| `smtp2go_password` | `SMTP2GO_PASSWORD` | Sim | plain |
-| `turnstile` | `TURNSTILE_KEYS_JSON` | Sim, contém secret (produção) | Base64 |
-| `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Sim, contém secret (teste) | Base64 |
+| Key ID | Environment | Ambiente | Sensível | Encoding |
+| --- | --- | --- | --- | --- |
+| `google_oauth_client_id` | `GOOGLE_OAUTH_CLIENT_ID` | Produção e testes | Não, identificador público | plain |
+| `google_oauth_client_secret` | `GOOGLE_OAUTH_CLIENT_SECRET` | Produção e testes | Sim | plain |
+| `smtp2go_username` | `SMTP2GO_USERNAME` | Produção e testes | Sim, credencial | plain |
+| `smtp2go_password` | `SMTP2GO_PASSWORD` | Produção e testes | Sim | plain |
+| `mercadopago_production_public_key` | `MERCADOPAGO_PRODUCTION_PUBLIC_KEY` | Produção | Não, uso no frontend | plain |
+| `mercadopago_production_access_token` | `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` | Produção | Sim | plain |
+| `mercadopago_webhook_secret` | `MERCADOPAGO_WEBHOOK_SECRET` | Produção | Sim | plain |
+| `turnstile` | `TURNSTILE_KEYS_JSON` | Produção | Sim, contém secret | Base64 |
+| `mercadopago_test_public_key` | `MERCADOPAGO_TEST_PUBLIC_KEY` | Testes | Não, uso no frontend | plain |
+| `mercadopago_test_access_token` | `MERCADOPAGO_TEST_ACCESS_TOKEN` | Testes | Sim | plain |
+| `mercadopago_test_buyer_password` | `MERCADOPAGO_TEST_BUYER_PASSWORD` | Testes | Sim, senha do comprador de teste | plain |
+| `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Testes | Sim, contém secret | Base64 |
+
+Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
+compartilhadas aparecem nas duas seções do painel. Mercado Pago: ver [MERCADOPAGO.md](../integrations/MERCADOPAGO.md).
 
 ## Regra ao incluir uma variável
 
@@ -241,8 +249,10 @@ tema ou hardcoding caminho Homelab/Hostinger no Portal.
 
 Página `/admin/config/aculta/segredos` (permissão `administer aculta secrets`, restrita):
 
-1. Mostra cada variável do contrato, a Key correspondente, se é obrigatória no ambiente e o estado
-   (✔ preenchida, ⚠ opcional sem valor, ✖ obrigatória sem valor), com a mesma legenda do diagnóstico do Portal.
+1. Mostra duas seções fixas: **Ambiente de Produção** e **Ambiente de Testes**. Cada uma lista as variáveis do
+   contrato daquele ambiente (variáveis compartilhadas aparecem nas duas), a Key, se é obrigatória naquele ambiente
+   e o estado (✔ preenchida, ⚠ opcional sem valor, ✖ obrigatória sem valor). A troca de ambiente continua a cargo do
+   ACULTA Deployer; o painel não troca nada, só mostra o ambiente atual declarado.
 2. Valores salvos aparecem **mascarados** (dois caracteres de cada ponta; valores curtos viram só bolinhas).
    O botão 👁 pede o valor completo ao servidor por uma rota com token CSRF e sem cache; o botão de novo volta
    à máscara. O valor completo nunca fica no HTML da página.

@@ -92,6 +92,7 @@ services:
     arguments: ['cep_autocomplete']
   aculta_portal.mercado_pago_environment_override:
     class: Drupal\aculta_portal\Config\MercadoPagoEnvironmentOverride
+    arguments: ['%app.root%']
     tags:
       - { name: config.factory.override, priority: 100 }
   aculta_portal.mercado_pago_webhook_guard:

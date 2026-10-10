@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoCredentials;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
@@ -13,20 +14,23 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class EntitySaveHooks {
 
   /**
-   * Keeps the Mercado Pago gateway fail-closed on save.
+   * Keeps the Mercado Pago gateway fail-closed on save: enabling it requires the Public Key and
+   * Access Token of the environment declared by the ACULTA Deployer.
    */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
     if ($entity->getEntityTypeId() !== 'commerce_payment_gateway'
-      || $entity->id() !== 'mercado_pago'
+      || $entity->id() !== MercadoPagoCredentials::GATEWAY_ID
       || !$entity->status()) {
       return;
     }
 
-    if (!getenv('MERCADOPAGO_PUBLIC_KEY') || !getenv('MERCADOPAGO_ACCESS_TOKEN')) {
-      throw new \LogicException(
-        'The Mercado Pago gateway cannot be enabled without both runtime test credentials.',
-      );
+    $environment = MercadoPagoCredentials::currentEnvironment(dirname(DRUPAL_ROOT));
+    if (!MercadoPagoCredentials::hasRuntimeCredentials($environment)) {
+      throw new \LogicException(sprintf(
+        'The Mercado Pago gateway cannot be enabled in the "%s" environment without its Public Key and Access Token.',
+        $environment,
+      ));
     }
   }
 

@@ -425,19 +425,27 @@ $number_element = ['#parents' => ['donation_amount'], '#value' => '0', '#min' =>
 $assert($number_state->hasAnyErrors(), 'Donation widget Form API rejects values below its R$5 minimum server-side.');
 $assert(!isset($number_element['#max']), 'Donation widget has no configured maximum amount.');
 
-$previous_public_key = getenv('MERCADOPAGO_PUBLIC_KEY');
-$previous_access_token = getenv('MERCADOPAGO_ACCESS_TOKEN');
+$mp_variables = ['MERCADOPAGO_TEST_PUBLIC_KEY', 'MERCADOPAGO_TEST_ACCESS_TOKEN', 'MERCADOPAGO_PRODUCTION_PUBLIC_KEY', 'MERCADOPAGO_PRODUCTION_ACCESS_TOKEN'];
+$previous_mp = [];
+foreach ($mp_variables as $variable) {
+  $previous_mp[$variable] = getenv($variable);
+}
+$mp_environment = \Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoCredentials::currentEnvironment(dirname(\Drupal::root()));
+$mp_token_field = $mp_environment === 'test' ? 'access_token_test' : 'access_token_prod';
 $gateway_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway');
 $fake_public_key = 'TEST_MP_PUBLIC_' . bin2hex(random_bytes(12));
 $fake_access_token = 'TEST_MP_ACCESS_' . bin2hex(random_bytes(24));
-putenv('MERCADOPAGO_PUBLIC_KEY=' . $fake_public_key);
-putenv('MERCADOPAGO_ACCESS_TOKEN=' . $fake_access_token);
+// Ambos os pares recebem valores falsos; o gateway deve usar o do ambiente declarado.
+putenv('MERCADOPAGO_TEST_PUBLIC_KEY=' . $fake_public_key);
+putenv('MERCADOPAGO_TEST_ACCESS_TOKEN=' . $fake_access_token);
+putenv('MERCADOPAGO_PRODUCTION_PUBLIC_KEY=' . $fake_public_key);
+putenv('MERCADOPAGO_PRODUCTION_ACCESS_TOKEN=' . $fake_access_token);
 $mp_override = \Drupal::service('aculta_portal.mercado_pago_environment_override')->loadOverrides(['commerce_payment.commerce_payment_gateway.mercado_pago']);
-$assert(($mp_override['commerce_payment.commerce_payment_gateway.mercado_pago']['configuration']['access_token_test'] ?? '') === $fake_access_token, 'Runtime credentials map to the gateway plugin in memory.');
+$assert(($mp_override['commerce_payment.commerce_payment_gateway.mercado_pago']['configuration'][$mp_token_field] ?? '') === $fake_access_token, 'Runtime credentials map to the gateway plugin in memory for the declared environment.');
 \Drupal::configFactory()->reset('commerce_payment.commerce_payment_gateway.mercado_pago');
 $gateway_storage->resetCache(['mercado_pago']);
 $runtime_gateway = \Drupal\commerce_payment\Entity\PaymentGateway::load('mercado_pago');
-$assert(($runtime_gateway->getPluginConfiguration()['access_token_test'] ?? '') === $fake_access_token, 'Commerce gateway receives the environment override at runtime.');
+$assert(($runtime_gateway->getPluginConfiguration()[$mp_token_field] ?? '') === $fake_access_token, 'Commerce gateway receives the environment override at runtime.');
 $admin_form_html = '';
 try {
   \Drupal::currentUser()->setAccount(\Drupal\user\Entity\User::load(1));
@@ -446,14 +454,15 @@ try {
   $admin_form_html = (string) \Drupal::service('renderer')->renderRoot($gateway_form);
 }
 finally {
-  putenv($previous_public_key === FALSE ? 'MERCADOPAGO_PUBLIC_KEY' : 'MERCADOPAGO_PUBLIC_KEY=' . $previous_public_key);
-  putenv($previous_access_token === FALSE ? 'MERCADOPAGO_ACCESS_TOKEN' : 'MERCADOPAGO_ACCESS_TOKEN=' . $previous_access_token);
+  foreach ($previous_mp as $variable => $previous) {
+    putenv($previous === FALSE ? $variable : $variable . '=' . $previous);
+  }
   \Drupal::configFactory()->reset('commerce_payment.commerce_payment_gateway.mercado_pago');
   $gateway_storage->resetCache(['mercado_pago']);
   \Drupal::currentUser()->setAccount(new \Drupal\Core\Session\AnonymousUserSession());
 }
 $assert(!str_contains($admin_form_html, $fake_access_token), 'Gateway admin HTML never reveals the runtime Access Token.');
-$assert(($gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['mercado_pago']->getPluginConfiguration()['access_token_test'] ?? '') === '', 'Fake runtime credentials were not persisted.');
+$assert(($gateway_storage->loadMultipleOverrideFree(['mercado_pago'])['mercado_pago']->getPluginConfiguration()[$mp_token_field] ?? '') === '', 'Fake runtime credentials were not persisted.');
 $gateway = \Drupal\commerce_payment\Entity\PaymentGateway::load('mercado_pago');
 $assert((bool) $gateway, 'The Commerce Mercado Pago gateway config entity exists.');
 $assert(!$gateway->status(), 'The Mercado Pago gateway remains disabled.');
