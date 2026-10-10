@@ -1,3 +1,14 @@
+.aculta-secret-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.aculta-secret-value__edit {
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
 .aculta-portal-requirements__status--ok {
   color: #1e5e2f;
   background-color: #e6f4ea;

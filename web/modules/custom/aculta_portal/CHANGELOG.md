@@ -1,3 +1,20 @@
+## 0.2.0-dev.32 — Alterar credencial por popup — 2026-10-10
+
+Classificação: mudança de interação no painel administrativo (PATCH, sem API pública nova).
+
+- Em "Credenciais do ambiente", os campos de senha da seção "Cadastrar ou alterar valores" e o botão "Salvar credenciais" saem da página.
+- Cada linha ganha um ícone ✎ ao lado do olho. Ao clicar, abre um popup (modal Drupal) com um único campo de senha para a variável escolhida. Salvar grava só essa variável.
+- O ✎ só aparece onde a gravação é possível (teste, arquivo de credenciais). Em produção, a página segue mostrando o aviso de armazenamento em banco.
+- Organização: `SecretsForm` deu lugar a `SecretsController` (página e popup, como serviço) e `Form/SecretEditForm` (popup, validação de campo obrigatório, AJAX de fechamento e redirecionamento).
+- Mantidos: permissão `administer aculta secrets`, valor fora do HTML, log só com nome e usuário, gravação atômica do arquivo.
+- Validação no Runtime de teste (`aculta.toca.net.br`), com sessão de administrador:
+  - página: 200, sem campo de senha, sete lápis (um por variável do contrato), sem o botão antigo;
+  - popup (navegador headless, Chromium/DevTools): o lápis abre "Alterar credencial"; envio vazio mostra o erro de campo obrigatório dentro do popup e não grava;
+  - gravação: envio com o valor atual de `GOOGLE_OAUTH_CLIENT_ID` (mesmo valor, sem alterar a credencial) fecha o popup, volta à página com a mensagem de sucesso e registra no log `1 variável(eis) atualizada(s)`;
+  - o olho segue revelando o valor depois da gravação.
+- Correção durante a validação: o popup precisou da biblioteca `core/drupal.dialog.ajax` na página (sem ela, o lápis navegava para a página de edição).
+- Não testado: alteração de uma credencial para valor diferente (a regravação foi com o mesmo valor).
+
 ## 0.2.0-dev.31 — Botão de exibir chave em Credenciais do ambiente — 2026-10-10
 
 Classificação: correção (PATCH).
