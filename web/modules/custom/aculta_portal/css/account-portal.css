@@ -70,6 +70,7 @@
 
 .portal-account__icon,
 .portal-account__chevron { display: none; }
+.portal-account__accordion { display: none; }
 
 .portal-account__link:is(:hover, :focus-visible) {
   color: #0c3c29;
@@ -197,32 +198,49 @@
 .portal-account__status { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 @media (max-width: 767.98px) {
-  /* Menu da conta no celular: lista vertical com ícone, rótulo, seta e divisórias. Só mobile. */
+  /* Menu da conta no celular: sanfona. Cada item expande e mostra descrição e link para a página. Só mobile. */
   .portal-account__nav { padding: 0; border-inline-start: 0; background: transparent; }
-  .portal-account__menu { display: block; gap: 0; background: #ffffff; border-radius: 0.25rem; }
-  .portal-account__menu > li { border-block-end: 1px solid #e3e8dc; }
-  .portal-account__menu > li:last-child { border-block-end: 0; }
-  .portal-account__link,
-  .portal-account__link:is(:hover, :focus-visible) {
+  .portal-account__menu-desktop { display: none; }
+  .portal-account__accordion { display: block; background: #ffffff; border-radius: 0.25rem; }
+  .portal-account__item { border-block-end: 1px solid #e3e8dc; }
+  .portal-account__summary,
+  .portal-account__logout-row {
     display: flex;
     align-items: center;
     gap: 0.875rem;
     min-height: 3.5rem;
     padding: 0.75rem 1rem;
     color: #3a3a3a;
-    background: #ffffff;
-    border: 0;
-    border-radius: 0;
     font: 500 1.05rem/1.3 Inter, sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
   }
-  .portal-account__link:is(:hover, :focus-visible) { background: #f7f9f3; }
-  .portal-account__link.is-active,
-  .portal-account__link[aria-current="page"] { color: #0c3c29; font-weight: 700; }
+  .portal-account__summary::-webkit-details-marker { display: none; }
+  .portal-account__summary:focus-visible,
+  .portal-account__logout-row:focus-visible { outline: 3px solid #0c3c29; outline-offset: -3px; }
+  .portal-account__item[open] > .portal-account__summary { color: #0c3c29; font-weight: 700; }
   .portal-account__icon { display: inline-block; flex: 0 0 1.5rem; font-size: 1.35rem; color: #5b5b5b; text-align: center; }
   .portal-account__label { flex: 1 1 auto; min-width: 0; }
-  .portal-account__chevron { display: inline-block; flex: 0 0 auto; font-size: 1.1rem; color: #7a7a7a; }
-  .portal-account__logout { margin-block-start: 0.5rem; border-block-start: 1px solid #e3e8dc; }
-  .portal-account__menu > li { display: block; }
+  .portal-account__chevron { display: inline-block; flex: 0 0 auto; font-size: 1.1rem; color: #7a7a7a; transition: transform 180ms ease; }
+  .portal-account__item[open] .portal-account__chevron { transform: rotate(90deg); }
+  .portal-account__panel { padding: 0 1rem 1rem 3.5rem; }
+  .portal-account__panel p { margin: 0 0 0.75rem; color: #555555; font: 400 0.95rem/1.4 Inter, sans-serif; }
+  .portal-account__go {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: #ffffff;
+    background: #0c3c29;
+    border-radius: 0.25rem;
+    font: 600 0.95rem/1.2 Inter, sans-serif;
+    text-decoration: none;
+  }
+  .portal-account__go:focus-visible { outline: 3px solid #0c3c29; outline-offset: 2px; }
+  .portal-account__logout-row { border-block-start: 1px solid #e3e8dc; }
+  .portal-account__chevron { transition: none; }
+  @media (prefers-reduced-motion: no-preference) { .portal-account__chevron { transition: transform 180ms ease; } }
   .portal-account__layout { grid-template-columns: minmax(0, 1fr); }
   .portal-account__nav { position: static; }
   .portal-account__identity { align-items: flex-start; }

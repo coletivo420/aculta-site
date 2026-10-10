@@ -1,3 +1,9 @@
+## 0.2.0-dev.27 — Menu da Minha conta no celular em sanfona — 2026-10-10
+
+- No celular (até 767px), cada item do menu da conta é uma sanfona nativa (`details`/`summary`, sem JavaScript): expande e mostra a descrição da seção e o link para a página. A seção atual começa aberta. Sair continua como linha simples.
+- No desktop, o menu segue como lista de links.
+- Conteúdo do menu duplicado em dois blocos e alternado só por CSS, para que cada versão tenha o próprio markup acessível.
+
 ## 0.2.0-dev.26 — Menu da Minha conta no celular: lista com ícones — 2026-10-10
 
 Classificação: apresentação (somente mobile; desktop sem mudança).

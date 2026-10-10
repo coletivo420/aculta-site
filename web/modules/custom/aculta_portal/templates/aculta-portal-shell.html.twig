@@ -6,7 +6,8 @@
   <div class="portal-account__layout">
     <nav class="portal-account__nav" aria-label="Minha conta">
       <h2 class="visually-hidden">Navegação da conta</h2>
-      {{ menu }}
+      <div class="portal-account__menu-desktop">{{ menu }}</div>
+      {{ menu_accordion }}
     </nav>
     <section class="portal-account__content" data-portal-account-content aria-labelledby="portal-account-section-title" aria-busy="false" role="region">
       <h2 id="portal-account-section-title" tabindex="-1">{{ section_title }}</h2>
