@@ -1,4 +1,7 @@
 services:
+  aculta_portal.registration_mail_policy:
+    class: Drupal\aculta_portal\Account\RegistrationMailPolicy
+    arguments: ['@entity_type.manager', '@plugin.manager.mail']
   aculta_portal.color_mode_preference:
     class: Drupal\aculta_portal\Appearance\ColorModePreference
     arguments: ['@config.factory', '@user.data']
@@ -33,7 +36,7 @@ services:
     arguments: ['@config.factory']
   aculta_portal.form_callbacks:
     class: Drupal\aculta_portal\Form\PortalFormCallbacks
-    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.registration_terms']
+    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.registration_terms', '@aculta_portal.registration_mail_policy']
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack']

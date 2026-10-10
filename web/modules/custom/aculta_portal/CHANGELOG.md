@@ -1,3 +1,14 @@
+## 0.2.0-dev.22 — Cadastro neutro com e-mail já usado (DT-P06) — 2026-10-09
+
+Classificação: mudança de comportamento no cadastro (decisão do responsável): a resposta não revela se o e-mail já tem conta.
+
+- Mensagem única nos dois casos: "Se este e-mail ainda não estiver cadastrado, enviaremos um link para confirmar o seu cadastro. Se ele já estiver cadastrado, enviaremos um aviso com as opções para acessar a sua conta. Verifique a caixa de entrada e a pasta de spam." Mesmo destino (página inicial).
+- Com e-mail já cadastrado, nenhuma conta é criada e ninguém é logado. O dono da conta recebe um e-mail com o link para entrar e para recuperar a senha, e a orientação de que não é preciso fazer nada se não foi ele.
+- Implementação: o erro "already taken" do Core sai do formulário; o botão usa `saveRegistration` no lugar de `::save`; a política `RegistrationMailPolicy` concentra a busca e o aviso; o hook `mail` do módulo traz o texto do aviso.
+- Cadastro com e-mail novo continua igual, exceto pela mensagem única (substitui a do Core).
+- Testes de Kernel: `RegistrationMailPolicyKernelTest` (conta encontrada só para e-mail cadastrado; aviso enviado ao dono; nenhuma conta criada).
+- Limites conhecidos: (1) o tempo de resposta difere quando o aviso é enviado na mesma requisição; (2) o aviso pode ser usado para lotar a caixa de um endereço alheio, por isso o CAPTCHA do cadastro continua obrigatório; (3) o aviso não é enfileirado.
+
 ## Documentação — S3 (validação em ambiente real) — 2026-10-09
 
 Mudança apenas documental; a versão vigente segue `0.2.0-dev.21`.

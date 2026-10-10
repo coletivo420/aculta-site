@@ -63,6 +63,12 @@ final class FormHooks {
         '#default_value' => TRUE,
         '#weight' => 90,
       ];
+      // DT-P06: o salvamento passa pelo Portal, que não cria conta quando o e-mail já existe (ver saveRegistration).
+      $form['#validate'][] = 'aculta_portal.form_callbacks:validateRegistrationMail';
+      $form['actions']['submit']['#submit'] = array_map(
+        static fn($callback) => $callback === '::save' ? 'aculta_portal.form_callbacks:saveRegistration' : $callback,
+        $form['actions']['submit']['#submit'] ?? [],
+      );
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:requestRegistrationConfirmation';
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:acceptRegistrationTerms';
     }
