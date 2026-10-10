@@ -1,3 +1,12 @@
+## 0.6.0-dev.1 — T5: reconstrução em ambiente novo verificada (ferramenta de conteúdo) — 2026-10-09
+
+Classificação: mudança de ferramenta (`scripts/content`), sem alteração de código do tema; versão vigente mantida.
+
+- Loader do conteúdo cria o que não existe: o nó da home (com `nid` 1, a página inicial) e os 3 destaques editoriais publicados, por UUID. Antes, a home de um ambiente novo ficava sem nó (404).
+- `home-content.json`: `nid` no nó da home e os 3 destaques (nós 14, 15 e 16 do Runtime; os exemplos de teste ficam de fora).
+- Verificado em ambiente novo (perfil `standard`, configuração importada, sem segredo real): a home mostra 27 de 27 textos declarados; uma segunda execução não altera nada.
+- Depende do arquivo de serviços do site (`web/sites/default/services.aculta.yml`), incluído por `settings` em cada ambiente.
+
 ## 0.6.0-dev.1 — F4: UI Patterns e biblioteca de componentes — 2026-10-09
 
 Classificação: MINOR (dependência nova e biblioteca navegável; sem alteração de markup nem de componentes).

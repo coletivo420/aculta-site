@@ -53,9 +53,25 @@ foreach ($data['block_content'] as $item) {
 }
 
 foreach ($data['node'] as $item) {
-  $node = Node::load(1);
-  if ($node === NULL || $node->uuid() !== $item['uuid']) {
-    $report['changes'][] = 'skip node ' . $item['uuid'] . ' (not found by UUID)';
+  // Nó com nid (a home, /node/1) é localizado pelo nid; os demais, pelo UUID. Ausente: criado.
+  $node = isset($item['nid'])
+    ? Node::load((int) $item['nid'])
+    : (($found = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['uuid' => $item['uuid']])) ? reset($found) : NULL);
+  if ($node === NULL) {
+    // Ambiente novo: o nó não existe. A home é criada com o nid de page.front (/node/1); os destaques, pelo UUID.
+    $report['changes'][] = 'create node ' . ($item['nid'] ?? 'auto') . ' (' . $item['uuid'] . ')';
+    $report['created_nodes'] = ($report['created_nodes'] ?? 0) + 1;
+    if ($apply) {
+      $values = ['uuid' => $item['uuid'], 'type' => $item['bundle'], 'title' => $item['title'], 'status' => 1, 'uid' => 1];
+      if (isset($item['nid'])) { $values['nid'] = (int) $item['nid']; }
+      $node = Node::create($values);
+      foreach ($item['fields'] as $field => $value) { $node->set($field, $value); }
+      $node->save();
+    }
+    continue;
+  }
+  if ($node->uuid() !== $item['uuid']) {
+    $report['changes'][] = 'skip node ' . $node->id() . ' (uuid differs from declared)';
     continue;
   }
   $changed = [];
