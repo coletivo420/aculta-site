@@ -72,7 +72,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       }
 
       // ACCOUNT's Domain root is the public landing URL. Its domain-specific
-      // front page resolves /conta-interna internally.
+      // front page resolves the overview route internally.
       $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
       if ($accountRoot !== NULL) {
         $this->retargetRedirect($event, $accountRoot->toString());
@@ -156,6 +156,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     // The support form is routed at /apoio but is the public home of the SUPPORT
     // subdomain: it is served only when the original request path is /.
     if ($routeName === 'aculta_portal.support_form' && $request->getPathInfo() !== '/') {
+      throw new NotFoundHttpException();
+    }
+    // The account overview is served only at the ACCOUNT root. Its internal
+    // route path is never a public URL, so direct requests to it fail closed.
+    if ($routeName === 'aculta_portal.dashboard' && $request->getPathInfo() !== '/') {
       throw new NotFoundHttpException();
     }
     if (in_array($routeName, ['user.login', 'social_auth.network.redirect'], TRUE)
