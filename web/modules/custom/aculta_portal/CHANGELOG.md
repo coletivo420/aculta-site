@@ -1,3 +1,11 @@
+## 0.2.0-dev.35 — Apagar valor de credencial pelo painel — 2026-10-10
+
+Classificação: funcionalidade pequena do painel (PATCH, sem API pública nova).
+
+- Cada credencial com valor ganha o ícone 🗑 ao lado do olho e do lápis. Ao clicar, abre uma confirmação (modal) que avisa que a variável sai do arquivo de credenciais deste ambiente.
+- `SecretsManager::clear()` remove a linha da variável. A escrita passou a ser um único método privado (`persist`), usado por `save()` e `clear()`, com a mesma escrita atômica e o mesmo log (só o nome).
+- Só aparece onde a gravação é possível (teste, arquivo de credenciais) e só quando há valor. Permissão `administer aculta secrets`.
+- Validação: ver a seção de validação na PR.
 ## 0.2.0-dev.34 — Remove Client ID e Client Secret do Mercado Pago — 2026-10-10
 
 Classificação: limpeza de contrato (PATCH).

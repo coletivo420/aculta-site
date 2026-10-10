@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Secrets;
 
+use Drupal\aculta_portal\Secrets\Form\SecretClearForm;
 use Drupal\aculta_portal\Secrets\Form\SecretEditForm;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -66,6 +67,11 @@ final class SecretsController {
   /** Popup de alteração de uma credencial (rota com link use-ajax modal). */
   public function edit(string $name): array {
     return $this->formBuilder->getForm(SecretEditForm::class, $name);
+  }
+
+  /** Popup de confirmação para apagar o valor de uma credencial. */
+  public function clear(string $name): array {
+    return $this->formBuilder->getForm(SecretClearForm::class, $name);
   }
 
   /**
@@ -173,6 +179,20 @@ final class SecretsController {
           'data-dialog-options' => Json::encode(['width' => 480]),
           'aria-label' => (string) $this->t('Alterar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
           'title' => (string) $this->t('Alterar valor'),
+        ],
+      ];
+    }
+    if ($this->secrets->canSaveHere() && $present) {
+      $cell['clear'] = [
+        '#type' => 'link',
+        '#title' => '🗑',
+        '#url' => Url::fromRoute('aculta_portal.secrets_clear', ['name' => $name]),
+        '#attributes' => [
+          'class' => ['aculta-secret-value__clear', 'use-ajax'],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => Json::encode(['width' => 480]),
+          'aria-label' => (string) $this->t('Apagar valor de @name (@environment)', ['@name' => $name, '@environment' => $environment]),
+          'title' => (string) $this->t('Apagar valor'),
         ],
       ];
     }

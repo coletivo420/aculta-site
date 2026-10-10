@@ -168,6 +168,14 @@ aculta_portal.secrets_import:
     _title: Credenciais do ambiente
   requirements:
     _permission: administer aculta secrets
+aculta_portal.secrets_clear:
+  path: /admin/config/aculta/segredos/apagar/{name}
+  defaults:
+    _controller: 'aculta_portal.secrets_controller:clear'
+    _title: Apagar valor
+  requirements:
+    _permission: administer aculta secrets
+    name: '[A-Z][A-Z0-9_]*'
 aculta_portal.secrets_edit:
   path: /admin/config/aculta/segredos/editar/{name}
   defaults:
