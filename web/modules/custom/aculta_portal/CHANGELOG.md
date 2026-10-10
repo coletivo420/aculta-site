@@ -1,3 +1,11 @@
+## Documentação — S3 (validação em ambiente real) — 2026-10-09
+
+Mudança apenas documental; a versão vigente segue `0.2.0-dev.21`.
+
+- DT-O06 executado: a validação do formulário de login recusa conta bloqueada e aceita a ativa.
+- DT-P08 parcial (widget Turnstile verificado em `/entrar`); DT-P11 adiado com decisão (exceção de teste do CAPTCHA); DT-P04 adiado por ambiente (PHP 8.5 exige root); DT-P05 e DT-O07 adiados por dependência (credenciais SMTP e deploy); DT-P07 adiado a pedido do responsável.
+- Critério da S3 cumprido: cada item tem resultado ou decisão de adiar.
+
 ## 0.2.0-dev.21 — S2: tipagem e primeiro teste de Kernel (DT-P02, DT-P03) — 2026-10-09
 
 Classificação: testes e gate (sem mudança de comportamento).

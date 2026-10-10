@@ -33,14 +33,14 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-P01 | Classes de tema (`aculta-*`) em templates do módulo | corrigido em 0.2.0-dev.20: classes `portal-account*` no módulo; gate reprova `class="aculta-*"` em `templates/` | Média | Não | S1 | Resolvida |
 | DT-P02 | Arquivo sem `declare(strict_types=1)` | `strict_types=1` em todo `src/`; teto vazio no gate (0.2.0-dev.21) | Baixa | Não | S2 | Resolvida |
 | DT-P03 | Sem testes de Kernel para os serviços P5–P7 | 1 teste de Kernel (login: `EmailConfirmationPolicy`, 0.2.0-dev.21). Pendentes: domínio (`DomainPurposeManager`, precisa do módulo Domain) e pagamento (`WebhookGuard` é coberto por teste unitário) | Média | Não | S2 | Aberta (parcial) |
-| DT-P04 | PHP 8.5 não instalado nem testado | `P10-R-FINAL-AUDIT.md` item 4; `composer.json` declara `>=8.3` | Média | Não | S3 | Aberta |
-| DT-P05 | Entrega de e-mail em produção não validada; `smtp.settings` e `system.mail` não importados | `P10-R` seção 10, risco 1 e seção 14 | Alta | Não (depende de deploy) | S3 | Aberta |
+| DT-P04 | PHP 8.5 não instalado nem testado | host tem PHP 8.4; instalação exige privilégio de root | Média | Não (ambiente) | S3 | Aberta (adiada por ambiente) |
+| DT-P05 | Entrega de e-mail em produção não validada; `smtp.settings` e `system.mail` não importados | adiada: depende de credenciais SMTP e de deploy; drift classificado (DT-O07) | Alta | Sim (credenciais SMTP) | S3 | Aberta (adiada por dependência) |
 | DT-P06 | Enumeração de contas pelo cadastro | `P10-R` seção 14: risco aceito pelo responsável | Média | Decisão registrada | S4 | Decisão registrada (reabrir em revisão) |
-| DT-P07 | Mercado Pago não testado com credencial real | `P10-R` item 6, DEFERRED | Média | Sim (credencial de sandbox) | S3 | Aberta |
-| DT-P08 | Login completo com CAPTCHA não exercitado por HTTP | `P10-R` seção 9, DEFERRED | Média | Não | S3 | Aberta |
+| DT-P07 | Mercado Pago não testado com credencial real | adiado a pedido do responsável (decisão sobre a credencial de sandbox) | Média | Sim (credencial de sandbox) | S3 | Aberta (adiada) |
+| DT-P08 | Login completo com CAPTCHA não exercitado por HTTP | widget Turnstile verificado em `/entrar`; resolução do desafio depende de exceção de teste aprovada pelo responsável | Média | Sim (exceção de teste do CAPTCHA) | S3 | Aberta (parcial) |
 | DT-P09 | Mensagem de webform via SMTP sem o modelo HTML | `P10-R` risco 5; `CHANGELOG.md` do Portal | Baixa | Não | S4 | Aberta |
 | DT-P10 | Módulos de administração ativos em produção | `P10-R` risco 7 ("avaliar") | Média | Sim | S4 | Aberta |
-| DT-P11 | `validate-final-contact` não executa fora do ambiente local | saída `Local only.`, código 1 | Baixa | Não | S3 | Aberta |
+| DT-P11 | `validate-final-contact` não executa fora do ambiente local | local por desenho (recusa outros hosts); sai com código 2 porque o Turnstile recusa envio por script. Adiado com decisão: exceção de teste do CAPTCHA | Baixa | Sim (exceção de teste do CAPTCHA) | S3 | Aberta (adiada com decisão) |
 | DT-P12 | Conta: segurança/conexões e AJAX herdados da lista antiga de prioridades | `ROADMAP.md` antigo (prioridades 2 e 3); `js/account-navigation.js` com 183 linhas | Média | Sim (escopo) | S5 | Aberta |
 | DT-P13 | Busca, engajamento e fórum sem decisão de adoção | `ROADMAP.md` antigo (prioridades 5 e 6) | Baixa | Sim | S5 | Aberta (condicional) |
 | DT-P14 | Portal sem tag própria antes de 2026-10-09 | `RELEASES.md` | Baixa | Não | — | Resolvida: `portal-v0.1.0` |
@@ -86,8 +86,8 @@ As regras que sobreviveram estão em `docs/portal/GUARDRAILS.md`.
 | DT-O03 | Scripts de migração e QA fora do repositório | migração de conteúdo versionada (ver DT-T10); scripts pontuais de migração continuam fora do Git por já terem sido aplicados; scratchpad de QA segue fora | Alta | Sim | T5 | Parcial |
 | DT-O04 | Diretório de agregados do Drupal não é gravável pelo usuário de desenvolvimento | `ls -ld web/sites/default/files/css` (dono `aculta:www-data`) | Média | Não (ambiente) | S6 | Aberta |
 | DT-O05 | Credenciais de teste no Runtime local, sem rotação programada | `~/.config/aculta-homelab/test-credentials.env`; `TEST-DATA.md` | Baixa | Não | S6 | Aberta |
-| DT-O06 | Teste de login negado para conta bloqueada descrito como esperado, não executado | `TEST-DATA.md` | Baixa | Não | S3 | Aberta |
-| DT-O07 | Config ainda com drift (`smtp.settings` e `system.mail`) | `drush config:status` | Média | Não | S3 | Aberta (já documentada) |
+| DT-O06 | Teste de login negado para conta bloqueada descrito como esperado, não executado | executado em 2026-10-09: o formulário de login recusa a conta bloqueada e aceita a ativa (conta de teste removida) | Baixa | Não | S3 | Resolvida |
+| DT-O07 | Config ainda com drift (`smtp.settings` e `system.mail`) | classificado: diferem de `config/sync`; não importar até a decisão de credenciais SMTP (DT-P05) | Média | Sim (credenciais SMTP) | S3 | Aberta (adiada por dependência) |
 | DT-O08 | PRs obsoletas acumuladas | PR #63 fechada em 2026-10-09 com arquivo em `archive/pr63` | Baixa | Não | — | Resolvida |
 
 ## Governança

@@ -50,13 +50,14 @@ versão alvo, validar e só então taguear.
 
 ### S3 — Validação em ambiente real (DT-P04, DT-P05, DT-P07, DT-P08, DT-P11, DT-O06, DT-O07)
 
-- PHP 8.5 instalado no Homelab: lint, PHPUnit e smoke.
-- Importação controlada de `smtp.settings` e `system.mail` e teste de entrega a endereço controlado.
-  Depende de deploy; não bloqueia S0–S2.
-- Mercado Pago com credencial de sandbox (decisão do responsável sobre a credencial).
-- Login completo com CAPTCHA por HTTP em ambiente de teste.
-- `validate-final-contact` com o flag de ambiente local documentado.
-- Critério: cada item com resultado registrado ou decisão de adiar, sem `DEFERRED` implícito.
+Resultado da rodada de 2026-10-09. Cada item tem resultado ou decisão de adiar; nada fica implícito.
+
+- **DT-O06 (login de conta bloqueada): executado.** A validação do formulário de login recusa a conta bloqueada com a mensagem do Core ("não foi ativado ou está bloqueado") e aceita a conta ativa. Conta de teste criada e removida. Observação: o serviço `user.auth` do Core devolve o uid sem checar o status; a recusa é do formulário, por desenho do Core.
+- **DT-P08 (login com CAPTCHA por HTTP): parcial.** O formulário de login em `/entrar` renderiza o widget Turnstile. A resolução do desafio depende de um humano ou de uma exceção de teste aprovada pelo responsável (ver DT-P11). Adiado.
+- **DT-P11 (`validate-final-contact`): adiado com decisão.** O script é local por desenho (recusa qualquer host que não seja localhost) e sai com código 2 (pendente) porque o Turnstile recusa envio por script. Permanece pendente até a decisão de exceção de teste.
+- **DT-P04 (PHP 8.5): adiado por ambiente.** O host tem PHP 8.4 e não tem PHP 8.5. A instalação exige privilégio de root neste host.
+- **DT-P05 (entrega de e-mail) e DT-O07 (drift de `smtp.settings` e `system.mail`): adiados por dependência.** Importar a configuração de SMTP exige credenciais e o deploy. Hoje o drift é classificado: ambos diferem de `config/sync`, e não serão importados até a decisão de credenciais.
+- **DT-P07 (Mercado Pago com credencial de sandbox): adiado.** Decisão do responsável, a pedido.
 
 ### S4 — Decisões do responsável (DT-P06, DT-P09, DT-P10, DT-G01)
 
