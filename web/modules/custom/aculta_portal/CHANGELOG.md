@@ -1,3 +1,11 @@
+## 0.2.0-dev.28 — Sanfona da Minha conta com o conteúdo completo da seção — 2026-10-10
+
+- No celular, cada item da sanfona mostra o conteúdo completo da seção, carregado por AJAX quando o item é aberto (mesma requisição que o `account-navigation.js` já usa para as seções). Sem links e sem descrição nos painéis.
+- A seção atual já vem aberta e carrega sozinha. No celular, a coluna de conteúdo lateral é removida do DOM, para não duplicar IDs.
+- Se a carga falhar, o painel mostra um link para abrir a página.
+- Desktop segue como lista de links.
+- Limite: a verificação autenticada (com login) não foi feita pela automação; validar no celular.
+
 ## 0.2.0-dev.27 — Menu da Minha conta no celular em sanfona — 2026-10-10
 
 - No celular (até 767px), cada item do menu da conta é uma sanfona nativa (`details`/`summary`, sem JavaScript): expande e mostra a descrição da seção e o link para a página. A seção atual começa aberta. Sair continua como linha simples.

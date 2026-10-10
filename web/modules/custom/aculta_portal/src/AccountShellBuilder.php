@@ -27,13 +27,13 @@ final class AccountShellBuilder {
   public function build(array &$variables): void {
     $route = $this->routeMatch->getRouteName();
     $sections = [
-      'aculta_portal.dashboard' => ['title' => $this->translation->translate('Visão geral'), 'route' => 'aculta_portal.dashboard', 'icon' => 'bi-grid', 'description' => 'Resumo da sua conta e atalhos para as outras áreas.'],
-      'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my', 'icon' => 'bi-heart', 'description' => 'Seus apoios e contribuições.'],
-      'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses', 'icon' => 'bi-mortarboard', 'description' => 'Os cursos em que você está matriculada.'],
-      'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data', 'icon' => 'bi-person-vcard', 'description' => 'Nome, telefone e endereços.'],
-      'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections', 'icon' => 'bi-link-45deg', 'description' => 'Contas conectadas, como o Google.'],
-      'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security', 'icon' => 'bi-shield-lock', 'description' => 'E-mail de acesso e senha.'],
-      'aculta_portal.account_settings' => ['title' => $this->translation->translate('Configurações'), 'route' => 'aculta_portal.account_settings', 'icon' => 'bi-sliders', 'description' => 'Modo de cor da página.'],
+      'aculta_portal.dashboard' => ['title' => $this->translation->translate('Visão geral'), 'route' => 'aculta_portal.dashboard', 'icon' => 'bi-grid'],
+      'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my', 'icon' => 'bi-heart'],
+      'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses', 'icon' => 'bi-mortarboard'],
+      'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data', 'icon' => 'bi-person-vcard'],
+      'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections', 'icon' => 'bi-link-45deg'],
+      'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security', 'icon' => 'bi-shield-lock'],
+      'aculta_portal.account_settings' => ['title' => $this->translation->translate('Configurações'), 'route' => 'aculta_portal.account_settings', 'icon' => 'bi-sliders'],
     ];
     if (!isset($sections[$route])) {
       return;
@@ -64,7 +64,6 @@ final class AccountShellBuilder {
       $accordion .= $this->accordionItem(
         Url::fromRoute($section['route'])->toString(),
         (string) $section['title'],
-        (string) $section['description'],
         $section['icon'],
         $route === $section_route,
       );
@@ -111,8 +110,11 @@ final class AccountShellBuilder {
     return ['#markup' => $markup];
   }
 
-  /** Item em sanfona (celular): cabeçalho com ícone, rótulo e seta; painel com descrição e link para a página. */
-  private function accordionItem(string $href, string $label, string $description, string $icon, bool $active): string {
+  /**
+   * Item em sanfona (celular). O painel começa vazio e carrega o conteúdo da seção por AJAX quando é aberto
+   * (ver account-navigation.js). A seção atual já vem aberta.
+   */
+  private function accordionItem(string $href, string $label, string $icon, bool $active): string {
     $open = $active ? ' open' : '';
     return '<details class="portal-account__item"' . $open . '>'
       . '<summary class="portal-account__summary">'
@@ -120,10 +122,8 @@ final class AccountShellBuilder {
       . '<span class="portal-account__label">' . Html::escape($label) . '</span>'
       . '<i class="bi bi-chevron-right portal-account__chevron" aria-hidden="true"></i>'
       . '</summary>'
-      . '<div class="portal-account__panel">'
-      . '<p>' . Html::escape($description) . '</p>'
-      . '<a class="portal-account__go" href="' . Html::escape($href) . '"' . ($active ? ' aria-current="page"' : '') . '>'
-      . 'Ir para ' . Html::escape($label) . '</a>'
+      . '<div class="portal-account__panel" data-portal-account-accordion-panel data-src="' . Html::escape($href) . '">'
+      . '<p class="portal-account__panel-loading">Carregando…</p>'
       . '</div>'
       . '</details>';
   }
