@@ -58,7 +58,7 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `smtp2go_password` | `SMTP2GO_PASSWORD` | Produção e testes | Sim | plain |
 | `mercadopago_production_public_key` | `MERCADOPAGO_PRODUCTION_PUBLIC_KEY` | Produção | Não, uso no frontend | plain |
 | `mercadopago_production_access_token` | `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` | Produção | Sim | plain |
-| `mercadopago_webhook_secret` | `MERCADOPAGO_WEBHOOK_SECRET` | Produção | Sim | plain |
+| `mercadopago_webhook_secret` | `MERCADOPAGO_WEBHOOK_SECRET` | Produção e testes (aplicação; obrigatória em produção) | Sim | plain |
 | `turnstile` | `TURNSTILE_KEYS_JSON` | Produção | Sim, contém secret | Base64 |
 | `mercadopago_test_public_key` | `MERCADOPAGO_TEST_PUBLIC_KEY` | Testes | Não, uso no frontend | plain |
 | `mercadopago_test_access_token` | `MERCADOPAGO_TEST_ACCESS_TOKEN` | Testes | Sim | plain |

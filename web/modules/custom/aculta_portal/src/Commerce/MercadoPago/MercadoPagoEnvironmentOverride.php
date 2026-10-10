@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Config;
+namespace Drupal\aculta_portal\Commerce\MercadoPago;
 
-use Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoCredentials;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;

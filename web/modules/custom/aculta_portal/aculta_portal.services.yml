@@ -91,7 +91,7 @@ services:
     parent: logger.channel_base
     arguments: ['cep_autocomplete']
   aculta_portal.mercado_pago_environment_override:
-    class: Drupal\aculta_portal\Config\MercadoPagoEnvironmentOverride
+    class: Drupal\aculta_portal\Commerce\MercadoPago\MercadoPagoEnvironmentOverride
     arguments: ['%app.root%']
     tags:
       - { name: config.factory.override, priority: 100 }

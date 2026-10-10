@@ -161,9 +161,10 @@ final class FormHooks {
     }
 
     $configurationForm = &$form['configuration']['form'];
+    // Access Tokens de teste e de produção: campo de senha sem valor exibido. O valor real vem do
+    // ambiente (MercadoPagoEnvironmentOverride), nunca da configuração.
     foreach ([
       ['credentials_test', 'access_token_test'],
-      ['credentials_stage', 'access_token_stage'],
       ['credentials_prod', 'access_token_prod'],
     ] as [$fieldset, $key]) {
       if (isset($configurationForm[$fieldset][$key])) {
@@ -173,12 +174,23 @@ final class FormHooks {
         $configurationForm[$fieldset][$key]['#attributes']['autocomplete'] = 'new-password';
       }
     }
-
-    if (isset($configurationForm['client_secret'])) {
-      $configurationForm['client_secret']['#type'] = 'password';
-      $configurationForm['client_secret']['#default_value'] = '';
-      unset($configurationForm['client_secret']['#value']);
-      $configurationForm['client_secret']['#attributes']['autocomplete'] = 'new-password';
+    // Não usados pela integração (modo stage e Client ID/Client Secret): desabilitados e sem valor,
+    // para que nenhuma credencial seja gravada na configuração exportada.
+    foreach ([
+      ['credentials_stage', 'public_key_stage'],
+      ['credentials_stage', 'access_token_stage'],
+      [NULL, 'client_id'],
+      [NULL, 'client_secret'],
+    ] as [$fieldset, $key]) {
+      $element = &$configurationForm;
+      if ($fieldset !== NULL) {
+        $element = &$configurationForm[$fieldset];
+      }
+      if (isset($element[$key])) {
+        $element[$key]['#disabled'] = TRUE;
+        $element[$key]['#default_value'] = '';
+        unset($element[$key]['#value']);
+      }
     }
   }
 

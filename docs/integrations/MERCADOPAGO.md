@@ -6,20 +6,28 @@ ambiente de testes e a validação de ponta a ponta ser feita.
 
 ## Credenciais
 
-Documentação oficial: [Credenciais](https://www.mercadopago.com.br/developers/pt/docs/your-integrations/credentials).
+Documentação oficial: [Credenciais](https://www.mercadopago.com.br/developers/pt/docs/your-integrations/credentials),
+[Notificações (webhooks)](https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks).
+O README do módulo `commerce_mercado_pago` também indica Public Key e Access Token como as credenciais necessárias.
 
 | Credencial | Uso | Ambiente | Variável (Key) |
 | --- | --- | --- | --- |
 | Public Key | frontend (meios de pagamento, criptografia dos dados do cartão) | teste e produção, valores diferentes | `MERCADOPAGO_TEST_PUBLIC_KEY` / `MERCADOPAGO_PRODUCTION_PUBLIC_KEY` |
 | Access Token | backend (gera pagamentos); chave privada | teste e produção, valores diferentes | `MERCADOPAGO_TEST_ACCESS_TOKEN` / `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` |
-| Assinatura do webhook | valida notificações recebidas | hoje só produção | `MERCADOPAGO_WEBHOOK_SECRET` |
+| Assinatura secreta do webhook | valida a `x-signature` das notificações | aplicação (uma para a aplicação, não por ambiente) | `MERCADOPAGO_WEBHOOK_SECRET` |
 
 Observações:
 - Client ID e Client Secret não são usados pela integração Checkout Pro: o Public Key e o Access Token bastam.
   Não entram no contrato nem no painel. Só existem no formulário de configuração do módulo, que os deixa vazios.
 - Credenciais de teste não precisam de ativação. Credenciais de produção exigem ativação na aplicação.
-- A documentação não diz se o webhook tem segredo separado por ambiente. Enquanto não houver teste de
-  notificação, `MERCADOPAGO_WEBHOOK_SECRET` continua só no ambiente de produção. Decisão pendente.
+- Assinatura do webhook (documentação oficial de notificações): a chave é **por aplicação** ("assinatura
+  secreta exclusiva para a sua aplicação"). Ela aparece em **Suas integrações > aplicação > Webhooks >
+  Configurar notificações**, e só é gerada depois de salvar a configuração de notificações. Por isso não
+  aparece antes da configuração. Para renovar, use o botão de redefinição ao lado da assinatura.
+- A validação da `x-signature` é feita pelo SDK oficial (`mercadopago/dx-php`, ver `WebhookGuard`): manifesto
+  `id:{data.id};request-id:{x-request-id};ts:{ts};` assinado com HMAC-SHA256 pela chave da aplicação.
+- A página de notificações pede URLs de recebimento distintas para teste e produção. Cada URL é usada com as
+  credenciais correspondentes ao seu ambiente.
 
 ## Ambiente e modo do gateway
 
@@ -91,5 +99,6 @@ navegador, para evitar erros de duplicidade de credenciais.
 
 - Informar, no painel "Credenciais do ambiente" (seção Ambiente de Testes), o Public Key e o Access Token de teste.
 - Validar o Checkout Pro de ponta a ponta no ambiente de testes, com os cartões e status acima, antes de ativar o gateway.
-- Decidir se o webhook terá segredo próprio no ambiente de testes.
+- Configurar as notificações da aplicação no painel do Mercado Pago (URL de teste e URL de produção), salvar e
+  copiar a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
 - Provisionar as credenciais de produção pelo ACULTA Deployer (não pelo painel do Runtime de teste).

@@ -1,3 +1,16 @@
+## 0.2.0-dev.36 — Alinhamento do Mercado Pago com a documentação e o módulo — 2026-10-10
+
+Classificação: alinhamento e limpeza (PATCH).
+
+- Overrides do Mercado Pago: `MercadoPagoEnvironmentOverride` movido para `Commerce/MercadoPago/`, junto do resolvedor `MercadoPagoCredentials`. Único override do módulo para o gateway.
+- Formulário do gateway (`FormHooks`): Access Tokens de teste e produção seguem como senha. Stage (não usado), Client ID e Client Secret ficam desabilitados e sem valor, para que nenhuma credencial não usada seja gravada na configuração.
+- Configuração exportada do gateway: removidas `public_key_stage`, `access_token_stage`, `client_id` e `client_secret` (não usadas, conforme o README do módulo e a documentação de credenciais).
+- `MERCADOPAGO_WEBHOOK_SECRET`: a documentação oficial diz que a assinatura é por aplicação, gerada ao salvar as notificações. Passa a valer em produção e testes (obrigatória só em produção).
+- Validação da `x-signature`: confere com o SDK oficial (`mercadopago/dx-php` 3.16.0), manifesto `id:...;request-id:...;ts:...;` com HMAC-SHA256.
+- Gate de comércio: lista de segredos do gateway alinhada (sem stage e client_secret); checagem de SMTP lê a configuração bruta (`getRawData()`), para não confundir com o valor vindo de Key.
+- Gates: Portal PASS (514); contrato PASS. Testes unitários de Mercado Pago e segredos: 19 OK.
+- Não validado: o gate de comércio completo. Ele exige modo seguro de SMTP (desligado), que o ambiente de testes não usa por decisão do projeto. As verificações de Mercado Pago foram conferidas com uma cópia temporária, sem a checagem de SMTP.
+
 ## 0.2.0-dev.35 — Apagar valor de credencial pelo painel — 2026-10-10
 
 Classificação: funcionalidade pequena do painel (PATCH, sem API pública nova).

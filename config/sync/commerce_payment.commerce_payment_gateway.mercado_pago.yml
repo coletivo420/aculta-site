@@ -16,12 +16,8 @@ configuration:
   collect_billing_information: false
   public_key_test: ''
   access_token_test: ''
-  public_key_stage: ''
-  access_token_stage: ''
   public_key_prod: ''
   access_token_prod: ''
-  client_id: ''
-  client_secret: ''
   redirect_mode: redirect
   country: BR
   payment_types: {  }
