@@ -1,3 +1,15 @@
+## 0.2.0-dev.23 — Caixa de ativação do Turnstile na administração — 2026-10-09
+
+Classificação: funcionalidade administrativa (política de CAPTCHA do Portal).
+
+- Nova opção em **ACULTA Portal > Turnstile (anti-bot)** (`/admin/config/aculta/portal/turnstile`): ativa ou desativa o desafio Turnstile.
+- Fonte da verdade: a própria configuração do CAPTCHA (`captcha.settings`, `enable_globally`, e os pontos com o desafio Turnstile). Não há configuração nova do Portal. Ao mudar, aplica-se o mesmo estado a todos esses pontos.
+- Ativar exige a chave `turnstile` configurada no ambiente (Key/env). O formulário mostra só se ela existe, nunca o valor.
+- Desativar exige confirmação do risco. Cada mudança é registrada no log do canal `aculta_portal`, com a conta que alterou.
+- O segredo não passa pela configuração: continua no Key/env.
+- Atenção: a alteração grava configuração no banco. Depois, exportar `config/sync` para o repositório.
+- Teste de Kernel `TurnstileToggleKernelTest` (3 testes OK). As 5 deprecações que ele mostra vêm dos contribs `captcha` e `key` (atributos de plugin e de requisitos), não deste código; acompanhar nas próximas versões dos contribs.
+
 ## 0.2.0-dev.22 — Cadastro neutro com e-mail já usado (DT-P06) — 2026-10-09
 
 Classificação: mudança de comportamento no cadastro (decisão do responsável): a resposta não revela se o e-mail já tem conta.

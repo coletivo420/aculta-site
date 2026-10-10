@@ -92,6 +92,13 @@ aculta_portal.admin:
     _title: ACULTA Portal
   requirements:
     _permission: administer site configuration
+aculta_portal.turnstile_settings:
+  path: /admin/config/aculta/portal/turnstile
+  defaults:
+    _form: '\Drupal\aculta_portal\Captcha\Form\TurnstileSettingsForm'
+    _title: Turnstile
+  requirements:
+    _permission: administer site configuration
 aculta_portal.requirements:
   path: /admin/config/aculta/portal/requisitos
   defaults:
