@@ -620,11 +620,11 @@ final class Cli {
       'target' => $target,
       'changed_files' => $changed,
       'steps' => [
-        'backup' => 'drush config:export --destination=DIR_BACKUP -y (estado atual do Runtime, para rollback)',
-        'import' => 'copie somente changed_files para DIR_IMPORT e rode drush config:import --partial --source=DIR_IMPORT -y',
-        'caches' => 'drush cr',
-        'sitemap' => $target === 'test' ? 'drush simple-sitemap:generate; aculta-deployer sitemap --env=test' : 'após o deploy: aculta-deployer sitemap --env=production',
-        'rollback' => 'importe novamente o backup com drush config:import --partial --source=DIR_BACKUP -y e rode drush cr',
+        'backup' => 'exportar a configuração ativa do Runtime para DIR_BACKUP (config:export do Drupal; para rollback)',
+        'import' => 'copie somente changed_files para DIR_IMPORT e importe com config:import --partial --source=DIR_IMPORT (Drupal)',
+        'caches' => 'limpar caches do Drupal (cr)',
+        'sitemap' => $target === 'test' ? 'regenerar o simple_sitemap (simple-sitemap:generate); aculta-deployer sitemap --env=test' : 'após o deploy: aculta-deployer sitemap --env=production',
+        'rollback' => 'importar novamente o backup com config:import --partial --source=DIR_BACKUP e limpar caches',
       ],
       'not_done' => 'nenhum Runtime foi alterado por este comando',
     ];
