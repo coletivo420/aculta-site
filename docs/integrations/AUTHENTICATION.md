@@ -22,9 +22,10 @@ redirecionamento ao provedor; quando o parâmetro ACULTA de purpose não é
 propagado pelo módulo upstream, o Portal conserva o purpose já capturado para o
 mesmo path **e query** em vez de sobrescrevê-lo com ACCOUNT. Quando não há página anterior ou destino explícito, o destino público padrão é
 a raiz do Domain ACCOUNT (`/` em `conta.aculta.org` ou no alias Homelab).
-A configuração Domain de ACCOUNT resolve essa raiz internamente para
-`/conta-interna`, rota `aculta_portal.dashboard`, sem expor esse caminho
-técnico como URL pós-login.
+A visão geral (rota `aculta_portal.dashboard`) é servida somente nessa raiz.
+O caminho técnico `/conta-interna` não é público: requisição direta responde 404
+(guarda em `DomainPurposeRequestSubscriber::onRequest`), no mesmo padrão de `/apoio`.
+Nenhum link gerado aponta para esse caminho.
 
 A página genérica de perfil do Drupal não é publicada. A rota técnica
 `user.page` continua registrada porque Core Navigation, recuperação de senha e
@@ -125,11 +126,11 @@ interação de navegador nesta alteração.
 
 ## Estado operacional desta revisão
 
-- Homelab: config ativa do Social Auth aponta o fallback para `/conta-interna`.
+- O fallback do Social Auth usa a raiz do Domain ACCOUNT (`AccountRouteSubscriber`), não o caminho interno.
 - a UI genérica de `/user` foi removida da experiência: `user.page` é mantida
   apenas como rota técnica de compatibilidade e redireciona usuários autenticados
   para a raiz ACCOUNT; `/identidade` não é destino de login;
-- `/conta-interna` permanece somente como front page interna do Domain ACCOUNT.
+- `/conta-interna` não é público: responde 404. A front page do Domain ACCOUNT resolve a visão geral na raiz.
 - Os links de login renderizados em MAIN, MAGAZINE, WIKI e COURSES carregaram
   `destination` com o caminho visível e o purpose respectivo.
 - O link Google gerado em `/entrar` preservou `destination`; o início OAuth

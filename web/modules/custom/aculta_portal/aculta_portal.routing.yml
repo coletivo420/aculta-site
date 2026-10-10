@@ -1,3 +1,5 @@
+# Caminho interno da visão geral. Não é público: o painel é servido somente na raiz
+# do Domain ACCOUNT (DomainPurposeRequestSubscriber::onRequest). Não gerar links por este caminho.
 aculta_portal.dashboard:
   path: /conta-interna
   defaults:
@@ -200,7 +202,7 @@ aculta_portal.deployer_status:
   requirements:
     _permission: administer aculta deployer
 aculta_portal.email_resend:
-  path: /conta-interna/confirmar-email/reenviar
+  path: /confirmar-email/reenviar
   defaults:
     _controller: '\Drupal\aculta_portal\Email\EmailResendController::resend'
   requirements:

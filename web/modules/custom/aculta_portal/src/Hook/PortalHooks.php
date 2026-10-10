@@ -487,7 +487,7 @@ final class PortalHooks {
     }
 
     // The account overview edits only the current account's photo here.
-    if ($entity->getEntityTypeId() === 'user' && $path === '/conta-interna') {
+    if ($entity->getEntityTypeId() === 'user' && $this->routeMatch->getRouteName() === 'aculta_portal.dashboard') {
       $allowed = ['user_picture', 'actions', 'form_build_id', 'form_token', 'form_id'];
       foreach (array_keys($form) as $key) {
         if (!in_array($key, $allowed, TRUE) && !str_starts_with((string) $key, '#')) {

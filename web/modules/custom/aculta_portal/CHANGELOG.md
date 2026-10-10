@@ -1,3 +1,15 @@
+## 0.2.0-dev.38 — Raiz pública da conta (sem /conta-interna) — 2026-10-10
+
+Classificação: correção de rota e de links (PATCH).
+
+- A visão geral da conta (`aculta_portal.dashboard`) é servida somente na raiz do Domain ACCOUNT (`/`). Requisição direta a `/conta-interna` responde 404, no mesmo padrão de `/apoio`, pela guarda em `DomainPurposeRequestSubscriber::onRequest`.
+- O caminho interno da rota foi mantido apenas como identificador técnico, comentado no routing. Nenhum link o gera: o hook de saída de URL já reescreve a rota para a raiz do Domain.
+- Formulário de foto de perfil da visão geral (`PortalHooks`): a condição passa a comparar a rota, não o caminho interno, que o Drupal entrega pela front page.
+- Reenvio de confirmação de e-mail: rota `aculta_portal.email_resend` passa a `/confirmar-email/reenviar` (slug público em português). Até a versão estável não há redirecionamento para o caminho antigo (decisão do responsável).
+- Documentação: `docs/integrations/AUTHENTICATION.md`, `docs/integrations/GOOGLE.md` e `docs/portal/ACCOUNT-MENU.md` descrevem a raiz como destino público.
+- Barreira anti-regressão: `scripts/validate-aculta-portal-conta-root.php` (gate "CONTA ROOT"). Reprova um segundo uso do caminho interno, a remoção da guarda, um link literal ao caminho em código, template, JS, CSS ou configuração exportada (exceto a front page do Domain ACCOUNT), o slug do reenvio fora do padrão e divergência entre `info.yml` e o changelog.
+- Não validado no Runtime: a checagem HTTP (`curl` em `https://conta.aculta.toca.net.br/` e em `/conta-interna`) depende do deploy no servidor de testes e é feita depois do merge.
+
 ## 0.2.0-dev.37 — Valor da credencial em popup — 2026-10-10
 
 Classificação: mudança visual no painel (PATCH).
