@@ -57,7 +57,9 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `mercadopago_webhook_secret` | `MERCADOPAGO_WEBHOOK_SECRET` | Sim | plain |
 | `smtp2go_username` | `SMTP2GO_USERNAME` | Sim, credencial | plain |
 | `smtp2go_password` | `SMTP2GO_PASSWORD` | Sim | plain |
-| `turnstile` | `TURNSTILE_KEYS_JSON` | Sim, contém secret | Base64 |
+| `turnstile` | `TURNSTILE_KEYS_JSON` | Sim, contém secret (produção) | Base64 |
+| `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Sim, contém secret (teste) | Base64 |
+| `turnstile_dev` | `TURNSTILE_DEV_KEYS_JSON` | Sim, contém secret (desenvolvimento) | Base64 |
 
 ## Arquitetura
 

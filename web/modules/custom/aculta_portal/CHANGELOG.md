@@ -1,3 +1,14 @@
+## 0.2.0-dev.24 — Turnstile: chaves separadas por ambiente — 2026-10-09
+
+Classificação: configuração e credenciais (sem mudança de comportamento para o ambiente de produção).
+
+- Três chaves do Turnstile no contrato de credenciais: `TURNSTILE_KEYS_JSON` (produção, Key `turnstile`), `TURNSTILE_TEST_KEYS_JSON` (teste, Key `turnstile_test`) e `TURNSTILE_DEV_KEYS_JSON` (desenvolvimento, Key `turnstile_dev`). Aparecem no painel de credenciais do ambiente.
+- Escolha automática: `TurnstileKeyOverride` aponta `turnstile.settings:keys` para a chave do ambiente que o deployer gravou (`aculta-deployer environment set --to=test|production`). Nada é gravado na configuração; a troca vale na próxima leitura.
+- Produção usa sempre a chave de produção. Teste usa a de teste. Não há mistura: a chave de teste não é lida em produção.
+- Desenvolvimento: a chave existe no contrato e no Key, mas a troca automática por ele depende de o deployer ganhar esse ambiente (hoje só aceita production e test).
+- Helper `DeployerEnvironment` único para o ambiente; o gerenciador de segredos passa a usá-lo.
+- Testes unitários: 3 OK (ambiente padrão, leitura do deployer, chave por ambiente).
+
 ## 0.2.0-dev.23 — Caixa de ativação do Turnstile na administração — 2026-10-09
 
 Classificação: funcionalidade administrativa (política de CAPTCHA do Portal).
