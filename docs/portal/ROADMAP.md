@@ -61,6 +61,8 @@ Resultado da rodada de 2026-10-09. Cada item tem resultado ou decisão de adiar;
 
 ### S4 — Decisões do responsável (DT-P06, DT-P09, DT-P10, DT-G01)
 
+- DT-P06 concluído em 0.2.0-dev.22 (decisão do responsável, 2026-10-09): cadastro neutro. Restam DT-P09, DT-P10 e DT-G01.
+
 - Reabrir a política de enumeração pelo cadastro quando houver revisão de CAPTCHA.
 - Decidir sobre os módulos de administração ativos em produção.
 - Decidir sobre a mensagem do webform via SMTP (template HTML).

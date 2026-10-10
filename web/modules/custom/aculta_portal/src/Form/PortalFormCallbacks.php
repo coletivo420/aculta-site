@@ -34,10 +34,19 @@ final class PortalFormCallbacks {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EmailConfirmationRequester $confirmationRequester,
     private readonly \Drupal\aculta_portal\Account\RegistrationTerms $registrationTerms,
+    private readonly \Drupal\aculta_portal\Account\RegistrationMailPolicy $registrationMail,
   ) {}
+
+  /** Mensagem única do cadastro, igual com e-mail novo ou já cadastrado (DT-P06). */
+  private function registrationStatusMessage(): string {
+    return (string) $this->translation->translate('Se este e-mail ainda não estiver cadastrado, enviaremos um link para confirmar o seu cadastro. Se ele já estiver cadastrado, enviaremos um aviso com as opções para acessar a sua conta. Verifique a caixa de entrada e a pasta de spam.');
+  }
 
   /** Registra o aceite dos termos do cadastro (checkbox obrigatório no formulário). */
   public function acceptRegistrationTerms(array &$form, FormStateInterface $formState): void {
+    if ($this->registrationAlreadyUsed($formState)) {
+      return;
+    }
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
     if ($account instanceof \Drupal\user\UserInterface) {
       $this->registrationTerms->record($account);
@@ -46,6 +55,9 @@ final class PortalFormCallbacks {
 
   /** Envia a confirmação de e-mail do cadastro recém-criado (conta ativa, e-mail não confirmado). */
   public function requestRegistrationConfirmation(array &$form, FormStateInterface $formState): void {
+    if ($this->registrationAlreadyUsed($formState)) {
+      return;
+    }
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
     if ($account instanceof \Drupal\user\UserInterface) {
       $this->confirmationRequester->request($account);
@@ -136,8 +148,58 @@ final class PortalFormCallbacks {
     $formState->set('aculta_register_pass', $pass);
   }
 
+  /**
+   * Cadastro com e-mail já usado: o erro "already taken" do Core sai (ele revela a existência da conta) e a
+   * submissão segue até saveRegistration(), que não cria conta. Outros erros do formulário são mantidos.
+   */
+  public function validateRegistrationMail(array &$form, FormStateInterface $formState): void {
+    $existing = $this->registrationMail->existingAccount((string) $formState->getValue('mail'));
+    if ($existing === NULL) {
+      return;
+    }
+    $remaining = [];
+    foreach ($formState->getErrors() as $name => $message) {
+      if ($name !== 'mail') {
+        $remaining[$name] = $message;
+      }
+    }
+    $formState->clearErrors();
+    foreach ($remaining as $name => $message) {
+      $formState->setErrorByName($name, $message);
+    }
+    $formState->set('aculta_registration_existing', (int) $existing->id());
+  }
+
+  /**
+   * Salvamento do cadastro (substitui o ::save do Core no botão). Com e-mail já cadastrado, nada é criado: o dono da
+   * conta recebe um aviso. Nos dois casos a resposta é a mesma: mesma mensagem e mesmo destino.
+   */
+  public function saveRegistration(array $form, FormStateInterface $formState): void {
+    $existingId = $formState->get('aculta_registration_existing');
+    if ($existingId !== NULL) {
+      $existing = $this->entityTypeManager->getStorage('user')->load((int) $existingId);
+      if ($existing instanceof \Drupal\user\UserInterface) {
+        $this->registrationMail->notifyExistingAccount($existing);
+      }
+    }
+    else {
+      $formState->getFormObject()->save($form, $formState);
+      // A mensagem do Core ("A welcome message...") é trocada pela mensagem única.
+      $this->messenger->deleteByType(MessengerInterface::TYPE_STATUS);
+    }
+    $this->messenger->addStatus($this->registrationStatusMessage());
+    $formState->setRedirect('<front>');
+  }
+
+  private function registrationAlreadyUsed(FormStateInterface $formState): bool {
+    return $formState->get('aculta_registration_existing') !== NULL;
+  }
+
   /** Grava a senha escolhida na conta criada (que segue bloqueada até a confirmação do e-mail). */
   public function storeRegistrationPassword(array &$form, FormStateInterface $formState): void {
+    if ($this->registrationAlreadyUsed($formState)) {
+      return;
+    }
     $pass = $formState->get('aculta_register_pass');
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
     if (!is_string($pass) || $pass === '' || !$account instanceof \Drupal\user\UserInterface) {
