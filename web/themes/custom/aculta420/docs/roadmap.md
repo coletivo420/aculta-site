@@ -77,7 +77,7 @@ Estruturas internas permanecem como rich text (ver `components.md`, decisão T1)
 - Critério: schema inválido quebra o gate; nenhuma porta fixa nos scripts. Cumprido.
 - Dívida nova: `validate-institution-browser.mjs` espera `/apoie` no host principal e `aculta_favicon.ico`. A página de apoio fica no host SUPPORT (homelab `apoio.aculta.toca.net.br`; produção `apoio.aculta.org`), na rota `/apoio` (Portal 0.2.0-dev.3). Falta a reescrita de `supportLayout` e o favicon oficial (DT-T18, pendente e independente do tema).
 
-### T5 — Portabilidade do conteúdo (DT-T10, DT-O03) — concluída em 0.4.1, reconstrução em ambiente novo DEFERRED
+### T5 — Portabilidade do conteúdo (DT-T10, DT-O03) — concluída em 0.4.1; reconstrução em ambiente novo verificada em 2026-10-09
 
 - Conteúdo de seções, missão, cabeçalho de projetos e hero declarado em `scripts/content/institution/home-content.json`, com exportador e loader por UUID, dry-run por padrão (`ACULTA_APPLY=1` para gravar).
 - Gate `validate-institution-content.php`: o JSON cobre todo UUID referenciado pelas colocações da home e do cabeçalho.
